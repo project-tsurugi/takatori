@@ -10,6 +10,7 @@ cppcoreguidelines-*,\
 fuchsia-*,\
 -fuchsia-default-arguments,\
 -fuchsia-overloaded-operator,\
+-fuchsia-trailing-return,\
 google-*,\
 -google-build-using-namespace,\
 -google-readability-namespace-comments,\

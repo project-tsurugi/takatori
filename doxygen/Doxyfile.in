@@ -1,10 +1,8 @@
-PROJECT_NAME           = "floating point decimal number library"
+PROJECT_NAME           = "C++ snippets"
 PROJECT_NUMBER         = @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
-STRIP_FROM_PATH        = @CMAKE_CURRENT_SOURCE_DIR@ \
-                         @PROJECT_SOURCE_DIR@/docs
+STRIP_FROM_PATH        = @CMAKE_CURRENT_SOURCE_DIR@
 INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@ \
-                         @TARGET_INCLUDES@ \
-                         @PROJECT_SOURCE_DIR@/docs
+                         @TARGET_INCLUDES@
 FILE_PATTERNS          = *.h *.md
 RECURSIVE              = YES
 USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/README.md
