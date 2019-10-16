@@ -20,4 +20,7 @@ function(add_test_executable source_file)
     )
 endfunction(add_test_executable)
 
+add_test_executable(util/clonable_test.cpp)
+add_test_executable(util/clonable_ptr_test.cpp)
 add_test_executable(util/optional_view_test.cpp)
+add_test_executable(util/poiner_test.cpp)

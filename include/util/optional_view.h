@@ -375,15 +375,15 @@ inline std::size_t optional_view<T>::hash<element_hash>::operator()(optional_vie
 
 /**
  * @brief converts the view by dynamic pointer cast.
- * @tparam U the destination value type
- * @tparam T the source value type
+ * @tparam T the destination value type
+ * @tparam U the source value type
  * @param view the target view
  * @return the converted view
  * @return empty if the input view is empty, or failed to convert the view
  */
-template<class U, class T>
-inline optional_view<U> dynamic_pointer_cast(optional_view<T> view) noexcept {
-    if (auto* pointer = dynamic_cast<typename optional_view<U>::pointer>(view.get()); pointer != nullptr) {
+template<class T, class U>
+inline optional_view<T> dynamic_pointer_cast(optional_view<U> view) noexcept {
+    if (auto* pointer = dynamic_cast<typename optional_view<T>::pointer>(view.get()); pointer != nullptr) {
         return *pointer;
     }
     return {};
@@ -391,19 +391,19 @@ inline optional_view<U> dynamic_pointer_cast(optional_view<T> view) noexcept {
 
 /**
  * @brief converts the view by dynamic reference cast.
- * @tparam U the destination value type
- * @tparam T the source value type
+ * @tparam T the destination value type
+ * @tparam U the source value type
  * @param view the target view
  * @return the converted view
  * @return empty if the input view is empty
  * @throws std::bad_cast if conversion was failed
  */
-template<class U, class T>
-inline optional_view<U> dynamic_reference_cast(optional_view<T> view) {
+template<class T, class U>
+inline optional_view<T> dynamic_reference_cast(optional_view<U> view) {
     if (!view) {
         return {};
     }
-    return dynamic_cast<typename optional_view<U>::reference>(*view);
+    return dynamic_cast<typename optional_view<T>::reference>(*view);
 }
 
 /**
@@ -415,7 +415,7 @@ inline optional_view<U> dynamic_reference_cast(optional_view<T> view) {
  */
 template<class T>
 inline std::ostream& operator<<(std::ostream& out, optional_view<T> value) {
-    if (value) {
+    if (!value) {
         return out << "(empty)";
     }
     return out << *value;
