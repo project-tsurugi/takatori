@@ -4,7 +4,10 @@
 #include <type_traits>
 #include <utility>
 
-#include "pointer.h"
+#include "util/object_creator.h"
+#include "util/pointer_traits.h"
+#include "util/rvalue_ptr.h"
+#include "util/rvalue_reference_wrapper.h"
 
 namespace util {
 
@@ -15,7 +18,7 @@ namespace impl {
 struct is_clonable {
     template<class T>
     std::enable_if_t<
-            std::is_base_of_v<T, std::remove_pointer_t<decltype(std::declval<T const&>().clone())>>,
+            std::is_assignable_v<T*&, decltype(std::declval<T const&>().clone(std::declval<object_creator>()))>,
             std::true_type>
     operator()(T&&) const { return {}; }
     std::false_type operator()(...) const { return {}; } // NOLINT
@@ -25,6 +28,7 @@ struct is_clonable {
 
 /**
  * @brief tests if the target type supports polymorphic clone.
+ * The clonable class "T" must have "T* T::clone(object_creator) const".
  * @tparam T the target type
  */
 template<class T> struct is_clonable;
@@ -37,105 +41,131 @@ template<class T>
 constexpr inline bool is_clonable_v = is_clonable<T>::value;
 
 /**
- * @brief provides clone of values.
- * @tparam T the value type
- */
-template<class T, class = void> struct cloner;
-
-/**
- * @brief provides clone of values.
- * @tparam T the value type
- */
-template<class T>
-struct cloner<T, std::enable_if_t<is_clonable_v<T>>> {
-
-    /// @brief the value type
-    using value_type = T;
-
-    /// @brief the element type
-    using element_type = std::remove_const_t<T>;
-
-    /// @brief the result type
-    using result_type = std::unique_ptr<element_type>;
-
-    /**
-     * @brief returns a clone of the given value.
-     * @param value the target value
-     * @return the created clone
-     */
-    result_type operator()(element_type const& value) { return result_type(value.clone()); }
-
-    /// @copydoc operator()()
-    result_type operator()(element_type&& value) { return result_type(std::move(value).clone()); }
-};
-
-/**
- * @brief provides clone of values over raw pointer.
- * @tparam T the value type
- */
-template<class T>
-struct cloner<T*, std::enable_if_t<is_clonable_v<T>>> {
-
-    /// @brief the value type
-    using value_type = T*;
-
-    /// @brief the element type
-    using element_type = std::remove_const_t<T>;
-
-    /// @brief the result type
-    using result_type = std::unique_ptr<element_type>;
-
-    /**
-     * @brief returns a clone of the given value.
-     * @param value the target value
-     * @return the created clone
-     */
-    std::unique_ptr<element_type> operator()(element_type const* value) {
-        return result_type(value == nullptr ? nullptr : value->clone());
-    }
-};
-
-/**
- * @brief provides clone of values over smart pointer.
- * @tparam T the value type
- * @tparam Container the container type, like std::unique_ptr
- */
-template<class T, template<class> class Container>
-struct cloner<Container<T>, std::enable_if_t<is_clonable_v<T> && is_smart_pointer_v<Container<T>>>> {
-
-    /// @brief the value type
-    using value_type = Container<T>;
-
-    /// @brief the element type
-    using element_type = std::remove_const_t<T>;
-
-    /// @brief the result type
-    using result_type = std::unique_ptr<std::remove_const_t<T>>;
-
-    /**
-     * @brief returns a clone of the given value.
-     * @param value the target value
-     * @return the created clone
-     */
-    result_type operator()(std::remove_const_t<value_type> const& value) {
-        return result_type(value ? value->clone() : nullptr);
-    }
-
-    /// @copydoc operator()()
-    result_type operator()(std::remove_const_t<value_type>&& value) {
-        return result_type(value ? std::move(value)->clone() : nullptr);
-    }
-};
-
-/**
- * @brief returns a clone of the input.
- * @tparam T the input type
- * @param value the target value, one of clonable references, raw pointers, or smart pointers
+ * @brief returns a clone of the given object.
+ * @tparam T the object type
+ * @param object the object to clone
+ * @param creator object creator for creating clones
  * @return the created clone
  */
 template<class T>
-constexpr inline typename cloner<std::remove_const_t<std::remove_reference_t<T>>>::result_type clone(T&& value) {
-    return cloner<std::remove_const_t<std::remove_reference_t<T>>>{}(std::forward<T>(value));
+inline std::enable_if_t<
+        is_clonable_v<std::remove_cv_t<std::remove_reference_t<T>>>,
+        std::add_pointer_t<std::remove_cv_t<std::remove_reference_t<T>>>>
+clone(T&& object, object_creator creator = {}) {
+    return std::forward<T>(object).clone(creator);
 }
+
+/**
+ * @brief returns a clone of the given object.
+ * @tparam T the object type
+ * @param object the object to clone
+ * @param creator object creator for creating clones
+ * @return the created clone
+ */
+template<class T>
+inline std::enable_if_t<is_clonable_v<T>, T*>
+clone(std::reference_wrapper<T> object, object_creator creator = {}) {
+    return object.get().clone(creator);
+}
+
+/**
+ * @brief returns a clone of the given object.
+ * @tparam T the object type
+ * @param object the object to clone
+ * @param creator object creator for creating clones
+ * @return the created clone
+ */
+template<class T>
+inline std::enable_if_t<is_clonable_v<T>, T*>
+clone(rvalue_reference_wrapper<T> object, object_creator creator = {}) {
+    return object.get().clone(creator);
+}
+
+/**
+ * @brief returns a clone of the given object.
+ * @tparam T the object type
+ * @param object the object to clone
+ * @param creator object creator for creating clones
+ * @return the created clone
+ * @return nullptr if input is nullptr
+ */
+template<class T>
+inline std::enable_if_t<is_clonable_v<T>, T*>
+clone(T const* object, object_creator creator = {}) {
+    if (!static_cast<bool>(object)) return nullptr;
+    return object->clone(creator);
+}
+
+/**
+ * @brief returns a clone of the given object.
+ * @tparam T the object type
+ * @param object the object to clone
+ * @param creator object creator for creating clones
+ * @return the created clone
+ * @return nullptr if input is nullptr
+ */
+template<class T>
+inline std::enable_if_t<is_clonable_v<T>, T*>
+clone(rvalue_ptr<T> object, object_creator creator = {}) {
+    if (!static_cast<bool>(object)) return nullptr;
+    return object.value().clone(creator);
+}
+
+/**
+ * @brief returns a clone of the given object.
+ * @tparam T the object type
+ * @param object the object to clone
+ * @param creator object creator for creating clones
+ * @return the created clone
+ * @return nullptr if input is nullptr
+ */
+template<class T>
+inline auto clone_unique(T&& object, object_creator creator = {}) {
+    return creator.wrap_unique(clone(std::forward<T>(object), creator));
+}
+
+/**
+ * @brief a copier which creates a copy via clone().
+ * @tparam T the object type
+ */
+template<class T>
+struct clonable_copier : is_clonable<T> {
+
+    /// @brief copy is available.
+    static constexpr inline bool is_available = is_clonable_v<T>;
+
+    /// @brief the value type
+    using value_type = std::remove_const_t<T>;
+
+    /// @brief the pointer type
+    using pointer = std::add_pointer_t<T>;
+
+    /**
+     * @brief the copier of the another object type.
+     * @tparam the another object type
+     */
+    template<class U>
+    using rebind = clonable_copier<U>;
+
+    /**
+     * @brief returns a new copy of the given object.
+     * @param creator the object creator
+     * @param object the target object
+     * @return the created copy, it must be delete via creator.delete_object()
+     */
+    static pointer copy(object_creator creator, value_type const& object) {
+        return clone(object, creator);
+    }
+
+    /**
+     * @brief returns a new copy of the given object.
+     * @param creator the object creator
+     * @param object the target object
+     * @return the created copy, it must be delete via creator.delete_object()
+     */
+    static pointer copy(object_creator creator, value_type&& object) {
+        return clone(std::move(object), creator);
+    }
+};
 
 } // namespace util

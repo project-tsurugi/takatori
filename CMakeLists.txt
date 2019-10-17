@@ -11,7 +11,16 @@ option(BUILD_TESTS "Build test programs" ON)
 option(BUILD_DOCUMENTS "Build documents" ON)
 option(BUILD_SHARED_LIBS "build shared libraries instead of static" ON)
 
+option(USE_BOOST_MEMORY_RESOURCE "use boost/container/pmr/memory_resource instead of C++ standard" ON)
+
 include(GNUInstallDirs)
+
+if (USE_BOOST_MEMORY_RESOURCE)
+    find_package(Boost 1.65
+            COMPONENTS container
+            REQUIRED)
+endif (USE_BOOST_MEMORY_RESOURCE)
+
 find_package(Doxygen)
 
 set(CMAKE_CXX_STANDARD 17)

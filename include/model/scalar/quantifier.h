@@ -1,0 +1,99 @@
+#pragma once
+
+#include <iostream>
+#include <string>
+#include <string_view>
+
+#include <cstdlib>
+
+#include "util/enum_tag.h"
+
+namespace model::scalar {
+
+/**
+ * @brief represents kind of quantifier.
+ */
+enum class quantifier {
+    /// @brief universal quantifier.
+    all,
+    /// @brief existential quantifier.
+    any,
+};
+
+/**
+ * @brief returns string representation of the value.
+ * @param value the target value
+ * @return the corresponded string representation
+ */
+inline constexpr std::string_view to_string_view(quantifier value) noexcept {
+    using namespace std::string_view_literals;
+    using kind = quantifier;
+    switch (value) {
+        case kind::all: return "all"sv;
+        case kind::any: return "any"sv;
+    }
+    std::abort();
+}
+
+/**
+ * @brief appends string representation of the given value.
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+inline std::ostream& operator<<(std::ostream& out, quantifier value) noexcept {
+    return out << to_string_view(value);
+}
+
+/**
+ * @brief a tag of quantifier.
+ * @tparam Kind the quantifier kind
+ */
+template<quantifier Kind>
+using quantifier_tag_t = util::enum_tag_t<quantifier, Kind>;
+
+/**
+ * @brief a tag object of quantifier.
+ * @tparam Kind the quantifier kind
+ */
+template<quantifier Kind>
+inline constexpr quantifier_tag_t<Kind> quantifier_tag {};
+
+/// @private
+namespace impl {
+
+/// @private
+template<quantifier Kind, class Callback, class... Args>
+inline std::enable_if_t<
+        std::is_invocable_v<Callback, quantifier_tag_t<Kind>, Args...>,
+        std::invoke_result_t<Callback, quantifier_tag_t<Kind>, Args...>>
+callback_quantifier(Callback&& callback, Args&&... args) {
+    return std::forward<Callback>(callback)(quantifier_tag<Kind>, std::forward<Args>(args)...);
+}
+
+} // namespace impl
+
+/**
+ * @brief invoke callback function for individual quantifier kinds.
+ * If the quantifier_kind is K, this may invoke Callback::operator()(quantifier_tag_t<K>, Args...).
+ * You must declare all callback functions for individual quantifiers,
+ * or declare Callback::operator()(quantifier, Args...) as "default" callback function.
+ * Each return type of callback function must be identical.
+ * @tparam Callback the callback object type
+ * @tparam Args the callback argument types
+ * @param quantifier_kind the quantifier kind
+ * @param callback the callback object
+ * @param args the callback arguments
+ * @return the callback result
+ */
+template<class Callback, class... Args>
+inline auto dispatch(Callback&& callback, quantifier quantifier_kind, Args&&... args) {
+    using kind = quantifier;
+    switch (quantifier_kind) {
+        case kind::all: return impl::callback_quantifier<kind::all>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::any: return impl::callback_quantifier<kind::any>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+    }
+    std::abort();
+}
+
+} // namespace model::scalar

@@ -16,7 +16,7 @@ git submodule update --init --recursive
 ```dockerfile
 FROM ubuntu:18.04
 
-RUN apt update -y && apt install -y git build-essential cmake ninja-build
+RUN apt update -y && apt install -y git build-essential cmake ninja-build libboost-container-dev
 ```
 
 optional packages:
@@ -40,6 +40,7 @@ available options:
 * `-DBUILD_SHARED_LIBS=OFF` - create static libraries instead of shared libraries
 * `-DBUILD_TESTS=OFF` - don't build test programs
 * `-DBUILD_DOCUMENTS=OFF` - don't build documents by doxygen
+* `-DUSE_BOOST_MEMORY_RESOURCE=OFF` - use standard `<memory_resource>` instead of Boost implementation
 
 ### install
 

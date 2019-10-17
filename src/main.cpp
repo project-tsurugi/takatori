@@ -1,6 +1,7 @@
-#include <iostream>
+#include "util/forwarding_memory_resource.h"
+
+#include <type_traits>
 
 int main() {
-    std::cout << "Hello, world!" << std::endl;
     return 0;
 }
