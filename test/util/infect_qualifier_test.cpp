@@ -1,8 +1,8 @@
-#include "util/infect_qualifier.h"
+#include "takatori/util/infect_qualifier.h"
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class infect_qualifier_test : public ::testing::Test {};
 
@@ -47,4 +47,4 @@ TEST_F(infect_qualifier_test, simple) {
     // only type traits
 }
 
-} // namespace util
+} // namespace takatori::util

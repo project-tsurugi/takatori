@@ -1,10 +1,10 @@
-#include "util/downcast.h"
+#include "takatori/util/downcast.h"
 
 #include <memory>
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class downcast_test : public ::testing::Test {};
 
@@ -36,4 +36,4 @@ TEST_F(downcast_test, rvalue) {
     static_assert(std::is_same_v<decltype(s), Sub&&>);
 }
 
-} // namespace util
+} // namespace takatori::util

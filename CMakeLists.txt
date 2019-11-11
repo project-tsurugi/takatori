@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(sandbox-cpp-project
+project(takatori-project
     VERSION 0.1.0
-    DESCRIPTION "C++ programming sandbox"
+    DESCRIPTION "Takatori - A generic SQL intermediate representation"
     LANGUAGES C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -33,16 +33,16 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-sanitize=alignment")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-sanitize-recover=address")
 
-set(export_name "sandbox-cpp")
-set(package_name "sandbox-cpp")
+set(export_name "takatori")
+set(package_name "takatori")
 
 include(CMakePackageConfigHelpers)
 
 enable_testing()
 
-add_library(sandbox-cpp-api INTERFACE)
+add_library(takatori-api INTERFACE)
 
-target_include_directories(sandbox-cpp-api
+target_include_directories(takatori-api
     INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${export_name}>
@@ -59,7 +59,7 @@ add_subdirectory(third_party)
 
 install(
     TARGETS
-        sandbox-cpp-api
+        takatori-api
     EXPORT
         ${export_name}
     LIBRARY

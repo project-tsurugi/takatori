@@ -1,4 +1,4 @@
-#include "util/pointer_traits.h"
+#include "takatori/util/pointer_traits.h"
 
 #include <memory>
 #include <optional>
@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class pointer_test : public ::testing::Test {};
 
@@ -39,4 +39,4 @@ TEST_F(pointer_test, simple) {
     // only type traits
 }
 
-} // namespace util
+} // namespace takatori::util

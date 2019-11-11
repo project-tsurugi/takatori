@@ -1,8 +1,8 @@
-#include "util/reference_vector.h"
+#include "takatori/util/reference_vector.h"
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class reference_vector_test : public ::testing::Test {
 public:
@@ -1109,4 +1109,4 @@ TEST_F(reference_vector_test, compare) {
     EXPECT_GE(make_vector({}, 10, 0), make_vector({}, 10));
 }
 
-} // namespace util
+} // namespace takatori::util

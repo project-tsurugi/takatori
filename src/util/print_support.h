@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-namespace util {
+namespace takatori::util {
 
 template<class T>
 class print_support {
@@ -29,4 +29,4 @@ inline std::ostream& operator<<(std::ostream& out, print_support<std::vector<E, 
     return out;
 }
 
-} // namespace util
+} // namespace takatori::util

@@ -1,10 +1,10 @@
-#include "util/object_creator.h"
+#include "takatori/util/object_creator.h"
 
 #include <string>
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class object_creator_test : public ::testing::Test {};
 
@@ -43,4 +43,4 @@ TEST_F(object_creator_test, allocator) {
     EXPECT_EQ(str, "Hello, custom allocator!");
 }
 
-} // namespace util
+} // namespace takatori::util

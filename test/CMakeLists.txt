@@ -7,8 +7,8 @@ function(add_test_executable source_file)
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
     )
     target_link_libraries(${test_name}
-        PRIVATE sandbox-cpp
-        PRIVATE sandbox-cpp-impl
+        PRIVATE takatori
+        PRIVATE takatori-impl
         PRIVATE gtest
     )
     target_sources(${test_name}
@@ -20,30 +20,30 @@ function(add_test_executable source_file)
     )
 endfunction(add_test_executable)
 
-add_test_executable(model/tree_element_test.cpp)
-add_test_executable(model/tree_element_util_test.cpp)
-add_test_executable(model/tree_element_vector_test.cpp)
-add_test_executable(model/tree_fragment_vector_test.cpp)
+add_test_executable(scalar/expression_dispatch_test.cpp)
 
-add_test_executable(model/tree_element_forward_test.cpp)
-add_test_executable(model/tree_element_vector_forward_test.cpp)
+add_test_executable(scalar/immediate_test.cpp)
+add_test_executable(scalar/variable_reference_test.cpp)
 
-add_test_executable(model/scalar/expression_dispatch_test.cpp)
+add_test_executable(scalar/unary_test.cpp)
+add_test_executable(scalar/cast_test.cpp)
 
-add_test_executable(model/scalar/immediate_test.cpp)
-add_test_executable(model/scalar/variable_reference_test.cpp)
+add_test_executable(scalar/binary_test.cpp)
+add_test_executable(scalar/compare_test.cpp)
 
-add_test_executable(model/scalar/unary_test.cpp)
-add_test_executable(model/scalar/cast_test.cpp)
+add_test_executable(scalar/match_test.cpp)
+add_test_executable(scalar/conditional_test.cpp)
+add_test_executable(scalar/coalesce_test.cpp)
+add_test_executable(scalar/let_test.cpp)
+add_test_executable(scalar/function_call_test.cpp)
 
-add_test_executable(model/scalar/binary_test.cpp)
-add_test_executable(model/scalar/compare_test.cpp)
+add_test_executable(tree/tree_element_test.cpp)
+add_test_executable(tree/tree_element_util_test.cpp)
+add_test_executable(tree/tree_element_vector_test.cpp)
+add_test_executable(tree/tree_fragment_vector_test.cpp)
 
-add_test_executable(model/scalar/match_test.cpp)
-add_test_executable(model/scalar/conditional_test.cpp)
-add_test_executable(model/scalar/coalesce_test.cpp)
-add_test_executable(model/scalar/let_test.cpp)
-add_test_executable(model/scalar/function_call_test.cpp)
+add_test_executable(tree/tree_element_forward_test.cpp)
+add_test_executable(tree/tree_element_vector_forward_test.cpp)
 
 add_test_executable(util/clonable_test.cpp)
 add_test_executable(util/clonable_ptr_test.cpp)

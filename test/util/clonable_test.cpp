@@ -1,10 +1,10 @@
-#include "util/clonable.h"
+#include "takatori/util/clonable.h"
 
 #include <string>
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class clonable_test : public ::testing::Test {};
 
@@ -55,4 +55,4 @@ TEST_F(clonable_test, pointer_const) {
     EXPECT_NE(ptr.get(), copy.get());
 }
 
-} // namespace util
+} // namespace takatori::util

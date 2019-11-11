@@ -1,8 +1,8 @@
-#include "util/standard_memory_resource.h"
+#include "takatori/util/standard_memory_resource.h"
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class standard_memory_resource_test : public ::testing::Test {};
 
@@ -57,4 +57,4 @@ TEST_F(standard_memory_resource_test, array) {
     traits::deallocate(a, ptr, 3);
 }
 
-} // namespace util
+} // namespace takatori::util

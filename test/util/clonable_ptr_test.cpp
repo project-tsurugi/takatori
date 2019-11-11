@@ -1,4 +1,4 @@
-#include "util/clonable_ptr.h"
+#include "takatori/util/clonable_ptr.h"
 
 #include <memory>
 #include <string>
@@ -6,9 +6,9 @@
 
 #include <gtest/gtest.h>
 
-#include "util/pointer_traits.h"
+#include "takatori/util/pointer_traits.h"
 
-namespace util {
+namespace takatori::util {
 
 class clonable_ptr_test : public ::testing::Test {};
 
@@ -175,4 +175,4 @@ TEST_F(clonable_ptr_test, swap) {
     EXPECT_EQ(b.get(), a_ptr);
 }
 
-} // namespace util
+} // namespace takatori::util

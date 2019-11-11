@@ -1,4 +1,4 @@
-#include "util/rvalue_reference_wrapper.h"
+#include "takatori/util/rvalue_reference_wrapper.h"
 
 #include <functional>
 #include <memory>
@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class rvalue_reference_wrapper_test : public ::testing::Test {
 public:
@@ -42,4 +42,4 @@ TEST_F(rvalue_reference_wrapper_test, implicit) {
     EXPECT_EQ(*v[2], 3);
 }
 
-} // namespace util
+} // namespace takatori::util

@@ -4,7 +4,7 @@ endif()
 
 set(TARGET_INCLUDES "")
 foreach (target_name
-        sandbox-cpp-api)
+        takatori-api)
     get_target_property(
         _includes
         ${target_name} INTERFACE_INCLUDE_DIRECTORIES

@@ -1,13 +1,13 @@
-#include "util/optional_ptr.h"
+#include "takatori/util/optional_ptr.h"
 
 #include <functional>
 #include <string>
 
 #include <gtest/gtest.h>
 
-#include "util/pointer_traits.h"
+#include "takatori/util/pointer_traits.h"
 
-namespace util {
+namespace takatori::util {
 
 class optional_reference_test : public ::testing::Test {
 public:
@@ -320,4 +320,4 @@ TEST_F(optional_reference_test, dynamic_reference_cast_rvalue) {
     EXPECT_THROW(dynamic_reference_cast<Other>(optional_ptr {*baseref }), std::bad_cast);
 }
 
-} // namespace util
+} // namespace takatori::util

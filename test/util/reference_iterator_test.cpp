@@ -1,10 +1,10 @@
-#include "util/reference_iterator.h"
+#include "takatori/util/reference_iterator.h"
 
 #include <vector>
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class reference_iterator_test : public ::testing::Test {};
 
@@ -57,4 +57,4 @@ TEST_F(reference_iterator_test, const) {
     EXPECT_EQ(iter, citer);
 }
 
-} // namespace util
+} // namespace takatori::util

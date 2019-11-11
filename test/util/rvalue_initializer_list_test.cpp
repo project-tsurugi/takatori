@@ -1,8 +1,8 @@
-#include "util/rvalue_initializer_list.h"
+#include "takatori/util/rvalue_initializer_list.h"
 
 #include <gtest/gtest.h>
 
-namespace util {
+namespace takatori::util {
 
 class rvalue_initializer_list_test : public ::testing::Test {};
 
@@ -48,4 +48,4 @@ TEST_F(rvalue_initializer_list_test, move_assign) {
     EXPECT_EQ(*vv[2], 3);
 }
 
-} // namespace util
+} // namespace takatori::util
