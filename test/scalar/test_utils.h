@@ -37,26 +37,24 @@ inline descriptor::value_descriptor value(int v) {
     return impl::get_descriptor<descriptor::value_descriptor>(v);
 }
 
-inline descriptor::variable_descriptor variable(int v) {
+inline descriptor::variable_descriptor vardesc(int v) {
     return impl::get_descriptor<descriptor::variable_descriptor>(v);
 }
 
-inline descriptor::function_descriptor function(int v) {
+inline descriptor::function_descriptor funcdesc(int v) {
     return impl::get_descriptor<descriptor::function_descriptor>(v);
 }
 
-inline descriptor::type_descriptor type(int v) {
+inline descriptor::type_descriptor typedesc(int v) {
     return impl::get_descriptor<descriptor::type_descriptor>(v);
 }
 
-inline immediate constant(int v) { return { value(v) }; }
-inline variable_reference vref(int v) { return { variable(v) }; }
+inline immediate constant(int v, descriptor::type_descriptor type = typedesc(-1)) {
+    return { value(v), std::move(type) };
+}
 
-inline std::optional<descriptor::value_descriptor> extract(util::optional_ptr<expression> expr) {
-    if (auto e = util::dynamic_pointer_cast<immediate>(expr)) {
-        return e->value();
-    }
-    return {};
+inline variable_reference varref(int v) {
+    return {vardesc(v) };
 }
 
 } // namespace takatori::scalar

@@ -4,14 +4,19 @@
 
 namespace takatori::scalar {
 
-immediate::immediate(descriptor::value_descriptor value) noexcept : value_(std::move(value)) {}
+immediate::immediate(
+        descriptor::value_descriptor value,
+        descriptor::type_descriptor type) noexcept
+    : value_(std::move(value))
+    , type_(std::move(type))
+{}
 
 immediate::immediate(immediate const& other, util::object_creator) noexcept
-    : immediate(other.value_)
+    : immediate(other.value_, other.type_)
 {}
 
 immediate::immediate(immediate&& other, util::object_creator) noexcept
-    : immediate(std::move(other.value_))
+    : immediate(std::move(other.value_), std::move(other.type_))
 {}
 
 expression::parent_type* immediate::parent_element() noexcept {
@@ -47,8 +52,18 @@ immediate& immediate::value(descriptor::value_descriptor value) noexcept {
     return *this;
 }
 
+descriptor::type_descriptor const& immediate::type() const noexcept {
+    return type_;
+}
+
+immediate& immediate::type(descriptor::type_descriptor type) noexcept {
+    type_ = std::move(type);
+    return *this;
+}
+
 bool operator==(immediate const& a, immediate const& b) noexcept {
-    return a.value() == b.value();
+    return a.value() == b.value()
+        && b.type() == b.type();
 }
 
 bool operator!=(immediate const& a, immediate const& b) noexcept {
@@ -56,7 +71,9 @@ bool operator!=(immediate const& a, immediate const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, immediate const& value) {
-    return out << "immediate(" << value.value() << ")";
+    return out << "immediate("
+               << "value=" << value.value() << ", "
+               << "type=" << value.type() << ")";
 }
 
 bool immediate::equals(expression const& other) const noexcept {

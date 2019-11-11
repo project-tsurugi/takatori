@@ -36,7 +36,7 @@ TEST_F(expression_dispatch_test, switch) {
     };
 
     EXPECT_EQ(dispatch(cb {}, constant(0)), 1);
-    EXPECT_EQ(dispatch(cb {}, vref(0)), 2);
+    EXPECT_EQ(dispatch(cb {}, varref(0)), 2);
 }
 
 TEST_F(expression_dispatch_test, void) {
@@ -56,7 +56,7 @@ TEST_F(expression_dispatch_test, void) {
     dispatch(c, constant(0));
     EXPECT_EQ(c.r, 1);
 
-    dispatch(c, vref(0));
+    dispatch(c, varref(0));
     EXPECT_EQ(c.r, 2);
 }
 

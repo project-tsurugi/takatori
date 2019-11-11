@@ -33,8 +33,11 @@ public:
     /**
      * @brief creates a new object.
      * @param value the descriptor of the immediate value
+     * @param type the value type
      */
-    immediate(descriptor::value_descriptor value) noexcept; // NOLINT
+    immediate(
+            descriptor::value_descriptor value,
+            descriptor::type_descriptor type) noexcept;
 
     /**
      * @brief creates a new object.
@@ -72,6 +75,19 @@ public:
     immediate& value(descriptor::value_descriptor value) noexcept;
 
     /**
+     * @brief returns the descriptor of value type.
+     * @return the type
+     */
+    descriptor::type_descriptor const& type() const noexcept;
+
+    /**
+     * @brief sets a descriptor of value type.
+     * @param type the type
+     * @return this
+     */
+    immediate& type(descriptor::type_descriptor type) noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @param a the first element
      * @param b the second element
@@ -103,6 +119,7 @@ protected:
 
 private:
     descriptor::value_descriptor value_;
+    descriptor::type_descriptor type_;
     parent_type* parent_ {};
 };
 
