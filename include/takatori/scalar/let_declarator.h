@@ -31,8 +31,18 @@ public:
     let_declarator(let_declarator const& other) = delete;
     let_declarator& operator=(let_declarator const& other) = delete;
 
-    // for STL
+    /**
+     * @brief creates a new object.
+     * @param other the move source
+     * @attention this is designed for the STL containers, developers should not call this directly
+     */
     let_declarator(let_declarator&& other) noexcept = default;
+
+    /**
+     * @brief assigns the given object.
+     * @param other the move source
+     * @attention this is designed for the STL containers, developers should not call this directly
+     */
     let_declarator& operator=(let_declarator&& other) noexcept = default;
 
     /**

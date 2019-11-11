@@ -95,7 +95,7 @@ public:
      */
     util::optional_ptr<expression> default_expression() noexcept;
 
-    /// @copydoc optional_default_expression()
+    /// @copydoc default_expression()
     util::optional_ptr<expression const> default_expression() const noexcept;
 
     /**
@@ -108,6 +108,7 @@ public:
     /**
      * @brief releases the default_expression expression.
      * @return the released expression
+     * @return empty if the default expression expression is absent
      */
     util::unique_object_ptr<expression> release_default_expression() noexcept;
 

@@ -431,7 +431,7 @@ public:
      */
     reference put(const_iterator position, const_reference element);
 
-    /// @copydoc put(const_reference)
+    /// @copydoc put(const_iterator, const_reference)
     reference put(const_iterator position, rvalue_reference element);
 
     /**

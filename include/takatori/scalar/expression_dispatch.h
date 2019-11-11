@@ -78,14 +78,14 @@ inline auto dispatch_expression(Callback&& callback, E&& expression, Args&&... a
 
 /**
  * @brief invoke callback function for individual expression's subclasses.
- * If the actual type of expr is T, this may invoke Callback::operator()(T, Args...).
+ * If the actual type of expr is T, this may invoke Callback::operator()(T&, Args...).
  * You must declare all callback functions for individual subclasses,
  * or declare Callback::operator()(expression&, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type
  * @tparam Args the callback argument types
  * @param callback the callback object
- * @param expression the target expression
+ * @param expr the target expression
  * @param args the callback arguments
  * @return the callback result
  */
@@ -94,13 +94,37 @@ inline auto dispatch(Callback&& callback, expression& expr, Args&&... args) {
     return impl::dispatch_expression(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
 }
 
-/// @copydoc dispatch()
+/**
+ * @brief invoke callback function for individual expression's subclasses.
+ * If the actual type of expr is T, this may invoke Callback::operator()(T const&, Args...).
+ * You must declare all callback functions for individual subclasses,
+ * or declare Callback::operator()(expression const&, Args...) as "default" callback function.
+ * Each return type of callback function must be identical.
+ * @tparam Callback the callback object type
+ * @tparam Args the callback argument types
+ * @param callback the callback object
+ * @param expr the target expression
+ * @param args the callback arguments
+ * @return the callback result
+ */
 template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, expression const& expr, Args&&... args) {
     return impl::dispatch_expression(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
 }
 
-/// @copydoc dispatch()
+/**
+ * @brief invoke callback function for individual expression's subclasses.
+ * If the actual type of expr is T, this may invoke Callback::operator()(T&&, Args...).
+ * You must declare all callback functions for individual subclasses,
+ * or declare Callback::operator()(expression&&, Args...) as "default" callback function.
+ * Each return type of callback function must be identical.
+ * @tparam Callback the callback object type
+ * @tparam Args the callback argument types
+ * @param callback the callback object
+ * @param expr the target expression
+ * @param args the callback arguments
+ * @return the callback result
+ */
 template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, expression&& expr, Args&&... args) {
     return impl::dispatch_expression(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);

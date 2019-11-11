@@ -196,10 +196,10 @@ struct pointer_traits<Ptr, std::enable_if_t<is_smart_pointer_v<Ptr>>> {
 
     /**
      * @brief removes the pointed value.
-     * After this operator, has_value(value) will return nullptr.
+     * After this operation, has_value(value) will return nullptr.
      * @param value the value
      */
-    static constexpr void reset() noexcept { value = nullptr; }
+    static constexpr void reset(Ptr& value) noexcept { value = nullptr; }
 };
 
 /// @private

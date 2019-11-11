@@ -41,6 +41,11 @@ int compare(tree_fragment_vector<T1> const& a, tree_fragment_vector<T2> const& b
 template<class T>
 std::ostream& operator<<(std::ostream& out, tree_fragment_vector<T> const& value);
 
+/**
+ * @brief a vector of tree fragments.
+ * As compare to tree_element_vector, this stores each object directly instead of via references.
+ * @tparam T the fragment type
+ */
 template<class T>
 class tree_fragment_vector {
 

@@ -88,6 +88,7 @@ public:
      * This requires U <: T.
      * @tparam U the source element type
      * @tparam C the copier type (ignored)
+     * @param parent the parent element
      * @param elements the source elements
      */
     template<class U, class C = typename util::reference_vector<value_type>::copier_type>

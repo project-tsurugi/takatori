@@ -8,7 +8,6 @@
 
 #include "infect_qualifier.h"
 
-/// @brief utilities
 namespace takatori::util {
 
 /**

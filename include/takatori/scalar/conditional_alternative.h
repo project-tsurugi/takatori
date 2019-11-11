@@ -28,8 +28,19 @@ public:
     conditional_alternative(conditional_alternative const& other) = delete;
     conditional_alternative& operator=(conditional_alternative const& other) = delete;
 
-    // for STL
+    /**
+     * @brief creates a new object.
+     * @param other the move source
+     * @attention this is designed for the STL containers, developers should not call this directly
+     */
     conditional_alternative(conditional_alternative&& other) noexcept = default;
+
+    /**
+     * @brief assigns the given object.
+     * @param other the move source
+     * @return this
+     * @attention this is designed for the STL containers, developers should not call this directly
+     */
     conditional_alternative& operator=(conditional_alternative&& other) noexcept = default;
 
     /**

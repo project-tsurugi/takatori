@@ -259,12 +259,15 @@ private:
     friend inline constexpr bool operator>=(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
 };
 
+/// @private
 template<class T>
 reference_iterator(T*) -> reference_iterator<pointer_extractor<T>>;
 
+/// @private
 template<class T>
 reference_iterator(T**) -> reference_iterator<double_pointer_extractor<T>>;
 
+/// @private
 template<class T>
 reference_iterator(T* const*) -> reference_iterator<double_pointer_extractor<T>>;
 

@@ -36,7 +36,6 @@ public:
     /**
      * @brief creates a new object.
      * @tparam Copier the object copying policy (don't care)
-     * @param function the descriptor of the target function
      * @param alternatives the alternative expressions
      */
     template<class Copier = util::clonable_copier<expression>>
@@ -45,7 +44,6 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param function the descriptor of the target function
      * @param alternatives the alternative expressions
      * @attention this may take copies of given expressions
      */

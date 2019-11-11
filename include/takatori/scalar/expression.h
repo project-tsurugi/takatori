@@ -9,9 +9,6 @@
 #include "takatori/util/object_creator.h"
 #include "takatori/util/optional_ptr.h"
 
-/**
- * @brief scalar expression models for SQL IR.
- */
 namespace takatori::scalar {
 
 /**

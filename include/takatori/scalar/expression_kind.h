@@ -86,7 +86,7 @@ enum class expression_kind {
 
     // special expressions
 
-    /// @copydoc custom expression for third party extension.
+    /// @brief custom expression for third party extension.
     extension, // FIXME: impl
 };
 

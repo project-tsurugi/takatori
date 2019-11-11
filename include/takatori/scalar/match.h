@@ -115,7 +115,7 @@ public:
      */
     util::optional_ptr<expression> optional_input() noexcept;
 
-    /// @copydoc optional_operand()
+    /// @copydoc optional_input()
     util::optional_ptr<expression const> optional_input() const noexcept;
 
     /**
@@ -153,7 +153,7 @@ public:
      */
     util::optional_ptr<expression> optional_pattern() noexcept;
 
-    /// @copydoc optional_operand()
+    /// @copydoc optional_pattern()
     util::optional_ptr<expression const> optional_pattern() const noexcept;
 
     /**
@@ -191,7 +191,7 @@ public:
      */
     util::optional_ptr<expression> optional_escape() noexcept;
 
-    /// @copydoc optional_operand()
+    /// @copydoc optional_escape()
     util::optional_ptr<expression const> optional_escape() const noexcept;
 
     /**

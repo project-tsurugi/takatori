@@ -111,7 +111,7 @@ public:
      */
     util::optional_ptr<expression> optional_left() noexcept;
 
-    /// @copydoc optional_operand()
+    /// @copydoc optional_left()
     util::optional_ptr<expression const> optional_left() const noexcept;
 
     /**
@@ -149,7 +149,7 @@ public:
      */
     util::optional_ptr<expression> optional_right() noexcept;
 
-    /// @copydoc optional_operand()
+    /// @copydoc optional_right()
     util::optional_ptr<expression const> optional_right() const noexcept;
 
     /**

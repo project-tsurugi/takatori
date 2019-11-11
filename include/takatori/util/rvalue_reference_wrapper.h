@@ -61,9 +61,15 @@ private:
 /// @private
 template<class T> rvalue_reference_wrapper(T&&) -> rvalue_reference_wrapper<std::remove_reference_t<T>>;
 
+/**
+ * @brief creates a new rvalue_reference_wrapper object.
+ * @tparam T the value type
+ * @param value reference to the target value
+ * @return the wrapped reference
+ */
 template<class T>
 inline std::enable_if_t<
-        !std::is_rvalue_reference_v<T>,
+        std::is_rvalue_reference_v<T&&>,
         rvalue_reference_wrapper<std::remove_reference_t<T>>>
 rvref(T&& value) noexcept {
     return rvalue_reference_wrapper<std::remove_reference_t<T>>(std::forward<T>(value));
