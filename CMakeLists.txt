@@ -7,10 +7,11 @@ project(takatori-project
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-option(BUILD_TESTS "Build test programs" ON)
-option(BUILD_DOCUMENTS "Build documents" ON)
+option(BUILD_TESTS "build test programs" ON)
+option(BUILD_DOCUMENTS "build documents" ON)
 option(BUILD_SHARED_LIBS "build shared libraries instead of static" ON)
 
+option(ENABLE_COVERAGE "enable coverage on debug build" OFF)
 option(USE_BOOST_MEMORY_RESOURCE "use boost/container/pmr/memory_resource instead of C++ standard" ON)
 
 include(GNUInstallDirs)
@@ -32,6 +33,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-sanitize=alignment")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-sanitize-recover=address")
+
+if(ENABLE_COVERAGE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} --coverage")
+endif()
 
 set(export_name "takatori")
 set(package_name "takatori")
