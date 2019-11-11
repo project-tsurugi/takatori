@@ -10,7 +10,7 @@
 #include "expression_traits.h"
 
 #include "takatori/tree/tree_element_vector.h"
-#include "takatori/descriptor/element_descriptor.h"
+#include "takatori/descriptor/function.h"
 
 #include "takatori/util/meta_type.h"
 #include "takatori/util/object_creator.h"
@@ -42,7 +42,7 @@ public:
      */
     template<class Copier = util::clonable_copier<expression>>
     explicit function_call(
-            descriptor::function_descriptor function,
+            descriptor::function function,
             util::reference_vector<expression, Copier> arguments) noexcept
         : function_(std::move(function))
         , arguments_(*this, std::move(arguments)) {}
@@ -54,7 +54,7 @@ public:
      * @attention this may take copies of given expressions
      */
     function_call( // NOLINT
-            descriptor::function_descriptor function,
+            descriptor::function function,
             std::initializer_list<util::rvalue_reference_wrapper<expression>> arguments = {});
 
     /**
@@ -83,14 +83,14 @@ public:
      * @brief returns the descriptor of target function.
      * @return the destination type
      */
-    descriptor::function_descriptor const& function() const noexcept;
+    descriptor::function const& function() const noexcept;
 
     /**
      * @brief sets a descriptor of target function.
      * @param function the target function
      * @return this
      */
-    function_call& function(descriptor::function_descriptor function) noexcept;
+    function_call& function(descriptor::function function) noexcept;
 
     /**
      * @brief returns the function arguments.
@@ -132,7 +132,7 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    descriptor::function_descriptor function_;
+    descriptor::function function_;
     tree::tree_element_vector<expression> arguments_;
     parent_type* parent_ {};
 };

@@ -9,32 +9,32 @@
 namespace takatori::scalar {
 
 cast::cast(
-        descriptor::type_descriptor type,
+        std::shared_ptr<type::data_type const> data_type,
         cast::loss_policy_type loss_policy,
         util::unique_object_ptr<expression> operand) noexcept
-    : type_(std::move(type))
+    : data_type_(std::move(data_type))
     , loss_policy_(loss_policy)
     , operand_(tree::bless_element(*this, std::move(operand))) {}
 
 cast::cast(
-        descriptor::type_descriptor type,
+        type::data_type&& data_type,
         cast::loss_policy_type loss_policy,
         expression&& operand)
     : cast(
-            std::move(type),
+            util::clone_shared(std::move(data_type)),
             loss_policy,
             util::clone_unique(std::move(operand))) {}
 
 cast::cast(cast const& other, util::object_creator creator)
     : cast(
-            other.type_,
+            other.data_type_,
             other.loss_policy_,
             tree::forward(creator, other.operand_))
 {}
 
 cast::cast(cast&& other, util::object_creator creator)
     : cast(
-            std::move(other.type_),
+            std::move(other.data_type_),
             other.loss_policy_,
             tree::forward(creator, std::move(other.operand_)))
 {}
@@ -63,12 +63,20 @@ cast* cast::clone(util::object_creator creator) && {
     return creator.create_object<cast>(std::move(*this), creator);
 }
 
-descriptor::type_descriptor const& cast::type() const noexcept {
-    return type_;
+type::data_type const& cast::data_type() const noexcept {
+    return *data_type_;
 }
 
-cast& cast::type(descriptor::type_descriptor type) noexcept {
-    type_ = std::move(type);
+util::optional_ptr<type::data_type const> cast::optional_data_type() const noexcept {
+    return util::optional_ptr { data_type_.get() };
+}
+
+std::shared_ptr<type::data_type const> cast::shared_data_type() const noexcept {
+    return data_type_;
+}
+
+cast& cast::data_type(std::shared_ptr<type::data_type const> data_type) noexcept {
+    data_type_ = std::move(data_type);
     return *this;
 }
 
@@ -106,7 +114,7 @@ cast& cast::operand(util::unique_object_ptr<expression> operand) noexcept {
 }
 
 bool operator==(cast const& a, cast const& b) noexcept {
-    return a.type() == b.type()
+    return a.optional_data_type() == b.optional_data_type()
         && a.loss_policy() == b.loss_policy()
         && a.optional_operand() == b.optional_operand();
 }
@@ -117,7 +125,7 @@ bool operator!=(cast const& a, cast const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, cast const& value) {
     return out << "cast("
-               << "type=" << value.type() << ", "
+               << "data_type=" << value.optional_data_type() << ", "
                << "loss_policy=" << value.loss_policy() << ", "
                << "operand=" << value.optional_operand() << ")";
 }

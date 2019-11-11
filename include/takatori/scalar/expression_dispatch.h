@@ -36,7 +36,7 @@
 
 //#include "extension.h"
 
-#include "takatori/util/downcast.h"
+#include "takatori/util/callback.h"
 
 namespace takatori::scalar {
 
@@ -44,29 +44,20 @@ namespace takatori::scalar {
 namespace impl {
 
 /// @private
-template<class T, class Callback, class E, class... Args>
-inline std::enable_if_t<
-        std::is_invocable_v<Callback, util::infect_qualifier_t<E, T>, Args...>,
-        std::invoke_result_t<Callback, util::infect_qualifier_t<E, T>, Args...>>
-callback_expression(Callback&& callback, E&& expression, Args&&... args) {
-    return std::forward<Callback>(callback)(util::unsafe_downcast<T>(std::forward<E>(expression)), std::forward<Args>(args)...);
-}
-
-/// @private
 template<class Callback, class E, class... Args>
 inline auto dispatch_expression(Callback&& callback, E&& expression, Args&&... args) {
     switch (expression.kind()) {
-        case immediate::tag: return callback_expression<immediate>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case variable_reference::tag: return callback_expression<variable_reference>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case unary::tag: return callback_expression<unary>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case cast::tag: return callback_expression<cast>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case binary::tag: return callback_expression<binary>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case compare::tag: return callback_expression<compare>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case match::tag: return callback_expression<match>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case conditional::tag: return callback_expression<conditional>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case coalesce::tag: return callback_expression<coalesce>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case let::tag: return callback_expression<let>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
-        case function_call::tag: return callback_expression<function_call>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case immediate::tag: return util::polymorphic_callback<immediate>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case variable_reference::tag: return util::polymorphic_callback<variable_reference>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case unary::tag: return util::polymorphic_callback<unary>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case cast::tag: return util::polymorphic_callback<cast>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case binary::tag: return util::polymorphic_callback<binary>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case compare::tag: return util::polymorphic_callback<compare>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case match::tag: return util::polymorphic_callback<match>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case conditional::tag: return util::polymorphic_callback<conditional>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case coalesce::tag: return util::polymorphic_callback<coalesce>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case let::tag: return util::polymorphic_callback<let>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
+        case function_call::tag: return util::polymorphic_callback<function_call>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
 
         // FIXME: other cases
         default: break;

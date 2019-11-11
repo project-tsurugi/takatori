@@ -4,7 +4,7 @@
 
 namespace takatori::scalar {
 
-variable_reference::variable_reference(descriptor::variable_descriptor variable) noexcept
+variable_reference::variable_reference(descriptor::variable variable) noexcept
     : variable_(std::move(variable))
 {}
 
@@ -40,11 +40,11 @@ variable_reference* variable_reference::clone(util::object_creator creator) && {
     return creator.create_object<variable_reference>(std::move(*this), creator);
 }
 
-descriptor::variable_descriptor const& variable_reference::variable() const noexcept {
+descriptor::variable const& variable_reference::variable() const noexcept {
     return variable_;
 }
 
-variable_reference& variable_reference::variable(descriptor::variable_descriptor variable) noexcept {
+variable_reference& variable_reference::variable(descriptor::variable variable) noexcept {
     variable_ = std::move(variable);
     return *this;
 }

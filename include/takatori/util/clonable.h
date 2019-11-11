@@ -112,16 +112,29 @@ clone(rvalue_ptr<T> object, object_creator creator = {}) {
 }
 
 /**
- * @brief returns a clone of the given object.
+ * @brief returns a clone of the given object, and wraps it into std::unique_ptr.
  * @tparam T the object type
  * @param object the object to clone
  * @param creator object creator for creating clones
  * @return the created clone
- * @return nullptr if input is nullptr
+ * @return empty if input is nullptr
  */
 template<class T>
 inline auto clone_unique(T&& object, object_creator creator = {}) {
     return creator.wrap_unique(clone(std::forward<T>(object), creator));
+}
+
+/**
+ * @brief returns a clone of the given object, and wraps it into std::shared_ptr.
+ * @tparam T the object type
+ * @param object the object to clone
+ * @param creator object creator for creating clones
+ * @return the created clone
+ * @return empty if input is nullptr
+ */
+template<class T>
+inline auto clone_shared(T&& object, object_creator creator = {}) {
+    return creator.wrap_shared(clone(std::forward<T>(object), creator));
 }
 
 /**

@@ -8,7 +8,7 @@
 namespace takatori::scalar {
 
 function_call::function_call(
-        descriptor::function_descriptor function,
+        descriptor::function function,
         std::initializer_list<util::rvalue_reference_wrapper<expression>> arguments)
     : function_call(
         std::move(function),
@@ -51,11 +51,11 @@ function_call* function_call::clone(util::object_creator creator) && {
     return creator.create_object<function_call>(std::move(*this), creator);
 }
 
-descriptor::function_descriptor const& function_call::function() const noexcept {
+descriptor::function const& function_call::function() const noexcept {
     return function_;
 }
 
-function_call& function_call::function(descriptor::function_descriptor function) noexcept {
+function_call& function_call::function(descriptor::function function) noexcept {
     function_ = std::move(function);
     return *this;
 }

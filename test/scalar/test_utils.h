@@ -1,14 +1,16 @@
 #pragma once
 
 #include <map>
-#include <optional>
 
-#include "takatori/descriptor/element_descriptor.h"
+#include "takatori/type/data_type.h"
+#include "takatori/type/int.h"
+
+#include "takatori/descriptor/value.h"
+#include "takatori/descriptor/variable.h"
+#include "takatori/descriptor/function.h"
 
 #include "takatori/scalar/immediate.h"
 #include "takatori/scalar/variable_reference.h"
-
-#include "takatori/util/optional_ptr.h"
 
 namespace takatori::scalar {
 
@@ -28,28 +30,24 @@ inline desc get_descriptor(int v) {
 
 } // namespace impl
 
-template<descriptor::descriptor_kind Kind>
-inline int resolve(descriptor::element_descriptor<Kind> const& desc) {
+template<descriptor::descriptor_kind K, class E>
+inline int resolve(descriptor::element<K, E> const& desc) {
     return *std::reinterpret_pointer_cast<int>(desc.entity());
 }
 
-inline descriptor::value_descriptor value(int v) {
-    return impl::get_descriptor<descriptor::value_descriptor>(v);
+inline descriptor::value value(int v) {
+    return impl::get_descriptor<descriptor::value>(v);
 }
 
-inline descriptor::variable_descriptor vardesc(int v) {
-    return impl::get_descriptor<descriptor::variable_descriptor>(v);
+inline descriptor::variable vardesc(int v) {
+    return impl::get_descriptor<descriptor::variable>(v);
 }
 
-inline descriptor::function_descriptor funcdesc(int v) {
-    return impl::get_descriptor<descriptor::function_descriptor>(v);
+inline descriptor::function funcdesc(int v) {
+    return impl::get_descriptor<descriptor::function>(v);
 }
 
-inline descriptor::type_descriptor typedesc(int v) {
-    return impl::get_descriptor<descriptor::type_descriptor>(v);
-}
-
-inline immediate constant(int v, descriptor::type_descriptor type = typedesc(-1)) {
+inline immediate constant(int v, type::data_type&& type = type::int4()) {
     return { value(v), std::move(type) };
 }
 

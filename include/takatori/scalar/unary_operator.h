@@ -74,20 +74,6 @@ using unary_operator_tag_t = util::enum_tag_t<unary_operator, Kind>;
 template<unary_operator Kind>
 inline constexpr unary_operator_tag_t<Kind> unary_operator_tag {};
 
-/// @private
-namespace impl {
-
-/// @private
-template<unary_operator Kind, class Callback, class... Args>
-inline std::enable_if_t<
-        std::is_invocable_v<Callback, unary_operator_tag_t<Kind>, Args...>,
-        std::invoke_result_t<Callback, unary_operator_tag_t<Kind>, Args...>>
-callback_unary_operator(Callback&& callback, Args&&... args) {
-    return std::forward<Callback>(callback)(unary_operator_tag<Kind>, std::forward<Args>(args)...);
-}
-
-} // namespace impl
-
 /**
  * @brief invoke callback function for individual unary operator kinds.
  * If the operator_kind is K, this may invoke Callback::operator()(unary_operator_tag_t<K>, Args...).
@@ -105,13 +91,13 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, unary_operator operator_kind, Args&&... args) {
     using kind = unary_operator;
     switch (operator_kind) {
-        case kind::plus: return impl::callback_unary_operator<kind::plus>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::sign_inversion: return impl::callback_unary_operator<kind::sign_inversion>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::length: return impl::callback_unary_operator<kind::length>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::conditional_not: return impl::callback_unary_operator<kind::conditional_not>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::is_null: return impl::callback_unary_operator<kind::is_null>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::is_true: return impl::callback_unary_operator<kind::is_true>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::is_false: return impl::callback_unary_operator<kind::is_false>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::plus: return util::enum_tag_callback<kind, kind::plus>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::sign_inversion: return util::enum_tag_callback<kind, kind::sign_inversion>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::length: return util::enum_tag_callback<kind, kind::length>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::conditional_not: return util::enum_tag_callback<kind, kind::conditional_not>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_null: return util::enum_tag_callback<kind, kind::is_null>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_true: return util::enum_tag_callback<kind, kind::is_true>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_false: return util::enum_tag_callback<kind, kind::is_false>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

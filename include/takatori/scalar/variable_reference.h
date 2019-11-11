@@ -8,7 +8,7 @@
 #include "expression_kind.h"
 #include "expression_traits.h"
 
-#include "takatori/descriptor/element_descriptor.h"
+#include "takatori/descriptor/variable.h"
 
 #include "takatori/util/meta_type.h"
 #include "takatori/util/object_creator.h"
@@ -34,7 +34,7 @@ public:
      * @brief creates a new object.
      * @param variable the descriptor of the target variable
      */
-    variable_reference(descriptor::variable_descriptor variable) noexcept; // NOLINT
+    variable_reference(descriptor::variable variable) noexcept; // NOLINT
 
     /**
      * @brief creates a new object.
@@ -62,14 +62,14 @@ public:
      * @brief returns the descriptor of target variable.
      * @return the destination type
      */
-    descriptor::variable_descriptor const& variable() const noexcept;
+    descriptor::variable const& variable() const noexcept;
 
     /**
      * @brief sets a descriptor of target variable.
      * @param variable the target variable
      * @return this
      */
-    variable_reference& variable(descriptor::variable_descriptor variable) noexcept;
+    variable_reference& variable(descriptor::variable variable) noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -102,7 +102,7 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    descriptor::variable_descriptor variable_;
+    descriptor::variable variable_;
     parent_type* parent_ {};
 };
 

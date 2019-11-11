@@ -59,20 +59,6 @@ using quantifier_tag_t = util::enum_tag_t<quantifier, Kind>;
 template<quantifier Kind>
 inline constexpr quantifier_tag_t<Kind> quantifier_tag {};
 
-/// @private
-namespace impl {
-
-/// @private
-template<quantifier Kind, class Callback, class... Args>
-inline std::enable_if_t<
-        std::is_invocable_v<Callback, quantifier_tag_t<Kind>, Args...>,
-        std::invoke_result_t<Callback, quantifier_tag_t<Kind>, Args...>>
-callback_quantifier(Callback&& callback, Args&&... args) {
-    return std::forward<Callback>(callback)(quantifier_tag<Kind>, std::forward<Args>(args)...);
-}
-
-} // namespace impl
-
 /**
  * @brief invoke callback function for individual quantifier kinds.
  * If the quantifier_kind is K, this may invoke Callback::operator()(quantifier_tag_t<K>, Args...).
@@ -90,8 +76,8 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, quantifier quantifier_kind, Args&&... args) {
     using kind = quantifier;
     switch (quantifier_kind) {
-        case kind::all: return impl::callback_quantifier<kind::all>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::any: return impl::callback_quantifier<kind::any>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::all: return util::enum_tag_callback<kind, kind::all>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::any: return util::enum_tag_callback<kind, kind::any>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

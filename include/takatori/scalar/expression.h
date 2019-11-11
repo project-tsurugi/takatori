@@ -20,11 +20,6 @@ public:
     using parent_type = tree::tree_element;
 
     /**
-     * @brief creates a new instance.
-     */
-    expression() = default;
-
-    /**
      * @brief destroys this object.
      */
     ~expression() override = default;
@@ -90,6 +85,11 @@ public:
     friend std::ostream& operator<<(std::ostream& out, expression const& value);
 
 protected:
+    /**
+     * @brief creates a new instance.
+     */
+    expression() = default;
+
     /**
      * @brief creates a new instance.
      * @param other the copy source

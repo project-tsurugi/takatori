@@ -7,14 +7,14 @@
 namespace takatori::scalar {
 
 let_declarator::let_declarator(
-        descriptor::variable_descriptor variable,
+        descriptor::variable variable,
         util::unique_object_ptr<expression> value) noexcept
     : variable_(std::move(variable))
     , value_(std::move(value))
 {}
 
 let_declarator::let_declarator(
-        descriptor::variable_descriptor variable,
+        descriptor::variable variable,
         expression&& value) noexcept
     : let_declarator(
             std::move(variable),
@@ -50,11 +50,11 @@ void let_declarator::parent_element(parent_type* parent) noexcept {
     fire_parent_element_changed();
 }
 
-descriptor::variable_descriptor const& let_declarator::variable() const noexcept {
+descriptor::variable const& let_declarator::variable() const noexcept {
     return variable_;
 }
 
-let_declarator& let_declarator::variable(descriptor::variable_descriptor variable) noexcept {
+let_declarator& let_declarator::variable(descriptor::variable variable) noexcept {
     variable_ = std::move(variable);
     return *this;
 }

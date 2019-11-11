@@ -71,20 +71,6 @@ using comparison_operator_tag_t = util::enum_tag_t<comparison_operator, Kind>;
 template<comparison_operator Kind>
 inline constexpr comparison_operator_tag_t<Kind> comparison_operator_tag {};
 
-/// @private
-namespace impl {
-
-/// @private
-template<comparison_operator Kind, class Callback, class... Args>
-inline std::enable_if_t<
-        std::is_invocable_v<Callback, comparison_operator_tag_t<Kind>, Args...>,
-        std::invoke_result_t<Callback, comparison_operator_tag_t<Kind>, Args...>>
-callback_comparison_operator(Callback&& callback, Args&&... args) {
-    return std::forward<Callback>(callback)(comparison_operator_tag<Kind>, std::forward<Args>(args)...);
-}
-
-} // namespace impl
-
 /**
  * @brief invoke callback function for individual comparison operator kinds.
  * If the operator_kind is K, this may invoke Callback::operator()(comparison_operator_tag_t<K>, Args...).
@@ -102,12 +88,12 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, comparison_operator operator_kind, Args&&... args) {
     using kind = comparison_operator;
     switch (operator_kind) {
-        case kind::equal: return impl::callback_comparison_operator<kind::equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::not_equal: return impl::callback_comparison_operator<kind::not_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::less: return impl::callback_comparison_operator<kind::less>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::less_equal: return impl::callback_comparison_operator<kind::less_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::greater: return impl::callback_comparison_operator<kind::greater>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::greater_equal: return impl::callback_comparison_operator<kind::greater_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::equal: return util::enum_tag_callback<kind, kind::equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::not_equal: return util::enum_tag_callback<kind, kind::not_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::less: return util::enum_tag_callback<kind, kind::less>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::less_equal: return util::enum_tag_callback<kind, kind::less_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::greater: return util::enum_tag_callback<kind, kind::greater>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::greater_equal: return util::enum_tag_callback<kind, kind::greater_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

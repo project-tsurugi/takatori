@@ -59,20 +59,6 @@ using match_operator_tag_t = util::enum_tag_t<match_operator, Kind>;
 template<match_operator Kind>
 inline constexpr match_operator_tag_t<Kind> match_operator_tag {};
 
-/// @private
-namespace impl {
-
-/// @private
-template<match_operator Kind, class Callback, class... Args>
-inline std::enable_if_t<
-        std::is_invocable_v<Callback, match_operator_tag_t<Kind>, Args...>,
-        std::invoke_result_t<Callback, match_operator_tag_t<Kind>, Args...>>
-callback_match_operator(Callback&& callback, Args&&... args) {
-    return std::forward<Callback>(callback)(match_operator_tag<Kind>, std::forward<Args>(args)...);
-}
-
-} // namespace impl
-
 /**
  * @brief invoke callback function for individual match operator kinds.
  * If the operator_kind is K, this may invoke Callback::operator()(match_operator_tag_t<K>, Args...).
@@ -90,8 +76,8 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, match_operator operator_kind, Args&&... args) {
     using kind = match_operator;
     switch (operator_kind) {
-        case kind::like: return impl::callback_match_operator<kind::like>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::similar: return impl::callback_match_operator<kind::similar>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::like: return util::enum_tag_callback<kind, kind::like>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::similar: return util::enum_tag_callback<kind, kind::similar>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

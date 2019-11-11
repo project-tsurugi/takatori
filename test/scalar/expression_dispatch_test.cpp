@@ -1,12 +1,8 @@
 #include "takatori/scalar/expression_dispatch.h"
 
-#include <type_traits>
-
 #include <gtest/gtest.h>
 
 #include "test_utils.h"
-
-#include "takatori/util/clonable.h"
 
 namespace takatori::scalar {
 
@@ -26,7 +22,7 @@ TEST_F(expression_dispatch_test, simple) {
 
 TEST_F(expression_dispatch_test, switch) {
     struct cb {
-        int operator()(expression const&) { std::abort(); }
+        int operator()(expression const&) { throw std::domain_error("default"); }
         int operator()(immediate const&) {
             return 1;
         }
@@ -37,6 +33,7 @@ TEST_F(expression_dispatch_test, switch) {
 
     EXPECT_EQ(dispatch(cb {}, constant(0)), 1);
     EXPECT_EQ(dispatch(cb {}, varref(0)), 2);
+    EXPECT_THROW(dispatch(cb {}, unary(unary_operator::plus, constant(1))), std::domain_error);
 }
 
 TEST_F(expression_dispatch_test, void) {
@@ -48,7 +45,7 @@ TEST_F(expression_dispatch_test, void) {
         void operator()(variable_reference const&) {
             r = 2;
         }
-        int r;
+        int r {};
     };
 
     cb c;

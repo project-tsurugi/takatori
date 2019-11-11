@@ -1,14 +1,15 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <string_view>
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
+#include "cast_loss_policy.h"
 
-#include "takatori/descriptor/element_descriptor.h"
+#include "takatori/type/data_type.h"
 
 #include "takatori/util/enum_tag.h"
 #include "takatori/util/meta_type.h"
@@ -16,73 +17,6 @@
 #include "takatori/util/optional_ptr.h"
 
 namespace takatori::scalar {
-
-/**
- * @brief action kind when the value precision was decreased.
- */
-enum class cast_loss_policy {
-
-    /// @brief ignores precision decrease (may apply default trimming or rounding).
-    ignore,
-
-    /// @brief round towards to -infinity.
-    floor,
-
-    /// @brief round towards to +infinity.
-    ceil,
-
-    /// @brief replace with unknown value.
-    unknown,
-
-    /// @brief raise warning and continue to operation (may apply default trimming or rounding).
-    warn,
-
-    /// @brief raise error and halt the operation.
-    error,
-};
-
-/**
- * @brief returns string representation of the value.
- * @param value the target value
- * @return the corresponded string representation
- */
-constexpr inline std::string_view to_string_view(cast_loss_policy value) noexcept {
-    using namespace std::string_view_literals;
-    using kind = cast_loss_policy;
-    switch (value) {
-        case kind::ignore: return "ignore"sv;
-        case kind::floor: return "floor"sv;
-        case kind::ceil: return "ceil"sv;
-        case kind::unknown: return "unknown"sv;
-        case kind::warn: return "warn"sv;
-        case kind::error: return "error"sv;
-    }
-    std::abort();
-}
-
-/**
- * @brief appends string representation of the given value.
- * @param out the target output
- * @param value the target value
- * @return the output
- */
-inline std::ostream& operator<<(std::ostream& out, cast_loss_policy value) {
-    return out << to_string_view(value);
-}
-
-/**
- * @brief a tag of cast_loss_policy.
- * @tparam Kind the cast_loss_policy kind
- */
-template<cast_loss_policy Kind>
-using cast_loss_policy_tag_t = util::enum_tag_t<cast_loss_policy, Kind>;
-
-/**
- * @brief a tag object of cast_loss_policy.
- * @tparam Kind the cast_loss_policy kind
- */
-template<cast_loss_policy Kind>
-inline constexpr cast_loss_policy_tag_t<Kind> cast_loss_policy_tag {};
 
 /**
  * @brief type casting expression.
@@ -104,24 +38,24 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param type the destination type
+     * @param data_type the destination type
      * @param loss_policy the loss policy
      * @param operand the operand
      */
     explicit cast(
-            descriptor::type_descriptor type,
+            std::shared_ptr<type::data_type const> data_type,
             loss_policy_type loss_policy,
             util::unique_object_ptr<expression> operand) noexcept;
 
     /**
      * @brief creates a new object.
-     * @param type the destination type
+     * @param data_type the destination type
      * @param loss_policy the loss policy
      * @param operand the operand
-     * @attention this may take copies of given expressions
+     * @attention this may take copies of given type and expression
      */
     cast(
-            descriptor::type_descriptor type,
+            type::data_type&& data_type,
             loss_policy_type loss_policy,
             expression&& operand);
 
@@ -148,17 +82,32 @@ public:
     cast* clone(util::object_creator creator) && override;
 
     /**
-     * @brief returns the descriptor of destination type.
+     * @brief returns the destination type.
      * @return the destination type
+     * @warning undefined behavior if the type is absent
      */
-    descriptor::type_descriptor const& type() const noexcept;
+    type::data_type const& data_type() const noexcept;
 
     /**
-     * @brief sets a descriptor of destination type.
-     * @param type the destination type
+     * @brief returns the destination type.
+     * @return the destination type
+     * @return empty if the type is absent
+     */
+    util::optional_ptr<type::data_type const> optional_data_type() const noexcept;
+
+    /**
+     * @brief returns the destination type for share its type.
+     * @return the destination type for sharing
+     * @return empty if the type is absent
+     */
+    std::shared_ptr<type::data_type const> shared_data_type() const noexcept;
+
+    /**
+     * @brief sets a destination type.
+     * @param data_type the destination type
      * @return this
      */
-    cast& type(descriptor::type_descriptor type) noexcept;
+    cast& data_type(std::shared_ptr<type::data_type const> data_type) noexcept;
 
     /**
      * @brief returns the action kind for decrease accuracy.
@@ -242,7 +191,7 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    descriptor::type_descriptor type_;
+    std::shared_ptr<type::data_type const> data_type_;
     loss_policy_type loss_policy_;
     util::unique_object_ptr<expression> operand_;
     parent_type* parent_ {};

@@ -1,5 +1,13 @@
 add_library(takatori
 
+    # type
+    type/data_type.cpp
+    type/decimal.cpp
+    type/character.cpp
+    type/bit.cpp
+    type/time_of_day.cpp
+    type/time_point.cpp
+
     # scalar
     scalar/expression.cpp
 

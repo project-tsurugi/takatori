@@ -20,6 +20,15 @@ function(add_test_executable source_file)
     )
 endfunction(add_test_executable)
 
+add_test_executable(type/data_type_dispatch_test.cpp)
+
+add_test_executable(type/simple_type_test.cpp)
+add_test_executable(type/decimal_type_test.cpp)
+add_test_executable(type/character_type_test.cpp)
+add_test_executable(type/bit_type_test.cpp)
+add_test_executable(type/time_of_day_type_test.cpp)
+add_test_executable(type/time_point_type_test.cpp)
+
 add_test_executable(scalar/expression_dispatch_test.cpp)
 
 add_test_executable(scalar/immediate_test.cpp)

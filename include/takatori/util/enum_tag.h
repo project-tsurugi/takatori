@@ -1,6 +1,8 @@
 #pragma once
 
+#include <functional>
 #include <iostream>
+#include <type_traits>
 
 namespace takatori::util {
 
@@ -57,6 +59,28 @@ template<class E, E Kind>
 inline std::ostream& operator<<(std::ostream& out, enum_tag_t<E, Kind> tag) {
     (void) tag;
     return out << Kind;
+}
+
+/**
+ * @brief invokes the callback object with an enum_tag argument.
+ * This invokes Callback::operator()(enum_tag<Enum, Kind> Args...).
+ * @tparam Enum the enumeration type
+ * @tparam Kind the enumeration value
+ * @tparam Callback the callback object type
+ * @tparam Args the callback extra parameter type
+ * @param callback the callback object
+ * @param object the target object
+ * @return the invocation result
+ */
+template<class Enum, Enum Kind, class Callback, class... Args>
+inline std::enable_if_t<
+        std::is_invocable_v<Callback, enum_tag_t<Enum, Kind>, Args...>,
+        std::invoke_result_t<Callback, enum_tag_t<Enum, Kind>, Args...>>
+enum_tag_callback(Callback&& callback, Args&&... args) {
+    return std::invoke(
+            std::forward<Callback>(callback),
+            enum_tag<Enum, Kind>,
+            std::forward<Args>(args)...);
 }
 
 } // namespace takatori::util

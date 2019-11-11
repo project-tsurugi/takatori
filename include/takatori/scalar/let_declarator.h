@@ -7,7 +7,7 @@
 
 #include "expression.h"
 
-#include "takatori/descriptor/element_descriptor.h"
+#include "takatori/descriptor/variable.h"
 
 #include "takatori/util/object_creator.h"
 #include "takatori/util/optional_ptr.h"
@@ -51,7 +51,7 @@ public:
      * @param value the bound expression
      */
     explicit let_declarator(
-            descriptor::variable_descriptor variable,
+            descriptor::variable variable,
             util::unique_object_ptr<expression> value) noexcept;
 
     /**
@@ -61,7 +61,7 @@ public:
      * @attention this may take copies of given expressions
      */
     let_declarator(
-            descriptor::variable_descriptor variable,
+            descriptor::variable variable,
             expression&& value) noexcept;
 
     /**
@@ -98,14 +98,14 @@ public:
      * @brief returns the descriptor of target variable.
      * @return the destination type
      */
-    descriptor::variable_descriptor const& variable() const noexcept;
+    descriptor::variable const& variable() const noexcept;
 
     /**
      * @brief sets a descriptor of the declared variable.
      * @param variable the declared variable
      * @return this
      */
-    let_declarator& variable(descriptor::variable_descriptor variable) noexcept;
+    let_declarator& variable(descriptor::variable variable) noexcept;
 
     /**
      * @brief returns the bound expression.
@@ -166,7 +166,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, let_declarator const& value);
 
 private:
-    descriptor::variable_descriptor variable_;
+    descriptor::variable variable_;
     util::unique_object_ptr<expression> value_;
 
     parent_type* parent_ {};

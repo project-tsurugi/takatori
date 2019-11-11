@@ -77,20 +77,6 @@ using binary_operator_tag_t = util::enum_tag_t<binary_operator, Kind>;
 template<binary_operator Kind>
 inline constexpr binary_operator_tag_t<Kind> binary_operator_tag {};
 
-/// @private
-namespace impl {
-
-/// @private
-template<binary_operator Kind, class Callback, class... Args>
-inline std::enable_if_t<
-        std::is_invocable_v<Callback, binary_operator_tag_t<Kind>, Args...>,
-        std::invoke_result_t<Callback, binary_operator_tag_t<Kind>, Args...>>
-callback_binary_operator(Callback&& callback, Args&&... args) {
-    return std::forward<Callback>(callback)(binary_operator_tag<Kind>, std::forward<Args>(args)...);
-}
-
-} // namespace impl
-
 /**
  * @brief invoke callback function for individual binary operator kinds.
  * If the operator_kind is K, this may invoke Callback::operator()(binary_operator_tag_t<K>, Args...).
@@ -108,14 +94,14 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, binary_operator operator_kind, Args&&... args) {
     using kind = binary_operator;
     switch (operator_kind) {
-        case kind::add: return impl::callback_binary_operator<kind::add>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::subtract: return impl::callback_binary_operator<kind::subtract>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::multiply: return impl::callback_binary_operator<kind::multiply>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::divide: return impl::callback_binary_operator<kind::divide>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::remainder: return impl::callback_binary_operator<kind::remainder>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::concat: return impl::callback_binary_operator<kind::concat>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::conditional_and: return impl::callback_binary_operator<kind::conditional_and>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::conditional_or: return impl::callback_binary_operator<kind::conditional_or>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::add: return util::enum_tag_callback<kind, kind::add>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::subtract: return util::enum_tag_callback<kind, kind::subtract>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::multiply: return util::enum_tag_callback<kind, kind::multiply>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::divide: return util::enum_tag_callback<kind, kind::divide>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::remainder: return util::enum_tag_callback<kind, kind::remainder>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::concat: return util::enum_tag_callback<kind, kind::concat>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::conditional_and: return util::enum_tag_callback<kind, kind::conditional_and>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::conditional_or: return util::enum_tag_callback<kind, kind::conditional_or>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

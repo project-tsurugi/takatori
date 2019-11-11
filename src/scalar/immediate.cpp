@@ -1,22 +1,29 @@
 #include "takatori/scalar/immediate.h"
 
+#include "takatori/util/clonable.h"
 #include "takatori/util/downcast.h"
 
 namespace takatori::scalar {
 
 immediate::immediate(
-        descriptor::value_descriptor value,
-        descriptor::type_descriptor type) noexcept
+        descriptor::value value,
+        std::shared_ptr<type::data_type const> data_type) noexcept
     : value_(std::move(value))
-    , type_(std::move(type))
+    , data_type_(std::move(data_type))
+{}
+
+immediate::immediate(descriptor::value value, type::data_type&& data_type)
+    : immediate(
+            std::move(value),
+            util::clone_shared(std::move(data_type)))
 {}
 
 immediate::immediate(immediate const& other, util::object_creator) noexcept
-    : immediate(other.value_, other.type_)
+    : immediate(other.value_, other.data_type_)
 {}
 
 immediate::immediate(immediate&& other, util::object_creator) noexcept
-    : immediate(std::move(other.value_), std::move(other.type_))
+    : immediate(std::move(other.value_), std::move(other.data_type_))
 {}
 
 expression::parent_type* immediate::parent_element() noexcept {
@@ -43,27 +50,35 @@ immediate* immediate::clone(util::object_creator creator) && {
     return creator.create_object<immediate>(std::move(*this), creator);
 }
 
-descriptor::value_descriptor const& immediate::value() const noexcept {
+descriptor::value const& immediate::value() const noexcept {
     return value_;
 }
 
-immediate& immediate::value(descriptor::value_descriptor value) noexcept {
+immediate& immediate::value(descriptor::value value) noexcept {
     value_ = std::move(value);
     return *this;
 }
 
-descriptor::type_descriptor const& immediate::type() const noexcept {
-    return type_;
+type::data_type const& immediate::data_type() const noexcept {
+    return *data_type_;
 }
 
-immediate& immediate::type(descriptor::type_descriptor type) noexcept {
-    type_ = std::move(type);
+util::optional_ptr<type::data_type const> immediate::optional_data_type() const noexcept {
+    return util::optional_ptr { data_type_.get() };
+}
+
+std::shared_ptr<type::data_type const> immediate::shared_data_type() const noexcept {
+    return data_type_;
+}
+
+immediate& immediate::data_type(std::shared_ptr<type::data_type const> data_type) noexcept {
+    data_type_ = std::move(data_type);
     return *this;
 }
 
 bool operator==(immediate const& a, immediate const& b) noexcept {
     return a.value() == b.value()
-        && b.type() == b.type();
+        && b.optional_data_type() == b.optional_data_type();
 }
 
 bool operator!=(immediate const& a, immediate const& b) noexcept {
@@ -73,7 +88,7 @@ bool operator!=(immediate const& a, immediate const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, immediate const& value) {
     return out << "immediate("
                << "value=" << value.value() << ", "
-               << "type=" << value.type() << ")";
+               << "data_type=" << value.optional_data_type() << ")";
 }
 
 bool immediate::equals(expression const& other) const noexcept {

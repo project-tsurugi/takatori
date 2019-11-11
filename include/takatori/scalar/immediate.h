@@ -8,7 +8,8 @@
 #include "expression_kind.h"
 #include "expression_traits.h"
 
-#include "takatori/descriptor/element_descriptor.h"
+#include "takatori/descriptor/value.h"
+#include "takatori/type/data_type.h"
 
 #include "takatori/util/meta_type.h"
 #include "takatori/util/object_creator.h"
@@ -33,11 +34,21 @@ public:
     /**
      * @brief creates a new object.
      * @param value the descriptor of the immediate value
-     * @param type the value type
+     * @param data_type the value type
+     */
+    explicit immediate(
+            descriptor::value value,
+            std::shared_ptr<type::data_type const> data_type) noexcept;
+
+    /**
+     * @brief creates a new object.
+     * @param value the descriptor of the immediate value
+     * @param data_type the value type
+     * @attention this may take a copy of given type
      */
     immediate(
-            descriptor::value_descriptor value,
-            descriptor::type_descriptor type) noexcept;
+            descriptor::value value,
+            type::data_type&& data_type);
 
     /**
      * @brief creates a new object.
@@ -65,27 +76,42 @@ public:
      * @brief returns the descriptor of indicating value.
      * @return the value
      */
-    descriptor::value_descriptor const& value() const noexcept;
+    descriptor::value const& value() const noexcept;
 
     /**
      * @brief sets a descriptor of value.
      * @param value the value
      * @return this
      */
-    immediate& value(descriptor::value_descriptor value) noexcept;
+    immediate& value(descriptor::value value) noexcept;
 
     /**
-     * @brief returns the descriptor of value type.
-     * @return the type
+     * @brief returns the value type.
+     * @return the value type
+     * @warning undefined behavior if the type is absent
      */
-    descriptor::type_descriptor const& type() const noexcept;
+    type::data_type const& data_type() const noexcept;
 
     /**
-     * @brief sets a descriptor of value type.
-     * @param type the type
+     * @brief returns the value type.
+     * @return the value type
+     * @return empty if the type is absent
+     */
+    util::optional_ptr<type::data_type const> optional_data_type() const noexcept;
+
+    /**
+     * @brief returns the value type for share its type.
+     * @return the value type for sharing
+     * @return empty if the type is absent
+     */
+    std::shared_ptr<type::data_type const> shared_data_type() const noexcept;
+
+    /**
+     * @brief sets a value type.
+     * @param data_type the value type
      * @return this
      */
-    immediate& type(descriptor::type_descriptor type) noexcept;
+    immediate& data_type(std::shared_ptr<type::data_type const> data_type) noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -118,8 +144,8 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    descriptor::value_descriptor value_;
-    descriptor::type_descriptor type_;
+    descriptor::value value_;
+    std::shared_ptr<type::data_type const> data_type_;
     parent_type* parent_ {};
 };
 
