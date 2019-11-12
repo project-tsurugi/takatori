@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class binary_test : public ::testing::Test {};
 
 static_assert(binary::tag == expression_kind::binary);
-static_assert(std::is_same_v<expression_kind_type_t<binary::tag>, binary>);
+static_assert(std::is_same_v<type_of_t<binary::tag>, binary>);
 
 TEST_F(binary_test, simple) {
     binary expr {

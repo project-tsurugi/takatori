@@ -11,26 +11,26 @@ namespace takatori::type {
 
 class simple_type_test : public ::testing::Test {};
 
-static_assert(int1::tag == data_type_kind::int1);
-static_assert(std::is_same_v<data_type_kind_type_t<int1::tag>, int1>);
+static_assert(int1::tag == type_kind::int1);
+static_assert(std::is_same_v<type_of_t<int1::tag>, int1>);
 
-static_assert(int2::tag == data_type_kind::int2);
-static_assert(std::is_same_v<data_type_kind_type_t<int2::tag>, int2>);
+static_assert(int2::tag == type_kind::int2);
+static_assert(std::is_same_v<type_of_t<int2::tag>, int2>);
 
-static_assert(int4::tag == data_type_kind::int4);
-static_assert(std::is_same_v<data_type_kind_type_t<int4::tag>, int4>);
+static_assert(int4::tag == type_kind::int4);
+static_assert(std::is_same_v<type_of_t<int4::tag>, int4>);
 
-static_assert(int8::tag == data_type_kind::int8);
-static_assert(std::is_same_v<data_type_kind_type_t<int8::tag>, int8>);
+static_assert(int8::tag == type_kind::int8);
+static_assert(std::is_same_v<type_of_t<int8::tag>, int8>);
 
-static_assert(float4::tag == data_type_kind::float4);
-static_assert(std::is_same_v<data_type_kind_type_t<float4::tag>, float4>);
+static_assert(float4::tag == type_kind::float4);
+static_assert(std::is_same_v<type_of_t<float4::tag>, float4>);
 
-static_assert(float8::tag == data_type_kind::float8);
-static_assert(std::is_same_v<data_type_kind_type_t<float8::tag>, float8>);
+static_assert(float8::tag == type_kind::float8);
+static_assert(std::is_same_v<type_of_t<float8::tag>, float8>);
 
-static_assert(unknown::tag == data_type_kind::unknown);
-static_assert(std::is_same_v<data_type_kind_type_t<unknown::tag>, unknown>);
+static_assert(unknown::tag == type_kind::unknown);
+static_assert(std::is_same_v<type_of_t<unknown::tag>, unknown>);
 
 TEST_F(simple_type_test, hash) {
     EXPECT_EQ(std::hash<int4>{}(int4()), std::hash<int4>{}(int4()));

@@ -4,7 +4,7 @@
 
 namespace takatori::type {
 
-data_type_kind decimal::kind() const noexcept {
+type_kind decimal::kind() const noexcept {
     return tag;
 }
 
@@ -36,7 +36,7 @@ std::ostream& operator<<(std::ostream& out, decimal const& value) {
     return out;
 }
 
-bool decimal::equals(data_type const& other) const noexcept {
+bool decimal::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<decimal>(other);
 }
 

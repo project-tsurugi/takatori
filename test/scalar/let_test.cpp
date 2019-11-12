@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class let_test : public ::testing::Test {};
 
 static_assert(let::tag == expression_kind::let);
-static_assert(std::is_same_v<expression_kind_type_t<let::tag>, let>);
+static_assert(std::is_same_v<type_of_t<let::tag>, let>);
 
 static_assert(tree::is_tree_fragment_v<let_declarator>);
 

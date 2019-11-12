@@ -8,7 +8,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 #include "let_declarator.h"
 
 #include "takatori/tree/tree_fragment_vector.h"
@@ -173,8 +172,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for let.
+ * @brief type_of for let.
  */
-template<> struct expression_kind_type<let::tag> : util::meta_type<let> {};
+template<> struct type_of<let::tag> : util::meta_type<let> {};
 
 } // namespace takatori::scalar

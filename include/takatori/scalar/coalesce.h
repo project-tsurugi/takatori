@@ -7,7 +7,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 
 #include "takatori/tree/tree_element_vector.h"
 
@@ -116,8 +115,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for coalesce.
+ * @brief type_of for coalesce.
  */
-template<> struct expression_kind_type<coalesce::tag> : util::meta_type<coalesce> {};
+template<> struct type_of<coalesce::tag> : util::meta_type<coalesce> {};
 
 } // namespace takatori::scalar

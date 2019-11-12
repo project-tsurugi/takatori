@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "data_type_kind.h"
-#include "data_type.h"
+#include "type_kind.h"
+#include "data.h"
 #include "varying.h"
 
 #include "takatori/util/meta_type.h"
@@ -13,10 +13,10 @@ namespace takatori::type {
 /**
  * @brief character sequence type.
  */
-class character : public data_type {
+class character : public data {
 public:
     /// @brief the kind of this type.
-    static constexpr inline data_type_kind tag = data_type_kind::character;
+    static constexpr inline type_kind tag = type_kind::character;
 
     /// @brief the size type.
     using size_type = std::size_t;
@@ -44,7 +44,7 @@ public:
     character(character&& other) noexcept = delete;
     character& operator=(character&& other) noexcept = delete;
 
-    data_type_kind kind() const noexcept override;
+    type_kind kind() const noexcept override;
     character* clone(util::object_creator creator) const& override;
     character* clone(util::object_creator creator) && override;
 
@@ -91,7 +91,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, character const& value);
 
 protected:
-    bool equals(data_type const& other) const noexcept override;
+    bool equals(data const& other) const noexcept override;
     std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
     
@@ -131,13 +131,13 @@ character::length() const noexcept {
     return length_;
 }
 
-template<> struct data_type_kind_type<character::tag> : util::meta_type<character> {};
+template<> struct type_of<character::tag> : util::meta_type<character> {};
 
 } // namespace takatori::type
 
 namespace std {
 
 /// @brief provides hash code of takatori::type::character.
-template<> struct hash<takatori::type::character> : hash<takatori::type::data_type> {};
+template<> struct hash<takatori::type::character> : hash<takatori::type::data> {};
 
 } // namespace std

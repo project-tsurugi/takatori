@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class match_test : public ::testing::Test {};
 
 static_assert(match::tag == expression_kind::match);
-static_assert(std::is_same_v<expression_kind_type_t<match::tag>, match>);
+static_assert(std::is_same_v<type_of_t<match::tag>, match>);
 
 TEST_F(match_test, simple) {
     match expr {

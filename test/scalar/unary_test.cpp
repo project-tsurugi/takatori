@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class unary_test : public ::testing::Test {};
 
 static_assert(unary::tag == expression_kind::unary);
-static_assert(std::is_same_v<expression_kind_type_t<unary::tag>, unary>);
+static_assert(std::is_same_v<type_of_t<unary::tag>, unary>);
 
 TEST_F(unary_test, simple) {
     unary expr {

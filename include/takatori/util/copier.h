@@ -8,7 +8,7 @@
 namespace takatori::util {
 
 /**
- * @brief a copiler but it just represents "copy is unavailable".
+ * @brief a copier but it just represents "copy is unavailable".
  * @tparam T the object type
  */
 template<class T>

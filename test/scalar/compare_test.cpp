@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class compare_test : public ::testing::Test {};
 
 static_assert(compare::tag == expression_kind::compare);
-static_assert(std::is_same_v<expression_kind_type_t<compare::tag>, compare>);
+static_assert(std::is_same_v<type_of_t<compare::tag>, compare>);
 
 TEST_F(compare_test, simple) {
     compare expr {

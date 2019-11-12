@@ -4,7 +4,7 @@
 
 namespace takatori::type {
 
-data_type_kind bit::kind() const noexcept {
+type_kind bit::kind() const noexcept {
     return tag;
 }
 
@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& out, bit const& value) {
     return out;
 }
 
-bool bit::equals(data_type const& other) const noexcept {
+bool bit::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<bit>(other);
 }
 

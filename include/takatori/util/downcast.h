@@ -46,8 +46,9 @@ template<class T, class U>
 constexpr inline infect_const_t<U, T>* unsafe_downcast(U* object) {
 #if !defined(NDEBUG)
     return downcast<T>(object); // NOLINT
-#endif // !defined(NDEBUG)
+#else
     return static_cast<infect_const_t<U, T>*>(object); // NOLINT
+#endif // !defined(NDEBUG)
 }
 
 /**
@@ -62,8 +63,9 @@ template<class T, class U>
 constexpr inline infect_qualifier_t<U, T>&& unsafe_downcast(U&& object) {
 #if !defined(NDEBUG)
     return downcast<T>(std::forward<U>(object)); // NOLINT
-#endif // !defined(NDEBUG)
+#else
     return static_cast<infect_qualifier_t<U, T>&&>(object);
+#endif // !defined(NDEBUG)
 }
 
 } // namespace takatori::util

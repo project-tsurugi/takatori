@@ -73,20 +73,9 @@ enum class expression_kind {
     /// @brief record element extraction expression.
     record_get, // FIXME: impl
 
-    // sub-query expressions
-
-    /// @brief scalar sub-query expression.
-    subquery_scalar, // FIXME: impl
-
-    /// @brief sub-query existential quantification expresion.
-    subquery_exists, // FIXME: impl
-
-    /// @brief sub-query result comparison with quantification expresion.
-    subquery_compare_quantification, // FIXME: impl
-
     // special expressions
 
-    /// @brief custom expression for third party extension.
+    /// @brief custom expression for compiler or third party extension.
     extension, // FIXME: impl
 };
 
@@ -94,10 +83,10 @@ enum class expression_kind {
  * @brief provides implementation type for the expression_kind.
  * @tparam Kind the expression kind
  */
-template<expression_kind Kind> struct expression_kind_type {};
+template<expression_kind Kind> struct type_of {};
 
-/// @copydoc expression_kind_type
-template<expression_kind Kind> using expression_kind_type_t = typename expression_kind_type<Kind>::type;
+/// @copydoc type_of
+template<expression_kind Kind> using type_of_t = typename type_of<Kind>::type;
 
 /**
  * @brief returns string representation of the value.
@@ -125,9 +114,6 @@ constexpr inline std::string_view to_string_view(expression_kind value) noexcept
         case kind::array_compare_quantification: return "array_compare_quantification"sv;
         case kind::record_construct: return "record_construct"sv;
         case kind::record_get: return "record_get"sv;
-        case kind::subquery_scalar: return "subquery_scalar"sv;
-        case kind::subquery_exists: return "subquery_exists"sv;
-        case kind::subquery_compare_quantification: return "subquery_compare_quantification"sv;
         case kind::extension: return "extension"sv;
     }
     std::abort();

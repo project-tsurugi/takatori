@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "data_type_kind.h"
-#include "data_type.h"
+#include "type_kind.h"
+#include "data.h"
 
 #include "takatori/descriptor/time_zone.h"
 
@@ -14,10 +14,10 @@ namespace takatori::type {
 /**
  * @brief time of day type.
  */
-class time_of_day : public data_type {
+class time_of_day : public data {
 public:
     /// @brief the kind of this type.
-    static constexpr inline data_type_kind tag = data_type_kind::time_of_day;
+    static constexpr inline type_kind tag = type_kind::time_of_day;
 
     /**
      * @brief creates a new instance.
@@ -31,7 +31,7 @@ public:
     time_of_day(time_of_day&& other) noexcept = delete;
     time_of_day& operator=(time_of_day&& other) noexcept = delete;
 
-    data_type_kind kind() const noexcept override;
+    type_kind kind() const noexcept override;
     time_of_day* clone(util::object_creator creator) const& override;
     time_of_day* clone(util::object_creator creator) && override;
 
@@ -69,7 +69,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, time_of_day const& value);
 
 protected:
-    bool equals(data_type const& other) const noexcept override;
+    bool equals(data const& other) const noexcept override;
     std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
     
@@ -77,13 +77,13 @@ private:
     std::optional<descriptor::time_zone> time_zone_;
 };
 
-template<> struct data_type_kind_type<time_of_day::tag> : util::meta_type<time_of_day> {};
+template<> struct type_of<time_of_day::tag> : util::meta_type<time_of_day> {};
 
 } // namespace takatori::type
 
 namespace std {
 
 /// @brief provides hash code of takatori::type::time_of_day.
-template<> struct hash<takatori::type::time_of_day> : hash<takatori::type::data_type> {};
+template<> struct hash<takatori::type::time_of_day> : hash<takatori::type::data> {};
 
 } // namespace std

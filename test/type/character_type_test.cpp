@@ -8,6 +8,9 @@ namespace takatori::type {
 
 class character_type_test : public ::testing::Test {};
 
+static_assert(character::tag == type_kind::character);
+static_assert(std::is_same_v<type_of_t<character::tag>, character>);
+
 TEST_F(character_type_test, simple) {
     character t { 16 };
     EXPECT_FALSE(t.varying());

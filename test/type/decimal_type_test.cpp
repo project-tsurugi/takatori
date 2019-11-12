@@ -8,6 +8,9 @@ namespace takatori::type {
 
 class decimal_type_test : public ::testing::Test {};
 
+static_assert(decimal::tag == type_kind::decimal);
+static_assert(std::is_same_v<type_of_t<decimal::tag>, decimal>);
+
 TEST_F(decimal_type_test, simple) {
     decimal t;
     EXPECT_EQ(t.precision().value_or(9999), 9999);

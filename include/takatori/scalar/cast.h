@@ -9,7 +9,7 @@
 #include "expression_kind.h"
 #include "cast_loss_policy.h"
 
-#include "takatori/type/data_type.h"
+#include "takatori/type/data.h"
 
 #include "takatori/util/enum_tag.h"
 #include "takatori/util/meta_type.h"
@@ -38,24 +38,24 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param data_type the destination type
+     * @param type the destination type
      * @param loss_policy the loss policy
      * @param operand the operand
      */
     explicit cast(
-            std::shared_ptr<type::data_type const> data_type,
+            std::shared_ptr<type::data const> type,
             loss_policy_type loss_policy,
             util::unique_object_ptr<expression> operand) noexcept;
 
     /**
      * @brief creates a new object.
-     * @param data_type the destination type
+     * @param type the destination type
      * @param loss_policy the loss policy
      * @param operand the operand
      * @attention this may take copies of given type and expression
      */
     cast(
-            type::data_type&& data_type,
+            type::data&& type,
             loss_policy_type loss_policy,
             expression&& operand);
 
@@ -86,28 +86,28 @@ public:
      * @return the destination type
      * @warning undefined behavior if the type is absent
      */
-    type::data_type const& data_type() const noexcept;
+    type::data const& type() const noexcept;
 
     /**
      * @brief returns the destination type.
      * @return the destination type
      * @return empty if the type is absent
      */
-    util::optional_ptr<type::data_type const> optional_data_type() const noexcept;
+    util::optional_ptr<type::data const> optional_type() const noexcept;
 
     /**
      * @brief returns the destination type for share its type.
      * @return the destination type for sharing
      * @return empty if the type is absent
      */
-    std::shared_ptr<type::data_type const> shared_data_type() const noexcept;
+    std::shared_ptr<type::data const> shared_type() const noexcept;
 
     /**
      * @brief sets a destination type.
-     * @param data_type the destination type
+     * @param type the destination type
      * @return this
      */
-    cast& data_type(std::shared_ptr<type::data_type const> data_type) noexcept;
+    cast& type(std::shared_ptr<type::data const> type) noexcept;
 
     /**
      * @brief returns the action kind for decrease accuracy.
@@ -191,15 +191,15 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    std::shared_ptr<type::data_type const> data_type_;
+    std::shared_ptr<type::data const> type_;
     loss_policy_type loss_policy_;
     util::unique_object_ptr<expression> operand_;
     parent_type* parent_ {};
 };
 
 /**
- * @brief expression_kind_type for cast.
+ * @brief type_of for cast.
  */
-template<> struct expression_kind_type<cast::tag> : util::meta_type<cast> {};
+template<> struct type_of<cast::tag> : util::meta_type<cast> {};
 
 } // namespace takatori::scalar

@@ -2,10 +2,12 @@
 
 #include <map>
 
-#include "takatori/type/data_type.h"
+#include "takatori/type/data.h"
 #include "takatori/type/int.h"
 
-#include "takatori/descriptor/value.h"
+#include "takatori/value/data.h"
+#include "takatori/value/int.h"
+
 #include "takatori/descriptor/variable.h"
 #include "takatori/descriptor/function.h"
 
@@ -35,10 +37,6 @@ inline int resolve(descriptor::element<K, E> const& desc) {
     return *std::reinterpret_pointer_cast<int>(desc.entity());
 }
 
-inline descriptor::value value(int v) {
-    return impl::get_descriptor<descriptor::value>(v);
-}
-
 inline descriptor::variable vardesc(int v) {
     return impl::get_descriptor<descriptor::variable>(v);
 }
@@ -47,8 +45,8 @@ inline descriptor::function funcdesc(int v) {
     return impl::get_descriptor<descriptor::function>(v);
 }
 
-inline immediate constant(int v, type::data_type&& type = type::int4()) {
-    return { value(v), std::move(type) };
+inline immediate constant(int v, type::data&& type = type::int4()) {
+    return { value::int4(v), std::move(type) };
 }
 
 inline variable_reference varref(int v) {

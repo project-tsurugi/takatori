@@ -1,4 +1,4 @@
-function(add_test_executable source_file)
+function (add_test_executable source_file)
     get_filename_component(test_name "${source_file}" NAME_WE)
     add_executable(${test_name}
         ${source_file}
@@ -9,19 +9,24 @@ function(add_test_executable source_file)
     target_link_libraries(${test_name}
         PRIVATE takatori
         PRIVATE takatori-impl
-        PRIVATE gtest
-    )
-    target_sources(${test_name}
-        PRIVATE main.cpp
+        PRIVATE takatori-test-main
     )
     add_test(
         NAME ${test_name}
         COMMAND ${test_name} --gtest_output=xml:${test_name}_gtest_result.xml
     )
-endfunction(add_test_executable)
+endfunction (add_test_executable)
 
-add_test_executable(type/data_type_dispatch_test.cpp)
+add_library(takatori-test-main STATIC
+    main.cpp
+)
 
+target_link_libraries(takatori-test-main
+    PUBLIC gtest
+)
+
+# type models
+add_test_executable(type/type_dispatch_test.cpp)
 add_test_executable(type/simple_type_test.cpp)
 add_test_executable(type/decimal_type_test.cpp)
 add_test_executable(type/character_type_test.cpp)
@@ -29,31 +34,33 @@ add_test_executable(type/bit_type_test.cpp)
 add_test_executable(type/time_of_day_type_test.cpp)
 add_test_executable(type/time_point_type_test.cpp)
 
-add_test_executable(scalar/expression_dispatch_test.cpp)
+# value models
+add_test_executable(value/value_dispatch_test.cpp)
+add_test_executable(value/simple_value_test.cpp)
 
+# scalar expression models
+add_test_executable(scalar/expression_dispatch_test.cpp)
 add_test_executable(scalar/immediate_test.cpp)
 add_test_executable(scalar/variable_reference_test.cpp)
-
 add_test_executable(scalar/unary_test.cpp)
 add_test_executable(scalar/cast_test.cpp)
-
 add_test_executable(scalar/binary_test.cpp)
 add_test_executable(scalar/compare_test.cpp)
-
 add_test_executable(scalar/match_test.cpp)
 add_test_executable(scalar/conditional_test.cpp)
 add_test_executable(scalar/coalesce_test.cpp)
 add_test_executable(scalar/let_test.cpp)
 add_test_executable(scalar/function_call_test.cpp)
 
+# tree models
 add_test_executable(tree/tree_element_test.cpp)
 add_test_executable(tree/tree_element_util_test.cpp)
 add_test_executable(tree/tree_element_vector_test.cpp)
 add_test_executable(tree/tree_fragment_vector_test.cpp)
-
 add_test_executable(tree/tree_element_forward_test.cpp)
 add_test_executable(tree/tree_element_vector_forward_test.cpp)
 
+# utilities
 add_test_executable(util/clonable_test.cpp)
 add_test_executable(util/clonable_ptr_test.cpp)
 add_test_executable(util/downcast_test.cpp)

@@ -10,6 +10,8 @@ namespace takatori::type {
 
 class time_point_type_test : public ::testing::Test {};
 
+static_assert(time_point::tag == type_kind::time_point);
+static_assert(std::is_same_v<type_of_t<time_point::tag>, time_point>);
 
 TEST_F(time_point_type_test, simple) {
     time_point t;

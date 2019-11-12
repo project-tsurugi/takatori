@@ -30,10 +30,6 @@
 //#include "record_construct.h"
 //#include "record_get.h"
 
-//#include "subquery_scalar.h"
-//#include "subquery_exists.h"
-//#include "subquery_compare_quantification.h"
-
 //#include "extension.h"
 
 #include "takatori/util/callback.h"
@@ -68,57 +64,57 @@ inline auto dispatch_expression(Callback&& callback, E&& expression, Args&&... a
 } // namespace impl
 
 /**
- * @brief invoke callback function for individual expression's subclasses.
- * If the actual type of expr is T, this may invoke Callback::operator()(T&, Args...).
+ * @brief invoke callback function for individual subclasses of expression.
+ * If the input object is ancestor type of T, this may invoke Callback::operator()(T&, Args...).
  * You must declare all callback functions for individual subclasses,
  * or declare Callback::operator()(expression&, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type
  * @tparam Args the callback argument types
  * @param callback the callback object
- * @param expr the target expression
+ * @param object the target expression
  * @param args the callback arguments
  * @return the callback result
  */
 template<class Callback, class... Args>
-inline auto dispatch(Callback&& callback, expression& expr, Args&&... args) {
-    return impl::dispatch_expression(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
+inline auto dispatch(Callback&& callback, expression& object, Args&&... args) {
+    return impl::dispatch_expression(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 }
 
 /**
- * @brief invoke callback function for individual expression's subclasses.
- * If the actual type of expr is T, this may invoke Callback::operator()(T const&, Args...).
+ * @brief invoke callback function for individual subclasses of expression.
+ * If the input object is ancestor type of T, this may invoke Callback::operator()(T const&, Args...).
  * You must declare all callback functions for individual subclasses,
  * or declare Callback::operator()(expression const&, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type
  * @tparam Args the callback argument types
  * @param callback the callback object
- * @param expr the target expression
+ * @param object the target expression
  * @param args the callback arguments
  * @return the callback result
  */
 template<class Callback, class... Args>
-inline auto dispatch(Callback&& callback, expression const& expr, Args&&... args) {
-    return impl::dispatch_expression(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
+inline auto dispatch(Callback&& callback, expression const& object, Args&&... args) {
+    return impl::dispatch_expression(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 }
 
 /**
- * @brief invoke callback function for individual expression's subclasses.
- * If the actual type of expr is T, this may invoke Callback::operator()(T&&, Args...).
+ * @brief invoke callback function for individual subclasses of expression.
+ * If the input object is ancestor type of T, this may invoke Callback::operator()(T&&, Args...).
  * You must declare all callback functions for individual subclasses,
  * or declare Callback::operator()(expression&&, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type
  * @tparam Args the callback argument types
  * @param callback the callback object
- * @param expr the target expression
+ * @param object the target expression
  * @param args the callback arguments
  * @return the callback result
  */
 template<class Callback, class... Args>
-inline auto dispatch(Callback&& callback, expression&& expr, Args&&... args) {
-    return impl::dispatch_expression(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
+inline auto dispatch(Callback&& callback, expression&& object, Args&&... args) {
+    return impl::dispatch_expression(std::forward<Callback>(callback), std::move(object), std::forward<Args>(args)...);
 }
 
 } // namespace takatori::scalar

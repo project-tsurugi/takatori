@@ -8,6 +8,9 @@ namespace takatori::type {
 
 class bit_type_test : public ::testing::Test {};
 
+static_assert(bit::tag == type_kind::bit);
+static_assert(std::is_same_v<type_of_t<bit::tag>, bit>);
+
 TEST_F(bit_type_test, simple) {
     bit t { 16 };
     EXPECT_FALSE(t.varying());

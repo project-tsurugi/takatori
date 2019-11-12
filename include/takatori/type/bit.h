@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "data_type_kind.h"
-#include "data_type.h"
+#include "type_kind.h"
+#include "data.h"
 #include "varying.h"
 
 #include "takatori/util/meta_type.h"
@@ -13,10 +13,10 @@ namespace takatori::type {
 /**
  * @brief bit sequence type.
  */
-class bit : public data_type {
+class bit : public data {
 public:
     /// @brief the kind of this type.
-    static constexpr inline data_type_kind tag = data_type_kind::bit;
+    static constexpr inline type_kind tag = type_kind::bit;
 
     /// @brief the size type.
     using size_type = std::size_t;
@@ -42,7 +42,7 @@ public:
     bit(bit&& other) noexcept = delete;
     bit& operator=(bit&& other) noexcept = delete;
 
-    data_type_kind kind() const noexcept override;
+    type_kind kind() const noexcept override;
     bit* clone(util::object_creator creator) const& override;
     bit* clone(util::object_creator creator) && override;
 
@@ -89,7 +89,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, bit const& value);
 
 protected:
-    bool equals(data_type const& other) const noexcept override;
+    bool equals(data const& other) const noexcept override;
     std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
     
@@ -128,13 +128,13 @@ bit::length() const noexcept {
     return length_;
 }
 
-template<> struct data_type_kind_type<bit::tag> : util::meta_type<bit> {};
+template<> struct type_of<bit::tag> : util::meta_type<bit> {};
 
 } // namespace takatori::type
 
 namespace std {
 
 /// @brief provides hash code of takatori::type::bit.
-template<> struct hash<takatori::type::bit> : hash<takatori::type::data_type> {};
+template<> struct hash<takatori::type::bit> : hash<takatori::type::data> {};
 
 } // namespace std

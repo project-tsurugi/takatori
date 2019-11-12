@@ -5,16 +5,8 @@
 #include <string>
 #include <string_view>
 
-#include "expression.h"
-#include "expression_kind.h"
-#include "expression_traits.h"
-
-#include "takatori/type/data_type.h"
-
 #include "takatori/util/enum_tag.h"
 #include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
-#include "takatori/util/optional_ptr.h"
 
 namespace takatori::scalar {
 

@@ -6,7 +6,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 #include "binary_operator.h"
 
 #include "takatori/util/meta_type.h"
@@ -204,8 +203,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for binary.
+ * @brief type_of for binary.
  */
-template<> struct expression_kind_type<binary::tag> : util::meta_type<binary> {};
+template<> struct type_of<binary::tag> : util::meta_type<binary> {};
 
 } // namespace takatori::scalar

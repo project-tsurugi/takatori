@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "data_type_kind.h"
-#include "data_type.h"
+#include "type_kind.h"
+#include "data.h"
 
 #include "takatori/util/meta_type.h"
 
@@ -12,10 +12,10 @@ namespace takatori::type {
 /**
  * @brief decimal number type.
  */
-class decimal : public data_type {
+class decimal : public data {
 public:
     /// @brief the kind of this type.
-    static constexpr inline data_type_kind tag = data_type_kind::decimal;
+    static constexpr inline type_kind tag = type_kind::decimal;
 
     /// @brief the size type.
     using size_type = std::size_t;
@@ -35,7 +35,7 @@ public:
     decimal(decimal&& other) noexcept = delete;
     decimal& operator=(decimal&& other) noexcept = delete;
 
-    data_type_kind kind() const noexcept override;
+    type_kind kind() const noexcept override;
     decimal* clone(util::object_creator creator) const& override;
     decimal* clone(util::object_creator creator) && override;
 
@@ -79,7 +79,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, decimal const& value);
 
 protected:
-    bool equals(data_type const& other) const noexcept override;
+    bool equals(data const& other) const noexcept override;
     std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
     
@@ -103,13 +103,13 @@ decimal::scale() const noexcept {
     return scale_;
 }
 
-template<> struct data_type_kind_type<decimal::tag> : util::meta_type<decimal> {};
+template<> struct type_of<decimal::tag> : util::meta_type<decimal> {};
 
 } // namespace takatori::type
 
 namespace std {
 
 /// @brief provides hash code of takatori::type::decimal.
-template<> struct hash<takatori::type::decimal> : hash<takatori::type::data_type> {};
+template<> struct hash<takatori::type::decimal> : hash<takatori::type::data> {};
 
 } // namespace std

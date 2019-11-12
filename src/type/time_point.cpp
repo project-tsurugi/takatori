@@ -8,7 +8,7 @@ time_point::time_point(std::optional<descriptor::time_zone> time_zone) noexcept
     : time_zone_(std::move(time_zone))
 {}
 
-data_type_kind time_point::kind() const noexcept {
+type_kind time_point::kind() const noexcept {
     return tag;
 }
 
@@ -45,7 +45,7 @@ std::ostream& operator<<(std::ostream& out, time_point const& value) {
     return out;
 }
 
-bool time_point::equals(data_type const& other) const noexcept {
+bool time_point::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<time_point>(other);
 }
 

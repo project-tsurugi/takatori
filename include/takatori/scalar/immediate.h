@@ -6,10 +6,9 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 
-#include "takatori/descriptor/value.h"
-#include "takatori/type/data_type.h"
+#include "takatori/type/data.h"
+#include "takatori/value/data.h"
 
 #include "takatori/util/meta_type.h"
 #include "takatori/util/object_creator.h"
@@ -33,22 +32,22 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param value the descriptor of the immediate value
-     * @param data_type the value type
+     * @param value the immediate value
+     * @param type the value type
      */
     explicit immediate(
-            descriptor::value value,
-            std::shared_ptr<type::data_type const> data_type) noexcept;
+            std::shared_ptr<value::data const> value,
+            std::shared_ptr<type::data const> type) noexcept;
 
     /**
      * @brief creates a new object.
-     * @param value the descriptor of the immediate value
-     * @param data_type the value type
-     * @attention this may take a copy of given type
+     * @param value the immediate value
+     * @param type the value type
+     * @attention this may take a copy of given value and type
      */
     immediate(
-            descriptor::value value,
-            type::data_type&& data_type);
+            value::data&& value,
+            type::data&& type);
 
     /**
      * @brief creates a new object.
@@ -73,45 +72,60 @@ public:
     immediate* clone(util::object_creator creator) && override;
 
     /**
-     * @brief returns the descriptor of indicating value.
-     * @return the value
+     * @brief returns the immediate value.
+     * @return the immediate value
+     * @warning undefined behavior if the value is absent
      */
-    descriptor::value const& value() const noexcept;
+    value::data const& value() const noexcept;
 
     /**
-     * @brief sets a descriptor of value.
-     * @param value the value
+     * @brief returns the immediate value.
+     * @return the immediate value
+     * @return empty if the value is absent
+     */
+    util::optional_ptr<value::data const> optional_value() const noexcept;
+
+    /**
+     * @brief returns the immediate value for share its value.
+     * @return the immediate value for sharing
+     * @return empty if the value is absent
+     */
+    std::shared_ptr<value::data const> shared_value() const noexcept;
+
+    /**
+     * @brief sets a immediate value.
+     * @param value the immediate value
      * @return this
      */
-    immediate& value(descriptor::value value) noexcept;
+    immediate& value(std::shared_ptr<value::data const> value) noexcept;
 
     /**
      * @brief returns the value type.
      * @return the value type
      * @warning undefined behavior if the type is absent
      */
-    type::data_type const& data_type() const noexcept;
+    type::data const& type() const noexcept;
 
     /**
      * @brief returns the value type.
      * @return the value type
      * @return empty if the type is absent
      */
-    util::optional_ptr<type::data_type const> optional_data_type() const noexcept;
+    util::optional_ptr<type::data const> optional_type() const noexcept;
 
     /**
      * @brief returns the value type for share its type.
      * @return the value type for sharing
      * @return empty if the type is absent
      */
-    std::shared_ptr<type::data_type const> shared_data_type() const noexcept;
+    std::shared_ptr<type::data const> shared_type() const noexcept;
 
     /**
      * @brief sets a value type.
-     * @param data_type the value type
+     * @param type the value type
      * @return this
      */
-    immediate& data_type(std::shared_ptr<type::data_type const> data_type) noexcept;
+    immediate& type(std::shared_ptr<type::data const> type) noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -144,14 +158,14 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    descriptor::value value_;
-    std::shared_ptr<type::data_type const> data_type_;
+    std::shared_ptr<value::data const> value_;
+    std::shared_ptr<type::data const> type_;
     parent_type* parent_ {};
 };
 
 /**
- * @brief expression_kind_type for immediate.
+ * @brief type_of for immediate.
  */
-template<> struct expression_kind_type<immediate::tag> : util::meta_type<immediate> {};
+template<> struct type_of<immediate::tag> : util::meta_type<immediate> {};
 
 } // namespace takatori::scalar

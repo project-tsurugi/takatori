@@ -20,9 +20,6 @@ enum class descriptor_kind {
     /// @brief describes a function.
     function,
 
-    /// @brief describes a data type.
-    data_type,
-
     /// @brief describes a query.
     query,
 
@@ -42,7 +39,6 @@ constexpr inline std::string_view to_string_view(descriptor_kind value) noexcept
         case kind::value: return "value"sv;
         case kind::variable: return "variable"sv;
         case kind::function: return "function"sv;
-        case kind::data_type: return "data_type"sv;
         case kind::query: return "query"sv;
         case kind::time_zone: return "time_zone"sv;
     }

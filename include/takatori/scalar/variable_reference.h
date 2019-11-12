@@ -6,7 +6,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 
 #include "takatori/descriptor/variable.h"
 
@@ -107,8 +106,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for variable_reference.
+ * @brief type_of for variable_reference.
  */
-template<> struct expression_kind_type<variable_reference::tag> : util::meta_type<variable_reference> {};
+template<> struct type_of<variable_reference::tag> : util::meta_type<variable_reference> {};
 
 } // namespace takatori::scalar

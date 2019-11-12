@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class coalesce_test : public ::testing::Test {};
 
 static_assert(coalesce::tag == expression_kind::coalesce);
-static_assert(std::is_same_v<expression_kind_type_t<coalesce::tag>, coalesce>);
+static_assert(std::is_same_v<type_of_t<coalesce::tag>, coalesce>);
 
 TEST_F(coalesce_test, simple) {
     coalesce expr {

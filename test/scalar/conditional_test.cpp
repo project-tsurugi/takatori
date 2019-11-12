@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class conditional_test : public ::testing::Test {};
 
 static_assert(conditional::tag == expression_kind::conditional);
-static_assert(std::is_same_v<expression_kind_type_t<conditional::tag>, conditional>);
+static_assert(std::is_same_v<type_of_t<conditional::tag>, conditional>);
 
 static_assert(tree::is_tree_fragment_v<conditional_alternative>);
 

@@ -3,7 +3,10 @@
 #include <iostream>
 #include <string>
 #include <string_view>
-#include <utility>
+
+#include <cstdlib>
+
+#include "takatori/util/enum_tag.h"
 
 namespace takatori::value {
 
@@ -12,7 +15,7 @@ namespace takatori::value {
  */
 enum class unknown_kind {
     /// @brief value is absent.
-    null,
+    null = 0,
     /// @brief value is not a number (NaN)
     not_a_number,
 };

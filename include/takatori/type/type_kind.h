@@ -3,14 +3,17 @@
 #include <iostream>
 #include <string>
 #include <string_view>
-#include <utility>
+
+#include <cstdlib>
+
+#include "takatori/util/enum_tag.h"
 
 namespace takatori::type {
 
 /**
  * @brief represents kind of data type.
  */
-enum class data_type_kind {
+enum class type_kind {
     // built-in types
 
     /// @brief boolean type.
@@ -29,9 +32,9 @@ enum class data_type_kind {
     float8,
     /// @brief decimal number type.
     decimal,
-    /// @brief character type.
+    /// @brief character sequence type.
     character,
-    /// @brief bit type.
+    /// @brief bit sequence type.
     bit,
     /// @brief date type.
     date,
@@ -50,12 +53,6 @@ enum class data_type_kind {
     record, // FIXME: impl
 
     // special types
-    /**
-     * @brief user defined type.
-     * @attention this must not appear on runtime.
-     */
-    user, // FIXME: impl
-
     /// @brief unknown type, including nulls.
     unknown,
 
@@ -66,35 +63,32 @@ enum class data_type_kind {
     row_id, // FIXME: impl
 
     /**
-     * @brief unresolved type, for placeholder values.
-     * @attention this must not appear on runtime.
-     */
-    unresolved, // FIXME: impl
-
-    /**
      * @brief compile error type.
      * @attention this must not appear on runtime.
      */
     error, // FIXME: impl
+
+    /// @brief custom type for compiler or third party extension.
+    extension, // FIXME: impl
 };
 
 /**
- * @brief provides implementation type for the data_type_kind.
+ * @brief provides implementation type for the type_kind.
  * @tparam Kind the expression kind
  */
-template<data_type_kind Kind> struct data_type_kind_type {};
+template<type_kind Kind> struct type_of {};
 
-/// @copydoc data_type_kind_type
-template<data_type_kind Kind> using data_type_kind_type_t = typename data_type_kind_type<Kind>::type;
+/// @copydoc type_of
+template<type_kind Kind> using type_of_t = typename type_of<Kind>::type;
 
 /**
  * @brief returns string representation of the value.
  * @param value the target value
  * @return the corresponded string representation
  */
-constexpr inline std::string_view to_string_view(data_type_kind value) noexcept {
+constexpr inline std::string_view to_string_view(type_kind value) noexcept {
     using namespace std::string_view_literals;
-    using kind = data_type_kind;
+    using kind = type_kind;
     switch (value) {
         case kind::boolean: return "bool"sv;
         case kind::int1: return "int1"sv;
@@ -112,12 +106,11 @@ constexpr inline std::string_view to_string_view(data_type_kind value) noexcept 
         case kind::time_interval: return "time_interval"sv;
         case kind::array: return "array"sv;
         case kind::record: return "record"sv;
-        case kind::user: return "user"sv;
         case kind::unknown: return "unknown"sv;
         case kind::row_reference: return "row_reference"sv;
         case kind::row_id: return "row_id"sv;
-        case kind::unresolved: return "unresolved"sv;
         case kind::error: return "error"sv;
+        case kind::extension: return "extension"sv;
     }
     std::abort();
 }
@@ -128,7 +121,7 @@ constexpr inline std::string_view to_string_view(data_type_kind value) noexcept 
  * @param value the target value
  * @return the output
  */
-inline std::ostream& operator<<(std::ostream& out, data_type_kind value) {
+inline std::ostream& operator<<(std::ostream& out, type_kind value) {
     return out << to_string_view(value);
 }
 

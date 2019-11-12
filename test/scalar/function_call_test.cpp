@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class function_call_test : public ::testing::Test {};
 
 static_assert(function_call::tag == expression_kind::function_call);
-static_assert(std::is_same_v<expression_kind_type_t<function_call::tag>, function_call>);
+static_assert(std::is_same_v<type_of_t<function_call::tag>, function_call>);
 
 TEST_F(function_call_test, simple) {
     function_call expr {funcdesc(1) };

@@ -9,32 +9,32 @@
 namespace takatori::scalar {
 
 cast::cast(
-        std::shared_ptr<type::data_type const> data_type,
+        std::shared_ptr<type::data const> type,
         cast::loss_policy_type loss_policy,
         util::unique_object_ptr<expression> operand) noexcept
-    : data_type_(std::move(data_type))
+    : type_(std::move(type))
     , loss_policy_(loss_policy)
     , operand_(tree::bless_element(*this, std::move(operand))) {}
 
 cast::cast(
-        type::data_type&& data_type,
+        type::data&& type,
         cast::loss_policy_type loss_policy,
         expression&& operand)
     : cast(
-            util::clone_shared(std::move(data_type)),
+            util::clone_shared(std::move(type)),
             loss_policy,
             util::clone_unique(std::move(operand))) {}
 
 cast::cast(cast const& other, util::object_creator creator)
     : cast(
-            other.data_type_,
+            other.type_,
             other.loss_policy_,
             tree::forward(creator, other.operand_))
 {}
 
 cast::cast(cast&& other, util::object_creator creator)
     : cast(
-            std::move(other.data_type_),
+            std::move(other.type_),
             other.loss_policy_,
             tree::forward(creator, std::move(other.operand_)))
 {}
@@ -63,20 +63,20 @@ cast* cast::clone(util::object_creator creator) && {
     return creator.create_object<cast>(std::move(*this), creator);
 }
 
-type::data_type const& cast::data_type() const noexcept {
-    return *data_type_;
+type::data const& cast::type() const noexcept {
+    return *type_;
 }
 
-util::optional_ptr<type::data_type const> cast::optional_data_type() const noexcept {
-    return util::optional_ptr { data_type_.get() };
+util::optional_ptr<type::data const> cast::optional_type() const noexcept {
+    return util::optional_ptr { type_.get() };
 }
 
-std::shared_ptr<type::data_type const> cast::shared_data_type() const noexcept {
-    return data_type_;
+std::shared_ptr<type::data const> cast::shared_type() const noexcept {
+    return type_;
 }
 
-cast& cast::data_type(std::shared_ptr<type::data_type const> data_type) noexcept {
-    data_type_ = std::move(data_type);
+cast& cast::type(std::shared_ptr<type::data const> type) noexcept {
+    type_ = std::move(type);
     return *this;
 }
 
@@ -114,7 +114,7 @@ cast& cast::operand(util::unique_object_ptr<expression> operand) noexcept {
 }
 
 bool operator==(cast const& a, cast const& b) noexcept {
-    return a.optional_data_type() == b.optional_data_type()
+    return a.optional_type() == b.optional_type()
         && a.loss_policy() == b.loss_policy()
         && a.optional_operand() == b.optional_operand();
 }
@@ -125,7 +125,7 @@ bool operator!=(cast const& a, cast const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, cast const& value) {
     return out << "cast("
-               << "data_type=" << value.optional_data_type() << ", "
+               << "data=" << value.optional_type() << ", "
                << "loss_policy=" << value.loss_policy() << ", "
                << "operand=" << value.optional_operand() << ")";
 }

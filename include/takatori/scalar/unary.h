@@ -6,7 +6,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 #include "unary_operator.h"
 
 #include "takatori/util/meta_type.h"
@@ -161,8 +160,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for unary.
+ * @brief type_of for unary.
  */
-template<> struct expression_kind_type<unary::tag> : util::meta_type<unary> {};
+template<> struct type_of<unary::tag> : util::meta_type<unary> {};
 
 } // namespace takatori::scalar

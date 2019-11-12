@@ -6,7 +6,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 #include "match_operator.h"
 
 #include "takatori/util/meta_type.h"
@@ -247,8 +246,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for match.
+ * @brief type_of for match.
  */
-template<> struct expression_kind_type<match::tag> : util::meta_type<match> {};
+template<> struct type_of<match::tag> : util::meta_type<match> {};
 
 } // namespace takatori::scalar

@@ -1,4 +1,4 @@
-#include "takatori/scalar/expression_dispatch.h"
+#include "takatori/scalar/dispatch.h"
 
 #include <gtest/gtest.h>
 
@@ -12,7 +12,7 @@ TEST_F(expression_dispatch_test, simple) {
     struct cb {
         int operator()(expression const&) { std::abort(); }
         int operator()(immediate const& expr) {
-            return resolve(expr.value());
+            return util::downcast<value::int4>(expr.value()).get();
         }
     };
 

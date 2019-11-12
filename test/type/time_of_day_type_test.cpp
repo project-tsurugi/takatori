@@ -10,6 +10,8 @@ namespace takatori::type {
 
 class time_of_day_type_test : public ::testing::Test {};
 
+static_assert(time_of_day::tag == type_kind::time_of_day);
+static_assert(std::is_same_v<type_of_t<time_of_day::tag>, time_of_day>);
 
 TEST_F(time_of_day_type_test, simple) {
     time_of_day t;

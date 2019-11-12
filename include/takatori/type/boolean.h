@@ -1,6 +1,6 @@
 #pragma once
 
-#include "data_type_kind.h"
+#include "type_kind.h"
 #include "simple_type.h"
 
 #include "takatori/util/meta_type.h"
@@ -10,11 +10,11 @@ namespace takatori::type {
 /**
  * @brief boolean type.
  */
-using boolean = simple_type<data_type_kind::boolean>;
+using boolean = simple_type<type_kind::boolean>;
 
 /**
- * @brief data_type_kind_type for boolean.
+ * @brief type_of for boolean.
  */
-template<> struct data_type_kind_type<boolean::tag> : util::meta_type<boolean> {};
+template<> struct type_of<boolean::tag> : util::meta_type<boolean> {};
 
 } // namespace takatori::type

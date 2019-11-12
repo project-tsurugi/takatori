@@ -13,7 +13,7 @@ namespace takatori::scalar {
 class variable_reference_test : public ::testing::Test {};
 
 static_assert(variable_reference::tag == expression_kind::variable_reference);
-static_assert(std::is_same_v<expression_kind_type_t<variable_reference::tag>, variable_reference>);
+static_assert(std::is_same_v<type_of_t<variable_reference::tag>, variable_reference>);
 
 TEST_F(variable_reference_test, simple) {
     variable_reference expr {vardesc(1) };

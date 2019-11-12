@@ -15,11 +15,11 @@ namespace takatori::scalar {
 class cast_test : public ::testing::Test {};
 
 static_assert(cast::tag == expression_kind::cast);
-static_assert(std::is_same_v<expression_kind_type_t<cast::tag>, cast>);
+static_assert(std::is_same_v<type_of_t<cast::tag>, cast>);
 
 TEST_F(cast_test, simple) {
     cast expr { type::int4(), cast::loss_policy_type::ignore, constant(1) };
-    EXPECT_EQ(expr.data_type(), type::int4());
+    EXPECT_EQ(expr.type(), type::int4());
     EXPECT_EQ(expr.loss_policy(), cast::loss_policy_type::ignore);
     EXPECT_EQ(expr.operand(), constant(1));
 }

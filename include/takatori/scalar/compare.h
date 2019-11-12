@@ -6,7 +6,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 #include "comparison_operator.h"
 
 #include "takatori/util/meta_type.h"
@@ -204,8 +203,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for compare.
+ * @brief type_of for compare.
  */
-template<> struct expression_kind_type<compare::tag> : util::meta_type<compare> {};
+template<> struct type_of<compare::tag> : util::meta_type<compare> {};
 
 } // namespace takatori::scalar

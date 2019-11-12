@@ -8,7 +8,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 #include "conditional_alternative.h"
 #include "takatori/tree/tree_fragment_vector.h"
 
@@ -150,8 +149,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for conditional.
+ * @brief type_of for conditional.
  */
-template<> struct expression_kind_type<conditional::tag> : util::meta_type<conditional> {};
+template<> struct type_of<conditional::tag> : util::meta_type<conditional> {};
 
 } // namespace takatori::scalar

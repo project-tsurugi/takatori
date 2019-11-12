@@ -7,7 +7,6 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "expression_traits.h"
 
 #include "takatori/tree/tree_element_vector.h"
 #include "takatori/descriptor/function.h"
@@ -138,8 +137,8 @@ private:
 };
 
 /**
- * @brief expression_kind_type for function_call.
+ * @brief type_of for function_call.
  */
-template<> struct expression_kind_type<function_call::tag> : util::meta_type<function_call> {};
+template<> struct type_of<function_call::tag> : util::meta_type<function_call> {};
 
 } // namespace takatori::scalar

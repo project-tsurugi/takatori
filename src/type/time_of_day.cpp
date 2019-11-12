@@ -8,7 +8,7 @@ time_of_day::time_of_day(std::optional<descriptor::time_zone> time_zone) noexcep
     : time_zone_(std::move(time_zone))
 {}
 
-data_type_kind time_of_day::kind() const noexcept {
+type_kind time_of_day::kind() const noexcept {
     return tag;
 }
 
@@ -45,7 +45,7 @@ std::ostream& operator<<(std::ostream& out, time_of_day const& value) {
     return out;
 }
 
-bool time_of_day::equals(data_type const& other) const noexcept {
+bool time_of_day::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<time_of_day>(other);
 }
 
