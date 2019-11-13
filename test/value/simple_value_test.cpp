@@ -61,8 +61,8 @@ TEST_F(simple_value_test, clone_move) {
 }
 
 TEST_F(simple_value_test, output) {
-    unknown t;
-    std::cout << t << std::endl;
+    unknown v;
+    std::cout << v << std::endl;
 }
 
 } // namespace takatori::value

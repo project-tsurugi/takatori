@@ -58,7 +58,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(time_of_day const& a, time_of_day const& b) noexcept;
+    friend bool operator!=(time_of_day const& a, time_of_day const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.
@@ -81,9 +81,5 @@ template<> struct type_of<time_of_day::tag> : util::meta_type<time_of_day> {};
 
 } // namespace takatori::type
 
-namespace std {
-
 /// @brief provides hash code of takatori::type::time_of_day.
-template<> struct hash<takatori::type::time_of_day> : hash<takatori::type::data> {};
-
-} // namespace std
+template<> struct std::hash<takatori::type::time_of_day> : hash<takatori::type::data> {};

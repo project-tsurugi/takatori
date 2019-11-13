@@ -74,7 +74,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(expression const& a, expression const& b) noexcept;
+    friend bool operator!=(expression const& a, expression const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.

@@ -10,7 +10,7 @@
 namespace takatori::value {
 
 /**
- * @brief a root model of values.
+ * @brief a root model of polymorphic values.
  */
 class data {
 public:
@@ -51,7 +51,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(data const& a, data const& b) noexcept;
+    friend bool operator!=(data const& a, data const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.
@@ -115,18 +115,16 @@ protected:
      */
     virtual std::ostream& print_to(std::ostream& out) const = 0;
 
-    friend struct ::std::hash<data>;
+    friend std::hash<data>;
 };
 
 } // namespace takatori::value
-
-namespace std {
 
 /**
  * @brief provides hash code of values.
  */
 template<>
-struct hash<takatori::value::data> {
+struct std::hash<takatori::value::data> {
     /**
      * @brief returns hash code of the given object.
      * @param object the target object
@@ -136,4 +134,3 @@ struct hash<takatori::value::data> {
         return object.hash() * 31 + static_cast<std::size_t>(object.kind());
     }
 };
-} // namespace std

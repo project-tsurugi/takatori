@@ -16,11 +16,11 @@ option(USE_BOOST_MEMORY_RESOURCE "use boost/container/pmr/memory_resource instea
 
 include(GNUInstallDirs)
 
-if (USE_BOOST_MEMORY_RESOURCE)
-    find_package(Boost 1.65
-            COMPONENTS container
-            REQUIRED)
-endif (USE_BOOST_MEMORY_RESOURCE)
+find_package(fpdecimal REQUIRED)
+
+find_package(Boost 1.65
+    COMPONENTS container
+    REQUIRED)
 
 find_package(Doxygen)
 

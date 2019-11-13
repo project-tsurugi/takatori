@@ -80,7 +80,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(character const& a, character const& b) noexcept;
+    friend bool operator!=(character const& a, character const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.
@@ -135,9 +135,5 @@ template<> struct type_of<character::tag> : util::meta_type<character> {};
 
 } // namespace takatori::type
 
-namespace std {
-
 /// @brief provides hash code of takatori::type::character.
-template<> struct hash<takatori::type::character> : hash<takatori::type::data> {};
-
-} // namespace std
+template<> struct std::hash<takatori::type::character> : hash<takatori::type::data> {};

@@ -116,7 +116,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(function_call const& a, function_call const& b) noexcept;
+    friend bool operator!=(function_call const& a, function_call const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.

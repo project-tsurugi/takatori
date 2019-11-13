@@ -139,7 +139,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(unary const& a, unary const& b) noexcept;
+    friend bool operator!=(unary const& a, unary const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.

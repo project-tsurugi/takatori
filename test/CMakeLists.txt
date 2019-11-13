@@ -37,6 +37,9 @@ add_test_executable(type/time_point_type_test.cpp)
 # value models
 add_test_executable(value/value_dispatch_test.cpp)
 add_test_executable(value/simple_value_test.cpp)
+add_test_executable(value/decimal_value_test.cpp)
+add_test_executable(value/character_value_test.cpp)
+add_test_executable(value/bit_value_test.cpp)
 
 # scalar expression models
 add_test_executable(scalar/expression_dispatch_test.cpp)

@@ -132,9 +132,5 @@ template<> struct type_of<bit::tag> : util::meta_type<bit> {};
 
 } // namespace takatori::type
 
-namespace std {
-
 /// @brief provides hash code of takatori::type::bit.
-template<> struct hash<takatori::type::bit> : hash<takatori::type::data> {};
-
-} // namespace std
+template<> struct std::hash<takatori::type::bit> : hash<takatori::type::data> {};

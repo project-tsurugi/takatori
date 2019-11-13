@@ -95,7 +95,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(coalesce const& a, coalesce const& b) noexcept;
+    friend bool operator!=(coalesce const& a, coalesce const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.

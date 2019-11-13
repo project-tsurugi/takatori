@@ -241,22 +241,22 @@ private:
     template<class U> friend class reference_iterator;
 
     template<class T1, class T2>
-    friend inline constexpr bool operator==(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
+    friend constexpr bool operator==(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
 
     template<class T1, class T2>
-    friend inline constexpr bool operator!=(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
+    friend constexpr bool operator!=(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
 
     template<class T1, class T2>
-    friend inline constexpr bool operator<(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
+    friend constexpr bool operator<(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
 
     template<class T1, class T2>
-    friend inline constexpr bool operator>(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
+    friend constexpr bool operator>(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
 
     template<class T1, class T2>
-    friend inline constexpr bool operator<=(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
+    friend constexpr bool operator<=(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
 
     template<class T1, class T2>
-    friend inline constexpr bool operator>=(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
+    friend constexpr bool operator>=(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
 };
 
 /// @private

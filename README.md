@@ -25,6 +25,19 @@ optional packages:
 * `graphviz`
 * `clang-tidy-8`
 
+### Install sub-modules
+
+#### fpdecimal
+
+```sh
+cd third_party/fpdecimal
+mkdir -p build
+cd build
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release [-DCMAKE_INSTALL_PREFIX=/path/to/install] -DBUILD_TESTS=OFF -DBUILD_DOCUMENTS=OFF ..
+ninja
+ninja install
+```
+
 ## How to build
 
 ```sh

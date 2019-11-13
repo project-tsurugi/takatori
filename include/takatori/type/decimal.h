@@ -68,7 +68,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(decimal const& a, decimal const& b) noexcept;
+    friend bool operator!=(decimal const& a, decimal const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.
@@ -107,9 +107,5 @@ template<> struct type_of<decimal::tag> : util::meta_type<decimal> {};
 
 } // namespace takatori::type
 
-namespace std {
-
 /// @brief provides hash code of takatori::type::decimal.
-template<> struct hash<takatori::type::decimal> : hash<takatori::type::data> {};
-
-} // namespace std
+template<> struct std::hash<takatori::type::decimal> : hash<takatori::type::data> {};

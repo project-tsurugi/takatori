@@ -12,20 +12,32 @@ namespace takatori::value {
 /**
  * @brief traits for value_kind::int4.
  */
-template<> struct simple_value_traits<value_kind::int4> : util::meta_type<std::int32_t> {};
+template<>
+struct simple_value_traits<value_kind::int4> {
+    /// @brief the entity type.
+    using entity_type = std::int32_t;
+    /// @brief the view type.
+    using view_type = entity_type;
+};
 
 /**
  * @brief traits for value_kind::int8.
  */
-template<> struct simple_value_traits<value_kind::int8> : util::meta_type<std::int64_t> {};
+template<>
+struct simple_value_traits<value_kind::int8> {
+    /// @brief the entity type.
+    using entity_type = std::int64_t;
+    /// @brief the view type.
+    using view_type = entity_type;
+};
 
 /**
- * @brief 4-octets integral number.
+ * @brief 4-octets integral number as polymorphic value model.
  */
 using int4 = simple_value<value_kind::int4>;
 
 /**
- * @brief 8-octets integral number.
+ * @brief 8-octets integral number as polymorphic value model.
  */
 using int8 = simple_value<value_kind::int8>;
 

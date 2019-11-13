@@ -31,6 +31,21 @@ pipeline {
                 '''
             }
         }
+        stage ('Install fpdecimal') {
+            steps {
+                sh '''
+                    cd third_party/fpdecimal
+                    git log -n 1 --format=%H
+                    # git clean -dfx
+                    mkdir -p build
+                    cd build
+                    # clean up cache variables from previous build
+                    rm -f CMakeCache.txt
+                    cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=OFF -DBUILD_DOCUMENTS=OFF -DCMAKE_INSTALL_PREFIX=${WORKSPACE}/.local ..
+                    make all install -j${BUILD_PARALLEL_NUM}
+                '''
+            }
+        }
         stage ('Build') {
             steps {
                 sh '''

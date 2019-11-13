@@ -10,13 +10,13 @@
 #include "boolean.h"
 #include "int.h"
 #include "float.h"
-// #include "decimal.h"
-// #include "character.h"
-// #include "bit.h"
-// #include "date.h"
-// #include "time_of_day.h"
-// #include "time_point.h"
-// #include "time_interval.h"
+#include "decimal.h"
+#include "character.h"
+#include "bit.h"
+#include "date.h"
+#include "time_of_day.h"
+#include "time_point.h"
+#include "time_interval.h"
 // #include "array.h"
 // #include "record.h"
 #include "unknown.h"
@@ -49,13 +49,13 @@ inline auto dispatch(Callback&& callback, data const& object, Args&&... args) {
         case int8::tag: return util::polymorphic_callback<int8>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case float4::tag: return util::polymorphic_callback<float4>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case float8::tag: return util::polymorphic_callback<float8>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case decimal::tag: return util::polymorphic_callback<decimal>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case character::tag: return util::polymorphic_callback<character>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case bit::tag: return util::polymorphic_callback<bit>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case date::tag: return util::polymorphic_callback<date>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case time_of_day::tag: return util::polymorphic_callback<time_of_day>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case time_point::tag: return util::polymorphic_callback<time_point>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case time_interval::tag: return util::polymorphic_callback<time_interval>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case decimal::tag: return util::polymorphic_callback<decimal>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case character::tag: return util::polymorphic_callback<character>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case bit::tag: return util::polymorphic_callback<bit>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case date::tag: return util::polymorphic_callback<date>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case time_of_day::tag: return util::polymorphic_callback<time_of_day>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case time_point::tag: return util::polymorphic_callback<time_point>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case time_interval::tag: return util::polymorphic_callback<time_interval>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 //        case array::tag: return util::polymorphic_callback<array>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 //        case record::tag: return util::polymorphic_callback<record>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 //        case error::tag: return util::polymorphic_callback<error>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);

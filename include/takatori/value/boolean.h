@@ -10,10 +10,16 @@ namespace takatori::value {
 /**
  * @brief traits for value_kind::boolean.
  */
-template<> struct simple_value_traits<value_kind::boolean> : util::meta_type<bool> {};
+template<>
+struct simple_value_traits<value_kind::boolean> {
+    /// @brief the entity type.
+    using entity_type = bool;
+    /// @brief the view type.
+    using view_type = entity_type;
+};
 
 /**
- * @brief boolean value.
+ * @brief boolean value as polymorphic value model.
  */
 using boolean = simple_value<value_kind::boolean>;
 

@@ -223,7 +223,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(match const& a, match const& b) noexcept;
+    friend bool operator!=(match const& a, match const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.

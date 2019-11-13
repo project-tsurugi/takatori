@@ -137,15 +137,13 @@ inline std::ostream& operator<<(std::ostream& out, element<K, E> const& value) {
 } // namespace takatori::descriptor
 
 
-namespace std {
-
 /**
  * @brief std::hash specialization for takatori::descriptor::element.
  * @tparam K the element kind
  * @tparam E the entity type
  */
 template<takatori::descriptor::descriptor_kind K, class E>
-struct hash<takatori::descriptor::element<K, E>> {
+struct std::hash<takatori::descriptor::element<K, E>> {
     /**
      * @brief compute hash of the given object.
      * @param value the target object
@@ -155,5 +153,3 @@ struct hash<takatori::descriptor::element<K, E>> {
         return reinterpret_cast<std::size_t>(value.entity().get()); // NOLINT
     }
 };
-
-} // namespace std

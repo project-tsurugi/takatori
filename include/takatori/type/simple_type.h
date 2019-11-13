@@ -117,13 +117,9 @@ inline std::ostream& simple_type<Kind>::print_to(std::ostream& out) const {
 
 } // namespace takatori::type
 
-namespace std {
-
 /**
  * @brief provides hash code of takatori::type::simple_type.
  * @tparam Kind the type kind
  */
 template<takatori::type::type_kind Kind>
-struct hash<takatori::type::simple_type<Kind>> : hash<takatori::type::data> {};
-
-} // namespace std
+struct std::hash<takatori::type::simple_type<Kind>> : hash<takatori::type::data> {};

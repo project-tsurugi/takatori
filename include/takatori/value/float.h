@@ -10,20 +10,32 @@ namespace takatori::value {
 /**
  * @brief traits for value_kind::float4.
  */
-template<> struct simple_value_traits<value_kind::float4> : util::meta_type<float> {};
+template<>
+struct simple_value_traits<value_kind::float4> {
+    /// @brief the entity type.
+    using entity_type = float;
+    /// @brief the view type.
+    using view_type = entity_type;
+};
 
 /**
  * @brief traits for value_kind::float8.
  */
-template<> struct simple_value_traits<value_kind::float8> : util::meta_type<double> {};
+template<>
+struct simple_value_traits<value_kind::float8> {
+    /// @brief the entity type.
+    using entity_type = double;
+    /// @brief the view type.
+    using view_type = entity_type;
+};
 
 /**
- * @brief 4-octets floating point number.
+ * @brief 4-octets binary floating point number as polymorphic value model.
  */
 using float4 = simple_value<value_kind::float4>;
 
 /**
- * @brief 8-octets floating point number.
+ * @brief 8-octets binary floating point number as polymorphic value model.
  */
 using float8 = simple_value<value_kind::float8>;
 

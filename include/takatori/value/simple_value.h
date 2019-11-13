@@ -11,6 +11,9 @@ namespace takatori::value {
 
 /**
  * @brief traits for the simple_value.
+ * This provides the following properties:
+ * - entity_type the entity type
+ * - view_type the view type
  * @tparam Kind the value kind, must be simple type
  */
 template<value_kind Kind> struct simple_value_traits;
@@ -27,10 +30,12 @@ public:
     static constexpr inline value_kind tag = Kind;
 
     /// @brief the entity type
-    using entity_type = typename simple_value_traits<Kind>::type;
+    using entity_type = typename simple_value_traits<Kind>::entity_type;
+
+    /// @brief the view type
+    using view_type = typename simple_value_traits<Kind>::view_type;
 
     static_assert(std::is_copy_constructible_v<entity_type>);
-    static_assert(std::is_trivially_copyable_v<entity_type>);
 
     static_assert(util::is_equal_comparable_v<entity_type, entity_type>);
     static_assert(util::is_less_comparable_v<entity_type, entity_type>);
@@ -55,10 +60,10 @@ public:
      * @brief returns the entity value.
      * @return the entity value
      */
-    constexpr entity_type get() const noexcept;
+    constexpr view_type get() const noexcept;
 
     /// @copydoc get()
-    explicit constexpr operator entity_type() const noexcept;
+    explicit constexpr operator view_type() const noexcept;
 
 protected:
     bool equals(data const& other) const noexcept override;
@@ -88,13 +93,14 @@ simple_value<Kind>::clone(util::object_creator creator) && {
 }
 
 template<value_kind Kind>
-inline constexpr typename simple_value<Kind>::entity_type
+inline constexpr typename simple_value<Kind>::view_type
 simple_value<Kind>::get() const noexcept {
     return entity_;
 }
 
 template<value_kind Kind>
-inline constexpr simple_value<Kind>::operator entity_type() const noexcept {
+inline constexpr
+simple_value<Kind>::operator view_type() const noexcept {
     return get();
 }
 
@@ -107,7 +113,8 @@ inline constexpr simple_value<Kind>::operator entity_type() const noexcept {
  * @return false otherwise
  */
 template<value_kind Kind>
-inline constexpr bool operator==(simple_value<Kind> const& a, simple_value<Kind> const& b) noexcept {
+inline constexpr bool
+operator==(simple_value<Kind> const& a, simple_value<Kind> const& b) noexcept {
     return a.get() == b.get();
 }
 
@@ -120,7 +127,8 @@ inline constexpr bool operator==(simple_value<Kind> const& a, simple_value<Kind>
  * @return false otherwise
  */
 template<value_kind Kind>
-inline constexpr bool operator!=(simple_value<Kind> const& a, simple_value<Kind> const& b) noexcept {
+inline constexpr bool
+operator!=(simple_value<Kind> const& a, simple_value<Kind> const& b) noexcept {
     return !(a == b);
 }
 
@@ -132,34 +140,34 @@ inline constexpr bool operator!=(simple_value<Kind> const& a, simple_value<Kind>
  * @return the output
  */
 template<value_kind Kind>
-inline std::ostream& operator<<(std::ostream& out, simple_value<Kind> const& value) {
+inline std::ostream&
+operator<<(std::ostream& out, simple_value<Kind> const& value) {
     return out << Kind << "(" << value.get() << ")";
 }
 
 template<value_kind Kind>
-inline bool simple_value<Kind>::equals(data const& other) const noexcept {
+inline bool
+simple_value<Kind>::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<simple_value<Kind>>(other);
 }
 
 template<value_kind Kind>
-inline std::size_t simple_value<Kind>::hash() const noexcept {
+inline std::size_t
+simple_value<Kind>::hash() const noexcept {
     return std::hash<entity_type>{}(entity_);
 }
 
 template<value_kind Kind>
-inline std::ostream& simple_value<Kind>::print_to(std::ostream& out) const {
+inline std::ostream&
+simple_value<Kind>::print_to(std::ostream& out) const {
     return out << *this;
 }
 
 } // namespace takatori::value
-
-namespace std {
 
 /**
  * @brief provides hash code of takatori::value::simple_value.
  * @tparam Kind the value kind
  */
 template<takatori::value::value_kind Kind>
-struct hash<takatori::value::simple_value<Kind>> : hash<takatori::value::data> {};
-
-} // namespace std
+struct std::hash<takatori::value::simple_value<Kind>> : hash<takatori::value::data> {};

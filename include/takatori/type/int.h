@@ -8,22 +8,22 @@
 namespace takatori::type {
 
 /**
- * @brief 1-byte integral number type.
+ * @brief 1-octet integral number type.
  */
 using int1 = simple_type<type_kind::int1>;
 
 /**
- * @brief 2-bytes integral number type.
+ * @brief 2-octets integral number type.
  */
 using int2 = simple_type<type_kind::int2>;
 
 /**
- * @brief 4-bytes integral number type.
+ * @brief 4-octets integral number type.
  */
 using int4 = simple_type<type_kind::int4>;
 
 /**
- * @brief 8-bytes integral number type.
+ * @brief 8-octets integral number type.
  */
 using int8 = simple_type<type_kind::int8>;
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -297,20 +298,6 @@ public:
     /// @copydoc end()
     const_iterator cend() const noexcept { return entry_ == nullptr ? nullptr : entry_ + 1; }  // NOLINT
 
-    /**
-     * @brief provides hash function of optional_reference.
-     * @tparam value_hash the hash function object for element values
-     */
-    template<class value_hash = std::hash<T>>
-    struct hash {
-        /**
-         * @brief returns the hash code of the reference.
-         * @param value the target reference
-         * @return the corresponded hash code
-         */
-        std::size_t operator()(optional_ptr const& value) const noexcept;
-    };
-
 private:
     pointer entry_ {};
 
@@ -486,13 +473,6 @@ inline bool operator>=(optional_ptr<T> const& a, U const& b) noexcept { return !
 template<class T, class U>
 inline bool operator>=(T const& a, optional_ptr<U> const& b) noexcept { return !(a < b); }
 
-// documented
-template<class T>
-template<class element_hash>
-inline std::size_t optional_ptr<T>::hash<element_hash>::operator()(optional_ptr<T> const& value) const noexcept {
-    return value.entry_ == nullptr ? 0 : 1 + 31 * element_hash{}(*value.entry_);
-}
-
 /**
  * @brief converts the reference by dynamic pointer cast.
  * @tparam T the destination value type
@@ -569,3 +549,19 @@ inline std::ostream& operator<<(std::ostream& out, optional_ptr<T> const& value)
 }
 
 } // namespace takatori::util
+
+/**
+ * @brief provides hash function of optional_reference.
+ * @tparam value_hash the hash function object for element values
+ */
+template<class T>
+struct std::hash<takatori::util::optional_ptr<T>> {
+    /**
+     * @brief returns the hash code of the reference.
+     * @param value the target reference
+     * @return the corresponded hash code
+     */
+    std::size_t operator()(takatori::util::optional_ptr<T> const& value) const noexcept {
+        return value.get() == nullptr ? 0 : 1 + 31 * ::std::hash<T>{}(value.value());
+    }
+};

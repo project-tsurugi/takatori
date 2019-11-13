@@ -51,7 +51,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(data const& a, data const& b) noexcept;
+    friend bool operator!=(data const& a, data const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.
@@ -115,18 +115,16 @@ protected:
      */
     virtual std::ostream& print_to(std::ostream& out) const = 0;
 
-    friend struct ::std::hash<data>;
+    friend std::hash<data>;
 };
 
 } // namespace takatori::type
-
-namespace std {
 
 /**
  * @brief provides hash code of type.
  */
 template<>
-struct hash<takatori::type::data> {
+struct std::hash<takatori::type::data> {
     /**
      * @brief returns hash code of the given object.
      * @param object the target object
@@ -136,4 +134,3 @@ struct hash<takatori::type::data> {
         return object.hash() * 31 + static_cast<std::size_t>(object.kind());
     }
 };
-} // namespace std

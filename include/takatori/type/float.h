@@ -8,12 +8,12 @@
 namespace takatori::type {
 
 /**
- * @brief 4-bytes floating point number type.
+ * @brief 4-octets binary floating point number type.
  */
 using float4 = simple_type<type_kind::float4>;
 
 /**
- * @brief 8-bytes floating point number type.
+ * @brief 8-octets binary floating point number type.
  */
 using float8 = simple_type<type_kind::float8>;
 

@@ -86,7 +86,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend inline bool operator!=(variable_reference const& a, variable_reference const& b) noexcept;
+    friend bool operator!=(variable_reference const& a, variable_reference const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.
