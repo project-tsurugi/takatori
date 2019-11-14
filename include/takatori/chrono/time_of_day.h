@@ -71,7 +71,7 @@ private:
     std::uint64_t total_nanoseconds_ {};
 
     static constexpr std::uint64_t normalize(std::int64_t time) noexcept {
-        constexpr std::int64_t day = 86'400'000'000'000ll;
+        constexpr std::int64_t day = 86'400'000'000'000LL;
         if (time < 0) {
             return static_cast<std::uint64_t>((time % day) + day);
         }
@@ -79,7 +79,7 @@ private:
     }
 
     static constexpr std::uint64_t normalize(std::uint64_t time) noexcept {
-        constexpr std::uint64_t day = 86'400'000'000'000ull;
+        constexpr std::uint64_t day = 86'400'000'000'000ULL;
         return time % day;
     }
 

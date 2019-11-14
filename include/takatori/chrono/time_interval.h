@@ -129,8 +129,7 @@ inline constexpr time_interval::time_interval(std::int64_t months, std::int64_t 
 
 template<class Rep, class Period>
 inline constexpr time_interval::time_interval(std::chrono::duration<Rep, Period> duration) noexcept
-    : total_months_(0)
-    , total_nanoseconds_(std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count())
+    : total_nanoseconds_(std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count())
 {}
 
 inline constexpr std::int64_t time_interval::total_months() const noexcept {

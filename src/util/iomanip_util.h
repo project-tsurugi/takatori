@@ -18,6 +18,11 @@ public:
         out_ << std::setfill(last_fill_);
     }
 
+    instant_fill(instant_fill const&) = delete;
+    instant_fill& operator=(instant_fill const&) = delete;
+    instant_fill(instant_fill&&) noexcept = delete;
+    instant_fill& operator=(instant_fill&&) noexcept = delete;
+
 private:
     std::ostream& out_;
     char last_fill_;

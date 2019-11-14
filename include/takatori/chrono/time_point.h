@@ -25,19 +25,19 @@ public:
      * @param date the date
      * @param time the time of day
      */
-    explicit constexpr time_point(class date date, class time_of_day time) noexcept;
+    explicit constexpr time_point(chrono::date date, chrono::time_of_day time) noexcept;
 
     /**
      * @brief returns the date.
      * @return the date
      */
-    constexpr class date date() const noexcept;
+    constexpr chrono::date date() const noexcept;
 
     /**
      * @brief returns the time of day.
      * @return the time of day
      */
-    constexpr class time_of_day time() const noexcept;
+    constexpr chrono::time_of_day time() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -66,22 +66,22 @@ public:
     friend std::ostream& operator<<(std::ostream& out, time_point const& value);
 
 private:
-    class date date_ {};
-    class time_of_day time_ {};
+    chrono::date date_ {};
+    chrono::time_of_day time_ {};
 
     std::ostream& print_body(std::ostream& out) const;
 };
 
-constexpr time_point::time_point(class date date, class time_of_day time) noexcept
+constexpr time_point::time_point(chrono::date date, chrono::time_of_day time) noexcept
     : date_(date)
     , time_(time)
 {}
 
-constexpr class date time_point::date() const noexcept {
+constexpr chrono::date time_point::date() const noexcept {
     return date_;
 }
 
-constexpr class time_of_day time_point::time() const noexcept {
+constexpr chrono::time_of_day time_point::time() const noexcept {
     return time_;
 }
 

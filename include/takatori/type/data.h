@@ -115,7 +115,7 @@ protected:
      */
     virtual std::ostream& print_to(std::ostream& out) const = 0;
 
-    friend std::hash<data>;
+    friend struct std::hash<data>;
 };
 
 } // namespace takatori::type

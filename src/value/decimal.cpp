@@ -1,5 +1,7 @@
 #include "takatori/value/decimal.h"
 
+#include <string_view>
+
 #include <cstring>
 
 namespace takatori::value {
@@ -29,9 +31,9 @@ decimal::operator view_type() const noexcept {
 }
 
 bool operator==(decimal const& a, decimal const& b) noexcept {
-    auto d1 = a.entity_.entity();
-    auto d2 = b.entity_.entity();
-    return std::memcmp(d1.bytes, d2.bytes, sizeof(decltype(d1)::bytes)) == 0;
+    auto&& d1 = a.entity_.entity();
+    auto&& d2 = b.entity_.entity();
+    return std::memcmp(&d1, &d2, sizeof(decltype(d1))) == 0;
 }
 
 bool operator!=(decimal const& a, decimal const& b) noexcept {
@@ -47,11 +49,12 @@ bool decimal::equals(data const& other) const noexcept {
 }
 
 std::size_t decimal::hash() const noexcept {
-    std::size_t result = 0;
-    for (auto b : entity_.entity().words) {
-        result = result * 31 + b;
-    }
-    return result;
+    auto&& d = entity_.entity();
+    std::string_view p {
+            reinterpret_cast<std::string_view::const_pointer>(&d), // NOLINT
+            sizeof(d),
+    };
+    return std::hash<std::string_view>{}(p);
 }
 
 std::ostream& decimal::print_to(std::ostream& out) const {
