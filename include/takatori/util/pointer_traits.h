@@ -15,8 +15,6 @@ template<class T> struct is_bool_support : std::is_constructible<bool, T> {};
 /// @private
 template<class T, class = void> struct is_dereference_support : std::is_pointer<T> {};
 
-// FIXME: detector idiom
-
 /// @private
 template<class Ptr> struct is_dereference_support<
         Ptr,

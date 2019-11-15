@@ -29,7 +29,7 @@ std::uint32_t date::day() const noexcept {
     return v.day_of_month;
 }
 
-std::ostream& operator<<(std::ostream& out, date const& value) {
+std::ostream& operator<<(std::ostream& out, date value) {
     out << "date(";
     value.print_body(out);
     out << ")";

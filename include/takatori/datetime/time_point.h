@@ -20,6 +20,9 @@ public:
     /// @brief time unit.
     using time_unit = std::chrono::duration<std::uint64_t, std::nano>;
 
+    /// @brief time offset type.
+    using difference_type = std::chrono::nanoseconds;
+
     /**
      * @brief creates a new instance of the epoch time, which represents 1900-01-01 00:00:00 GMT.
      */
@@ -27,9 +30,9 @@ public:
 
     /**
      * @brief creates a new instance
-     * @param elapsed elapsed time since 1900-01-01 00:00:00 GMT, ignoring leap seconds
+     * @param time_since_epoch elapsed time since 1900-01-01 00:00:00 GMT, ignoring leap seconds
      */
-    explicit constexpr time_point(time_unit elapsed) noexcept;
+    explicit constexpr time_point(time_unit time_since_epoch) noexcept;
 
     /**
      * @brief creates a new instance from date and time.
@@ -39,16 +42,17 @@ public:
     explicit time_point(datetime::date date, datetime::time_of_day time = {}) noexcept;
 
     /**
-     * @brief creates a new instance from date and time.
-     * @param date date in GMT
-     * @param time time of the date
+     * @brief creates a new instance.
+     * @tparam Clock the clock type
+     * @tparam Duration the duration type
+     * @param time time system time point
      */
     template<class Clock, class Duration>
     explicit time_point(std::chrono::time_point<Clock, Duration> time);
 
     /**
      * @brief returns the time point of now in system clock.
-     * @return now
+     * @return time point of now
      */
     static time_point now();
 
@@ -56,7 +60,7 @@ public:
      * @brief returns the elapsed time since 1900-01-01 00:00:00 GMT, ignoring leap seconds.
      * @return the the elapsed time since the epoch
      */
-    constexpr time_unit elapsed() const noexcept;
+    constexpr time_unit time_since_epoch() const noexcept;
 
     /**
      * @brief returns the date of the time point (in GMT).
@@ -73,10 +77,55 @@ public:
     /**
      * @brief returns a pair of date and time of the time point (in GMT).
      * @return the date and time
+     * @see calendar
      */
     constexpr std::pair<datetime::date, datetime::time_of_day> date_time() const noexcept;
 
-    // FIXME: with tz
+    /**
+     * @brief adds a time point and offset.
+     * @param a the time point
+     * @param b the offset
+     * @return the computed time point
+     */
+    friend constexpr time_point operator+(time_point a, difference_type b) noexcept;
+
+    /**
+     * @brief adds a time point and offset.
+     * @param a the time point
+     * @param b the offset
+     * @return the computed time point
+     */
+    friend constexpr time_point operator+(difference_type a, time_point b) noexcept;
+
+    /**
+     * @brief subtracts offset from the time point.
+     * @param a the time point
+     * @param b the offset
+     * @return the computed time point
+     */
+    friend constexpr time_point operator-(time_point a, difference_type b) noexcept;
+
+    /**
+     * @brief returns difference between two time points.
+     * @param a the first time point
+     * @param b the second time point
+     * @return the difference
+     */
+    friend constexpr difference_type operator-(time_point a, time_point b) noexcept;
+
+    /**
+     * @brief adds offset into this time point.
+     * @param offset the offset
+     * @return this
+     */
+    constexpr time_point& operator+=(difference_type offset) noexcept;
+
+    /**
+     * @brief subtracts offset from this time point.
+     * @param offset the offset
+     * @return this
+     */
+    constexpr time_point& operator-=(difference_type offset) noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -85,7 +134,7 @@ public:
      * @return true if a == b
      * @return false otherwise
      */
-    friend constexpr bool operator==(time_point const& a, time_point const& b) noexcept;
+    friend constexpr bool operator==(time_point a, time_point b) noexcept;
 
     /**
      * @brief returns whether or not the two elements are different.
@@ -94,7 +143,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend constexpr bool operator!=(time_point const& a, time_point const& b) noexcept;
+    friend constexpr bool operator!=(time_point a, time_point b) noexcept;
 
     /**
      * @brief appends string representation of the given value.
@@ -102,7 +151,7 @@ public:
      * @param value the target value
      * @return the output
      */
-    friend std::ostream& operator<<(std::ostream& out, time_point const& value);
+    friend std::ostream& operator<<(std::ostream& out, time_point value);
 
 private:
     time_unit elapsed_ {};
@@ -113,8 +162,8 @@ private:
     std::ostream& print_body(std::ostream& out) const;
 };
 
-constexpr time_point::time_point(time_unit elapsed) noexcept
-    : elapsed_(elapsed)
+constexpr time_point::time_point(time_unit time_since_epoch) noexcept
+    : elapsed_(time_since_epoch)
 {}
 
 template<class Clock, class Duration>
@@ -122,7 +171,7 @@ time_point::time_point(std::chrono::time_point<Clock, Duration> time)
     : elapsed_(from_chrono(std::chrono::time_point_cast<clock_unit>(time)))
 {}
 
-inline constexpr time_point::time_unit time_point::elapsed() const noexcept {
+inline constexpr time_point::time_unit time_point::time_since_epoch() const noexcept {
     return elapsed_;
 }
 
@@ -139,11 +188,35 @@ constexpr std::pair<datetime::date, datetime::time_of_day> time_point::date_time
     return std::make_pair(date(), time());
 }
 
-inline constexpr bool operator==(time_point const& a, time_point const& b) noexcept {
+constexpr time_point operator+(time_point a, time_point::difference_type b) noexcept {
+    return time_point { a.elapsed_ + b };
+}
+
+constexpr time_point operator+(time_point::difference_type a, time_point b) noexcept {
+    return b + a;
+}
+
+constexpr time_point operator-(time_point a, time_point::difference_type b) noexcept {
+    return a + -b;
+}
+
+constexpr time_point::difference_type operator-(time_point a, time_point b) noexcept {
+    return a.elapsed_ - b.elapsed_;
+}
+
+constexpr time_point& time_point::operator+=(difference_type offset) noexcept {
+    return *this = *this + offset;
+}
+
+constexpr time_point& time_point::operator-=(difference_type offset) noexcept {
+    return *this = *this - offset;
+}
+
+inline constexpr bool operator==(time_point a, time_point b) noexcept {
     return a.elapsed_ == b.elapsed_;
 }
 
-inline constexpr bool operator!=(time_point const& a, time_point const& b) noexcept {
+inline constexpr bool operator!=(time_point a, time_point b) noexcept {
     return !(a == b);
 }
 
@@ -156,7 +229,7 @@ template<> struct std::hash<takatori::datetime::time_point> {
      * @param object the target object
      * @return the computed hash code
      */
-    constexpr std::size_t operator()(takatori::datetime::time_point const& object) const noexcept {
-        return object.elapsed().count() * 257;
+    constexpr std::size_t operator()(takatori::datetime::time_point object) const noexcept {
+        return object.time_since_epoch().count() * 257;
     }
 };

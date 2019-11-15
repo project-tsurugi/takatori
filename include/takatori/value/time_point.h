@@ -5,6 +5,8 @@
 
 #include "value_kind.h"
 #include "simple_value.h"
+#include "date.h"
+#include "time_of_day.h"
 
 #include "takatori/datetime/time_point.h"
 
@@ -34,16 +36,36 @@ public:
     explicit constexpr time_point(entity_type value) noexcept;
 
     /**
-     * @brief creates a new instance from date and time.
+     * @brief creates a new instance.
      * @param date date in GMT
      * @param time time of the date
      */
     explicit time_point(datetime::date date, datetime::time_of_day time = {}) noexcept;
 
     /**
-     * @brief creates a new instance from date and time.
-     * @param date date in GMT
-     * @param time time of the date
+     * @brief creates a new instance from GMT date and time.
+     * @param year the year (1900-)
+     * @param month the month number (1-12) of year
+     * @param day the day (1-31) of month
+     * @param hour hour of day
+     * @param minute minute of hour
+     * @param second second of minute
+     * @param subsecond sub-second value
+     */
+    explicit time_point(
+            std::uint32_t year,
+            std::uint32_t month,
+            std::uint32_t day,
+            std::uint32_t hour,
+            std::uint32_t minute,
+            std::uint32_t second,
+            datetime::time_of_day::time_unit subsecond = {}) noexcept;
+
+    /**
+     * @brief creates a new instance.
+     * @tparam Clock the clock type
+     * @tparam Duration the duration type
+     * @param time time system time point
      */
     template<class Clock, class Duration>
     explicit time_point(std::chrono::time_point<Clock, Duration> time);
@@ -108,6 +130,11 @@ inline constexpr time_point::time_point(time_point::entity_type value) noexcept
     : entity_(value)
 {}
 
+template<class Clock, class Duration>
+inline time_point::time_point(std::chrono::time_point<Clock, Duration> time)
+    : entity_(time)
+{}
+
 inline constexpr time_point::view_type time_point::get() const noexcept {
     return entity_;
 }
@@ -123,11 +150,6 @@ inline constexpr bool operator==(time_point const& a, time_point const& b) noexc
 inline constexpr bool operator!=(time_point const& a, time_point const& b) noexcept {
     return !(a == b);
 }
-
-template<class Clock, class Duration>
-time_point::time_point(std::chrono::time_point<Clock, Duration> time)
-    : entity_(time)
-{}
 
 /**
  * @brief type_of for time_point.

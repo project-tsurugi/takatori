@@ -4,7 +4,7 @@
 
 namespace takatori::type {
 
-time_point::time_point(std::optional<descriptor::time_zone> time_zone) noexcept
+time_point::time_point(std::optional<datetime::time_zone> time_zone) noexcept
     : time_zone_(std::move(time_zone))
 {}
 
@@ -20,12 +20,11 @@ time_point* time_point::clone(util::object_creator creator) && {
     return creator.create_object<time_point>(std::move(time_zone_));
 }
 
-std::optional<descriptor::time_zone> const& time_point::time_zone() const noexcept {
+std::optional<datetime::time_zone> const& time_point::time_zone() const noexcept {
     return time_zone_;
 }
 
 bool operator==(time_point const& a, time_point const& b) noexcept {
-    // FIXME: comparison
     return a.time_zone_ == b.time_zone_;
 }
 
@@ -36,7 +35,6 @@ bool operator!=(time_point const& a, time_point const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, time_point const& value) {
     out << "time_point(";
     if (value.time_zone_) {
-        // FIXME: printing
         out << "time_zone=" << value.time_zone_.value();
     } else {
         out << "time_zone=N/A";
@@ -51,11 +49,7 @@ bool time_point::equals(data const& other) const noexcept {
 
 std::size_t
 time_point::hash() const noexcept {
-    if (time_zone_) {
-        // FIXME: comparison
-        return std::hash<decltype(time_zone_)>{}(time_zone_);
-    }
-    return 0;
+    return std::hash<decltype(time_zone_)>{}(time_zone_);
 }
 
 std::ostream& time_point::print_to(std::ostream& out) const {

@@ -3,6 +3,7 @@
 #include <memory>
 #include <type_traits>
 
+#include "takatori/util/detect.h"
 #include "takatori/util/meta_type.h"
 #include "takatori/util/optional_ptr.h"
 
@@ -11,35 +12,26 @@ namespace takatori::tree {
 /// @private
 namespace impl {
 
-// FIXME: detector idiom
-
 /// @private
-template<class T, class = void>
-struct tree_element_parent : util::meta_type<void> {};
+template<class T>
+using tree_element_parent_t = decltype(std::declval<T>().parent_element());
 
 /// @private
 template<class T>
-struct tree_element_parent<
-        T,
-        std::enable_if_t<std::is_pointer_v<decltype(std::declval<T const>().parent_element())>>>
-    : util::meta_type<std::remove_cv_t<std::remove_pointer_t<decltype(std::declval<T const>().parent_element())>>> {};
+using is_tree_element = std::is_pointer<util::detect_t<tree_element_parent_t, T const>>;
 
 /// @private
 template<class T>
-struct is_tree_element : std::bool_constant<!std::is_same_v<typename tree_element_parent<T>::type, void>> {};
-
-/// @private
-template<class T, class = void>
-struct tree_element_can_get_mutable_parent : std::false_type {};
+using tree_element_parent = std::conditional<
+        is_tree_element<T>::value,
+        std::remove_cv_t<std::remove_pointer_t<util::detect_t<tree_element_parent_t, T const>>>,
+        void>;
 
 /// @private
 template<class T>
-struct tree_element_can_get_mutable_parent<
-        T,
-        std::enable_if_t<std::is_same_v<
-                typename tree_element_parent<T>::type,
-                std::remove_pointer_t<decltype(std::declval<T>().parent_element())>>>>
-    : std::true_type {};
+using tree_element_can_get_mutable_parent = std::is_same<
+        std::remove_pointer_t<util::detect_t<tree_element_parent_t, T>>,
+        typename tree_element_parent<T>::type>;
 
 } // namespace impl
 

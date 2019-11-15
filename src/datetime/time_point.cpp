@@ -5,14 +5,14 @@ namespace takatori::datetime {
 using date_unit = std::chrono::duration<std::uint64_t, std::ratio<86'400>>;
 
 time_point::time_point(datetime::date date, datetime::time_of_day time) noexcept
-    : elapsed_(date_unit(date.elapsed()) + time.elapsed())
+    : elapsed_(date_unit(date.days_since_epoch()) + time.time_since_epoch())
 {}
 
 time_point time_point::now() {
     return time_point { std::chrono::system_clock::now() };
 }
 
-std::ostream& operator<<(std::ostream& out, time_point const& value) {
+std::ostream& operator<<(std::ostream& out, time_point value) {
     out << "time_point(";
     value.print_body(out);
     out << ")";

@@ -17,7 +17,7 @@ enum class value_kind {
     // built-in values
 
     /// @brief special value, including nulls.
-    unknown, // FIXME: impl
+    unknown,
 
     /// @brief boolean type.
     boolean,
@@ -30,19 +30,19 @@ enum class value_kind {
     /// @brief 8-octets floating point number.
     float8,
     /// @brief decimal number.
-    decimal, // FIXME: impl
+    decimal,
     /// @brief character sequence.
-    character, // FIXME: impl
+    character,
     /// @brief bit sequence.
-    bit, // FIXME: impl
+    bit,
     /// @brief date type.
-    date, // FIXME: impl
+    date,
     /// @brief time of day.
-    time_of_day, // FIXME: impl
+    time_of_day,
     /// @brief time point.
-    time_point, // FIXME: impl
-    /// @brief time interval.
-    time_interval, // FIXME: impl
+    time_point,
+    /// @brief date and time interval.
+    datetime_interval,
 
     // complex values
 
@@ -92,7 +92,7 @@ constexpr inline std::string_view to_string_view(value_kind value) noexcept {
         case kind::date: return "date"sv;
         case kind::time_of_day: return "time_of_day"sv;
         case kind::time_point: return "time_point"sv;
-        case kind::time_interval: return "time_interval"sv;
+        case kind::datetime_interval: return "time_interval"sv;
         case kind::array: return "array"sv;
         case kind::record: return "record"sv;
         case kind::unknown: return "unknown"sv;

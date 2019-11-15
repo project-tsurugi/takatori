@@ -19,30 +19,34 @@ TEST_F(time_point_type_test, simple) {
 }
 
 TEST_F(time_point_type_test, time_zone) {
-    time_point t { tz(1) };
-    EXPECT_EQ(t.time_zone(), tz(1));
+    time_point t { tz("UTC") };
+    EXPECT_EQ(t.time_zone(), tz("UTC"));
 }
 
 TEST_F(time_point_type_test, hash) {
     time_point a;
-    time_point b { tz(1) };
+    time_point b { tz("UTC") };
+    time_point c { tz("JST") };
 
     using namespace std;
 
     EXPECT_EQ(std::hash<time_point>{}(a), std::hash<time_point>{}(a));
     EXPECT_EQ(std::hash<time_point>{}(b), std::hash<time_point>{}(b));
+    EXPECT_EQ(std::hash<time_point>{}(c), std::hash<time_point>{}(c));
     EXPECT_NE(std::hash<time_point>{}(a), std::hash<time_point>{}(b));
+    EXPECT_NE(std::hash<time_point>{}(b), std::hash<time_point>{}(c));
+    EXPECT_NE(std::hash<time_point>{}(c), std::hash<time_point>{}(a));
 }
 
 TEST_F(time_point_type_test, clone) {
-    time_point t { tz(1) };
+    time_point t { tz("UTC") };
     auto copy = util::clone_unique(t);
     EXPECT_EQ(t, *copy);
     EXPECT_NE(std::addressof(t), copy.get());
 }
 
 TEST_F(time_point_type_test, clone_move) {
-    time_point t { tz(1) };
+    time_point t { tz("UTC") };
     auto copy = util::clone_unique(t);
     EXPECT_EQ(t, *copy);
     EXPECT_NE(std::addressof(t), copy.get());
@@ -53,7 +57,7 @@ TEST_F(time_point_type_test, clone_move) {
 }
 
 TEST_F(time_point_type_test, output) {
-    time_point t { tz(1) };
+    time_point t { tz("UTC") };
     std::cout << t << std::endl;
 }
 

@@ -16,13 +16,17 @@ add_library(takatori
     value/date.cpp
     value/time_of_day.cpp
     value/time_point.cpp
-    value/time_interval.cpp
+    value/datetime_interval.cpp
 
     # datetime
     datetime/date.cpp
     datetime/time_of_day.cpp
     datetime/time_point.cpp
+    datetime/date_interval.cpp
     datetime/time_interval.cpp
+    datetime/datetime_interval.cpp
+    datetime/time_zone.cpp
+    datetime/time_zone_impl.cpp
 
     # scalar
     scalar/expression.cpp
@@ -58,6 +62,10 @@ add_executable(takatori-exec
 
 target_include_directories(takatori
     PRIVATE .
+    PRIVATE ICU::uc
+    PRIVATE ICU::data
+    PRIVATE ICU::i18n
+    PRIVATE ICU::io
 )
 
 target_include_directories(takatori-exec

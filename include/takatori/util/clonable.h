@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "detect.h"
 #include "object_creator.h"
 #include "pointer_traits.h"
 #include "rvalue_ptr.h"
@@ -14,17 +15,8 @@ namespace takatori::util {
 /// @private
 namespace impl {
 
-// FIXME: detector idiom
-
 /// @private
-struct is_clonable {
-    template<class T>
-    std::enable_if_t<
-            std::is_assignable_v<T*&, decltype(std::declval<T const&>().clone(std::declval<object_creator>()))>,
-            std::true_type>
-    operator()(T&&) const { return {}; }
-    std::false_type operator()(...) const { return {}; } // NOLINT
-};
+template<class T> using clonable_t = decltype(std::declval<T>().clone(std::declval<object_creator>()));
 
 } // namespace impl
 
@@ -33,10 +25,9 @@ struct is_clonable {
  * The clonable class "T" must have "T* T::clone(object_creator) const".
  * @tparam T the target type
  */
-template<class T> struct is_clonable;
-
-/// @private
-template<class T> struct is_clonable : std::invoke_result_t<impl::is_clonable, std::remove_cv_t<std::remove_reference_t<T>>> {};
+template<class T> using is_clonable = std::is_convertible<
+        util::detect_t<impl::clonable_t, std::remove_reference_t<T> const&>,
+        std::remove_const_t<std::remove_reference_t<T>>*>;
 
 /// @copydoc is_clonable
 template<class T>

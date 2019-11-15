@@ -6,6 +6,19 @@ time_point::time_point(datetime::date date, datetime::time_of_day time) noexcept
     : entity_(date, time)
 {}
 
+time_point::time_point(
+        std::uint32_t year,
+        std::uint32_t month,
+        std::uint32_t day,
+        std::uint32_t hour,
+        std::uint32_t minute,
+        std::uint32_t second,
+        datetime::time_of_day::time_unit subsecond) noexcept
+    : time_point(
+        datetime::date { year, month, day },
+        datetime::time_of_day { hour, minute, second, subsecond })
+{}
+
 value_kind time_point::kind() const noexcept {
     return tag;
 }

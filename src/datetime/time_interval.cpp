@@ -4,29 +4,20 @@
 
 namespace takatori::datetime {
 
-template<class T>
-static char sign(T value) noexcept {
-    return value >= 0 ? '+' : '-';
+std::ostream& time_interval::print_to(std::ostream& out) {
+    util::instant_fill fill { out, '0' };
+    util::instant_showpos showpos { out };
+    return out << day() << ':'
+               << hour() << ':'
+               << minute() << ':'
+               << second() << '.'
+               << std::setw(9) << std::noshowpos << std::abs(subsecond().count());
 }
 
-std::ostream& operator<<(std::ostream& out, time_interval const& value) {
-    auto months = std::abs(value.total_months_);
-    auto secs = std::abs(value.total_nanoseconds_ / 1'000'000'000);
-    auto subsecs = std::abs(value.total_nanoseconds_ % 1'000'000'000);
-
-    util::instant_fill fill { out, '0' };
+std::ostream& operator<<(std::ostream& out, time_interval value) {
     out << "time_interval(";
-    out << "[" << sign(value.total_months_) << "]";
-    out << (months / 12) << "-";
-    out << (months % 12) << "-";
-    out << "[" << sign(value.total_nanoseconds_) << "]";
-    out << (secs / 86'400) << "T";
-    out << std::setw(2) << (secs / 3'600 % 24) << ":";
-    out << std::setw(2) << (secs / 60 % 60) << ":";
-    out << std::setw(2) << (secs % 60) << ".";
-    out << std::setw(9) << subsecs;
+    value.print_to(out);
     out << ")";
-
     return out;
 }
 

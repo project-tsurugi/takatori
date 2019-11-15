@@ -5,7 +5,7 @@
 #include "type_kind.h"
 #include "data.h"
 
-#include "takatori/descriptor/time_zone.h"
+#include "takatori/datetime/time_zone.h"
 
 #include "takatori/util/meta_type.h"
 
@@ -23,7 +23,7 @@ public:
      * @brief creates a new instance.
      * @param time_zone an optional time zone information
      */
-    explicit time_point(std::optional<descriptor::time_zone> time_zone = {}) noexcept;
+    explicit time_point(std::optional<datetime::time_zone> time_zone = {}) noexcept;
 
     ~time_point() override = default;
     time_point(time_point const& other) = delete;
@@ -40,7 +40,7 @@ public:
      * @return time zone information if this object represents the zoned time
      * @return empty if this object does not have time zone information
      */
-    std::optional<descriptor::time_zone> const& time_zone() const noexcept;
+    std::optional<datetime::time_zone> const& time_zone() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -74,7 +74,7 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
     
 private:
-    std::optional<descriptor::time_zone> time_zone_;
+    std::optional<datetime::time_zone> time_zone_;
 };
 
 template<> struct type_of<time_point::tag> : util::meta_type<time_point> {};

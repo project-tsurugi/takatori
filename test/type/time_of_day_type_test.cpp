@@ -19,30 +19,34 @@ TEST_F(time_of_day_type_test, simple) {
 }
 
 TEST_F(time_of_day_type_test, time_zone) {
-    time_of_day t { tz(1) };
-    EXPECT_EQ(t.time_zone(), tz(1));
+    time_of_day t { tz("UTC") };
+    EXPECT_EQ(t.time_zone(), tz("UTC"));
 }
 
 TEST_F(time_of_day_type_test, hash) {
     time_of_day a;
-    time_of_day b { tz(1) };
+    time_of_day b { tz("UTC") };
+    time_of_day c { tz("JST") };
 
     using namespace std;
 
     EXPECT_EQ(std::hash<time_of_day>{}(a), std::hash<time_of_day>{}(a));
     EXPECT_EQ(std::hash<time_of_day>{}(b), std::hash<time_of_day>{}(b));
+    EXPECT_EQ(std::hash<time_of_day>{}(c), std::hash<time_of_day>{}(c));
     EXPECT_NE(std::hash<time_of_day>{}(a), std::hash<time_of_day>{}(b));
+    EXPECT_NE(std::hash<time_of_day>{}(b), std::hash<time_of_day>{}(c));
+    EXPECT_NE(std::hash<time_of_day>{}(c), std::hash<time_of_day>{}(a));
 }
 
 TEST_F(time_of_day_type_test, clone) {
-    time_of_day t { tz(1) };
+    time_of_day t { tz("UTC") };
     auto copy = util::clone_unique(t);
     EXPECT_EQ(t, *copy);
     EXPECT_NE(std::addressof(t), copy.get());
 }
 
 TEST_F(time_of_day_type_test, clone_move) {
-    time_of_day t { tz(1) };
+    time_of_day t { tz("UTC") };
     auto copy = util::clone_unique(t);
     EXPECT_EQ(t, *copy);
     EXPECT_NE(std::addressof(t), copy.get());
@@ -53,7 +57,7 @@ TEST_F(time_of_day_type_test, clone_move) {
 }
 
 TEST_F(time_of_day_type_test, output) {
-    time_of_day t { tz(1) };
+    time_of_day t { tz("UTC") };
     std::cout << t << std::endl;
 }
 

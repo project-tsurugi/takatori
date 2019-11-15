@@ -8,17 +8,17 @@
 
 namespace takatori::datetime {
 
-class date_datetime_test : public ::testing::Test {};
+class date_test : public ::testing::Test {};
 
-TEST_F(date_datetime_test, epoch) {
+TEST_F(date_test, epoch) {
     date d;
-    EXPECT_EQ(d.elapsed(), 0);
+    EXPECT_EQ(d.days_since_epoch(), 0);
     EXPECT_EQ(d.year(), 1900);
     EXPECT_EQ(d.month(), 1);
     EXPECT_EQ(d.day(), 1);
 }
 
-TEST_F(date_datetime_test, conversion) {
+TEST_F(date_test, conversion) {
     UErrorCode status = U_ZERO_ERROR;
     std::unique_ptr<icu::Calendar> calendar {icu::Calendar::createInstance(
             *icu::TimeZone::getGMT(),
@@ -37,7 +37,7 @@ TEST_F(date_datetime_test, conversion) {
     }
 }
 
-TEST_F(date_datetime_test, triple) {
+TEST_F(date_test, triple) {
     for (std::uint32_t i = 0, n = 366 * 500; i < n; ++i) {
         date d1 { i };
         date d2 { d1.year(), d1.month(), d1.day() };
@@ -45,7 +45,7 @@ TEST_F(date_datetime_test, triple) {
     }
 }
 
-TEST_F(date_datetime_test, output) {
+TEST_F(date_test, output) {
     date d { 2019, 11, 15 };
     std::cout << d << std::endl;
 }
