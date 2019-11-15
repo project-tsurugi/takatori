@@ -2,6 +2,10 @@
 
 namespace takatori::value {
 
+time_point::time_point(datetime::date date, datetime::time_of_day time) noexcept
+    : entity_(date, time)
+{}
+
 value_kind time_point::kind() const noexcept {
     return tag;
 }

@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-namespace takatori::chrono {
+namespace takatori::datetime {
 
 /**
  * @brief represents time interval.
@@ -179,16 +179,16 @@ inline constexpr bool operator!=(time_interval const& a, time_interval const& b)
     return !(a == b);
 }
 
-} // namespace takatori::chrono
+} // namespace takatori::datetime
 
-/// @brief provides hash code of takatori::chrono::time_interval.
-template<> struct std::hash<takatori::chrono::time_interval> {
+/// @brief provides hash code of takatori::datetime::time_interval.
+template<> struct std::hash<takatori::datetime::time_interval> {
     /**
      * @brief returns hash code of the given object.
      * @param object the target object
      * @return the computed hash code
      */
-    constexpr std::size_t operator()(takatori::chrono::time_interval const& object) const noexcept {
+    constexpr std::size_t operator()(takatori::datetime::time_interval const& object) const noexcept {
         return static_cast<std::size_t>(object.total_months()) * 31
                + static_cast<std::size_t>(object.total_nanoseconds());
     }

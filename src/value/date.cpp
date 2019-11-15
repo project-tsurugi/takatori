@@ -2,6 +2,10 @@
 
 namespace takatori::value {
 
+date::date(std::uint32_t year, std::uint32_t month, std::uint32_t day) noexcept
+    : entity_(year, month, day)
+{}
+
 value_kind date::kind() const noexcept {
     return tag;
 }

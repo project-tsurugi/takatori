@@ -1,11 +1,12 @@
 #pragma once
 
+#include <chrono>
 #include <iostream>
 
 #include "value_kind.h"
 #include "simple_value.h"
 
-#include "takatori/chrono/time_point.h"
+#include "takatori/datetime/time_point.h"
 
 #include "takatori/util/meta_type.h"
 #include "takatori/util/object_creator.h"
@@ -21,7 +22,7 @@ public:
     static constexpr inline value_kind tag = value_kind::time_point;
 
     /// @brief the entity type
-    using entity_type = chrono::time_point;
+    using entity_type = datetime::time_point;
 
     /// @brief the view type
     using view_type = entity_type;
@@ -32,7 +33,20 @@ public:
      */
     explicit constexpr time_point(entity_type value) noexcept;
 
-    // FIXME: duplicate constructor from chrono
+    /**
+     * @brief creates a new instance from date and time.
+     * @param date date in GMT
+     * @param time time of the date
+     */
+    explicit time_point(datetime::date date, datetime::time_of_day time = {}) noexcept;
+
+    /**
+     * @brief creates a new instance from date and time.
+     * @param date date in GMT
+     * @param time time of the date
+     */
+    template<class Clock, class Duration>
+    explicit time_point(std::chrono::time_point<Clock, Duration> time);
 
     ~time_point() override = default;
     time_point(time_point const& other) = delete;
@@ -109,6 +123,11 @@ inline constexpr bool operator==(time_point const& a, time_point const& b) noexc
 inline constexpr bool operator!=(time_point const& a, time_point const& b) noexcept {
     return !(a == b);
 }
+
+template<class Clock, class Duration>
+time_point::time_point(std::chrono::time_point<Clock, Duration> time)
+    : entity_(time)
+{}
 
 /**
  * @brief type_of for time_point.

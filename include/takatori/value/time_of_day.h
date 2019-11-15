@@ -5,7 +5,7 @@
 #include "value_kind.h"
 #include "simple_value.h"
 
-#include "takatori/chrono/time_of_day.h"
+#include "takatori/datetime/time_of_day.h"
 
 #include "takatori/util/meta_type.h"
 #include "takatori/util/object_creator.h"
@@ -21,7 +21,7 @@ public:
     static constexpr inline value_kind tag = value_kind::time_of_day;
 
     /// @brief the entity type
-    using entity_type = chrono::time_of_day;
+    using entity_type = datetime::time_of_day;
 
     /// @brief the view type
     using view_type = entity_type;
@@ -32,7 +32,18 @@ public:
      */
     explicit constexpr time_of_day(entity_type value) noexcept;
 
-    // FIXME: duplicate constructor from chrono
+    /**
+     * @brief creates a new instance.
+     * @param hour hour of day
+     * @param minute minute of hour
+     * @param second second of minute
+     * @param subsecond sub-second value
+     */
+    explicit time_of_day(
+            std::uint32_t hour,
+            std::uint32_t minute,
+            std::uint32_t second,
+            entity_type::time_unit subsecond = entity_type::time_unit::zero()) noexcept;
 
     ~time_of_day() override = default;
     time_of_day(time_of_day const& other) = delete;

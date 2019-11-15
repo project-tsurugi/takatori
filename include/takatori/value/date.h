@@ -5,7 +5,7 @@
 #include "value_kind.h"
 #include "simple_value.h"
 
-#include "takatori/chrono/date.h"
+#include "takatori/datetime/date.h"
 
 #include "takatori/util/meta_type.h"
 #include "takatori/util/object_creator.h"
@@ -21,7 +21,7 @@ public:
     static constexpr inline value_kind tag = value_kind::date;
 
     /// @brief the entity type
-    using entity_type = chrono::date;
+    using entity_type = datetime::date;
 
     /// @brief the view type
     using view_type = entity_type;
@@ -32,7 +32,13 @@ public:
      */
     explicit constexpr date(entity_type value) noexcept;
 
-    // FIXME: duplicate constructor from chrono
+    /**
+     * @brief creates a new instance from year. month, and day triple.
+     * @param year the year (1900-)
+     * @param month the month number (1-12) of year
+     * @param day the day (1-31) of month
+     */
+    explicit date(std::uint32_t year, std::uint32_t month, std::uint32_t day) noexcept;
 
     ~date() override = default;
     date(date const& other) = delete;

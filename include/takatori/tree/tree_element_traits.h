@@ -11,6 +11,8 @@ namespace takatori::tree {
 /// @private
 namespace impl {
 
+// FIXME: detector idiom
+
 /// @private
 template<class T, class = void>
 struct tree_element_parent : util::meta_type<void> {};

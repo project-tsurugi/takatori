@@ -5,7 +5,7 @@
 #include "value_kind.h"
 #include "simple_value.h"
 
-#include "takatori/chrono/time_interval.h"
+#include "takatori/datetime/time_interval.h"
 
 #include "takatori/util/meta_type.h"
 #include "takatori/util/object_creator.h"
@@ -21,7 +21,7 @@ public:
     static constexpr inline value_kind tag = value_kind::time_interval;
 
     /// @brief the entity type
-    using entity_type = chrono::time_interval;
+    using entity_type = datetime::time_interval;
 
     /// @brief the view type
     using view_type = entity_type;
@@ -32,7 +32,7 @@ public:
      */
     explicit constexpr time_interval(entity_type value) noexcept;
 
-    // FIXME: duplicate constructor from chrono
+    // FIXME: duplicate constructor from datetime
 
     ~time_interval() override = default;
     time_interval(time_interval const& other) = delete;

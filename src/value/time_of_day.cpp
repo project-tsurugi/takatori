@@ -2,6 +2,14 @@
 
 namespace takatori::value {
 
+time_of_day::time_of_day(
+        std::uint32_t hour,
+        std::uint32_t minute,
+        std::uint32_t second,
+        datetime::time_of_day::time_unit subsecond) noexcept
+    : entity_(hour, minute, second, subsecond)
+{}
+
 value_kind time_of_day::kind() const noexcept {
     return tag;
 }

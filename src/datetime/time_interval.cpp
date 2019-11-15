@@ -1,8 +1,8 @@
-#include "takatori/chrono/time_interval.h"
+#include "takatori/datetime/time_interval.h"
 
 #include "../util/iomanip_util.h"
 
-namespace takatori::chrono {
+namespace takatori::datetime {
 
 template<class T>
 static char sign(T value) noexcept {
@@ -30,4 +30,4 @@ std::ostream& operator<<(std::ostream& out, time_interval const& value) {
     return out;
 }
 
-} // namespace takatori::chrono
+} // namespace takatori::datetime

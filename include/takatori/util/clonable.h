@@ -14,6 +14,8 @@ namespace takatori::util {
 /// @private
 namespace impl {
 
+// FIXME: detector idiom
+
 /// @private
 struct is_clonable {
     template<class T>

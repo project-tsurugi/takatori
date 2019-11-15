@@ -10,6 +10,10 @@ function (add_test_executable source_file)
         PRIVATE takatori
         PRIVATE takatori-impl
         PRIVATE takatori-test-main
+        PRIVATE ICU::uc
+        PRIVATE ICU::data
+        PRIVATE ICU::i18n
+        PRIVATE ICU::io
     )
     add_test(
         NAME ${test_name}
@@ -40,6 +44,11 @@ add_test_executable(value/simple_value_test.cpp)
 add_test_executable(value/decimal_value_test.cpp)
 add_test_executable(value/character_value_test.cpp)
 add_test_executable(value/bit_value_test.cpp)
+
+# datetime
+add_test_executable(datetime/date_datetime_test.cpp)
+add_test_executable(datetime/time_of_day_datetime_test.cpp)
+add_test_executable(datetime/time_point_datetime_test.cpp)
 
 # scalar expression models
 add_test_executable(scalar/expression_dispatch_test.cpp)

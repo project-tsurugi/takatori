@@ -16,7 +16,7 @@ git submodule update --init --recursive
 ```dockerfile
 FROM ubuntu:18.04
 
-RUN apt update -y && apt install -y git build-essential cmake ninja-build libboost-container-dev
+RUN apt update -y && apt install -y git build-essential cmake ninja-build libboost-container-dev libicu-dev
 ```
 
 optional packages:

@@ -16,7 +16,15 @@ option(USE_BOOST_MEMORY_RESOURCE "use boost/container/pmr/memory_resource instea
 
 include(GNUInstallDirs)
 
-find_package(fpdecimal REQUIRED)
+find_package(fpdecimal 3.68 REQUIRED)
+
+find_package(ICU 60
+    COMPONENTS
+        uc
+        data
+        i18n
+        io
+    REQUIRED)
 
 find_package(Boost 1.65
     COMPONENTS container

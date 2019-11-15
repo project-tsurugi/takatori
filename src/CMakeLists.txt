@@ -18,11 +18,11 @@ add_library(takatori
     value/time_point.cpp
     value/time_interval.cpp
 
-    # chrono
-    chrono/date.cpp
-    chrono/time_of_day.cpp
-    chrono/time_point.cpp
-    chrono/time_interval.cpp
+    # datetime
+    datetime/date.cpp
+    datetime/time_of_day.cpp
+    datetime/time_point.cpp
+    datetime/time_interval.cpp
 
     # scalar
     scalar/expression.cpp
@@ -66,8 +66,8 @@ target_include_directories(takatori-exec
 
 target_link_libraries(takatori
     PUBLIC takatori-api
-    PUBLIC Boost::boost
     PUBLIC fpdecimal
+    PUBLIC Boost::boost
 )
 
 if (USE_BOOST_MEMORY_RESOURCE)

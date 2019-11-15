@@ -30,8 +30,6 @@ using namespace std::experimental::pmr;
 
 #else
 
-// FIXME: fallback to boost::pmr
-
 #error "missing memory_resource"
 
 #endif

@@ -9,6 +9,8 @@ namespace takatori::tree {
 /// @private
 namespace impl {
 
+// FIXME: detector idiom
+
 /// @private
 template<class T>
 struct tree_fragment_parent {

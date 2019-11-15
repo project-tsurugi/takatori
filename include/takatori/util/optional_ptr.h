@@ -199,12 +199,6 @@ public:
      */
     constexpr bool has_value() const noexcept { return !empty(); }
 
-    /*
-     * FIXME:
-     *   xxx_ptr.get() -> T*
-     *   reference_wrapper.get() -> T&
-     */
-
     /**
      * @brief returns a pointer to the holding value.
      * @return pointer to the holding value
