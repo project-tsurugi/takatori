@@ -19,7 +19,7 @@ static_assert(tree::is_tree_fragment_v<let_declarator>);
 
 TEST_F(let_test, simple) {
     let expr {
-            {vardesc(1), constant(2) },
+            let::declarator { vardesc(1), constant(2) },
             varref(1),
     };
 

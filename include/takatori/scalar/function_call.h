@@ -26,13 +26,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::function_call;
 
-    function_call() = delete;
-    ~function_call() override = default;
-    function_call(function_call const& other) = delete;
-    function_call& operator=(function_call const& other) = delete;
-    function_call(function_call&& other) noexcept = delete;
-    function_call& operator=(function_call&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @tparam Copier the object copying policy (don't care)
@@ -52,7 +45,7 @@ public:
      * @param arguments the argument expressions
      * @attention this may take copies of given expressions
      */
-    function_call( // NOLINT
+    explicit function_call(
             descriptor::function function,
             std::initializer_list<util::rvalue_reference_wrapper<expression>> arguments = {});
 
@@ -61,18 +54,14 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    function_call(function_call const& other, util::object_creator creator);
+    explicit function_call(function_call const& other, util::object_creator creator);
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    function_call(function_call&& other, util::object_creator creator);
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;
+    explicit function_call(function_call&& other, util::object_creator creator);
 
     expression_kind kind() const noexcept override;
     function_call* clone(util::object_creator creator) const& override;
@@ -133,7 +122,6 @@ protected:
 private:
     descriptor::function function_;
     tree::tree_element_vector<expression> arguments_;
-    parent_type* parent_ {};
 };
 
 /**

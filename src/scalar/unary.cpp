@@ -35,18 +35,6 @@ unary::unary(unary&& other, util::object_creator creator) noexcept
             tree::forward(creator, std::move(other.operand_)))
 {}
 
-expression::parent_type* unary::parent_element() noexcept {
-    return parent_;
-}
-
-expression::parent_type const* unary::parent_element() const noexcept {
-    return parent_;
-}
-
-void unary::parent_element(expression::parent_type* parent) noexcept {
-    parent_ = parent;
-}
-
 expression_kind unary::kind() const noexcept {
     return tag;
 }

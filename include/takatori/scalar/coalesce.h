@@ -25,13 +25,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::coalesce;
 
-    coalesce() = delete;
-    ~coalesce() override = default;
-    coalesce(coalesce const& other) = delete;
-    coalesce& operator=(coalesce const& other) = delete;
-    coalesce(coalesce&& other) noexcept = delete;
-    coalesce& operator=(coalesce&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @tparam Copier the object copying policy (don't care)
@@ -46,25 +39,21 @@ public:
      * @param alternatives the alternative expressions
      * @attention this may take copies of given expressions
      */
-    coalesce(std::initializer_list<util::rvalue_reference_wrapper<expression>> alternatives = {}); // NOLINT
+    explicit coalesce(std::initializer_list<util::rvalue_reference_wrapper<expression>> alternatives = {}); // NOLINT
 
     /**
      * @brief creates a new object.
      * @param other the copy source
      * @param creator the object creator
      */
-    coalesce(coalesce const& other, util::object_creator creator);
+    explicit coalesce(coalesce const& other, util::object_creator creator);
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    coalesce(coalesce&& other, util::object_creator creator);
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;
+    explicit coalesce(coalesce&& other, util::object_creator creator);
 
     expression_kind kind() const noexcept override;
     coalesce* clone(util::object_creator creator) const& override;
@@ -111,7 +100,6 @@ protected:
 
 private:
     tree::tree_element_vector<expression> alternatives_;
-    parent_type* parent_ {};
 };
 
 /**

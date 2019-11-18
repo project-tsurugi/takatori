@@ -46,11 +46,11 @@ inline descriptor::function funcdesc(int v) {
 }
 
 inline immediate constant(int v, type::data&& type = type::int4()) {
-    return { value::int4(v), std::move(type) };
+    return immediate { value::int4(v), std::move(type) };
 }
 
 inline variable_reference varref(int v) {
-    return {vardesc(v) };
+    return variable_reference { vardesc(v) };
 }
 
 } // namespace takatori::scalar

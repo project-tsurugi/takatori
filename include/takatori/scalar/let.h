@@ -2,8 +2,6 @@
 
 #include <initializer_list>
 #include <iostream>
-#include <string>
-#include <string_view>
 #include <vector>
 
 #include "expression.h"
@@ -31,13 +29,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::let;
 
-    let() = delete;
-    ~let() override = default;
-    let(let const& other) = delete;
-    let& operator=(let const& other) = delete;
-    let(let&& other) noexcept = delete;
-    let& operator=(let&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param variables the variable declarations
@@ -53,7 +44,7 @@ public:
      * @param body the body expression
      * @attention this may take copies of given expressions
      */
-    let(declarator&& variable, util::rvalue_ptr<expression> body);
+    explicit let(declarator&& variable, util::rvalue_ptr<expression> body);
 
     /**
      * @brief creates a new object.
@@ -61,7 +52,7 @@ public:
      * @param body the body expression
      * @attention this may take copies of given expressions
      */
-    let(
+    explicit let(
             std::initializer_list<util::rvalue_reference_wrapper<declarator>> variables,
             util::rvalue_ptr<expression> body);
 
@@ -78,10 +69,6 @@ public:
      * @param creator the object creator
      */
     explicit let(let&& other, util::object_creator creator);
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;
 
     expression_kind kind() const noexcept override;
     let* clone(util::object_creator creator) const& override;
@@ -167,8 +154,6 @@ protected:
 private:
     tree::tree_fragment_vector<declarator> variables_;
     util::unique_object_ptr<expression> body_;
-
-    tree_element* parent_ {};
 };
 
 /**

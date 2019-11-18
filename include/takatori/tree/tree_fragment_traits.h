@@ -2,6 +2,7 @@
 
 #include <type_traits>
 
+#include "takatori/util/detect.h"
 #include "takatori/util/optional_ptr.h"
 
 namespace takatori::tree {
@@ -25,14 +26,14 @@ struct tree_fragment_parent {
     static P find(U*) { return nullptr; }
 
     template<class... Args>
-    static void* find(Args*...) { return nullptr; }
+    static util::detect_failure find(Args*...) { return {}; }
 
     using type = std::remove_pointer_t<decltype(find<T>(nullptr))>;
 };
 
 /// @private
 template<class T>
-struct is_tree_fragment : std::negation<std::is_same<typename tree_fragment_parent<T>::type, void>> {};
+struct is_tree_fragment : std::negation<std::is_same<typename tree_fragment_parent<T>::type, util::detect_failure>> {};
 
 } // namespace impl
 

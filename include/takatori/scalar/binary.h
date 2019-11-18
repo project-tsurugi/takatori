@@ -24,13 +24,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::binary;
 
-    binary() = delete;
-    ~binary() override = default;
-    binary(binary const& other) = delete;
-    binary& operator=(binary const& other) = delete;
-    binary(binary&& other) noexcept = delete;
-    binary& operator=(binary&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param operator_kind the binary operator kind
@@ -49,7 +42,7 @@ public:
      * @param right the right operand
      * @attention this may take copies of given expressions
      */
-    binary(
+    explicit binary(
             operator_kind_type operator_kind,
             expression&& left,
             expression&& right) noexcept;
@@ -59,18 +52,14 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    binary(binary const& other, util::object_creator creator) noexcept;
+    explicit binary(binary const& other, util::object_creator creator) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    binary(binary&& other, util::object_creator creator) noexcept;
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;;
+    explicit binary(binary&& other, util::object_creator creator) noexcept;
 
     expression_kind kind() const noexcept override;
     binary* clone(util::object_creator creator) const& override;
@@ -199,7 +188,6 @@ private:
     operator_kind_type operator_kind_;
     util::unique_object_ptr<expression> left_;
     util::unique_object_ptr<expression> right_;
-    parent_type* parent_ {};
 };
 
 /**

@@ -23,13 +23,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::immediate;
 
-    immediate() = delete;
-    ~immediate() override = default;
-    immediate(immediate const& other) = delete;
-    immediate& operator=(immediate const& other) = delete;
-    immediate(immediate&& other) noexcept = delete;
-    immediate& operator=(immediate&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param value the immediate value
@@ -45,7 +38,7 @@ public:
      * @param type the value type
      * @attention this may take a copy of given value and type
      */
-    immediate(
+    explicit immediate(
             value::data&& value,
             type::data&& type);
 
@@ -54,18 +47,14 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    immediate(immediate const& other, util::object_creator creator) noexcept;
+    explicit immediate(immediate const& other, util::object_creator creator) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    immediate(immediate&& other, util::object_creator creator) noexcept;
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;;
+    explicit immediate(immediate&& other, util::object_creator creator) noexcept;
 
     expression_kind kind() const noexcept override;
     immediate* clone(util::object_creator creator) const& override;
@@ -160,7 +149,6 @@ protected:
 private:
     std::shared_ptr<value::data const> value_;
     std::shared_ptr<type::data const> type_;
-    parent_type* parent_ {};
 };
 
 /**

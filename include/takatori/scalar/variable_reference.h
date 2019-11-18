@@ -22,36 +22,25 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::variable_reference;
 
-    variable_reference() = delete;
-    ~variable_reference() override = default;
-    variable_reference(variable_reference const& other) = delete;
-    variable_reference& operator=(variable_reference const& other) = delete;
-    variable_reference(variable_reference&& other) noexcept = delete;
-    variable_reference& operator=(variable_reference&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param variable the descriptor of the target variable
      */
-    variable_reference(descriptor::variable variable) noexcept; // NOLINT
+    explicit variable_reference(descriptor::variable variable) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the copy source
      * @param creator the object creator
      */
-    variable_reference(variable_reference const& other, util::object_creator creator) noexcept;
+    explicit variable_reference(variable_reference const& other, util::object_creator creator) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    variable_reference(variable_reference&& other, util::object_creator creator) noexcept;
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;;
+    explicit variable_reference(variable_reference&& other, util::object_creator creator) noexcept;
 
     expression_kind kind() const noexcept override;
     variable_reference* clone(util::object_creator creator) const& override;
@@ -102,7 +91,6 @@ protected:
 
 private:
     descriptor::variable variable_;
-    parent_type* parent_ {};
 };
 
 /**

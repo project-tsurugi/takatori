@@ -43,18 +43,6 @@ let::let(let&& other, util::object_creator creator)
             tree::forward(creator, std::move(other.body_)))
 {}
 
-expression::parent_type* let::parent_element() noexcept {
-    return parent_;
-}
-
-expression::parent_type const* let::parent_element() const noexcept {
-    return parent_;
-}
-
-void let::parent_element(expression::parent_type* parent) noexcept {
-    parent_ = parent;
-}
-
 expression_kind let::kind() const noexcept {
     return tag;
 }

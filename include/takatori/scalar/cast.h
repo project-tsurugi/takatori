@@ -29,13 +29,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::cast;
 
-    cast() = delete;
-    ~cast() override = default;
-    cast(cast const& other) = delete;
-    cast& operator=(cast const& other) = delete;
-    cast(cast&& other) noexcept = delete;
-    cast& operator=(cast&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param type the destination type
@@ -54,7 +47,7 @@ public:
      * @param operand the operand
      * @attention this may take copies of given type and expression
      */
-    cast(
+    explicit cast(
             type::data&& type,
             loss_policy_type loss_policy,
             expression&& operand);
@@ -64,18 +57,14 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    cast(cast const& other, util::object_creator creator);
+    explicit cast(cast const& other, util::object_creator creator);
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    cast(cast&& other, util::object_creator creator);
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;
+    explicit cast(cast&& other, util::object_creator creator);
 
     expression_kind kind() const noexcept override;
     cast* clone(util::object_creator creator) const& override;
@@ -194,7 +183,6 @@ private:
     std::shared_ptr<type::data const> type_;
     loss_policy_type loss_policy_;
     util::unique_object_ptr<expression> operand_;
-    parent_type* parent_ {};
 };
 
 /**

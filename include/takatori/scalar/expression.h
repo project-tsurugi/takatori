@@ -4,7 +4,7 @@
 
 #include "expression_kind.h"
 
-#include "takatori/tree/tree_element.h"
+#include "takatori/tree/tree_element_base.h"
 
 #include "takatori/util/object_creator.h"
 #include "takatori/util/optional_ptr.h"
@@ -14,15 +14,25 @@ namespace takatori::scalar {
 /**
  * @brief a root model of scalar expressions.
  */
-class expression : public tree::tree_element {
+class expression : public tree::tree_element_base {
 public:
     /// @brief the parent type.
-    using parent_type = tree::tree_element;
+    using parent_type = tree::tree_element_base;
+
+    /**
+     * @brief creates a new instance.
+     */
+    expression() = default;
 
     /**
      * @brief destroys this object.
      */
     ~expression() override = default;
+
+    expression(expression const& other) = delete;
+    expression& operator=(expression const& other) = delete;
+    expression(expression&& other) noexcept = delete;
+    expression& operator=(expression&& other) noexcept = delete;
 
     /**
      * @brief returns the kind of this expression.
@@ -40,13 +50,25 @@ public:
     /// @copydoc clone()
     virtual expression* clone(util::object_creator creator) && = 0;
 
-    using tree_element::parent_element;
+    /**
+     * @brief returns the parent element.
+     * @return the parent element
+     * @return nullptr if this is the root or orphaned element
+     */
+    parent_type* parent_element() noexcept;
+
+    /**
+     * @brief returns the parent element.
+     * @return the parent element
+     * @return nullptr if this is the root or orphaned element
+     */
+    parent_type const* parent_element() const noexcept;
 
     /**
      * @brief sets the parent element.
      * @param parent the parent element
      */
-    virtual void parent_element(parent_type* parent) noexcept = 0;
+    void parent_element(parent_type* parent) noexcept;
 
     /**
      * @brief returns the parent expression
@@ -85,36 +107,6 @@ public:
     friend std::ostream& operator<<(std::ostream& out, expression const& value);
 
 protected:
-    /**
-     * @brief creates a new instance.
-     */
-    expression() = default;
-
-    /**
-     * @brief creates a new instance.
-     * @param other the copy source
-     */
-    expression(expression const& other) = default;
-
-    /**
-     * @brief assigns the given object.
-     * @param other the copy source
-     * @return this
-     */
-    expression& operator=(expression const& other) = default;
-
-    /**
-     * @brief creates a new instance.
-     * @param other the move source
-     */
-    expression(expression&& other) noexcept = default;
-
-    /**
-     * @brief assigns the given object.
-     * @param other the move source
-     * @return this
-     */
-    expression& operator=(expression&& other) noexcept = default;
 
     /**
      * @brief returns whether or not this expressions is equivalent to the target one.
@@ -130,6 +122,9 @@ protected:
      * @return the output
      */
     virtual std::ostream& print_to(std::ostream& out) const = 0;
+
+private:
+    parent_type* parent_ {};
 };
 
 } // namespace takatori::scalar

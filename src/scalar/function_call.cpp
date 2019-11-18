@@ -27,18 +27,6 @@ function_call::function_call(function_call&& other, util::object_creator creator
         tree::forward(creator, std::move(other.arguments_)))
 {}
 
-expression::parent_type* function_call::parent_element() noexcept {
-    return parent_;
-}
-
-expression::parent_type const* function_call::parent_element() const noexcept {
-    return parent_;
-}
-
-void function_call::parent_element(expression::parent_type* parent) noexcept {
-    parent_ = parent;
-}
-
 expression_kind function_call::kind() const noexcept {
     return tag;
 }

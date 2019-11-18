@@ -24,13 +24,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::unary;
 
-    unary() = delete;
-    ~unary() override = default;
-    unary(unary const& other) = delete;
-    unary& operator=(unary const& other) = delete;
-    unary(unary&& other) noexcept = delete;
-    unary& operator=(unary&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param operator_kind the unary operator kind
@@ -46,7 +39,7 @@ public:
      * @param operand the expression operand
      * @attention this may take copies of given expressions
      */
-    unary(
+    explicit unary(
             operator_kind_type operator_kind,
             expression&& operand) noexcept;
 
@@ -55,18 +48,14 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    unary(unary const& other, util::object_creator creator) noexcept;
+    explicit unary(unary const& other, util::object_creator creator) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    unary(unary&& other, util::object_creator creator) noexcept;
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;;
+    explicit unary(unary&& other, util::object_creator creator) noexcept;
 
     expression_kind kind() const noexcept override;
     unary* clone(util::object_creator creator) const& override;
@@ -156,7 +145,6 @@ protected:
 private:
     operator_kind_type operator_kind_;
     util::unique_object_ptr<expression> operand_;
-    parent_type* parent_ {};
 };
 
 /**

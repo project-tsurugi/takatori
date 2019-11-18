@@ -52,6 +52,74 @@ add_library(takatori
     scalar/let_declarator.cpp
     scalar/function_call.cpp
 
+    # scalar - util
+    scalar/variable_declarator.cpp
+
+    # relational
+    relation/expression.cpp
+
+    # relation - scan
+    # relation/scan_full.cpp
+    # relation/scan_point.cpp
+    # relation/scan_prefix.cpp
+    # relation/scan_range.cpp
+
+    # relation - logical join
+    # relation/logical/join_map.cpp
+    # relation/logical/join_loop.cpp
+    # relation/logical/join_merge.cpp
+
+    # relation - join with scan
+    # relation/join_scan_point.cpp
+    # relation/join_scan_prefix.cpp
+    # relation/join_scan_range.cpp
+
+    # relation - tuple by tuple operations
+    relation/select.cpp
+    relation/select_column.cpp
+    relation/where.cpp
+    # relation/buffer.cpp
+
+    # relation - logical grouping operations
+    # relation/logical/aggregate.cpp
+    # relation/logical/distinct.cpp
+    # relation/logical/limit.cpp
+
+    # relation - logical set operations
+    # relation/logical/intersect.cpp
+    # relation/logical/difference.cpp
+
+    # relation - DML
+    # relation/emit.cpp
+    # relation/logical/emit_sorted.cpp
+    # relation/insert.cpp
+    # relation/update.cpp
+    # relation/delete_.cpp
+    # relation/overwrite.cpp
+
+    # relation - misc.
+    # relation/logical/union.cpp
+    # relation/logical/escape.cpp
+
+    # relation - physical join
+    # relation/join_broadcast_map.cpp
+    # relation/join_broadcast_loop.cpp
+    # relation/join_group.cpp
+
+    # relation - pyhisical grouping
+    # relation/aggregate_group.cpp
+    # relation/distinct_group.cpp
+    # relation/limit_group.cpp
+    # relation/intersect_group.cpp
+    # relation/difference_group.cpp
+    # relation/flatten.cpp
+
+    # relation - communicate with exchange operators
+    # relation/take_flat.cpp
+    # relation/take_group.cpp
+    # relation/take_cogroup.cpp
+    # relation/offer.cpp
+
     # util
     util/object_creator.cpp
 )
@@ -62,10 +130,6 @@ add_executable(takatori-exec
 
 target_include_directories(takatori
     PRIVATE .
-    PRIVATE ICU::uc
-    PRIVATE ICU::data
-    PRIVATE ICU::i18n
-    PRIVATE ICU::io
 )
 
 target_include_directories(takatori-exec
@@ -76,6 +140,10 @@ target_link_libraries(takatori
     PUBLIC takatori-api
     PUBLIC fpdecimal
     PUBLIC Boost::boost
+    PRIVATE ICU::uc
+    PRIVATE ICU::data
+    PRIVATE ICU::i18n
+    PRIVATE ICU::io
 )
 
 if (USE_BOOST_MEMORY_RESOURCE)

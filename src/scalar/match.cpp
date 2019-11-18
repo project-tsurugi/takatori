@@ -47,18 +47,6 @@ match::match(match&& other, util::object_creator creator) noexcept
             tree::forward(creator, std::move(other.escape_)))
 {}
 
-expression::parent_type* match::parent_element() noexcept {
-    return parent_;
-}
-
-expression::parent_type const* match::parent_element() const noexcept {
-    return parent_;
-}
-
-void match::parent_element(expression::parent_type* parent) noexcept {
-    parent_ = parent;
-}
-
 expression_kind match::kind() const noexcept {
     return tag;
 }

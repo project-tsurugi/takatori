@@ -19,18 +19,6 @@ coalesce::coalesce(coalesce&& other, util::object_creator creator)
     : coalesce(tree::forward(creator, std::move(other.alternatives_)))
 {}
 
-expression::parent_type* coalesce::parent_element() noexcept {
-    return parent_;
-}
-
-expression::parent_type const* coalesce::parent_element() const noexcept {
-    return parent_;
-}
-
-void coalesce::parent_element(expression::parent_type* parent) noexcept {
-    parent_ = parent;
-}
-
 expression_kind coalesce::kind() const noexcept {
     return tag;
 }

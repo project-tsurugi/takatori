@@ -24,13 +24,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::compare;
 
-    compare() = delete;
-    ~compare() override = default;
-    compare(compare const& other) = delete;
-    compare& operator=(compare const& other) = delete;
-    compare(compare&& other) noexcept = delete;
-    compare& operator=(compare&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param operator_kind the comparison operator kind
@@ -49,7 +42,7 @@ public:
      * @param right the right operand
      * @attention this may take copies of given expressions
      */
-    compare(
+    explicit compare(
             operator_kind_type operator_kind,
             expression&& left,
             expression&& right) noexcept;
@@ -59,18 +52,14 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    compare(compare const& other, util::object_creator creator) noexcept;
+    explicit compare(compare const& other, util::object_creator creator) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    compare(compare&& other, util::object_creator creator) noexcept;
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;;
+    explicit compare(compare&& other, util::object_creator creator) noexcept;
 
     expression_kind kind() const noexcept override;
     compare* clone(util::object_creator creator) const& override;
@@ -199,7 +188,6 @@ private:
     operator_kind_type operator_kind_;
     util::unique_object_ptr<expression> left_;
     util::unique_object_ptr<expression> right_;
-    parent_type* parent_ {};
 };
 
 /**

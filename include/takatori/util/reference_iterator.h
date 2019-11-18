@@ -4,71 +4,9 @@
 #include <type_traits>
 #include <utility>
 
+#include "reference_extractor.h"
+
 namespace takatori::util {
-
-/**
- * @brief extracts reference from pointer.
- * @tparam T the value type
- */
-template<class T>
-struct pointer_extractor {
-
-    /// @brief the value type
-    using value_type = T;
-    /// @brief the pointer type.
-    using pointer = std::add_pointer_t<value_type>;
-    /// @brief the reference type.
-    using reference = std::add_lvalue_reference_t<value_type>;
-    /// @brief the cursor type.
-    using cursor_type = std::add_pointer_t<std::add_const_t<pointer>>;
-
-    /**
-     * @brief extracts a reference on the cursor.
-     * @param cursor the target cursor
-     * @return the reference
-     */
-    static reference get(cursor_type cursor) noexcept { return *cursor; }
-
-    /**
-     * @brief extracts a reference on the cursor with the offset.
-     * @param cursor the target cursor
-     * @param offset
-     * @return the reference
-     */
-    static reference get(cursor_type cursor, std::ptrdiff_t offset) noexcept { return cursor[offset]; } // NOLINT
-};
-
-/**
- * @brief extracts reference from pointer of pointer.
- * @tparam T the value type
- */
-template<class T>
-struct double_pointer_extractor {
-
-    /// @brief the value type
-    using value_type = T;
-    /// @brief the pointer type.
-    using pointer = std::add_pointer_t<value_type>;
-    /// @brief the reference type.
-    using reference = std::add_lvalue_reference_t<value_type>;
-    /// @brief the cursor type.
-    using cursor_type = std::add_pointer_t<std::add_const_t<pointer>>;
-
-    /**
-     * @brief extracts a reference on the cursor.
-     * @param cursor the target cursor
-     * @return the reference
-     */
-    static reference get(cursor_type cursor) noexcept { return **cursor; }
-
-    /**
-     * @brief extracts a reference on the cursor with the offset.
-     * @param cursor the target cursor
-     * @param offset
-     * @return the reference
-     */
-    static reference get(cursor_type cursor, std::ptrdiff_t offset) noexcept { return *cursor[offset]; } // NOLINT
-};
 
 template<class Extractor>
 class reference_iterator;
@@ -100,10 +38,12 @@ class reference_iterator {
 public:
     /// @brief the reference resolver type
     using extractor_type = Extractor;
+    /// @brief the iterator type
+    using iterator_type = reference_iterator;
     /// @brief the value type
     using value_type = typename extractor_type::value_type;
     /// @brief the difference type
-    using difference_type = std::ptrdiff_t;
+    using difference_type = typename extractor_type::difference_type;
     /// @brief the pointer type.
     using pointer = typename extractor_type::pointer;
     /// @brief the reference type.
@@ -136,52 +76,72 @@ public:
      * @brief returns the value reference where this iterator pointing.
      * @return reference of the current value
      */
-    reference operator*() const noexcept { return extractor_type::get(cursor_); }
+    constexpr reference operator*() const noexcept {
+        return extractor_type::get(cursor_);
+    }
 
     /**
      * @brief returns pointer to the value where this iterator pointing.
      * @return pointer to the current value
      */
-    pointer operator->() const noexcept { return std::addressof(operator*()); }
+    constexpr pointer operator->() const noexcept {
+        return std::addressof(operator*());
+    }
 
     /**
      * @brief returns the value reference where the given offset from this iterator pointing.
      * @param offset the offset count from the current position
      * @return reference of the target value
      */
-    reference operator[](difference_type offset) const noexcept { return extractor_type::get(cursor_, offset); }
+    constexpr reference operator[](difference_type offset) const noexcept {
+        return extractor_type::get(extractor_type::advance(cursor_, offset));
+    }
 
     /**
      * @brief increments this iterator position.
      * @return this
      */
-    reference_iterator& operator++() noexcept { ++cursor_; return *this; } // NOLINT
+    constexpr iterator_type& operator++() noexcept {
+        cursor_ = extractor_type::advance(cursor_, +1);
+        return *this;
+    }
 
     /**
      * @brief increments this iterator position.
      * @return the last position
      */
-    reference_iterator const operator++(int) noexcept { return iterator(cursor_++); } // NOLINT
+    constexpr iterator_type const operator++(int) noexcept { // NOLINT
+        iterator_type r { *this };
+        operator++();
+        return r;
+    }
 
     /**
      * @brief decrements this iterator position.
      * @return this
      */
-    reference_iterator& operator--() noexcept { --cursor_; return *this; } // NOLINT
+    constexpr iterator_type& operator--() noexcept {
+        cursor_ = extractor_type::advance(cursor_, -1);
+        return *this;
+    }
 
     /**
      * @brief decrements this iterator position.
      * @return the last position
      */
-    reference_iterator const operator--(int) noexcept { return iterator(cursor_--); } // NOLINT
+    iterator_type const operator--(int) noexcept { // NOLINT
+        iterator_type r { *this };
+        operator--();
+        return r;
+    }
 
     /**
      * @brief increments this iterator position.
      * @param difference number of increments
      * @return this
      */
-    reference_iterator& operator+=(difference_type difference) noexcept {
-        cursor_ += difference; // NOLINT
+    iterator_type& operator+=(difference_type difference) noexcept {
+        cursor_ = extractor_type::advance(cursor_, difference);
         return *this;
     }
 
@@ -191,7 +151,7 @@ public:
      * @param difference number of increments
      * @return the moved iterator
      */
-    friend reference_iterator operator+(reference_iterator iter, difference_type difference) noexcept {
+    friend iterator_type operator+(iterator_type iter, difference_type difference) noexcept {
         return iter += difference;
     }
 
@@ -201,7 +161,7 @@ public:
      * @param iter the target iterator
      * @return the moved iterator
      */
-    friend reference_iterator operator+(difference_type difference, reference_iterator iter) noexcept {
+    friend iterator_type operator+(difference_type difference, iterator_type iter) noexcept {
         return iter += difference;
     }
 
@@ -210,8 +170,8 @@ public:
      * @param difference number of decrements
      * @return this
      */
-    reference_iterator& operator-=(difference_type difference) noexcept {
-        cursor_ -= difference; // NOLINT
+    iterator_type& operator-=(difference_type difference) noexcept {
+        cursor_ = extractor_type::advance(cursor_, -difference);
         return *this;
     }
 
@@ -221,7 +181,7 @@ public:
      * @param difference number of decrements
      * @return the moved iterator
      */
-    friend reference_iterator operator-(reference_iterator iter, difference_type difference) noexcept {
+    friend iterator_type operator-(iterator_type iter, difference_type difference) noexcept {
         return iter -= difference;
     }
 
@@ -231,12 +191,12 @@ public:
      * @param b the second iterator
      * @return the distance from the first iterator to the second one
      */
-    friend difference_type operator-(reference_iterator a, reference_iterator b) noexcept {
+    friend difference_type operator-(iterator_type a, iterator_type b) noexcept {
         return a.cursor_ - b.cursor_; // NOLINT
     }
 
 private:
-    pointer const* cursor_;
+    cursor_type cursor_;
 
     template<class U> friend class reference_iterator;
 

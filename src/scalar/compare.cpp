@@ -41,18 +41,6 @@ compare::compare(compare&& other, util::object_creator creator) noexcept
             tree::forward(creator, std::move(other.right_)))
 {}
 
-expression::parent_type* compare::parent_element() noexcept {
-    return parent_;
-}
-
-expression::parent_type const* compare::parent_element() const noexcept {
-    return parent_;
-}
-
-void compare::parent_element(expression::parent_type* parent) noexcept {
-    parent_ = parent;
-}
-
 expression_kind compare::kind() const noexcept {
     return tag;
 }

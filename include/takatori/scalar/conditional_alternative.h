@@ -22,12 +22,6 @@ public:
     /// @brief the fragment owner type.
     using parent_type = conditional;
 
-    conditional_alternative() = delete;
-    ~conditional_alternative() = default;
-
-    conditional_alternative(conditional_alternative const& other) = delete;
-    conditional_alternative& operator=(conditional_alternative const& other) = delete;
-
     /**
      * @brief creates a new object.
      * @param other the move source
@@ -58,7 +52,7 @@ public:
      * @param body the body expression
      * @attention this may take copies of given expressions
      */
-    conditional_alternative(
+    explicit conditional_alternative(
             expression&& condition,
             expression&& body) noexcept;
 
@@ -67,14 +61,19 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    conditional_alternative(conditional_alternative const& other, util::object_creator creator);
+    explicit conditional_alternative(conditional_alternative const& other, util::object_creator creator);
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    conditional_alternative(conditional_alternative&& other, util::object_creator creator);
+    explicit conditional_alternative(conditional_alternative&& other, util::object_creator creator);
+
+    ~conditional_alternative() = default;
+
+    conditional_alternative(conditional_alternative const& other) = delete;
+    conditional_alternative& operator=(conditional_alternative const& other) = delete;
 
     /**
      * @brief returns the owner of this fragment.

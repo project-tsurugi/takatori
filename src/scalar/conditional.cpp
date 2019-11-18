@@ -35,18 +35,6 @@ conditional::conditional(conditional&& other, util::object_creator creator)
             tree::forward(creator, std::move(other.default_expression_)))
 {}
 
-expression::parent_type* conditional::parent_element() noexcept {
-    return parent_;
-}
-
-expression::parent_type const* conditional::parent_element() const noexcept {
-    return parent_;
-}
-
-void conditional::parent_element(expression::parent_type* parent) noexcept {
-    parent_ = parent;
-}
-
 expression_kind conditional::kind() const noexcept {
     return tag;
 }

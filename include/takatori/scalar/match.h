@@ -23,14 +23,6 @@ public:
 
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::match;
-
-    match() = delete;
-    ~match() override = default;
-    match(match const& other) = delete;
-    match& operator=(match const& other) = delete;
-    match(match&& other) noexcept = delete;
-    match& operator=(match&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param operator_kind the match operator kind
@@ -52,7 +44,7 @@ public:
      * @param escape the escape character
      * @attention this may take copies of given expressions
      */
-    match(
+    explicit match(
             operator_kind_type operator_kind,
             expression&& input,
             expression&& pattern,
@@ -63,18 +55,14 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    match(match const& other, util::object_creator creator) noexcept;
+    explicit match(match const& other, util::object_creator creator) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    match(match&& other, util::object_creator creator) noexcept;
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;;
+    explicit match(match&& other, util::object_creator creator) noexcept;
 
     expression_kind kind() const noexcept override;
     match* clone(util::object_creator creator) const& override;
@@ -242,7 +230,6 @@ private:
     util::unique_object_ptr<expression> input_;
     util::unique_object_ptr<expression> pattern_;
     util::unique_object_ptr<expression> escape_;
-    parent_type* parent_ {};
 };
 
 /**

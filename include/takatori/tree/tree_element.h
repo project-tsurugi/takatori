@@ -1,17 +1,19 @@
 #pragma once
 
+#include "tree_element_base.h"
+
 namespace takatori::tree {
 
 /**
  * @brief a generic tree node.
  * @see tree_element_traits
  */
-class tree_element {
+class tree_element : public tree_element_base {
 public:
     /**
      * @brief destroys this object.
      */
-    virtual ~tree_element() = default;
+    ~tree_element() override = default;
 
     /**
      * @brief returns the parent element.

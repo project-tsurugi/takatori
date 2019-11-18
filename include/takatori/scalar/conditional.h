@@ -30,13 +30,6 @@ public:
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::conditional;
 
-    conditional() = delete;
-    ~conditional() override = default;
-    conditional(conditional const& other) = delete;
-    conditional& operator=(conditional const& other) = delete;
-    conditional(conditional&& other) noexcept = delete;
-    conditional& operator=(conditional&& other) noexcept = delete;
-
     /**
      * @brief creates a new object.
      * @param alternatives the case alternatives
@@ -52,7 +45,7 @@ public:
      * @param default_expression the default case expression
      * @attention this may take copies of given expressions
      */
-    conditional( // NOLINT
+    conditional(
             std::initializer_list<util::rvalue_reference_wrapper<alternative>> alternatives,
             util::rvalue_ptr<expression> default_expression = {});
 
@@ -69,10 +62,6 @@ public:
      * @param creator the object creator
      */
     explicit conditional(conditional&& other, util::object_creator creator);
-
-    parent_type* parent_element() noexcept override;
-    parent_type const* parent_element() const noexcept override;
-    void parent_element(parent_type* parent) noexcept override;
 
     expression_kind kind() const noexcept override;
     conditional* clone(util::object_creator creator) const& override;
@@ -144,8 +133,6 @@ protected:
 private:
     tree::tree_fragment_vector<alternative> alternatives_;
     util::unique_object_ptr<expression> default_expression_;
-
-    tree_element* parent_ {};
 };
 
 /**

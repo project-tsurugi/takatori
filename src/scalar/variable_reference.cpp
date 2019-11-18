@@ -16,18 +16,6 @@ variable_reference::variable_reference(variable_reference&& other, util::object_
     : variable_reference(std::move(other.variable_))
 {}
 
-expression::parent_type* variable_reference::parent_element() noexcept {
-    return parent_;
-}
-
-expression::parent_type const* variable_reference::parent_element() const noexcept {
-    return parent_;
-}
-
-void variable_reference::parent_element(expression::parent_type* parent) noexcept {
-    parent_ = parent;
-}
-
 expression_kind variable_reference::kind() const noexcept {
     return tag;
 }

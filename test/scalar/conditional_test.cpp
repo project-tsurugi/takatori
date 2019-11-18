@@ -20,7 +20,7 @@ static_assert(tree::is_tree_fragment_v<conditional_alternative>);
 TEST_F(conditional_test, simple) {
     conditional expr {
             {
-                    { constant(1), constant(2) }
+                    conditional::alternative { constant(1), constant(2) }
             },
     };
     auto&& alts = expr.alternatives();

@@ -8,7 +8,7 @@
 namespace takatori::scalar {
 
 /**
- * @brief represents kind of expression.
+ * @brief represents kind of scalar expression.
  */
 enum class expression_kind {
 

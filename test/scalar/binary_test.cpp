@@ -15,6 +15,12 @@ class binary_test : public ::testing::Test {};
 static_assert(binary::tag == expression_kind::binary);
 static_assert(std::is_same_v<type_of_t<binary::tag>, binary>);
 
+static_assert(!std::is_default_constructible_v<binary>);
+static_assert(!std::is_copy_constructible_v<binary>);
+static_assert(!std::is_copy_assignable_v<binary>);
+static_assert(!std::is_move_constructible_v<binary>);
+static_assert(!std::is_move_assignable_v<binary>);
+
 TEST_F(binary_test, simple) {
     binary expr {
         binary_operator::add,
