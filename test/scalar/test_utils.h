@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 
 #include "takatori/type/data.h"
 #include "takatori/type/int.h"
@@ -16,33 +16,35 @@
 
 namespace takatori::scalar {
 
-namespace impl {
+template<class T>
+class value_object : public util::object {
+public:
+    explicit value_object(T value) noexcept : value_(std::move(value)) {}
+    T const& value() const noexcept { return value_; }
 
-inline std::map<int, std::shared_ptr<int>> descriptor_values {};
-
-template<class desc>
-inline desc get_descriptor(int v) {
-    if (auto iter = descriptor_values.find(v); iter != descriptor_values.end()) {
-        return desc(iter->second);
+protected:
+    bool equals(object const& other) const noexcept override {
+        if (auto* ptr = util::downcast<value_object>(&other)) {
+            return value_ == ptr->value_;
+        }
+        return false;
     }
-    auto value = std::make_shared<int>(v);
-    descriptor_values[v] = value;
-    return desc(std::move(value));
-}
-
-} // namespace impl
-
-template<descriptor::descriptor_kind K, class E>
-inline int resolve(descriptor::element<K, E> const& desc) {
-    return *std::reinterpret_pointer_cast<int>(desc.entity());
-}
+    std::size_t hash() const noexcept override {
+        return std::hash<T>{}(value_);
+    }
+    std::ostream& print_to(std::ostream& out) const override {
+        return out << value_;
+    }
+private:
+    T value_;
+};
 
 inline descriptor::variable vardesc(int v) {
-    return impl::get_descriptor<descriptor::variable>(v);
+    return descriptor::variable { std::make_shared<value_object<int>>(v) };
 }
 
 inline descriptor::function funcdesc(int v) {
-    return impl::get_descriptor<descriptor::function>(v);
+    return descriptor::function { std::make_shared<value_object<int>>(v) };
 }
 
 inline immediate constant(int v, type::data&& type = type::int4()) {

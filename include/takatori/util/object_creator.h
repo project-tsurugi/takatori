@@ -47,10 +47,23 @@ template<class T>
 using unique_object_ptr = std::unique_ptr<T, object_deleter>;
 
 /**
+ * @brief allocator type that compatible with object_creator.
+ */
+template<class T>
+using object_allocator = pmr::polymorphic_allocator<T>;
+
+/**
  * @brief creates and deletes objects.
  */
 class object_creator {
 public:
+    /**
+     * @brief the corresponded allocator type
+     * @tparam T value type
+     */
+    template<class T>
+    using allocator_type = object_allocator<T>;
+
     /**
      * @brief creates a new instance.
      * @param resource the underlying memory resource
@@ -63,7 +76,7 @@ public:
      * @param allocator the polymorphic allocator
      */
     template<class T>
-    object_creator(pmr::polymorphic_allocator<T> const& allocator) noexcept : object_creator(allocator.resource()) {} // NOLINT
+    object_creator(allocator_type<T> const& allocator) noexcept : object_creator(allocator.resource()) {} // NOLINT
 
     /**
      * @brief creates a new object and wrap it into std::unique_ptr.
@@ -178,13 +191,6 @@ public:
      */
     template<class T>
     void deallocate(void* pointer, std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t));
-
-    /**
-     * @brief the corresponded allocator type
-     * @tparam T value type
-     */
-    template<class T>
-    using allocator_type = pmr::polymorphic_allocator<T>;
 
     /**
      * @brief returns a standard allocator object for this.
@@ -359,8 +365,8 @@ struct allocator_compatibility_tester<std::allocator<T>> {
 
 /// @private
 template<class T>
-struct allocator_compatibility_tester<pmr::polymorphic_allocator<T>> {
-    bool operator()(object_creator creator, pmr::polymorphic_allocator<T> const& allocator) const noexcept {
+struct allocator_compatibility_tester<object_allocator<T>> {
+    bool operator()(object_creator creator, object_allocator<T> const& allocator) const noexcept {
         if constexpr (std::is_array_v<T>) { // NOLINT
             return false;
         }

@@ -55,7 +55,7 @@ public:
     /// @brief the value type
     using value_type = T;
     /// @brief internal allocator type.
-    using allocator_type = util::pmr::polymorphic_allocator<T>;
+    using allocator_type = util::object_allocator<T>;
     /// @brief internal entity type
     using entity_type = std::vector<value_type, allocator_type>;
 

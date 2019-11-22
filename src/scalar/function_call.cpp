@@ -1,7 +1,7 @@
 #include "takatori/scalar/function_call.h"
 
-#include "tree/tree_element_forward.h"
-#include "tree/tree_element_vector_forward.h"
+#include "takatori/tree/tree_element_forward.h"
+#include "takatori/tree/tree_element_vector_forward.h"
 
 #include "takatori/util/downcast.h"
 
@@ -66,7 +66,7 @@ bool operator!=(function_call const& a, function_call const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, function_call const& value) {
-    return out << "function_call("
+    return out << value.kind() << "("
                << "function=" << value.function() << ", "
                << "arguments=" << value.arguments() <<  ")";
 }

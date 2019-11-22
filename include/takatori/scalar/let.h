@@ -6,7 +6,7 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "let_declarator.h"
+#include "details/variable_declarator.h"
 
 #include "takatori/tree/tree_fragment_vector.h"
 
@@ -24,7 +24,7 @@ namespace takatori::scalar {
 class let : public expression {
 public:
     /// @brief the variable declarator type.
-    using declarator = let_declarator;
+    using declarator = details::variable_declarator<let>;
     
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::let;
@@ -35,7 +35,7 @@ public:
      * @param body the body expression
      */
     explicit let(
-            std::vector<declarator, util::pmr::polymorphic_allocator<declarator>> variables,
+            std::vector<declarator, util::object_allocator<declarator>> variables,
             util::unique_object_ptr<expression> body) noexcept;
 
     /**

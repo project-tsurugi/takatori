@@ -427,12 +427,12 @@ template<class T, class C>
 tree_element_vector(util::reference_vector<T, C>) -> tree_element_vector<T>;
 
 template<class T>
-tree_element_vector<T>::tree_element_vector(parent_type& parent, util::object_creator creator) noexcept
+inline tree_element_vector<T>::tree_element_vector(parent_type& parent, util::object_creator creator) noexcept
     : parent_(std::addressof(parent)), elements_(creator) {}
 
 template<class T>
 template<class U, class C>
-tree_element_vector<T>::tree_element_vector(parent_type& parent, util::reference_vector<U, C> elements) noexcept
+inline tree_element_vector<T>::tree_element_vector(parent_type& parent, util::reference_vector<U, C> elements) noexcept
     : parent_(std::addressof(parent)), elements_(std::move(elements))
 {
     bless();
@@ -440,7 +440,7 @@ tree_element_vector<T>::tree_element_vector(parent_type& parent, util::reference
 
 template<class T>
 template<class U, class C>
-tree_element_vector<T>&
+inline tree_element_vector<T>&
 tree_element_vector<T>::operator=(util::reference_vector<U, C> elements) noexcept {
     assign(std::move(elements));
     return *this;
@@ -683,8 +683,8 @@ inline int compare(tree_element_vector<T1> const& a, tree_element_vector<T2> con
  * @param value the target value
  * @return the output
  */
-template<class U>
-inline std::ostream& operator<<(std::ostream& out, tree_element_vector<U> const& value) {
+template<class T>
+inline std::ostream& operator<<(std::ostream& out, tree_element_vector<T> const& value) {
     return out << value.elements_;
 }
 

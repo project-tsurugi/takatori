@@ -11,69 +11,79 @@ namespace takatori::relation {
  * @brief represents kind of relational expression.
  */
 enum class expression_kind {
-
     // scan
-    scan_full,
-    scan_point,
-    scan_prefix,
-    scan_range,
+    /// @brief obtains rows from an external relation by their key.
+    find,
+    /// @brief obtains rows an external relation by their key range.
+    scan,
 
     // join
-    logical_join_map,
-    logical_join_loop,
-    logical_join_merge,
-
-    // join with scan
-    join_scan_point,
-    join_scan_prefix,
-    join_scan_range,
+    /// @brief joins relations.
+    join_relation,
+    /// @brief joins input with rows in storage.
+    join_find,
+    /// @brief join input with rows in storage.
+    join_scan,
 
     // tuple by tuple operations
-    select,
-    where,
+    /// @brief adds columns into relation.
+    project,
+    /// @brief removes rows from relation.
+    filter,
+    /// @brief distribute copy of relation into the multiple successors.
     buffer,
 
-    // logical grouping operations
-    logical_aggregate,
-    logical_distinct,
-    logical_limit,
+    // grouping operations for whole relation
+    /// @brief aggregates columns in relation.
+    aggregate_relation,
+    /// @brief removes duplicated rows in relation.
+    distinct_relation,
+    /// @brief limits the number of rows in relation or its partitions
+    limit_relation,
 
-    // logical set operations
-    logical_intersect,
-    logical_difference,
+    // set operations for whole relation
+    /// @brief obtains a multi-set union between two input relations.
+    union_relation,
+    /// @brief obtains a multi-set intersection of two input relations.
+    intersection_relation,
+    /// @brief obtains a multi-set difference between two input relations.
+    difference_relation,
 
     // DML
+    /// @brief emits rows in relation.
     emit,
-    logical_emit_sorted,
-    insert,
-    update,
-    delete_,
-    overwrite,
+    /// @brief edits rows on the table.
+    write,
 
     // misc.
-    logical_union,
-    logical_escape,
+    /// @brief re-defines all column identifiers in relations.
+    escape,
 
-    // join (on step execution plan)
-    join_broadcast_map,
-    join_broadcast_loop,
+    // dealing with group relations
+    /// @brief join groups.
     join_group,
-
-    // grouping  (on step execution plan)
+    /// @brief aggregates columns in group.
     aggregate_group,
+    /// @brief removes duplication in group.
     distinct_group,
+    /// @brief limits the number of rows in group.
     limit_group,
-    intersect_group,
+    /// @brief obtains intersection of two groups.
+    intersection_group,
+    /// @brief obtains difference of two groups.
     difference_group,
-    flatten,
+    /// @brief flattens groups into rows.
+    flatten_group,
 
     // communicate with exchange operators
+    /// @brief obtains rows from an exchange.
     take_flat,
+    /// @brief obtains groups from an exchange.
     take_group,
+    /// @brief obtains groups from two or more exchanges.
     take_cogroup,
+    /// @brief puts rows into an exchange.
     offer,
-
-    // FIXME: impl
 
     /// @brief custom expression for compiler or third party extension.
     extension, // FIXME: impl
@@ -97,41 +107,30 @@ constexpr inline std::string_view to_string_view(expression_kind value) noexcept
     using namespace std::string_view_literals;
     using kind = expression_kind;
     switch (value) {
-        case kind::scan_full: return "scan_full"sv;
-        case kind::scan_point: return "scan_point"sv;
-        case kind::scan_prefix: return "scan_prefix"sv;
-        case kind::scan_range: return "scan_range"sv;
-        case kind::logical_join_map: return "logical::join_map"sv;
-        case kind::logical_join_loop: return "logical::join_loop"sv;
-        case kind::logical_join_merge: return "logical::join_merge"sv;
-        case kind::join_scan_point: return "join_scan_point"sv;
-        case kind::join_scan_prefix: return "join_scan_prefix"sv;
-        case kind::join_scan_range: return "join_scan_range"sv;
-        case kind::select: return "select"sv;
-        case kind::where: return "where"sv;
+        case kind::find: return "find"sv;
+        case kind::scan: return "scan"sv;
+        case kind::join_relation: return "join_relation"sv;
+        case kind::join_find: return "join_find"sv;
+        case kind::join_scan: return "join_scan"sv;
+        case kind::project: return "select"sv;
+        case kind::filter: return "where"sv;
         case kind::buffer: return "buffer"sv;
-        case kind::logical_aggregate: return "logical::aggregate"sv;
-        case kind::logical_distinct: return "logical::distinct"sv;
-        case kind::logical_limit: return "logical::limit"sv;
-        case kind::logical_intersect: return "logical::intersect"sv;
-        case kind::logical_difference: return "logical::difference"sv;
+        case kind::aggregate_relation: return "aggregate_relation"sv;
+        case kind::distinct_relation: return "distinct_relation"sv;
+        case kind::limit_relation: return "limit_relation"sv;
+        case kind::union_relation: return "union_relation"sv;
+        case kind::intersection_relation: return "intersection_relation"sv;
+        case kind::difference_relation: return "difference_relation"sv;
         case kind::emit: return "emit"sv;
-        case kind::logical_emit_sorted: return "logical::emit_sorted"sv;
-        case kind::insert: return "insert"sv;
-        case kind::update: return "update"sv;
-        case kind::delete_: return "delete_"sv;
-        case kind::overwrite: return "overwrite"sv;
-        case kind::logical_union: return "logical::union"sv;
-        case kind::logical_escape: return "logical::escape"sv;
-        case kind::join_broadcast_map: return "join_broadcast_map"sv;
-        case kind::join_broadcast_loop: return "join_broadcast_loop"sv;
+        case kind::write: return "write"sv;
+        case kind::escape: return "escape"sv;
         case kind::join_group: return "join_group"sv;
         case kind::aggregate_group: return "aggregate_group"sv;
         case kind::distinct_group: return "distinct_group"sv;
         case kind::limit_group: return "limit_group"sv;
-        case kind::intersect_group: return "intersect_group"sv;
+        case kind::intersection_group: return "intersection_group"sv;
         case kind::difference_group: return "difference_group"sv;
-        case kind::flatten: return "flatten"sv;
+        case kind::flatten_group: return "flatten_group"sv;
         case kind::take_flat: return "take_flat"sv;
         case kind::take_group: return "take_group"sv;
         case kind::take_cogroup: return "take_cogroup"sv;
@@ -149,6 +148,102 @@ constexpr inline std::string_view to_string_view(expression_kind value) noexcept
  */
 inline std::ostream& operator<<(std::ostream& out, expression_kind value) {
     return out << to_string_view(value);
+}
+
+/**
+ * @brief returns whether or not the kind of expression is available in intermediate execution plan.
+ * @param value the target kind
+ * @return true if the target expression is available in intermediate execution plan
+ * @return false otherwise
+ */
+inline constexpr bool is_available_in_intermediate_plan(expression_kind value) {
+    using kind = expression_kind;
+    switch (value) {
+        case kind::find:
+        case kind::scan:
+        case kind::join_relation:
+        case kind::join_find:
+        case kind::join_scan:
+        case kind::project:
+        case kind::filter:
+        case kind::buffer:
+        case kind::aggregate_relation:
+        case kind::distinct_relation:
+        case kind::limit_relation:
+        case kind::union_relation:
+        case kind::intersection_relation:
+        case kind::difference_relation:
+        case kind::emit:
+        case kind::write:
+        case kind::escape:
+            return true;
+
+        case kind::join_group:
+        case kind::aggregate_group:
+        case kind::distinct_group:
+        case kind::limit_group:
+        case kind::intersection_group:
+        case kind::difference_group:
+        case kind::flatten_group:
+        case kind::take_flat:
+        case kind::take_group:
+        case kind::take_cogroup:
+        case kind::offer:
+            return false;
+
+        // FIXME: impl
+        case kind::extension:
+            return false;
+    }
+    std::abort();
+}
+
+/**
+ * @brief returns whether or not the kind of expression is available in step execution plan.
+ * @param value the target kind
+ * @return true if the target expression is available in step execution plan
+ * @return false otherwise
+ */
+inline constexpr bool is_available_in_step_plan(expression_kind value) {
+    using kind = expression_kind;
+    switch (value) {
+        case kind::find:
+        case kind::scan:
+        case kind::join_find:
+        case kind::join_scan:
+        case kind::project:
+        case kind::filter:
+        case kind::buffer:
+        case kind::emit:
+        case kind::write:
+        case kind::join_group:
+        case kind::aggregate_group:
+        case kind::distinct_group:
+        case kind::limit_group:
+        case kind::intersection_group:
+        case kind::difference_group:
+        case kind::flatten_group:
+        case kind::take_flat:
+        case kind::take_group:
+        case kind::take_cogroup:
+        case kind::offer:
+            return true;
+
+        case kind::join_relation:
+        case kind::aggregate_relation:
+        case kind::distinct_relation:
+        case kind::limit_relation:
+        case kind::union_relation:
+        case kind::intersection_relation:
+        case kind::difference_relation:
+        case kind::escape:
+            return false;
+
+        // FIXME: impl
+        case kind::extension:
+            return false;
+    }
+    std::abort();
 }
 
 } // namespace takatori::relation

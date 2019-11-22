@@ -102,15 +102,4 @@ using is_greater_equal_comparable = std::is_convertible<detect_t<impl::greater_e
 template<class A, class B>
 constexpr inline bool is_greater_equal_comparable_v = is_greater_equal_comparable<A, B>::value;
 
-/**
- * @brief provides whether or not std::hash<T> is supported.
- * @tparam T the value type
- */
-template<class T>
-using is_hash_support = is_detected<std::hash, T>;
-
-/// @copydoc is_hash_support
-template<class T>
-constexpr inline bool is_hash_support_v = is_hash_support<T>::value;
-
 } // namespace takatori::util

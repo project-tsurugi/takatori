@@ -1,7 +1,7 @@
 #include "takatori/scalar/cast.h"
 
 #include "takatori/tree/tree_element_util.h"
-#include "tree/tree_element_forward.h"
+#include "takatori/tree/tree_element_forward.h"
 
 #include "takatori/util/clonable.h"
 #include "takatori/util/downcast.h"
@@ -112,7 +112,7 @@ bool operator!=(cast const& a, cast const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, cast const& value) {
-    return out << "cast("
+    return out << value.kind() << "("
                << "data=" << value.optional_type() << ", "
                << "loss_policy=" << value.loss_policy() << ", "
                << "operand=" << value.optional_operand() << ")";

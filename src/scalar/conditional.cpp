@@ -1,15 +1,15 @@
 #include "takatori/scalar/conditional.h"
 
 #include "takatori/tree/tree_element_util.h"
-#include "tree/tree_element_forward.h"
-#include "tree/tree_fragment_vector_forward.h"
+#include "takatori/tree/tree_element_forward.h"
+#include "takatori/tree/tree_fragment_vector_forward.h"
 
 #include "takatori/util/downcast.h"
 
 namespace takatori::scalar {
 
 conditional::conditional(
-        std::vector<alternative, util::pmr::polymorphic_allocator<alternative>> alternatives,
+        std::vector<alternative, util::object_allocator<alternative>> alternatives,
         util::unique_object_ptr<expression> default_expression) noexcept
     : alternatives_(*this, std::move(alternatives))
     , default_expression_(tree::bless_element(*this, std::move(default_expression)))
@@ -81,9 +81,9 @@ bool operator!=(conditional const& a, conditional const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, conditional const& value) {
-    return out << "conditional("
-            << "alternatives=" << value.alternatives() << ", "
-            << "default=" << value.default_expression() << ")";
+    return out << value.kind() << "("
+               << "alternatives=" << value.alternatives() << ", "
+               << "default=" << value.default_expression() << ")";
 }
 
 bool conditional::equals(expression const& other) const noexcept {

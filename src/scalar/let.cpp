@@ -1,15 +1,15 @@
 #include "takatori/scalar/let.h"
 
 #include "takatori/tree/tree_element_util.h"
-#include "tree/tree_element_forward.h"
-#include "tree/tree_fragment_vector_forward.h"
+#include "takatori/tree/tree_element_forward.h"
+#include "takatori/tree/tree_fragment_vector_forward.h"
 
 #include "takatori/util/downcast.h"
 
 namespace takatori::scalar {
 
 let::let(
-        std::vector<declarator, util::pmr::polymorphic_allocator<declarator>> variables,
+        std::vector<declarator, util::object_allocator<declarator>> variables,
         util::unique_object_ptr<expression> body) noexcept
     : variables_(*this, std::move(variables))
     , body_(tree::bless_element(*this, std::move(body)))
@@ -97,9 +97,9 @@ bool operator!=(let const& a, let const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, let const& value) {
-    return out << "let("
-            << "variables=" << value.variables() << ", "
-            << "body=" << value.body() << ")";
+    return out << value.kind() << "("
+               << "variables=" << value.variables() << ", "
+               << "body=" << value.body() << ")";
 }
 
 bool let::equals(expression const& other) const noexcept {

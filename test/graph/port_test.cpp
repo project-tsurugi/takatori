@@ -122,6 +122,56 @@ TEST_F(port_test, dispose) {
     EXPECT_TRUE(v1.output().opposites().empty());
 }
 
+TEST_F(port_test, move_ctor) {
+    simple_graph g;
+    auto&& v1 = g.emplace(100);
+    auto&& v2 = g.emplace(200);
+
+    v1.output() >> v2.input();
+
+    ASSERT_EQ(v1.output().opposites().size(), 1);
+    EXPECT_EQ(&v1.output().opposites()[0], &v2.input());
+
+    ASSERT_EQ(v2.input().opposites().size(), 1);
+    EXPECT_EQ(&v2.input().opposites()[0], &v1.output());
+
+    simple_input p { std::move(v2.input()) };
+    EXPECT_TRUE(v2.input().opposites().empty());
+
+    EXPECT_EQ(&p.owner(), &v2);
+
+    ASSERT_EQ(p.opposites().size(), 1);
+    EXPECT_EQ(&p.opposites()[0], &v1.output());
+
+    ASSERT_EQ(v1.output().opposites().size(), 1);
+    EXPECT_EQ(&v1.output().opposites()[0], &p);
+}
+
+TEST_F(port_test, move_assign) {
+    simple_graph g;
+    auto&& v1 = g.emplace(100);
+    auto&& v2 = g.emplace(200);
+
+    v1.output() >> v2.input();
+
+    ASSERT_EQ(v1.output().opposites().size(), 1);
+    ASSERT_EQ(v2.input().opposites().size(), 1);
+
+    EXPECT_EQ(&v1.output().opposites()[0], &v2.input());
+    EXPECT_EQ(&v2.input().opposites()[0], &v1.output());
+
+    simple_input p { v2, 1 };
+    p = std::move(v2.input());
+    EXPECT_TRUE(v2.input().opposites().empty());
+
+    EXPECT_EQ(&p.owner(), &v2);
+    ASSERT_EQ(p.opposites().size(), 1);
+    EXPECT_EQ(&p.opposites()[0], &v1.output());
+
+    ASSERT_EQ(v1.output().opposites().size(), 1);
+    EXPECT_EQ(&v1.output().opposites()[0], &p);
+}
+
 TEST_F(port_test, output) {
     simple_graph g;
     auto&& v1 = g.emplace(100);

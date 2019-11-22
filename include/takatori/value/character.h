@@ -21,7 +21,7 @@ public:
     static constexpr inline value_kind tag = value_kind::character;
 
     /// @brief the allocator type
-    using allocator_type = util::pmr::polymorphic_allocator<char>;
+    using allocator_type = util::object_allocator<char>;
 
     /// @brief the entity type
     using entity_type = std::basic_string<char, std::char_traits<char>, allocator_type>;

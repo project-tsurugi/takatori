@@ -1,7 +1,7 @@
 #include "takatori/scalar/binary.h"
 
 #include "takatori/tree/tree_element_util.h"
-#include "tree/tree_element_forward.h"
+#include "takatori/tree/tree_element_forward.h"
 
 #include "takatori/util/clonable.h"
 #include "takatori/util/downcast.h"
@@ -121,7 +121,7 @@ bool operator!=(binary const& a, binary const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, binary const& value) {
-    return out << "binary("
+    return out << value.kind() << "("
                << "operator_kind=" << value.operator_kind() << ", "
                << "left=" << value.optional_left() << ", "
                << "right=" << value.optional_right() << ")";

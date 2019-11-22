@@ -37,7 +37,7 @@ public:
             id_type,
             element_type*,
             std::less<id_type>,
-            util::object_creator::allocator_type<entry_type>>;
+            util::object_allocator<entry_type>>;
 
     /// @brief the value type
     using value_type = element_type;

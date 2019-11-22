@@ -82,7 +82,7 @@ bool operator!=(immediate const& a, immediate const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, immediate const& value) {
-    return out << "immediate("
+    return out << value.kind() << "("
                << "value=" << value.value() << ", "
                << "type=" << value.optional_type() << ")";
 }

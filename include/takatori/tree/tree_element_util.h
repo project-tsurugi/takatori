@@ -13,11 +13,10 @@ namespace takatori::tree {
  * @return the element
  */
 template<class Parent, class E>
-E&& bless_element(Parent& parent, E&& element) {
+E&& bless_element(Parent&& parent, E&& element) {
     static_assert(is_tree_fragment_v<std::remove_reference_t<E>>);
     using traits = tree_fragment_traits<std::remove_reference_t<E>>;
-    static_assert(std::is_convertible_v<Parent*, typename traits::parent_type*>);
-    traits::set_parent_element(element, parent);
+    traits::set_parent_element(element, util::optional_ptr<typename traits::parent_type> { parent });
     return std::forward<E>(element);
 }
 
@@ -31,9 +30,9 @@ E&& bless_element(Parent& parent, E&& element) {
  * @return the element
  */
 template<class Parent, class E, class D>
-std::unique_ptr<E, D>& bless_element(Parent& parent, std::unique_ptr<E, D>& element) {
+std::unique_ptr<E, D>& bless_element(Parent&& parent, std::unique_ptr<E, D>& element) {
     if (element) {
-        bless_element(parent, *element);
+        bless_element(std::forward<Parent>(parent), *element);
     }
     return element;
 }
@@ -48,9 +47,9 @@ std::unique_ptr<E, D>& bless_element(Parent& parent, std::unique_ptr<E, D>& elem
  * @return the element
  */
 template<class Parent, class E, class D>
-std::unique_ptr<E, D> bless_element(Parent& parent, std::unique_ptr<E, D>&& element) {
+std::unique_ptr<E, D> bless_element(Parent&& parent, std::unique_ptr<E, D>&& element) {
     if (element) {
-        bless_element(parent, *element);
+        bless_element(std::forward<Parent>(parent), *element);
     }
     return std::move(element);
 }

@@ -6,6 +6,8 @@
 #include "date_interval.h"
 #include "time_interval.h"
 
+#include "takatori/util/hash.h"
+
 namespace takatori::datetime {
 
 /**
@@ -210,7 +212,6 @@ template<> struct std::hash<takatori::datetime::datetime_interval> {
      * @return the computed hash code
      */
     constexpr std::size_t operator()(takatori::datetime::datetime_interval object) const noexcept {
-        return std::hash<decltype(object.date())>{}(object.date()) * 31
-               + std::hash<decltype(object.time())>{}(object.time());
+        return takatori::util::hash(object.date(), object.time());
     }
 };

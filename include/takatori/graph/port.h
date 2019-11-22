@@ -7,6 +7,7 @@
 
 #include "port_direction.h"
 
+#include "takatori/util/object_creator.h"
 #include "takatori/util/print_support.h"
 #include "takatori/util/reference_list_view.h"
 
@@ -60,16 +61,30 @@ public:
      * @brief constructs a new object.
      * @param owner the owner node
      * @param id the port ID (in node)
+     * @param creator the object creator
      * @warning don't invoke this outside of owner node
      */
-    explicit constexpr port(node_type& owner, id_type id = 0) noexcept;
+    explicit port(node_type& owner, id_type id = 0, util::object_creator creator = {}) noexcept;
 
     ~port();
 
     port(port const& other) = delete;
     port& operator=(port const& other) = delete;
-    port(port&& other) noexcept = delete;
-    port& operator=(port&& other) noexcept = delete;
+
+    /**
+     * @brief constructs a new object.
+     * @param other the move source
+     * @warning this is designed for STL like containers, developers should not use this directly
+     */
+    port(port&& other) noexcept;
+
+    /**
+     * @brief assigns the given object.
+     * @param other the move source
+     * @return this
+     * @warning this is designed for STL like containers, developers should not use this directly
+     */
+    port& operator=(port&& other) noexcept;
 
     /**
      * @brief returns the port ID.
@@ -121,24 +136,56 @@ private:
     id_type id_;
     node_type* owner_;
     static constexpr std::size_t opposite_buffer_size = 4;
-    boost::container::small_vector<opposite_port_type*, opposite_buffer_size> opposites_ {};
+    using opposite_buffer_allocator_type = util::object_allocator<opposite_port_type*>;
+    boost::container::small_vector<opposite_port_type*, opposite_buffer_size, opposite_buffer_allocator_type> opposites_ {};
 
-    bool do_connect(opposite_port_type& opposite);
-    bool do_disconnect(opposite_port_type& opposite);
+    bool internal_connect(opposite_port_type& opposite);
+    bool internal_disconnect(opposite_port_type& opposite);
+    bool internal_reconnect(opposite_port_type& old_opposite, opposite_port_type& new_opposite) noexcept;
 
     friend class port<node_type, ~direction>;
 };
 
 template<class T, port_direction Direction>
-inline constexpr
-port<T, Direction>::port(node_type& owner, port::id_type id) noexcept
+inline
+port<T, Direction>::port(node_type& owner, port::id_type id, util::object_creator creator) noexcept
     : id_(id)
     , owner_(std::addressof(owner))
+    , opposites_(typename decltype(opposites_)::allocator_type(creator.allocator<opposite_port_type*>()))
 {}
 
 template<class T, port_direction Direction>
-inline port<T, Direction>::~port() {
+inline
+port<T, Direction>::~port() {
     disconnect_all();
+}
+
+template<class T, port_direction Direction>
+inline
+port<T, Direction>::port(port&& other) noexcept
+    : id_(other.id_)
+    , owner_(other.owner_)
+    , opposites_(std::move(other.opposites_))
+{
+    // NOTE: boost::container::small_vector may not become empty on move
+    other.opposites_.clear();
+    for (auto* p : opposites_) {
+        p->internal_reconnect(other, *this);
+    }
+}
+
+template<class T, port_direction Direction>
+inline
+port<T, Direction>& port<T, Direction>::operator=(port&& other) noexcept {
+    id_ = other.id_;
+    owner_ = other.owner_;
+    opposites_ = std::move(other.opposites_);
+    // NOTE: boost::container::small_vector may not become empty on move
+    other.opposites_.clear();
+    for (auto* p : opposites_) {
+        p->internal_reconnect(other, *this);
+    }
+    return *this;
 }
 
 template<class T, port_direction Direction>
@@ -172,9 +219,10 @@ port<T, Direction>::opposites() const noexcept {
 }
 
 template<class T, port_direction Direction>
-bool port<T, Direction>::connect_to(opposite_port_type& opposite) {
-    bool a = do_connect(opposite);
-    bool b = opposite.do_connect(*this);
+inline bool
+port<T, Direction>::connect_to(opposite_port_type& opposite) {
+    bool a = internal_connect(opposite);
+    bool b = opposite.internal_connect(*this);
     if (a != b) {
         throw std::domain_error("inconsistent connection");
     }
@@ -182,9 +230,10 @@ bool port<T, Direction>::connect_to(opposite_port_type& opposite) {
 }
 
 template<class T, port_direction Direction>
-bool port<T, Direction>::disconnect_from(opposite_port_type& opposite) {
-    bool a = do_disconnect(opposite);
-    bool b = opposite.do_disconnect(*this);
+inline bool
+port<T, Direction>::disconnect_from(opposite_port_type& opposite) {
+    bool a = internal_disconnect(opposite);
+    bool b = opposite.internal_disconnect(*this);
     if (a != b) {
         throw std::domain_error("inconsistent connection");
     }
@@ -192,10 +241,11 @@ bool port<T, Direction>::disconnect_from(opposite_port_type& opposite) {
 }
 
 template<class T, port_direction Direction>
-void port<T, Direction>::disconnect_all() {
+inline void
+port<T, Direction>::disconnect_all() {
     for (auto*& opposite : opposites_) {
         if (opposite != nullptr) {
-            opposite->do_disconnect(*this);
+            opposite->internal_disconnect(*this);
             opposite = nullptr;
         }
     }
@@ -203,17 +253,34 @@ void port<T, Direction>::disconnect_all() {
 }
 
 template<class T, port_direction Direction>
-bool port<T, Direction>::do_connect(opposite_port_type& opposite) {
+inline bool
+port<T, Direction>::internal_connect(opposite_port_type& opposite) {
     // NOTE: multi connections
     opposites_.emplace_back(std::addressof(opposite));
     return true;
 }
 
 template<class T, port_direction Direction>
-bool port<T, Direction>::do_disconnect(opposite_port_type& opposite) {
+inline bool
+port<T, Direction>::internal_disconnect(opposite_port_type& opposite) {
     // NOTE: removes only 1 connection
-    if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(opposite)); iter != opposites_.end()) {
+    if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(opposite));
+            iter != opposites_.end()) {
         opposites_.erase(iter);
+        return true;
+    }
+    return false;
+}
+
+template<class T, port_direction Direction>
+inline bool
+port<T, Direction>::internal_reconnect(
+        opposite_port_type& old_opposite,
+        opposite_port_type& new_opposite) noexcept {
+    // NOTE: replaces only 1 connection
+    if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(old_opposite));
+            iter != opposites_.end()) {
+        *iter = std::addressof(new_opposite);
         return true;
     }
     return false;

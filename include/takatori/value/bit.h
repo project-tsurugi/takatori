@@ -27,7 +27,7 @@ public:
     using block_type = std::uint64_t;
 
     /// @brief the allocator type
-    using allocator_type = util::pmr::polymorphic_allocator<block_type>;
+    using allocator_type = util::object_allocator<block_type>;
 
     /// @brief the entity type
     using entity_type = boost::dynamic_bitset<block_type, allocator_type>;

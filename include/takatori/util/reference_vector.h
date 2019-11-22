@@ -33,7 +33,7 @@ inline void delete_vector(object_creator creator, std::vector<T*, A>& elements) 
 
 /// @private
 template<class T>
-using reference_vector_entity = std::vector<T*, object_creator::allocator_type<T*>>;
+using reference_vector_entity = std::vector<T*, object_allocator<T*>>;
 
 /// @private
 template<class T>
@@ -686,7 +686,7 @@ reference_vector<T, C>::reference_vector(std::initializer_list<U> list, object_c
 
 template<class T, class C>
 template<class Iter, class>
-reference_vector<T, C>::reference_vector(Iter first, Iter last, object_creator creator) : storage_(creator) {
+inline reference_vector<T, C>::reference_vector(Iter first, Iter last, object_creator creator) : storage_(creator) {
     assign(first, last);
 }
 

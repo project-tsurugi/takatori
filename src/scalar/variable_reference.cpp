@@ -46,7 +46,7 @@ bool operator!=(variable_reference const& a, variable_reference const& b) noexce
 }
 
 std::ostream& operator<<(std::ostream& out, variable_reference const& value) {
-    return out << "variable_reference(" << value.variable() << ")";
+    return out << value.kind() << "(" << value.variable() << ")";
 }
 
 bool variable_reference::equals(expression const& other) const noexcept {

@@ -16,6 +16,9 @@ enum class descriptor_kind {
 
     /// @brief describes a function.
     function,
+
+    /// @brief describes an external relation (table, index, broadcast data, or etc.).
+    relation,
 };
 
 /**
@@ -29,6 +32,7 @@ constexpr inline std::string_view to_string_view(descriptor_kind value) noexcept
     switch (value) {
         case kind::variable: return "variable"sv;
         case kind::function: return "function"sv;
+        case kind::relation: return "relation"sv;
     }
     std::abort();
 }

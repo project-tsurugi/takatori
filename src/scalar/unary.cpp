@@ -1,7 +1,7 @@
 #include "takatori/scalar/unary.h"
 
 #include "takatori/tree/tree_element_util.h"
-#include "tree/tree_element_forward.h"
+#include "takatori/tree/tree_element_forward.h"
 
 #include "takatori/util/clonable.h"
 #include "takatori/util/downcast.h"
@@ -90,7 +90,7 @@ bool operator!=(unary const& a, unary const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, unary const& value) {
-    return out << "unary("
+    return out << value.kind() << "("
                << "operator_kind=" << value.operator_kind() << ", "
                << "operand=" << value.optional_operand() << ")";
 }

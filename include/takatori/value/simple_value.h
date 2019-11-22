@@ -5,6 +5,7 @@
 
 #include "takatori/util/comparable_traits.h"
 #include "takatori/util/downcast.h"
+#include "takatori/util/hash.h"
 #include "takatori/util/meta_type.h"
 
 namespace takatori::value {

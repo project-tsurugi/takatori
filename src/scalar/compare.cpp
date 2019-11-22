@@ -1,7 +1,7 @@
 #include "takatori/scalar/compare.h"
 
 #include "takatori/tree/tree_element_util.h"
-#include "tree/tree_element_forward.h"
+#include "takatori/tree/tree_element_forward.h"
 
 #include "takatori/util/clonable.h"
 #include "takatori/util/downcast.h"
@@ -121,7 +121,7 @@ bool operator!=(compare const& a, compare const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, compare const& value) {
-    return out << "compare("
+    return out << value.kind() << "("
                << "operator_kind=" << value.operator_kind() << ", "
                << "left=" << value.optional_left() << ", "
                << "right=" << value.optional_right() << ")";

@@ -20,6 +20,14 @@ TEST_F(sequence_view_test, simple) {
     EXPECT_EQ(v[2], 3);
 }
 
+TEST_F(sequence_view_test, empty) {
+    sequence_view<int> v;
+    static_assert(std::is_same_v<decltype(v)::value_type, int>);
+
+    ASSERT_EQ(v.size(), 0);
+    EXPECT_EQ(v.begin(), v.end());
+}
+
 TEST_F(sequence_view_test, pointer_size) {
     std::array<int, 5> a { 1, 2, 3, 4, 5 };
     sequence_view v { &a[1], 3 };

@@ -28,6 +28,11 @@ public:
     using iterator = reference_iterator<pointer_extractor<value_type>>;
 
     /**
+     * @brief creates a new empty instance.
+     */
+    constexpr sequence_view() = default;
+
+    /**
      * @brief creates a new instance.
      * @param data pointer the head of sequence data
      * @param size the number of elements
@@ -130,8 +135,8 @@ public:
     constexpr std::reverse_iterator<iterator> rend() const noexcept;
 
 private:
-    pointer data_;
-    size_type size_;
+    pointer data_ {};
+    size_type size_ {};
 };
 
 template<class T>

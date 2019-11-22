@@ -7,6 +7,6 @@ namespace takatori::descriptor {
 /**
  * @brief describes a variable.
  */
-using variable = element<descriptor_kind::variable, void>;
+using variable = element<descriptor_kind::variable>;
 
 } // namespace takatori::descriptor

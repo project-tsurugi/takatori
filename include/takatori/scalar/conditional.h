@@ -8,7 +8,7 @@
 
 #include "expression.h"
 #include "expression_kind.h"
-#include "conditional_alternative.h"
+#include "details/conditional_alternative.h"
 #include "takatori/tree/tree_fragment_vector.h"
 
 #include "takatori/util/object_creator.h"
@@ -25,7 +25,7 @@ namespace takatori::scalar {
 class conditional : public expression {
 public:
     /// @brief alternative type.
-    using alternative = conditional_alternative;
+    using alternative = details::conditional_alternative;
 
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::conditional;
@@ -36,7 +36,7 @@ public:
      * @param default_expression the default case expression
      */
     explicit conditional(
-            std::vector<alternative, util::pmr::polymorphic_allocator<alternative>> alternatives,
+            std::vector<alternative, util::object_allocator<alternative>> alternatives,
             util::unique_object_ptr<expression> default_expression) noexcept;
 
     /**

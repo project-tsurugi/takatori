@@ -1,7 +1,7 @@
 #include "takatori/scalar/coalesce.h"
 
-#include "tree/tree_element_forward.h"
-#include "tree/tree_element_vector_forward.h"
+#include "takatori/tree/tree_element_forward.h"
+#include "takatori/tree/tree_element_vector_forward.h"
 
 #include "takatori/util/downcast.h"
 
@@ -48,7 +48,7 @@ bool operator!=(coalesce const& a, coalesce const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, coalesce const& value) {
-    return out << "coalesce(" << value.alternatives() <<  ")";
+    return out << value.kind() << "(" << value.alternatives() <<  ")";
 }
 
 bool coalesce::equals(expression const& other) const noexcept {

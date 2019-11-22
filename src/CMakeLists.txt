@@ -46,79 +46,70 @@ add_library(takatori
     # scalar - complex expression
     scalar/match.cpp
     scalar/conditional.cpp
-    scalar/conditional_alternative.cpp
+    scalar/details/conditional_alternative.cpp
     scalar/coalesce.cpp
     scalar/let.cpp
-    scalar/let_declarator.cpp
     scalar/function_call.cpp
 
-    # scalar - util
-    scalar/variable_declarator.cpp
+    # scalar - misc.
 
     # relational
     relation/expression.cpp
 
     # relation - scan
-    # relation/scan_full.cpp
-    # relation/scan_point.cpp
-    # relation/scan_prefix.cpp
-    # relation/scan_range.cpp
+    relation/find.cpp
+    relation/scan.cpp
 
-    # relation - logical join
-    # relation/logical/join_map.cpp
-    # relation/logical/join_loop.cpp
-    # relation/logical/join_merge.cpp
-
-    # relation - join with scan
-    # relation/join_scan_point.cpp
-    # relation/join_scan_prefix.cpp
-    # relation/join_scan_range.cpp
+    # relation - join
+    relation/intermediate/join.cpp
+    relation/join_find.cpp
+    relation/join_scan.cpp
 
     # relation - tuple by tuple operations
-    relation/select.cpp
-    relation/select_column.cpp
-    relation/where.cpp
-    # relation/buffer.cpp
+    relation/project.cpp
+    relation/filter.cpp
+    relation/buffer.cpp
 
-    # relation - logical grouping operations
-    # relation/logical/aggregate.cpp
-    # relation/logical/distinct.cpp
-    # relation/logical/limit.cpp
+    # relation - grouping operations for whole relation
+    relation/intermediate/aggregate.cpp
+    relation/intermediate/distinct.cpp
+    relation/intermediate/limit.cpp
 
-    # relation - logical set operations
-    # relation/logical/intersect.cpp
-    # relation/logical/difference.cpp
+    # relation - set operations for whole relation
+    relation/intermediate/union.cpp
+    relation/intermediate/intersection.cpp
+    relation/intermediate/difference.cpp
 
     # relation - DML
-    # relation/emit.cpp
-    # relation/logical/emit_sorted.cpp
-    # relation/insert.cpp
-    # relation/update.cpp
-    # relation/delete_.cpp
-    # relation/overwrite.cpp
+    relation/emit.cpp
+    relation/write.cpp
 
     # relation - misc.
-    # relation/logical/union.cpp
-    # relation/logical/escape.cpp
+    relation/intermediate/escape.cpp
 
-    # relation - physical join
-    # relation/join_broadcast_map.cpp
-    # relation/join_broadcast_loop.cpp
-    # relation/join_group.cpp
-
-    # relation - pyhisical grouping
-    # relation/aggregate_group.cpp
-    # relation/distinct_group.cpp
-    # relation/limit_group.cpp
-    # relation/intersect_group.cpp
-    # relation/difference_group.cpp
-    # relation/flatten.cpp
+    # relation - dealing with group relations
+    relation/step/join.cpp
+    relation/step/aggregate.cpp
+    relation/step/distinct.cpp
+    relation/step/limit.cpp
+    relation/step/intersection.cpp
+    relation/step/difference.cpp
+    relation/step/flatten.cpp
 
     # relation - communicate with exchange operators
-    # relation/take_flat.cpp
-    # relation/take_group.cpp
-    # relation/take_cogroup.cpp
-    # relation/offer.cpp
+    relation/step/take_flat.cpp
+    relation/step/take_group.cpp
+    relation/step/take_cogroup.cpp
+    relation/step/offer.cpp
+
+    # relation - details
+    relation/details/mapping_element.cpp
+    relation/details/emit_element.cpp
+    relation/details/sort_key_element.cpp
+    relation/details/aggregate_element.cpp
+    relation/details/key_pair_element.cpp
+    relation/details/union_element.cpp
+    relation/details/cogroup_element.cpp
 
     # util
     util/object_creator.cpp

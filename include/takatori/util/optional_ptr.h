@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "hash.h"
 #include "infect_qualifier.h"
 
 namespace takatori::util {
@@ -359,6 +360,30 @@ template<class T, class U>
 inline bool operator==(T const& a, optional_ptr<U> const& b) noexcept { return b == a; }
 
 /**
+ * @brief returns whether or not the reference is absent.
+ * @tparam T the reference type
+ * @param ref the reference
+ * @return true if the reference is absent
+ * @return false otherwise
+ */
+template<class T>
+inline constexpr bool operator==(optional_ptr<T> const& ref, std::nullptr_t) noexcept {
+    return !ref;
+}
+
+/**
+ * @brief returns whether or not the reference is absent.
+ * @tparam T the reference type
+ * @param ref the reference
+ * @return true if the reference is absent
+ * @return false otherwise
+ */
+template<class T>
+inline constexpr bool operator==(std::nullptr_t, optional_ptr<T> const& ref) noexcept {
+    return !ref;
+}
+
+/**
  * @brief returns whether or not the two references are different.
  * @tparam T the value type
  * @tparam equal_to the equivalent function object type for the element values
@@ -377,6 +402,30 @@ inline bool operator!=(optional_ptr<T> const& a, U const& b) noexcept { return !
 /// @copydoc operator!=()
 template<class T, class U>
 inline bool operator!=(T const& a, optional_ptr<U> const& b) noexcept { return !(a == b); }
+
+/**
+ * @brief returns whether or not the reference is present.
+ * @tparam T the reference type
+ * @param ref the reference
+ * @return true if the reference is present
+ * @return false otherwise
+ */
+template<class T>
+inline constexpr bool operator!=(optional_ptr<T> const& ref, std::nullptr_t) noexcept {
+    return ref;
+}
+
+/**
+ * @brief returns whether or not the reference is present.
+ * @tparam T the reference type
+ * @param ref the reference
+ * @return true if the reference is present
+ * @return false otherwise
+ */
+template<class T>
+inline constexpr bool operator!=(std::nullptr_t, optional_ptr<T> const& ref) noexcept {
+    return ref;
+}
 
 /**
  * @brief returns whether or not the first reference is less than the second one.
@@ -556,6 +605,7 @@ struct std::hash<takatori::util::optional_ptr<T>> {
      * @return the corresponded hash code
      */
     std::size_t operator()(takatori::util::optional_ptr<T> const& value) const noexcept {
-        return value.get() == nullptr ? 0 : 1 + 31 * ::std::hash<T>{}(value.value());
+        return value.get() == nullptr ? takatori::util::hash()
+                                      : takatori::util::hash(1, value.value());
     }
 };

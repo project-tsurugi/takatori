@@ -1,7 +1,7 @@
 #include "takatori/scalar/match.h"
 
 #include "takatori/tree/tree_element_util.h"
-#include "tree/tree_element_forward.h"
+#include "takatori/tree/tree_element_forward.h"
 
 #include "takatori/util/clonable.h"
 #include "takatori/util/downcast.h"
@@ -152,7 +152,7 @@ bool operator!=(match const& a, match const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, match const& value) {
-    return out << "match("
+    return out << value.kind() << "("
                << "operator_kind=" << value.operator_kind() << ", "
                << "input=" << value.optional_input() << ", "
                << "pattern=" << value.optional_pattern() << ", "

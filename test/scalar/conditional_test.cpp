@@ -15,7 +15,7 @@ class conditional_test : public ::testing::Test {};
 static_assert(conditional::tag == expression_kind::conditional);
 static_assert(std::is_same_v<type_of_t<conditional::tag>, conditional>);
 
-static_assert(tree::is_tree_fragment_v<conditional_alternative>);
+static_assert(tree::is_tree_fragment_v<conditional::alternative>);
 
 TEST_F(conditional_test, simple) {
     conditional expr {
