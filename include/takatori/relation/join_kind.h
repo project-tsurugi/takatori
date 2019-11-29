@@ -60,7 +60,7 @@ inline std::ostream& operator<<(std::ostream& out, join_kind value) {
  * @tparam Kind the join_kind kind
  */
 template<join_kind Kind>
-using join_kind_tag_t = util::enum_tag_t<join_kind, Kind>;
+using join_kind_tag_t = util::enum_tag_t<Kind>;
 
 /**
  * @brief a tag object of join_kind.
@@ -86,11 +86,11 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, join_kind tag_value, Args&&... args) {
     using kind = join_kind;
     switch (tag_value) {
-        case kind::inner: return util::enum_tag_callback<kind, kind::inner>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::left_outer: return util::enum_tag_callback<kind, kind::left_outer>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::full_outer: return util::enum_tag_callback<kind, kind::full_outer>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::semi: return util::enum_tag_callback<kind, kind::semi>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::anti: return util::enum_tag_callback<kind, kind::anti>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::inner: return util::enum_tag_callback<kind::inner>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::left_outer: return util::enum_tag_callback<kind::left_outer>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::full_outer: return util::enum_tag_callback<kind::full_outer>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::semi: return util::enum_tag_callback<kind::semi>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::anti: return util::enum_tag_callback<kind::anti>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

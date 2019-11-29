@@ -50,7 +50,7 @@ inline std::ostream& operator<<(std::ostream& out, sort_direction value) noexcep
  * @tparam Kind the direction kind
  */
 template<sort_direction Kind>
-using sort_direction_tag_t = util::enum_tag_t<sort_direction, Kind>;
+using sort_direction_tag_t = util::enum_tag_t<Kind>;
 
 /**
  * @brief a tag object of direction.
@@ -76,8 +76,8 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, sort_direction tag_value, Args&&... args) {
     using kind = sort_direction;
     switch (tag_value) {
-        case kind::ascendant: return util::enum_tag_callback<kind, kind::ascendant>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::descendant: return util::enum_tag_callback<kind, kind::descendant>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::ascendant: return util::enum_tag_callback<kind::ascendant>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::descendant: return util::enum_tag_callback<kind::descendant>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

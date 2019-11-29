@@ -68,7 +68,7 @@ inline std::ostream& operator<<(std::ostream& out, cast_loss_policy value) {
  * @tparam Kind the cast_loss_policy kind
  */
 template<cast_loss_policy Kind>
-using cast_loss_policy_tag_t = util::enum_tag_t<cast_loss_policy, Kind>;
+using cast_loss_policy_tag_t = util::enum_tag_t<Kind>;
 
 /**
  * @brief a tag object of cast_loss_policy.
@@ -94,12 +94,12 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, cast_loss_policy policy, Args&&... args) {
     using kind = cast_loss_policy;
     switch (policy) {
-        case kind::ignore: return util::enum_tag_callback<kind, kind::ignore>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::floor: return util::enum_tag_callback<kind, kind::floor>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::ceil: return util::enum_tag_callback<kind, kind::ceil>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::unknown: return util::enum_tag_callback<kind, kind::unknown>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::warn: return util::enum_tag_callback<kind, kind::warn>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::error: return util::enum_tag_callback<kind, kind::error>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::ignore: return util::enum_tag_callback<kind::ignore>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::floor: return util::enum_tag_callback<kind::floor>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::ceil: return util::enum_tag_callback<kind::ceil>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::unknown: return util::enum_tag_callback<kind::unknown>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::warn: return util::enum_tag_callback<kind::warn>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::error: return util::enum_tag_callback<kind::error>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

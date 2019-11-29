@@ -53,57 +53,47 @@ public:
     simple_value(simple_value&& other) noexcept = delete;
     simple_value& operator=(simple_value&& other) noexcept = delete;
 
-    value_kind kind() const noexcept override;
-    simple_value* clone(util::object_creator creator) const& override;
-    simple_value* clone(util::object_creator creator) && override;
+    value_kind kind() const noexcept override {
+        return Kind;
+    }
+
+    simple_value* clone(util::object_creator creator) const& override {
+        return creator.create_object<simple_value<Kind>>(entity_);
+    }
+
+    simple_value* clone(util::object_creator creator) && override {
+        return creator.create_object<simple_value<Kind>>(std::move(entity_));
+    }
 
     /**
      * @brief returns the entity value.
      * @return the entity value
      */
-    constexpr view_type get() const noexcept;
+    constexpr view_type get() const noexcept {
+        return entity_;
+    }
 
     /// @copydoc get()
-    explicit constexpr operator view_type() const noexcept;
+    explicit constexpr operator view_type() const noexcept {
+        return get();
+    }
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
-    std::ostream& print_to(std::ostream& out) const override;
+    bool equals(data const& other) const noexcept override {
+        return tag == other.kind() && *this == util::unsafe_downcast<simple_value<Kind>>(other);
+    }
+
+    std::size_t hash() const noexcept override {
+        return util::hash(entity_);
+    }
+
+    std::ostream& print_to(std::ostream& out) const override {
+        return out << *this;
+    }
 
 private:
     entity_type entity_;
 };
-
-template<value_kind Kind>
-inline value_kind
-simple_value<Kind>::kind() const noexcept {
-    return Kind;
-}
-
-template<value_kind Kind>
-inline simple_value<Kind>*
-simple_value<Kind>::clone(util::object_creator creator) const& {
-    return creator.create_object<simple_value<Kind>>(entity_);
-}
-
-template<value_kind Kind>
-inline simple_value<Kind>*
-simple_value<Kind>::clone(util::object_creator creator) && {
-    return creator.create_object<simple_value<Kind>>(std::move(entity_));
-}
-
-template<value_kind Kind>
-inline constexpr typename simple_value<Kind>::view_type
-simple_value<Kind>::get() const noexcept {
-    return entity_;
-}
-
-template<value_kind Kind>
-inline constexpr
-simple_value<Kind>::operator view_type() const noexcept {
-    return get();
-}
 
 /**
  * @brief returns whether or not the two elements are equivalent.
@@ -144,24 +134,6 @@ template<value_kind Kind>
 inline std::ostream&
 operator<<(std::ostream& out, simple_value<Kind> const& value) {
     return out << Kind << "(" << value.get() << ")";
-}
-
-template<value_kind Kind>
-inline bool
-simple_value<Kind>::equals(data const& other) const noexcept {
-    return tag == other.kind() && *this == util::unsafe_downcast<simple_value<Kind>>(other);
-}
-
-template<value_kind Kind>
-inline std::size_t
-simple_value<Kind>::hash() const noexcept {
-    return std::hash<entity_type>{}(entity_);
-}
-
-template<value_kind Kind>
-inline std::ostream&
-simple_value<Kind>::print_to(std::ostream& out) const {
-    return out << *this;
 }
 
 } // namespace takatori::value

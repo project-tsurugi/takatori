@@ -62,7 +62,7 @@ inline std::ostream& operator<<(std::ostream& out, comparison_operator value) no
  * @tparam Kind the comparison_operator kind
  */
 template<comparison_operator Kind>
-using comparison_operator_tag_t = util::enum_tag_t<comparison_operator, Kind>;
+using comparison_operator_tag_t = util::enum_tag_t<Kind>;
 
 /**
  * @brief a tag object of comparison_operator.
@@ -88,12 +88,12 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, comparison_operator operator_kind, Args&&... args) {
     using kind = comparison_operator;
     switch (operator_kind) {
-        case kind::equal: return util::enum_tag_callback<kind, kind::equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::not_equal: return util::enum_tag_callback<kind, kind::not_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::less: return util::enum_tag_callback<kind, kind::less>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::less_equal: return util::enum_tag_callback<kind, kind::less_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::greater: return util::enum_tag_callback<kind, kind::greater>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::greater_equal: return util::enum_tag_callback<kind, kind::greater_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::equal: return util::enum_tag_callback<kind::equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::not_equal: return util::enum_tag_callback<kind::not_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::less: return util::enum_tag_callback<kind::less>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::less_equal: return util::enum_tag_callback<kind::less_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::greater: return util::enum_tag_callback<kind::greater>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::greater_equal: return util::enum_tag_callback<kind::greater_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

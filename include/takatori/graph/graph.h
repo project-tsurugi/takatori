@@ -143,7 +143,7 @@ public:
     void clear() noexcept;
 
     /**
-     * @brief removes a element.
+     * @brief removes an element.
      * @param id the target element ID
      * @return true if successfully removed
      * @return false otherwise (may be no such the element)
@@ -151,7 +151,7 @@ public:
     bool erase(id_type id);
 
     /**
-     * @brief removes a element on the given iterator.
+     * @brief removes an element on the given iterator.
      * @param position the target element position
      * @return the next position of the erased element
      */
@@ -178,14 +178,14 @@ public:
     reference emplace(Args&&... args);
 
     /**
-     * @brief releases a element from this graph.
+     * @brief releases an element from this graph.
      * @param id the target element ID
      * @return the released element
      */
     util::unique_object_ptr<value_type> release(id_type id) noexcept;
 
     /**
-     * @brief removes a element on the given iterator.
+     * @brief removes an element on the given iterator.
      * @param position the target position
      * @return a pair of the removed element, and the next position of the released element
      */

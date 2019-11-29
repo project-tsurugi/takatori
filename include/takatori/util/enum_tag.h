@@ -18,11 +18,11 @@ struct enum_default_tag_t {};
  * @tparam E the enum type
  * @tparam Kind the enum value
  */
-template<class E, E Kind>
-struct enum_tag_t : enum_default_tag_t<E> {
+template<auto Kind>
+struct enum_tag_t : enum_default_tag_t<decltype(Kind)> {
 
     /// @brief the enum type.
-    using type = E;
+    using type = decltype(Kind);
 
     /// @brief the enum value.
     static inline constexpr type value = Kind;
@@ -36,35 +36,32 @@ struct enum_tag_t : enum_default_tag_t<E> {
      * @brief returns the enum value.
      * @return the enum value
      */
-    constexpr operator E() const noexcept { return value; } // NOLINT
+    constexpr operator type() const noexcept { return value; } // NOLINT
 };
 
 /**
  * @brief a tag object for scoped enum values.
- * @tparam E the enum type
  * @tparam Kind the enum value
  */
-template<class E, E Kind>
-inline constexpr enum_tag_t<E, Kind> enum_tag {};
+template<auto Kind>
+inline constexpr enum_tag_t<Kind> enum_tag {};
 
 /**
  * @brief appends string representation of the given tag's value.
- * @tparam E the enum type
  * @tparam Kind the enum value
  * @param out the target output
  * @param tag the target tag
  * @return the output
  */
-template<class E, E Kind>
-inline std::ostream& operator<<(std::ostream& out, enum_tag_t<E, Kind> tag) {
+template<auto Kind>
+inline std::ostream& operator<<(std::ostream& out, enum_tag_t<Kind> tag) {
     (void) tag;
     return out << Kind;
 }
 
 /**
  * @brief invokes the callback object with an enum_tag argument.
- * This invokes Callback::operator()(enum_tag<Enum, Kind> Args...).
- * @tparam Enum the enumeration type
+ * This invokes Callback::operator()(enum_tag<Kind> Args...).
  * @tparam Kind the enumeration value
  * @tparam Callback the callback object type
  * @tparam Args the callback extra parameter type
@@ -72,14 +69,14 @@ inline std::ostream& operator<<(std::ostream& out, enum_tag_t<E, Kind> tag) {
  * @param object the target object
  * @return the invocation result
  */
-template<class Enum, Enum Kind, class Callback, class... Args>
+template<auto Kind, class Callback, class... Args>
 inline std::enable_if_t<
-        std::is_invocable_v<Callback, enum_tag_t<Enum, Kind>, Args...>,
-        std::invoke_result_t<Callback, enum_tag_t<Enum, Kind>, Args...>>
+        std::is_invocable_v<Callback, enum_tag_t<Kind>, Args...>,
+        std::invoke_result_t<Callback, enum_tag_t<Kind>, Args...>>
 enum_tag_callback(Callback&& callback, Args&&... args) {
     return std::invoke(
             std::forward<Callback>(callback),
-            enum_tag<Enum, Kind>,
+            enum_tag<Kind>,
             std::forward<Args>(args)...);
 }
 

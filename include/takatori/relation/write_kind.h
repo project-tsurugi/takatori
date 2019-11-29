@@ -57,7 +57,7 @@ inline std::ostream& operator<<(std::ostream& out, write_kind value) {
  * @tparam Kind the write_kind kind
  */
 template<write_kind Kind>
-using write_kind_tag_t = util::enum_tag_t<write_kind, Kind>;
+using write_kind_tag_t = util::enum_tag_t<Kind>;
 
 /**
  * @brief a tag object of write_kind.
@@ -83,10 +83,10 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, write_kind tag_value, Args&&... args) {
     using kind = write_kind;
     switch (tag_value) {
-        case kind::insert: return util::enum_tag_callback<kind, kind::insert>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::update: return util::enum_tag_callback<kind, kind::update>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::delete_: return util::enum_tag_callback<kind, kind::delete_>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::insert_or_update: return util::enum_tag_callback<kind, kind::insert_or_update>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::insert: return util::enum_tag_callback<kind::insert>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::update: return util::enum_tag_callback<kind::update>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::delete_: return util::enum_tag_callback<kind::delete_>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::insert_or_update: return util::enum_tag_callback<kind::insert_or_update>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

@@ -50,7 +50,7 @@ inline std::ostream& operator<<(std::ostream& out, match_operator value) noexcep
  * @tparam Kind the match_operator kind
  */
 template<match_operator Kind>
-using match_operator_tag_t = util::enum_tag_t<match_operator, Kind>;
+using match_operator_tag_t = util::enum_tag_t<Kind>;
 
 /**
  * @brief a tag object of match_operator.
@@ -76,8 +76,8 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, match_operator operator_kind, Args&&... args) {
     using kind = match_operator;
     switch (operator_kind) {
-        case kind::like: return util::enum_tag_callback<kind, kind::like>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::similar: return util::enum_tag_callback<kind, kind::similar>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::like: return util::enum_tag_callback<kind::like>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::similar: return util::enum_tag_callback<kind::similar>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

@@ -50,7 +50,7 @@ inline std::ostream& operator<<(std::ostream& out, quantifier value) noexcept {
  * @tparam Kind the quantifier kind
  */
 template<quantifier Kind>
-using quantifier_tag_t = util::enum_tag_t<quantifier, Kind>;
+using quantifier_tag_t = util::enum_tag_t<Kind>;
 
 /**
  * @brief a tag object of quantifier.
@@ -76,8 +76,8 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, quantifier quantifier_kind, Args&&... args) {
     using kind = quantifier;
     switch (quantifier_kind) {
-        case kind::all: return util::enum_tag_callback<kind, kind::all>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::any: return util::enum_tag_callback<kind, kind::any>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::all: return util::enum_tag_callback<kind::all>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::any: return util::enum_tag_callback<kind::any>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

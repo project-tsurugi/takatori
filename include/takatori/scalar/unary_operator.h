@@ -65,7 +65,7 @@ inline std::ostream& operator<<(std::ostream& out, unary_operator value) noexcep
  * @tparam Kind the unary_operator kind
  */
 template<unary_operator Kind>
-using unary_operator_tag_t = util::enum_tag_t<unary_operator, Kind>;
+using unary_operator_tag_t = util::enum_tag_t<Kind>;
 
 /**
  * @brief a tag object of unary_operator.
@@ -91,13 +91,13 @@ template<class Callback, class... Args>
 inline auto dispatch(Callback&& callback, unary_operator operator_kind, Args&&... args) {
     using kind = unary_operator;
     switch (operator_kind) {
-        case kind::plus: return util::enum_tag_callback<kind, kind::plus>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::sign_inversion: return util::enum_tag_callback<kind, kind::sign_inversion>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::length: return util::enum_tag_callback<kind, kind::length>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::conditional_not: return util::enum_tag_callback<kind, kind::conditional_not>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::is_null: return util::enum_tag_callback<kind, kind::is_null>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::is_true: return util::enum_tag_callback<kind, kind::is_true>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::is_false: return util::enum_tag_callback<kind, kind::is_false>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::plus: return util::enum_tag_callback<kind::plus>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::sign_inversion: return util::enum_tag_callback<kind::sign_inversion>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::length: return util::enum_tag_callback<kind::length>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::conditional_not: return util::enum_tag_callback<kind::conditional_not>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_null: return util::enum_tag_callback<kind::is_null>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_true: return util::enum_tag_callback<kind::is_true>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_false: return util::enum_tag_callback<kind::is_false>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

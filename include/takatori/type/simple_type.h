@@ -31,33 +31,31 @@ public:
     simple_type(simple_type&& other) noexcept = delete;
     simple_type& operator=(simple_type&& other) noexcept = delete;
 
-    type_kind kind() const noexcept override;
-    simple_type* clone(util::object_creator creator) const& override;
-    simple_type* clone(util::object_creator creator) && override;
+    type_kind kind() const noexcept override {
+        return Kind;
+    }
+
+    simple_type* clone(util::object_creator creator) const& override {
+        return creator.create_object<simple_type<Kind>>();
+    }
+
+    simple_type* clone(util::object_creator creator) && override {
+        return creator.create_object<simple_type<Kind>>();
+    }
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
-    std::ostream& print_to(std::ostream& out) const override;
+    bool equals(data const& other) const noexcept override {
+        return tag == other.kind() && *this == util::unsafe_downcast<simple_type<Kind>>(other);
+    }
+
+    std::size_t hash() const noexcept override {
+        return 0;
+    }
+
+    std::ostream& print_to(std::ostream& out) const override {
+        return out << *this;
+    }
 };
-
-template<type_kind Kind>
-inline type_kind
-simple_type<Kind>::kind() const noexcept {
-    return Kind;
-}
-
-template<type_kind Kind>
-inline simple_type<Kind>*
-simple_type<Kind>::clone(util::object_creator creator) const& {
-    return creator.create_object<simple_type<Kind>>();
-}
-
-template<type_kind Kind>
-inline simple_type<Kind>*
-simple_type<Kind>::clone(util::object_creator creator) && {
-    return creator.create_object<simple_type<Kind>>();
-}
 
 /**
  * @brief returns whether or not the two elements are equivalent.
@@ -98,21 +96,6 @@ template<type_kind Kind>
 inline std::ostream& operator<<(std::ostream& out, simple_type<Kind> const& value) {
     (void) value;
     return out << Kind << "()";
-}
-
-template<type_kind Kind>
-inline bool simple_type<Kind>::equals(data const& other) const noexcept {
-    return tag == other.kind() && *this == util::unsafe_downcast<simple_type<Kind>>(other);
-}
-
-template<type_kind Kind>
-inline std::size_t simple_type<Kind>::hash() const noexcept {
-    return 0;
-}
-
-template<type_kind Kind>
-inline std::ostream& simple_type<Kind>::print_to(std::ostream& out) const {
-    return out << *this;
 }
 
 } // namespace takatori::type
