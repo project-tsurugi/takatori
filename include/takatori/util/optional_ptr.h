@@ -544,6 +544,13 @@ inline optional_ptr<util::infect_const_t<U, T>> dynamic_pointer_cast(optional_pt
     return destination_type(dynamic_cast<typename destination_type::pointer>(value.get()));
 }
 
+/// @copydoc dynamic_pointer_cast()
+template<class T, class U>
+inline optional_ptr<util::infect_const_t<U, T>> dynamic_pointer_cast(U& value) noexcept {
+    optional_ptr<std::remove_reference_t<U>> ptr { value };
+    return dynamic_pointer_cast<T>(ptr);
+}
+
 /**
  * @brief converts the reference by dynamic reference cast.
  * @tparam T the destination value type

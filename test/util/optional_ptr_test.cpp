@@ -293,6 +293,14 @@ TEST_F(optional_reference_test, dynamic_pointer_cast_rvalue) {
     EXPECT_FALSE(dynamic_pointer_cast<Other>(optional_ptr {*baseref }));
 }
 
+TEST_F(optional_reference_test, dynamic_pointer_bare) {
+    Sub x;
+    Base& baseref = x;
+    auto subref = dynamic_pointer_cast<Sub>(baseref);
+    EXPECT_EQ(subref.get(), &x);
+    EXPECT_FALSE(dynamic_pointer_cast<Other>(baseref));
+}
+
 TEST_F(optional_reference_test, dynamic_reference_cast) {
     Sub x;
     optional_ptr<Base> baseref {x };

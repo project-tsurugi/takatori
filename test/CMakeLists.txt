@@ -30,20 +30,20 @@ target_link_libraries(takatori-test-main
 )
 
 # type models
-add_test_executable(type/type_dispatch_test.cpp)
 add_test_executable(type/simple_type_test.cpp)
 add_test_executable(type/decimal_type_test.cpp)
 add_test_executable(type/character_type_test.cpp)
 add_test_executable(type/bit_type_test.cpp)
 add_test_executable(type/time_of_day_type_test.cpp)
 add_test_executable(type/time_point_type_test.cpp)
+add_test_executable(type/type_dispatch_test.cpp)
 
 # value models
-add_test_executable(value/value_dispatch_test.cpp)
 add_test_executable(value/simple_value_test.cpp)
 add_test_executable(value/decimal_value_test.cpp)
 add_test_executable(value/character_value_test.cpp)
 add_test_executable(value/bit_value_test.cpp)
+add_test_executable(value/value_dispatch_test.cpp)
 
 # datetime
 add_test_executable(datetime/date_test.cpp)
@@ -55,7 +55,6 @@ add_test_executable(datetime/time_point_test.cpp)
 add_test_executable(datetime/time_zone_test.cpp)
 
 # scalar expression models
-add_test_executable(scalar/expression_dispatch_test.cpp)
 add_test_executable(scalar/immediate_test.cpp)
 add_test_executable(scalar/variable_reference_test.cpp)
 add_test_executable(scalar/unary_test.cpp)
@@ -67,6 +66,7 @@ add_test_executable(scalar/conditional_test.cpp)
 add_test_executable(scalar/coalesce_test.cpp)
 add_test_executable(scalar/let_test.cpp)
 add_test_executable(scalar/function_call_test.cpp)
+add_test_executable(scalar/expression_dispatch_test.cpp)
 
 # relational algebra expression models
 add_test_executable(relation/find_test.cpp)
@@ -97,6 +97,8 @@ add_test_executable(relation/step/take_flat_test.cpp)
 add_test_executable(relation/step/take_group_test.cpp)
 add_test_executable(relation/step/take_cogroup_test.cpp)
 add_test_executable(relation/step/offer_test.cpp)
+add_test_executable(relation/intermediate/relation_intermediate_dispatch_test.cpp)
+add_test_executable(relation/step/relation_step_dispatch_test.cpp)
 
 # tree models
 add_test_executable(tree/tree_element_test.cpp)

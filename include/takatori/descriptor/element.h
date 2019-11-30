@@ -34,20 +34,14 @@ public:
      * @return the descriptor entity
      * @warning undefined behavior if the entity is absent
      */
-    util::object& entity() noexcept { return *entity_; }
-
-    /// @copydoc entity()
-    util::object const& entity() const noexcept { return *entity_; }
+    util::object& entity() const noexcept { return *entity_; }
 
     /**
      * @brief returns the descriptor entity.
      * @return the descriptor entity
      * @return empty if the entity is absent
      */
-    util::optional_ptr<util::object> optional_entity() noexcept { return util::optional_ptr { entity_.get() }; }
-
-    /// @copydoc optional_entity()
-    util::optional_ptr<util::object const> optional_entity() const noexcept { return util::optional_ptr { entity_.get() }; }
+    util::optional_ptr<util::object> optional_entity() const noexcept { return util::optional_ptr { entity_.get() }; }
 
     /**
      * @brief returns the descriptor entity.

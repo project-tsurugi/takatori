@@ -13,6 +13,7 @@
 namespace takatori::relation {
 
 using scalar::value_object;
+using scalar::value_of;
 using scalar::vardesc;
 using scalar::funcdesc;
 using scalar::constant;
