@@ -80,7 +80,7 @@ public:
 
     /**
      * @brief returns whether or not this group is mandatory.
-     * this option effects like as join kind (e.g. inner, full_outer).
+     * @details this option effects like as join kind (e.g. inner, full_outer).
      * @return true this group is mandatory - if there are no rows for some keys in this source, the co-group operation does not emit rows for such the keys
      * @return false this group is optional - the co-group operation emits rows even if there are no rows for some keys in this source
      */

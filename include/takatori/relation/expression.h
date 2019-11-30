@@ -50,10 +50,10 @@ public:
 
     /**
      * @brief returns a clone of this object.
-     * The created clone will become orphaned vertex, that is, this never copies the following:
-     * - the vertex ID
-     * - the owner graph
-     * - the input/output opposites
+     * @details The created clone will become orphaned vertex, that is, this never copies the following:
+     *   @li the vertex ID
+     *   @li the owner graph
+     *   @li the input/output opposites
      * @param creator the object creator
      * @return the created clone
      */
@@ -81,7 +81,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are equivalent.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a == b
@@ -91,7 +91,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are different.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a != b
@@ -122,7 +122,7 @@ protected:
 
     /**
      * @brief returns whether or not this expressions is equivalent to the target one.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param other the target expression
      * @return true if the both are equivalent
      * @return false otherwise

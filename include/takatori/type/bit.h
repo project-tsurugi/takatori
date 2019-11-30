@@ -55,7 +55,7 @@ public:
 
     /**
      * @brief returns the max number of bits in the sequence.
-     * Note that, if this object represents fixed-length bit sequence, the returned value must not be empty.
+     * @note if this object represents fixed-length bit sequence, the returned value must not be empty.
      * @return the max number of bits
      * @return empty if it is not defined
      * @see is_varying()

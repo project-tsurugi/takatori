@@ -139,15 +139,19 @@ private:
     size_type size_ {};
 };
 
+/// @private
 template<class T>
 sequence_view(T*) -> sequence_view<T>;
 
+/// @private
 template<class T>
 sequence_view(T*, std::size_t) -> sequence_view<T>;
 
+/// @private
 template<class T>
 sequence_view(T*, T*) -> sequence_view<T>;
 
+/// @private
 template<class T>
 sequence_view(T&) -> sequence_view<std::remove_pointer_t<decltype(std::declval<T>().data())>>;
 

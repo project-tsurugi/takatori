@@ -48,7 +48,7 @@ template<class T> constexpr inline bool is_tree_fragment_v = is_tree_fragment<T>
 
 /**
  * @brief the traits for tree fragment.
- * The tree element "T" must have "T::parent_element(U*) -> void" where "U" is parent_type.
+ * @details The tree element "T" must have "T::parent_element(U*) -> void" where "U" is parent_type.
  * @tparam T the element type
  */
 template<class T>

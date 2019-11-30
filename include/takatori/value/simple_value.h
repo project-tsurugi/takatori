@@ -12,9 +12,9 @@ namespace takatori::value {
 
 /**
  * @brief traits for the simple_value.
- * This provides the following properties:
- * - entity_type the entity type
- * - view_type the view type
+ * @details This provides the following properties:
+ *   @li entity_type the entity type
+ *   @li view_type the view type
  * @tparam Kind the value kind, must be simple type
  */
 template<value_kind Kind> struct simple_value_traits;

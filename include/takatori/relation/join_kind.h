@@ -71,8 +71,8 @@ inline constexpr join_kind_tag_t<Kind> join_kind_tag {};
 
 /**
  * @brief invoke callback function for individual join kinds.
- * If the join_kind is K, this may invoke Callback::operator()(join_kind_tag_t<K>, Args...).
- * You must declare all callback functions for individual join kinds,
+ * @details If the join_kind is K, this may invoke Callback::operator()(join_kind_tag_t<K>, Args...).
+ * @attention You must declare all callback functions for individual join kinds,
  * or declare Callback::operator()(join_kind, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type

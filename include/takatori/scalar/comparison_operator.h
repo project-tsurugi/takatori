@@ -73,8 +73,8 @@ inline constexpr comparison_operator_tag_t<Kind> comparison_operator_tag {};
 
 /**
  * @brief invoke callback function for individual comparison operator kinds.
- * If the operator_kind is K, this may invoke Callback::operator()(comparison_operator_tag_t<K>, Args...).
- * You must declare all callback functions for individual comparison operators,
+ * @details If the operator_kind is K, this may invoke Callback::operator()(comparison_operator_tag_t<K>, Args...).
+ * @attention You must declare all callback functions for individual comparison operators,
  * or declare Callback::operator()(comparison_operator, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type

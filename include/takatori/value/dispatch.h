@@ -29,8 +29,8 @@ namespace takatori::value {
 
 /**
  * @brief invoke callback function for individual subclasses of value::data.
- * If the actual input object has type of T, this may invoke Callback::operator()(T const&, Args...).
- * You must declare all callback functions for individual subclasses,
+ * @details If the actual input object has type of T, this may invoke Callback::operator()(T const&, Args...).
+ * @attention You must declare all callback functions for individual subclasses,
  * or declare Callback::operator()(value::data const&, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type

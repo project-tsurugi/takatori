@@ -78,7 +78,7 @@ struct graph_element_traits {
 
     /**
      * @brief tells when the element was leave from the current graph.
-     * If the element has been a member of some graph, this does nothing.
+     * @details If the element has been a member of some graph, this does nothing.
      * @param element the target element
      */
     static void leave(reference element);

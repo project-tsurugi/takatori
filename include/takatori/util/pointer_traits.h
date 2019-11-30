@@ -61,10 +61,10 @@ template<class T> struct is_smart_pointer : std::conjunction<
 
 /**
  * @brief tests if the target type is supports the "pointer" concept.
- * That is, the target type supports the all following features:
- * - bool conversion operator : returns true iff not empty
- * - de-reference operator : returns reference of the pointing data
- * - arrow operator : returns raw pointer of the pointing data
+ * @details That is, the target type supports the all following features:
+ *   @li bool conversion operator : returns true iff not empty
+ *   @li de-reference operator : returns reference of the pointing data
+ *   @li arrow operator : returns raw pointer of the pointing data
  * @tparam T the target type
  */
 template<class T> struct is_pointer : impl::is_pointer<T> {};
@@ -143,7 +143,7 @@ struct pointer_traits<E*, std::enable_if_t<is_pointer_v<E*>>> {
 
     /**
      * @brief removes the pointed value.
-     * After this operator, has_value(value) will return nullptr.
+     * @details After this operator, has_value(value) will return nullptr.
      * @param value the value
      */
     static constexpr void reset(E*& value) noexcept { value = nullptr; }
@@ -196,7 +196,7 @@ struct pointer_traits<Ptr, std::enable_if_t<is_smart_pointer_v<Ptr>>> {
 
     /**
      * @brief removes the pointed value.
-     * After this operation, has_value(value) will return nullptr.
+     * @details After this operation, has_value(value) will return nullptr.
      * @param value the value
      */
     static constexpr void reset(Ptr& value) noexcept { value = nullptr; }
@@ -217,7 +217,7 @@ struct remove_pointer<T, std::enable_if_t<is_pointer_v<T>>> : meta_type<typename
 
 /**
  * @brief provides the value type of the smart pointer.
- * If the specified type is not a smart pointer, this just returns the specified type.
+ * @details If the specified type is not a smart pointer, this just returns the specified type.
  * @tparam T the target type
  */
 template<class T> struct remove_pointer : impl::remove_pointer<T> {};

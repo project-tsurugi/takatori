@@ -10,7 +10,7 @@ namespace takatori::relation::step {
 
 /**
  * @brief obtains an intersection of two input groups.
- * Actually this works that limits the number of rows in the first input group, up to the number of rows in second one.
+ * @details Actually this works that limits the number of rows in the first input group, up to the number of rows in second one.
  */
 class intersection : public expression {
 public:
@@ -47,7 +47,7 @@ public:
 
     /**
      * @brief returns the input port.
-     * The input must be a co-group relation consists of two groups.
+     * @attention The input must be a co-group relation consists of two groups.
      * @return the input port
      * @see take_cogroup
      */
@@ -67,7 +67,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are equivalent.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a == b
@@ -77,7 +77,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are different.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a != b

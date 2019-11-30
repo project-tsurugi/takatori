@@ -322,7 +322,7 @@ public:
 
     /**
      * @brief inserts the given element.
-     * This may create a copy if the element is not created by this container's object creator.
+     * @attention This may create a copy if the element is not created by this container's object creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param position the insertion position
@@ -369,7 +369,7 @@ public:
 
     /**
      * @brief appends the given element into the tail of this.
-     * This may create a copy if the element is not created by this container's object creator.
+     * @attention This may create a copy if the element is not created by this container's object creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param element the source element
@@ -412,7 +412,7 @@ public:
 
     /**
      * @brief replaces an existing element with the given element.
-     * This may create a copy if the element is not created by this container's object creator.
+     * @attention This may create a copy if the element is not created by this container's object creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param position the target element position
@@ -519,7 +519,7 @@ public:
 
     /**
      * @brief exchanges contents between this and the given container.
-     * This also exchanges their object_creator, but object copying strategy does not.
+     * @attention This also exchanges their object_creator, but object copying strategy does not.
      * @param other the opposite container
      */
     void swap(reference_vector& other) noexcept { std::swap(storage_, other.storage_); }

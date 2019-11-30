@@ -68,8 +68,8 @@ inline constexpr write_kind_tag_t<Kind> write_kind_tag {};
 
 /**
  * @brief invoke callback function for individual write operation kinds.
- * If the write_kind is K, this may invoke Callback::operator()(write_kind_tag_t<K>, Args...).
- * You must declare all callback functions for individual join kinds,
+ * @details If the write_kind is K, this may invoke Callback::operator()(write_kind_tag_t<K>, Args...).
+ * @attention You must declare all callback functions for individual join kinds,
  * or declare Callback::operator()(write_kind, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type

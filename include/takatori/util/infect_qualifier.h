@@ -39,7 +39,7 @@ using infect_const_t = typename infect_const<From, To>::type;
 
 /**
  * @brief infect reference qualifier from the source type into the destination type.
- * If the destination type is already reference, this has no effect.
+ * @details If the destination type is already reference, this has no effect.
  * @tparam From the source type
  * @tparam To the destination type
  */

@@ -11,7 +11,7 @@ class datetime_interval;
 
 /**
  * @brief represents date interval.
- * This is designed for the solar calendar.
+ * @note This is designed for the solar calendar.
  */
 class date_interval {
 public:

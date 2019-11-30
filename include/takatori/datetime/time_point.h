@@ -13,7 +13,7 @@ namespace takatori::datetime {
 
 /**
  * @brief represents time point since 1900-01-01 00:00:00 GMT.
- * This can represent about 592 years long since 1900-01-01.
+ * @details This can represent about 592 years long since 1900-01-01.
  */
 class time_point {
 public:

@@ -10,7 +10,7 @@ namespace takatori::relation::step {
 
 /**
  * @brief obtains an difference between the first input group and the second one.
- * Actually this works that removes the rows in the first input group by the number of rows in second input.
+ * @details Actually this works that removes the rows in the first input group by the number of rows in second input.
  */
 class difference : public expression {
 public:
@@ -47,7 +47,7 @@ public:
 
     /**
      * @brief returns the input port.
-     * The input must be a co-group relation consists of two groups.
+     * @attention The input must be a co-group relation consists of two groups.
      * @return the input port
      * @see take_cogroup
      */
@@ -67,7 +67,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are equivalent.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a == b
@@ -77,7 +77,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are different.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a != b

@@ -22,7 +22,7 @@ template<class T> using clonable_t = decltype(std::declval<T>().clone(std::declv
 
 /**
  * @brief tests if the target type supports polymorphic clone.
- * The clonable class "T" must have "T* T::clone(object_creator) const".
+ * @details The clonable class "T" must have "T* T::clone(object_creator) const".
  * @tparam T the target type
  */
 template<class T> using is_clonable = std::is_convertible<

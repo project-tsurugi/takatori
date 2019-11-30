@@ -61,8 +61,8 @@ inline constexpr quantifier_tag_t<Kind> quantifier_tag {};
 
 /**
  * @brief invoke callback function for individual quantifier kinds.
- * If the quantifier_kind is K, this may invoke Callback::operator()(quantifier_tag_t<K>, Args...).
- * You must declare all callback functions for individual quantifiers,
+ * @details If the quantifier_kind is K, this may invoke Callback::operator()(quantifier_tag_t<K>, Args...).
+ * @attention You must declare all callback functions for individual quantifiers,
  * or declare Callback::operator()(quantifier, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type

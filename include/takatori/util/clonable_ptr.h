@@ -44,7 +44,7 @@ public:
 
     /**
      * @brief constructs a new object.
-     * This operation may create a new copy of the target object.
+     * @attention This operation may create a new copy of the target object.
      * @param other the copy source
      */
     clonable_ptr(clonable_ptr const& other)
@@ -53,7 +53,7 @@ public:
 
     /**
      * @brief assigns the given object.
-     * This operation may create a new copy of the target object.
+     * @attention This operation may create a new copy of the target object.
      * @param other the copy source
      * @return this
      */
@@ -66,14 +66,14 @@ public:
 
     /**
      * @brief constructs a new object.
-     * This operation just transfers the ownership of the object, so that this must not create any copies.
+     * @attention This operation just transfers the ownership of the object, so that this must not create any copies.
      * @param other the move source
      */
     clonable_ptr(clonable_ptr&& other) noexcept : pointer_(other.release()), creator_(other.creator_) {}
 
     /**
      * @brief assigns the given object.
-     * This operation just transfers the ownership of the object, so that this must not create any  copies.
+     * @attention This operation just transfers the ownership of the object, so that this must not create any  copies.
      * @param other the move source
      * @return this
      */
@@ -86,7 +86,7 @@ public:
 
     /**
      * @brief constructs a new object.
-     * This may create a new copy if the target object is not created by the given creator.
+     * @attention This may create a new copy if the target object is not created by the given creator.
      * @tparam U the element type
      * @tparam E the deleter type
      * @param entity the source object
@@ -118,7 +118,7 @@ public:
 
     /**
      * @brief assigns the given object.
-     * This may create a new copy if the target object is not created by the given creator.
+     * @attention This may create a new copy if the target object is not created by the given creator.
      * @tparam U the element type
      * @tparam E the deleter type
      * @param entity the source object
@@ -197,7 +197,7 @@ public:
 
     /**
      * @brief returns reference of the managed object.
-     * If this container is empty, this operation is not defined.
+     * @warning undefined behavior if this container is empty
      * @return the managed object
      */
     reference value() const { return *pointer_; }
@@ -313,7 +313,7 @@ inline bool operator!=(clonable_ptr<T> const& a, clonable_ptr<U> const& b) { ret
 
 /**
  * @brief returns whether or not an object on the first container appears before the second one.
- * Note that, object on an empty container will be on the beginning of this order.
+ * @note object on an empty container will be on the beginning of this order.
  * @tparam T the element type of the first container
  * @tparam U the element type of the second container
  * @param a the first container
@@ -326,7 +326,7 @@ inline bool operator<(clonable_ptr<T> const& a, clonable_ptr<U> const& b) { retu
 
 /**
  * @brief returns whether or not an object on the first container appears after the second one.
- * Note that, object on an empty container will be on the beginning of this order.
+ * @note object on an empty container will be on the beginning of this order.
  * @tparam T the element type of the first container
  * @tparam U the element type of the second container
  * @param a the first container
@@ -339,7 +339,7 @@ inline bool operator>(clonable_ptr<T> const& a, clonable_ptr<U> const& b) { retu
 
 /**
  * @brief returns whether or not an object on the first container appears before the second one or the both are identical.
- * Note that, object on an empty container will be on the beginning of this order.
+ * @note object on an empty container will be on the beginning of this order.
  * @tparam T the element type of the first container
  * @tparam U the element type of the second container
  * @param a the first container
@@ -352,7 +352,7 @@ inline bool operator<=(clonable_ptr<T> const& a, clonable_ptr<U> const& b) { ret
 
 /**
  * @brief returns whether or not an object on the first container appears after the second one or the both are identical.
- * Note that, object on an empty container will be on the beginning of this order.
+ * @note object on an empty container will be on the beginning of this order.
  * @tparam T the element type of the first container
  * @tparam U the element type of the second container
  * @param a the first container

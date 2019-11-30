@@ -103,7 +103,7 @@ protected:
 
     /**
      * @brief returns hash code of this object.
-     * The returned digest value should compute from only type specific information.
+     * @details The returned digest value should compute from only type specific information.
      * @return the computed hash code
      */
     virtual std::size_t hash() const noexcept = 0;

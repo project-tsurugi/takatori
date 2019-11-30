@@ -61,12 +61,12 @@ inline std::ostream& operator<<(std::ostream& out, enum_tag_t<Kind> tag) {
 
 /**
  * @brief invokes the callback object with an enum_tag argument.
- * This invokes Callback::operator()(enum_tag<Kind> Args...).
+ * @details This invokes Callback::operator()(enum_tag<Kind> Args...).
  * @tparam Kind the enumeration value
  * @tparam Callback the callback object type
  * @tparam Args the callback extra parameter type
  * @param callback the callback object
- * @param object the target object
+ * @param args the callback extra arguments
  * @return the invocation result
  */
 template<auto Kind, class Callback, class... Args>

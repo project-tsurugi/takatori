@@ -11,7 +11,7 @@ namespace takatori::util {
 
 /**
  * @brief a wrapper of std::initializer_list of rvalue_reference_wrapper.
- * This is for avoiding overload ambiguity.
+ * @note This is for avoiding overload ambiguity.
  * @tparam T the element type
  */
 template<class T>

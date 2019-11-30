@@ -79,8 +79,8 @@ inline constexpr binary_operator_tag_t<Kind> binary_operator_tag {};
 
 /**
  * @brief invoke callback function for individual binary operator kinds.
- * If the operator_kind is K, this may invoke Callback::operator()(binary_operator_tag_t<K>, Args...).
- * You must declare all callback functions for individual binary operators,
+ * @details If the operator_kind is K, this may invoke Callback::operator()(binary_operator_tag_t<K>, Args...).
+ * @attention You must declare all callback functions for individual binary operators,
  * or declare Callback::operator()(binary_operator, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type

@@ -79,8 +79,8 @@ inline constexpr cast_loss_policy_tag_t<Kind> cast_loss_policy_tag {};
 
 /**
  * @brief invoke callback function for individual loss policies.
- * If the policy is K, this may invoke Callback::operator()(cast_loss_policy_tag_t<K>, Args...).
- * You must declare all callback functions for individual loss policies,
+ * @details If the policy is K, this may invoke Callback::operator()(cast_loss_policy_tag_t<K>, Args...).
+ * @attention You must declare all callback functions for individual loss policies,
  * or declare Callback::operator()(cast_loss_policy, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type

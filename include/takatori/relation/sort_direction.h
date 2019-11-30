@@ -61,8 +61,8 @@ inline constexpr sort_direction_tag_t<Kind> sort_direction_tag {};
 
 /**
  * @brief invoke callback function for individual sort direction kinds.
- * If the direction_kind is K, this may invoke Callback::operator()(sort_direction_tag_t<K>, Args...).
- * You must declare all callback functions for individual directions,
+ * @details If the direction_kind is K, this may invoke Callback::operator()(sort_direction_tag_t<K>, Args...).
+ * @attention You must declare all callback functions for individual directions,
  * or declare Callback::operator()(direction, Args...) as "default" callback function.
  * Each return type of callback functions must be identical.
  * @tparam Callback the callback object type

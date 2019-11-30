@@ -11,7 +11,7 @@ namespace takatori::util {
 
 /**
  * @brief apply downcast to the given object and invoke the callback.
- * This invokes Callback::operator()(T&&, Args...).
+ * @details This invokes Callback::operator()(T&&, Args...).
  * @tparam T the downcast target type
  * @tparam Callback the callback object type
  * @tparam Object the target object type

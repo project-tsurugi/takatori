@@ -67,50 +67,50 @@ private:
  * @return true if the two descriptors are equivalent
  * @return false otherwise
  */
-template<descriptor_kind K>
-inline bool operator==(element<K> const& a, element<K> const& b) noexcept {
+template<descriptor_kind Kind>
+inline bool operator==(element<Kind> const& a, element<Kind> const& b) noexcept {
     return a.optional_entity() == b.optional_entity();
 }
 
 /**
  * @brief returns whether or not the each element which the descriptor indicates is not same.
- * @tparam K the element kind
+ * @tparam Kind the element kind
  * @param a the first descriptor
  * @param b the second descriptor
  * @return true if the two descriptors are different
  * @return false otherwise
  */
-template<descriptor_kind K>
-inline bool operator!=(element<K> const& a, element<K> const& b) noexcept {
+template<descriptor_kind Kind>
+inline bool operator!=(element<Kind> const& a, element<Kind> const& b) noexcept {
     return !(a == b);
 }
 
 /**
  * @brief appends string representation of the given value.
- * @tparam K the element kind
+ * @tparam Kind the element kind
  * @param out the target output
  * @param value the target value
  * @return the output stream
  */
-template<descriptor_kind K>
-inline std::ostream& operator<<(std::ostream& out, element<K> const& value) {
-    return out << K << "(" << value.optional_entity() << ")";
+template<descriptor_kind Kind>
+inline std::ostream& operator<<(std::ostream& out, element<Kind> const& value) {
+    return out << Kind << "(" << value.optional_entity() << ")";
 }
 
 } // namespace takatori::descriptor
 
 /**
  * @brief std::hash specialization for takatori::descriptor::element.
- * @tparam K the element kind
+ * @tparam Kind the element kind
  */
-template<takatori::descriptor::descriptor_kind K>
-struct std::hash<takatori::descriptor::element<K>> {
+template<takatori::descriptor::descriptor_kind Kind>
+struct std::hash<takatori::descriptor::element<Kind>> {
     /**
      * @brief compute hash of the given object.
      * @param value the target object
      * @return computed hash code
      */
-    std::size_t operator()(takatori::descriptor::element<K> const& value) const noexcept {
-        return takatori::util::hash(K, value.optional_entity());
+    std::size_t operator()(takatori::descriptor::element<Kind> const& value) const noexcept {
+        return takatori::util::hash(Kind, value.optional_entity());
     }
 };

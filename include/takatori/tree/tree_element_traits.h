@@ -46,9 +46,9 @@ template<class T> constexpr inline bool is_tree_element_v = is_tree_element<T>::
 
 /**
  * @brief the traits for tree_element.
- * The tree element "T" must have "T::parent_element() const -> U const*" where "U" is parent_type.
+ * @details The tree element "T" must have "T::parent_element() const -> U const*" where "U" is parent_type.
  * Additionally, tree elements may have the following optional features.
- * 1. "T::parent_element() -> U*" - can_get_mutable_parent
+ *   @li 1. "T::parent_element() -> U*" - can_get_mutable_parent
  * @tparam T the element type
  */
 template<class T>

@@ -14,7 +14,7 @@ namespace takatori::relation::step {
 
 /**
  * @brief join groups (co-group).
- * The resulting rows must be first order.
+ * @details The resulting rows must be first order.
  * If the number of input groups is just two, this operation treats as the first group is left input, and
  * the second group is right input.
  * If the number of input groups is greater than two, this only supports the join kind of inner and full outer.
@@ -84,7 +84,7 @@ public:
 
     /**
      * @brief returns the input port.
-     * The input must be a co-group relation.
+     * @attention The input must be a co-group relation.
      * @return the input port
      * @see take_cogroup
      */
@@ -145,7 +145,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are equivalent.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a == b
@@ -155,7 +155,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are different.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a != b

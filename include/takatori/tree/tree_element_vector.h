@@ -85,7 +85,7 @@ public:
 
     /**
      * @brief constructs a new object.
-     * This requires U <: T.
+     * @attention This requires U <: T.
      * @tparam U the source element type
      * @tparam C the copier type (ignored)
      * @param parent the parent element
@@ -96,7 +96,7 @@ public:
 
     /**
      * @brief assigns elements in the list.
-     * This requires U <: T.
+     * @attention This requires U <: T.
      * @tparam U the element type
      * @tparam C the copier type
      * @param elements the elements

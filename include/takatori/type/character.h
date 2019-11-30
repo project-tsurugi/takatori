@@ -57,7 +57,7 @@ public:
 
     /**
      * @brief returns the max number of character octets in the character sequence.
-     * Note that, if this object represents fixed-length character sequence, the returned value must not be empty.
+     * @note if this object represents fixed-length character sequence, the returned value must not be empty.
      * @return the max number of octets
      * @return empty if it is not defined
      * @see is_varying()

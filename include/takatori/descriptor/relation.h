@@ -1,12 +1,6 @@
 #pragma once
 
-#include <iostream>
-
-#include "descriptor_kind.h"
 #include "element.h"
-#include "takatori/util/object.h"
-
-#include "takatori/util/optional_ptr.h"
 
 namespace takatori::descriptor {
 

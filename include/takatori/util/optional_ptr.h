@@ -14,7 +14,7 @@ namespace takatori::util {
 
 /**
  * @brief a pointer like object that can handle empty pointer strictly.
- * This reference does not have any ownership of values.
+ * @details This reference does not have any ownership of values.
  * @tparam T the value type, must not be a reference type
  */
 template<class T>
@@ -429,7 +429,7 @@ inline constexpr bool operator!=(std::nullptr_t, optional_ptr<T> const& ref) noe
 
 /**
  * @brief returns whether or not the first reference is less than the second one.
- * Note that, empty references are always less than the non-empty references.
+ * @note empty references are always less than the non-empty references.
  * @tparam T the value type
  * @tparam equal_to the equivalent function object type for the element values
  * @param a the first reference
@@ -454,7 +454,7 @@ inline bool operator<(T const& a, optional_ptr<U> const& b) noexcept { return b 
 
 /**
  * @brief returns whether or not the first reference is greater than the second one.
- * This compute the order by using (b < a).
+ * @details This compute the order by using (b < a).
  * @tparam T the value type
  * @tparam equal_to the equivalent function object type for the element values
  * @param a the first reference
@@ -475,8 +475,8 @@ inline bool operator>(T const& a, optional_ptr<U> const& b) noexcept { return b 
 
 /**
  * @brief returns whether or not the first reference is less than or equal to the second one.
- * This compute the order by using !(b < a).
- * Note that, empty references are always less than the non-empty references.
+ * @details This compute the order by using !(b < a).
+ * @note empty references are always less than the non-empty references.
  * @tparam T the value type
  * @tparam equal_to the equivalent function object type for the element values
  * @param a the first reference
@@ -497,7 +497,7 @@ inline bool operator<=(T const& a, optional_ptr<U> const& b) noexcept { return !
 
 /**
  * @brief returns whether or not the first reference is greater than or equal to the second one.
- * This compute the order by using !(a < b).
+ * @details This compute the order by using !(a < b).
  * @tparam T the value type
  * @tparam equal_to the equivalent function object type for the element values
  * @param a the first reference

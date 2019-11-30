@@ -104,7 +104,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are equivalent.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a == b
@@ -114,7 +114,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are different.
-     * This operation does not consider which the input/output ports are connected to.
+     * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
      * @return true if a != b

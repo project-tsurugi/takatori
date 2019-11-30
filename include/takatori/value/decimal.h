@@ -59,7 +59,7 @@ public:
 
     /**
      * @brief returns whether or not the two elements are identical.
-     * Note that, this tests identity of decimal values.
+     * @note this tests identity of decimal values.
      * For examples, NaN is identical to the same NaN even if they are not equivalent,
      * and 0.1 is not identical to 0.10 but they are equivalent.
      * @param a the first element

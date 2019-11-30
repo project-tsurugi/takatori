@@ -43,7 +43,7 @@ std::ostream& operator<<(std::ostream& out, tree_fragment_vector<T> const& value
 
 /**
  * @brief a vector of tree fragments.
- * As compare to tree_element_vector, this stores each object directly instead of via references.
+ * @details As compare to tree_element_vector, this stores each object directly instead of via references.
  * @tparam T the fragment type
  */
 template<class T>
@@ -399,7 +399,7 @@ public:
 
     /**
      * @brief exchanges contents between this and the given container.
-     * This also exchanges their util::object_creator, but object copying strategy does not.
+     * @details This also exchanges their util::object_creator, but object copying strategy does not.
      * @param other the opposite container
      */
     void swap(tree_fragment_vector& other) noexcept { std::swap(elements_, other.elements_); }

@@ -264,7 +264,7 @@ public:
 
     /**
      * @brief exchanges contents between this and the given graph.
-     * This also exchanges their object_creator.
+     * @details This also exchanges their object_creator.
      * @param other the target graph
      */
     void swap(graph& other) noexcept;

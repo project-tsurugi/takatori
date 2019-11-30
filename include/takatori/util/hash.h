@@ -48,10 +48,8 @@ struct hash {
 
 /**
  * @brief returns hash code of the value list
- * @tparam First the first value type
- * @tparam Rest the rest value types
- * @param first the first vale
- * @param rest the rest values
+ * @tparam Elements the target element types
+ * @param elements the target elements
  * @return the computed hash code
  */
 template<class... Elements>

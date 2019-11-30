@@ -8,7 +8,7 @@ namespace takatori::util {
 
 /**
  * @brief an implementation of memory_resource which use global new/delete operator..
- * Note that, this cannot handle external array objects managed new[] or delete[].
+ * @note this cannot handle external array objects managed new[] or delete[].
  */
 class standard_memory_resource : public pmr::memory_resource {
 protected:

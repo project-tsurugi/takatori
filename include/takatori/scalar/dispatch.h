@@ -65,8 +65,8 @@ inline auto dispatch_expression(Callback&& callback, E&& expression, Args&&... a
 
 /**
  * @brief invoke callback function for individual subclasses of expression.
- * If the input object is ancestor type of T, this may invoke Callback::operator()(T&, Args...).
- * You must declare all callback functions for individual subclasses,
+ * @details If the input object has type of T, this may invoke Callback::operator()(T&, Args...).
+ * @attention You must declare all callback functions for individual subclasses,
  * or declare Callback::operator()(expression&, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type
@@ -83,8 +83,8 @@ inline auto dispatch(Callback&& callback, expression& object, Args&&... args) {
 
 /**
  * @brief invoke callback function for individual subclasses of expression.
- * If the input object is ancestor type of T, this may invoke Callback::operator()(T const&, Args...).
- * You must declare all callback functions for individual subclasses,
+ * @details If the input object has type of T, this may invoke Callback::operator()(T const&, Args...).
+ * @attention You must declare all callback functions for individual subclasses,
  * or declare Callback::operator()(expression const&, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type
@@ -101,8 +101,8 @@ inline auto dispatch(Callback&& callback, expression const& object, Args&&... ar
 
 /**
  * @brief invoke callback function for individual subclasses of expression.
- * If the input object is ancestor type of T, this may invoke Callback::operator()(T&&, Args...).
- * You must declare all callback functions for individual subclasses,
+ * @details If the input object has type of T, this may invoke Callback::operator()(T&&, Args...).
+ * @attention You must declare all callback functions for individual subclasses,
  * or declare Callback::operator()(expression&&, Args...) as "default" callback function.
  * Each return type of callback function must be identical.
  * @tparam Callback the callback object type
