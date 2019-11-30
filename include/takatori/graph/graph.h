@@ -118,6 +118,14 @@ public:
     bool contains(id_type id) const;
 
     /**
+     * @brief returns whether or not this graph contains the given element.
+     * @param element the target element
+     * @return true if there is such the element
+     * @return false otherwise
+     */
+    bool contains(const_reference element) const;
+
+    /**
      * @brief returns whether or not this is empty.
      * @return true if this is empty
      * @return false otherwise
@@ -149,6 +157,14 @@ public:
      * @return false otherwise (may be no such the element)
      */
     bool erase(id_type id);
+
+    /**
+     * @brief removes an element.
+     * @param element the target element
+     * @return true if successfully removed
+     * @return false otherwise (may be no such the element)
+     */
+    bool erase(const_reference element);
 
     /**
      * @brief removes an element on the given iterator.
@@ -183,6 +199,13 @@ public:
      * @return the released element
      */
     util::unique_object_ptr<value_type> release(id_type id) noexcept;
+
+    /**
+     * @brief releases the element on this graph.
+     * @param element the target element
+     * @return the released element
+     */
+    util::unique_object_ptr<value_type> release(const_reference element) noexcept;
 
     /**
      * @brief removes an element on the given iterator.
@@ -334,6 +357,16 @@ graph<T>::contains(id_type id) const {
 }
 
 template<class T>
+inline bool
+graph<T>::contains(const_reference element) const {
+    auto id = graph_element_traits<element_type>::id(element);
+    if (auto found = find(id)) {
+        return found.get() == std::addressof(element);
+    }
+    return false;
+}
+
+template<class T>
 bool graph<T>::empty() const noexcept {
     return vertices_.empty();
 }
@@ -367,6 +400,19 @@ template<class T>
 inline bool
 graph<T>::erase(id_type id) {
     if (auto iter = vertices_.find(id); iter != vertices_.end()) {
+        erase(const_iterator(iter));
+        return true;
+    }
+    return false;
+}
+
+template<class T>
+inline bool
+graph<T>::erase(const_reference element) {
+    auto id = graph_element_traits<element_type>::id(element);
+    if (auto iter = vertices_.find(id);
+            iter != vertices_.end()
+            && iter->second == std::addressof(element)) {
         erase(const_iterator(iter));
         return true;
     }
@@ -414,6 +460,19 @@ template<class T>
 util::unique_object_ptr<typename graph<T>::value_type>
 graph<T>::release(id_type id) noexcept {
     if (auto iter = vertices_.find(id); iter != vertices_.end()) {
+        auto kv = release(const_iterator(iter));
+        return std::get<0>(std::move(kv));
+    }
+    return {};
+}
+
+template<class T>
+inline util::unique_object_ptr<typename graph<T>::value_type>
+graph<T>::release(const_reference element) noexcept {
+    auto id = graph_element_traits<element_type>::id(element);
+    if (auto iter = vertices_.find(id);
+            iter != vertices_.end()
+            && iter->second == std::addressof(element)) {
         auto kv = release(const_iterator(iter));
         return std::get<0>(std::move(kv));
     }

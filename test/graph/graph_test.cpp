@@ -137,6 +137,22 @@ TEST_F(graph_test, contains) {
     EXPECT_FALSE(g.contains(v1.id() + v2.id() + v3.id()));
 }
 
+TEST_F(graph_test, contains_element) {
+    simple_graph mg;
+    auto&& v1 = mg.emplace(100);
+    auto&& v2 = mg.emplace(200);
+    auto&& v3 = mg.emplace(300);
+
+    auto&& g = make_const(mg);
+    EXPECT_TRUE(is_const_v<decltype(g[v1.id()])>);
+    EXPECT_TRUE(g.contains(v1));
+    EXPECT_TRUE(g.contains(v2));
+    EXPECT_TRUE(g.contains(v3));
+
+    simple_graph other;
+    EXPECT_FALSE(g.contains(other.emplace(100)));
+}
+
 TEST_F(graph_test, empty) {
     simple_graph mg;
     auto&& g = make_const(mg);
@@ -190,6 +206,25 @@ TEST_F(graph_test, erase_id) {
     EXPECT_TRUE(g.contains(i1));
     EXPECT_FALSE(g.contains(i2));
     EXPECT_TRUE(g.contains(i3));
+
+    EXPECT_FALSE(g.erase(i2));
+}
+
+TEST_F(graph_test, erase_element) {
+    simple_graph g;
+    auto&& v1 = g.emplace(100);
+    auto&& v2 = g.emplace(200);
+    auto&& v3 = g.emplace(300);
+
+    EXPECT_TRUE(g.contains(v1));
+    EXPECT_TRUE(g.contains(v2));
+    EXPECT_TRUE(g.contains(v3));
+
+    auto i2 = v2.id();
+    EXPECT_TRUE(g.erase(v2));
+    EXPECT_TRUE(g.contains(v1));
+    EXPECT_FALSE(g.contains(i2));
+    EXPECT_TRUE(g.contains(v3));
 
     EXPECT_FALSE(g.erase(i2));
 }
@@ -282,6 +317,28 @@ TEST_F(graph_test, release_id) {
     EXPECT_TRUE(g.contains(i3));
 
     EXPECT_FALSE(g.release(i2));
+}
+
+TEST_F(graph_test, release_element) {
+    simple_graph g;
+    auto&& v1 = g.emplace(100);
+    auto&& v2 = g.emplace(200);
+    auto&& v3 = g.emplace(300);
+
+    EXPECT_TRUE(g.contains(v1));
+    EXPECT_TRUE(g.contains(v2));
+    EXPECT_TRUE(g.contains(v3));
+
+    auto r = g.release(v2);
+    ASSERT_TRUE(r);
+    ASSERT_EQ(r.get(), std::addressof(v2));
+    EXPECT_EQ(r->optional_owner().get(), nullptr);
+
+    EXPECT_TRUE(g.contains(v1));
+    EXPECT_FALSE(g.contains(v2));
+    EXPECT_TRUE(g.contains(v3));
+
+    EXPECT_FALSE(g.release(v2));
 }
 
 TEST_F(graph_test, release_iter) {
