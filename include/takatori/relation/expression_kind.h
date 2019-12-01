@@ -112,8 +112,8 @@ constexpr inline std::string_view to_string_view(expression_kind value) noexcept
         case kind::join_relation: return "join_relation"sv;
         case kind::join_find: return "join_find"sv;
         case kind::join_scan: return "join_scan"sv;
-        case kind::project: return "select"sv;
-        case kind::filter: return "where"sv;
+        case kind::project: return "project"sv;
+        case kind::filter: return "filter"sv;
         case kind::buffer: return "buffer"sv;
         case kind::aggregate_relation: return "aggregate_relation"sv;
         case kind::distinct_relation: return "distinct_relation"sv;

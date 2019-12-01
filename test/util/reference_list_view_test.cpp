@@ -9,6 +9,13 @@ namespace takatori::util {
 
 class reference_list_view_test : public ::testing::Test {};
 
+class Base {
+public:
+    Base() = default;
+    virtual ~Base() = default;
+};
+class Sub : public Base {};
+
 TEST_F(reference_list_view_test, simple) {
     std::array<int, 3> a { 1, 2, 3 };
     reference_list_view v { a };

@@ -29,7 +29,8 @@ void expression::on_join(graph_type* graph) noexcept {
 }
 
 void expression::on_leave() noexcept {
-    on_join(nullptr);
+    owner_ = nullptr;
+    // FIXME: dispose all connections?
 }
 
 bool operator==(expression const& a, expression const& b) noexcept {

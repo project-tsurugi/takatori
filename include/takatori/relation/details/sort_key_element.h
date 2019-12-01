@@ -16,7 +16,7 @@ class sort_key_element {
 public:
     /**
      * @brief creates a new instance.
-     * @param variable the sort key column on the input relation
+     * @param variable the sort key column on the relation
      * @param direction the sort direction of this key element
      */
     sort_key_element( // NOLINT
@@ -24,13 +24,13 @@ public:
             sort_direction direction = sort_direction::ascendant) noexcept;
 
     /**
-     * @brief returns the sort key column on the input relation.
+     * @brief returns the sort key column on the relation.
      * @return the variable descriptor of sort key
      */
     descriptor::variable const& variable() const noexcept;
 
     /**
-     * @brief sets a sort key column on the input relation.
+     * @brief sets a sort key column on the relation.
      * @param variable the variable descriptor of sort key
      * @return this
      */

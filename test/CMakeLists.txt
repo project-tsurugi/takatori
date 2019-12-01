@@ -100,6 +100,16 @@ add_test_executable(relation/step/offer_test.cpp)
 add_test_executable(relation/intermediate/relation_intermediate_dispatch_test.cpp)
 add_test_executable(relation/step/relation_step_dispatch_test.cpp)
 
+# step execution plan models
+add_test_executable(plan/process_test.cpp)
+add_test_executable(plan/exchange_test.cpp)
+add_test_executable(plan/forward_test.cpp)
+add_test_executable(plan/group_test.cpp)
+add_test_executable(plan/aggregate_test.cpp)
+add_test_executable(plan/broadcast_test.cpp)
+add_test_executable(plan/discard_test.cpp)
+add_test_executable(plan/plan_dispatch_test.cpp)
+
 # tree models
 add_test_executable(tree/tree_element_test.cpp)
 add_test_executable(tree/tree_element_util_test.cpp)

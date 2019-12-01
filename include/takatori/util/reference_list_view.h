@@ -135,6 +135,9 @@ public:
 private:
     cursor_type first_;
     cursor_type last_;
+
+    template<class U>
+    friend class reference_list_view;
 };
 
 /// @private

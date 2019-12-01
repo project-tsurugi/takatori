@@ -32,7 +32,7 @@ using output_multiport = multiport<T, port_direction::output>;
  * @brief the view of port list.
  */
 template<class Port>
-using port_list_view = util::reference_list_view<util::double_pointer_extractor<Port>>;
+using multiport_list_view = util::reference_list_view<util::double_pointer_extractor<Port>>;
 
 /**
  * @brief represents an input/output port of graph nodes, which can have multiple opposites.
@@ -106,10 +106,10 @@ public:
      * @return the opposite ports
      * @attention the returned list was disabled after the opposite set was changed
      */
-    port_list_view<opposite_type> opposites() noexcept;
+    multiport_list_view<opposite_type> opposites() noexcept;
 
     /// @copydoc opposites()
-    port_list_view<opposite_type const> opposites() const noexcept;
+    multiport_list_view<opposite_type const> opposites() const noexcept;
 
     /**
      * @brief connects to a opposite port.
@@ -208,15 +208,15 @@ multiport<T, Direction>::owner() const noexcept {
 }
 
 template<class T, port_direction Direction>
-inline port_list_view<typename multiport<T, Direction>::opposite_type>
+inline multiport_list_view<typename multiport<T, Direction>::opposite_type>
 multiport<T, Direction>::opposites() noexcept {
-    return port_list_view<opposite_type> { opposites_.data(), opposites_.size() };
+    return multiport_list_view<opposite_type> {opposites_.data(), opposites_.size() };
 }
 
 template<class T, port_direction Direction>
-inline port_list_view<typename multiport<T, Direction>::opposite_type const>
+inline multiport_list_view<typename multiport<T, Direction>::opposite_type const>
 multiport<T, Direction>::opposites() const noexcept {
-    return port_list_view<opposite_type> { opposites_.data(), opposites_.size() };
+    return multiport_list_view<opposite_type> {opposites_.data(), opposites_.size() };
 }
 
 template<class T, port_direction Direction>

@@ -41,6 +41,55 @@ TEST_F(graph_test, simple) {
     EXPECT_EQ(&v2.owner(), &g);
     EXPECT_EQ(&v3.owner(), &g);
 
+    ASSERT_EQ(g.size(), 3);
+    EXPECT_TRUE(g.contains(v1));
+    EXPECT_TRUE(g.contains(v2));
+    EXPECT_TRUE(g.contains(v3));
+}
+
+TEST_F(graph_test, ctor_move) {
+    simple_graph mg;
+    auto&& v1 = mg.emplace(100);
+    auto&& v2 = mg.emplace(200);
+    auto&& v3 = mg.emplace(300);
+
+    simple_graph g { std::move(mg) };
+
+    EXPECT_EQ(v1.value(), 100);
+    EXPECT_EQ(v2.value(), 200);
+    EXPECT_EQ(v3.value(), 300);
+
+    EXPECT_EQ(&v1.owner(), &g);
+    EXPECT_EQ(&v2.owner(), &g);
+    EXPECT_EQ(&v3.owner(), &g);
+
+    ASSERT_EQ(g.size(), 3);
+    EXPECT_TRUE(g.contains(v1));
+    EXPECT_TRUE(g.contains(v2));
+    EXPECT_TRUE(g.contains(v3));
+}
+
+TEST_F(graph_test, assign_move) {
+    simple_graph mg;
+    auto&& v1 = mg.emplace(100);
+    auto&& v2 = mg.emplace(200);
+    auto&& v3 = mg.emplace(300);
+
+    simple_graph g;
+    g.emplace(400);
+    g.emplace(500);
+
+    g = std::move(mg);
+
+    EXPECT_EQ(v1.value(), 100);
+    EXPECT_EQ(v2.value(), 200);
+    EXPECT_EQ(v3.value(), 300);
+
+    EXPECT_EQ(&v1.owner(), &g);
+    EXPECT_EQ(&v2.owner(), &g);
+    EXPECT_EQ(&v3.owner(), &g);
+
+    ASSERT_EQ(g.size(), 3);
     EXPECT_TRUE(g.contains(v1));
     EXPECT_TRUE(g.contains(v2));
     EXPECT_TRUE(g.contains(v3));

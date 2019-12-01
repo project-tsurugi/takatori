@@ -111,6 +111,16 @@ add_library(takatori
     relation/details/union_element.cpp
     relation/details/cogroup_element.cpp
 
+    # plan
+    plan/step.cpp
+    plan/process.cpp
+    plan/exchange.cpp
+    plan/forward.cpp
+    plan/group.cpp
+    plan/aggregate.cpp
+    plan/broadcast.cpp
+    plan/discard.cpp
+
     # util
     util/object_creator.cpp
 )

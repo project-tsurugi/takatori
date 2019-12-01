@@ -2,38 +2,35 @@
 
 #include <iostream>
 
-#include "expression_kind.h"
+#include "step_kind.h"
 
 #include "takatori/graph/graph.h"
-#include "takatori/graph/port.h"
 
-#include "takatori/tree/tree_element_base.h"
-
-#include "takatori/util/object_creator.h"
 #include "takatori/util/optional_ptr.h"
-#include "takatori/util/sequence_view.h"
+#include "takatori/util/reference_list_view.h"
 
-namespace takatori::relation {
+namespace takatori::plan {
 
 /**
- * @brief a root model of relational algebra expressions.
+ * @brief a list view of steps.
+ * @tparam T the step type
  */
-class expression : public tree::tree_element_base {
+template<class T>
+using step_list_view = util::reference_list_view<util::double_pointer_extractor<T>>;
+
+/**
+ * @brief represents a step of execution plan.
+ */
+class step {
 public:
     /// @brief the graph type
-    using graph_type = graph::graph<expression>;
+    using graph_type = graph::graph<step>;
 
-    /// @brief the input port type.
-    using input_port_type = graph::input_port<expression>;
-
-    /// @brief the output port type.
-    using output_port_type = graph::output_port<expression>;
-
-    ~expression() override = default;
-    expression(expression const& other) = delete;
-    expression& operator=(expression const& other) = delete;
-    expression(expression&& other) noexcept = delete;
-    expression& operator=(expression&& other) noexcept = delete;
+    virtual ~step() = default;
+    step(step const& other) = delete;
+    step& operator=(step const& other) = delete;
+    step(step&& other) noexcept = delete;
+    step& operator=(step&& other) noexcept = delete;
 
     /**
      * @brief returns whether or not this vertex is orphaned.
@@ -55,7 +52,7 @@ public:
     graph_type const& owner() const;
 
     /**
-     * @brief returns the graph which owns this expression.
+     * @brief returns the graph which owns this step.
      * @return the owner
      * @return empty if this vertex is orphaned
      */
@@ -65,41 +62,20 @@ public:
     util::optional_ptr<graph_type const> optional_owner() const noexcept;
 
     /**
-     * @brief returns the kind of this expression.
-     * @return the expression kind
+     * @brief returns the kind of this step.
+     * @return the step kind
      */
-    virtual expression_kind kind() const noexcept = 0;
-
-    /**
-     * @brief returns list of input ports.
-     * @return input ports
-     */
-    virtual util::sequence_view<input_port_type> input_ports() noexcept = 0;
-
-    /// @copydoc input_ports()
-    virtual util::sequence_view<input_port_type const> input_ports() const noexcept = 0;
-
-    /**
-     * @brief returns list of output ports.
-     * @return output ports
-     */
-    virtual util::sequence_view<output_port_type> output_ports() noexcept = 0;
-
-    /// @copydoc output_ports()
-    virtual util::sequence_view<output_port_type const> output_ports() const noexcept = 0;
+    virtual step_kind kind() const noexcept = 0;
 
     /**
      * @brief returns a clone of this object.
-     * @details The created clone will become orphaned vertex, that is, this never copies the following:
-     *   @li the owner graph
-     *   @li the input/output opposites
      * @param creator the object creator
      * @return the created clone
      */
-    virtual expression* clone(util::object_creator creator) const& = 0;
+    virtual step* clone(util::object_creator creator) const& = 0;
 
     /// @copydoc clone()
-    virtual expression* clone(util::object_creator creator) && = 0;
+    virtual step* clone(util::object_creator creator) && = 0;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -109,7 +85,7 @@ public:
      * @return true if a == b
      * @return false otherwise
      */
-    friend bool operator==(expression const& a, expression const& b) noexcept;
+    friend bool operator==(step const& a, step const& b) noexcept;
 
     /**
      * @brief returns whether or not the two elements are different.
@@ -119,7 +95,7 @@ public:
      * @return true if a != b
      * @return false otherwise
      */
-    friend bool operator!=(expression const& a, expression const& b) noexcept;
+    friend bool operator!=(step const& a, step const& b) noexcept;
 
     /**
      * @brief appends string representation of the given value.
@@ -127,10 +103,10 @@ public:
      * @param value the target value
      * @return the output
      */
-    friend std::ostream& operator<<(std::ostream& out, expression const& value);
+    friend std::ostream& operator<<(std::ostream& out, step const& value);
 
     /**
-     * @brief handles when this expression is joined into the given graph.
+     * @brief handles when this step is joined into the given graph.
      * @param graph the owner graph, or nullptr to leave
      */
     void on_join(graph_type* graph) noexcept;
@@ -144,16 +120,16 @@ protected:
     /**
      * @brief creates a new instance.
      */
-    expression() = default;
+    step() = default;
 
     /**
-     * @brief returns whether or not this expressions is equivalent to the target one.
+     * @brief returns whether or not this steps is equivalent to the target one.
      * @details This operation does not consider which the input/output ports are connected to.
-     * @param other the target expression
+     * @param other the target step
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    virtual bool equals(expression const& other) const noexcept = 0;
+    virtual bool equals(step const& other) const noexcept = 0;
 
     /**
      * @brief appends string representation of this object into the given output.
@@ -166,4 +142,4 @@ private:
     graph_type* owner_ {};
 };
 
-} // namespace takatori::relation
+} // namespace takatori::plan

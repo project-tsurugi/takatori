@@ -58,16 +58,27 @@ public:
     /// @brief the const iterator type
     using const_iterator = graph_iterator<typename entity_type::const_iterator>;
 
-    ~graph();
-    graph(graph const& other) = delete;
-    graph& operator=(graph const& other) = delete;
-    graph(graph&& other) noexcept = delete;
-    graph& operator=(graph&& other) noexcept = delete;
-
     /**
      * @brief creates a new object with default object creator.
      */
     graph() = default;
+
+    ~graph();
+    graph(graph const& other) = delete;
+    graph& operator=(graph const& other) = delete;
+
+    /**
+     * @brief creates a new object.
+     * @param other the move source
+     */
+    graph(graph&& other) noexcept;
+
+    /**
+     * @brief assigns the given object.
+     * @param other the move source
+     * @return this
+     */
+    graph& operator=(graph&& other) noexcept;
 
     /**
      * @brief creates a new object.
@@ -141,7 +152,7 @@ public:
      * @return the inserted element
      */
     template<class U = element_type, class... Args>
-    reference emplace(Args&&... args);
+    U& emplace(Args&&... args);
 
     /**
      * @brief releases the element on this graph.
@@ -236,26 +247,46 @@ private:
         }
     }
 
-    pointer insert_element(util::unique_object_ptr<value_type> element) {
+    template<class U>
+    U* insert_element(util::unique_object_ptr<U> element) {
         auto [iter, success] = vertices_.emplace(element.get());
         if (!success) {
             throw std::logic_error("conflict element ID");
         }
-        element.release();
-        return *iter;
+        (void) iter;
+        return element.release();
     }
 
     template<class U, class... Args>
-    util::unique_object_ptr<value_type> create_element(Args&&... args) {
+    util::unique_object_ptr<U> create_element(Args&&... args) {
         return get_object_creator().template create_unique<U>(std::forward<Args>(args)...);
     }
 
-    void delete_element(pointer element) {
+    void delete_element(pointer element) noexcept {
         if (element != nullptr) {
             get_object_creator().delete_object(element);
         }
     }
 };
+
+template<class T>
+graph<T>::graph(graph&& other) noexcept
+    : vertices_(std::move(other.vertices_))
+{
+    for (auto* e : vertices_) {
+        bless_element(e);
+    }
+}
+
+template<class T>
+graph<T>& graph<T>::operator=(graph&& other) noexcept {
+    clear();
+    vertices_ = std::move(other.vertices_);
+    for (auto* e : vertices_) {
+        bless_element(e);
+    }
+    return *this;
+}
 
 template<class T>
 inline graph<T>::graph(util::object_creator creator) noexcept
@@ -339,11 +370,12 @@ graph<T>::insert(rvalue_reference element) {
 
 template<class T>
 template<class U, class... Args>
-inline typename graph<T>::reference
+inline U&
 graph<T>::emplace(Args&& ... args) {
     static_assert(util::is_clonable_v<element_type>);
-    auto&& entry = insert_element(create_element<U>(std::forward<Args>(args)...));
-    return bless_element(entry);
+    auto entry = insert_element(create_element<U>(std::forward<Args>(args)...));
+    bless_element(entry);
+    return *entry;
 }
 
 template<class T>
