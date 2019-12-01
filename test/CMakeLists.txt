@@ -110,6 +110,7 @@ add_test_executable(tree/tree_element_vector_forward_test.cpp)
 
 # graph models
 add_test_executable(graph/graph_test.cpp)
+add_test_executable(graph/port_test.cpp)
 add_test_executable(graph/multiport_test.cpp)
 
 # utilities
@@ -120,7 +121,7 @@ add_test_executable(util/downcast_test.cpp)
 add_test_executable(util/infect_qualifier_test.cpp)
 add_test_executable(util/object_creator_test.cpp)
 add_test_executable(util/optional_ptr_test.cpp)
-add_test_executable(util/poiner_traits_test.cpp)
+add_test_executable(util/pointer_traits_test.cpp)
 add_test_executable(util/sequence_view_test.cpp)
 add_test_executable(util/reference_iterator_test.cpp)
 add_test_executable(util/reference_list_view_test.cpp)

@@ -52,7 +52,7 @@ public:
     static constexpr direction_type direction = Direction;
 
     /// @brief the opposite port type.
-    using opposite_port_type = multiport<T, ~direction>;
+    using opposite_type = multiport<T, ~direction>;
 
     /// @brief the ID type of the ports.
     using id_type = std::uint64_t;
@@ -106,10 +106,10 @@ public:
      * @return the opposite ports
      * @attention the returned list was disabled after the opposite set was changed
      */
-    port_list_view<opposite_port_type> opposites() noexcept;
+    port_list_view<opposite_type> opposites() noexcept;
 
     /// @copydoc opposites()
-    port_list_view<opposite_port_type const> opposites() const noexcept;
+    port_list_view<opposite_type const> opposites() const noexcept;
 
     /**
      * @brief connects to a opposite port.
@@ -117,7 +117,7 @@ public:
      * @return true if successfully connected
      * @return false otherwise
      */
-    bool connect_to(opposite_port_type& opposite);
+    bool connect_to(opposite_type& opposite);
 
     /**
      * @brief disconnects from the opposite port.
@@ -125,7 +125,7 @@ public:
      * @return true if successfully connected
      * @return false otherwise, may by not yet connected
      */
-    bool disconnect_from(opposite_port_type& opposite);
+    bool disconnect_from(opposite_type& opposite);
 
     /**
      * @brief disconnects from the all opposite ports.
@@ -136,12 +136,12 @@ private:
     id_type id_;
     node_type* owner_;
     static constexpr std::size_t opposite_buffer_size = 4;
-    using opposite_buffer_allocator_type = util::object_allocator<opposite_port_type*>;
-    boost::container::small_vector<opposite_port_type*, opposite_buffer_size, opposite_buffer_allocator_type> opposites_ {};
+    using opposite_buffer_allocator_type = util::object_allocator<opposite_type*>;
+    boost::container::small_vector<opposite_type*, opposite_buffer_size, opposite_buffer_allocator_type> opposites_ {};
 
-    bool internal_connect(opposite_port_type& opposite);
-    bool internal_disconnect(opposite_port_type& opposite);
-    bool internal_reconnect(opposite_port_type& old_opposite, opposite_port_type& new_opposite) noexcept;
+    bool internal_connect(opposite_type& opposite);
+    bool internal_disconnect(opposite_type& opposite);
+    bool internal_reconnect(opposite_type& old_opposite, opposite_type& new_opposite) noexcept;
 
     friend class multiport<node_type, ~direction>;
 };
@@ -151,7 +151,7 @@ inline
 multiport<T, Direction>::multiport(node_type& owner, multiport::id_type id, util::object_creator creator) noexcept
     : id_(id)
     , owner_(std::addressof(owner))
-    , opposites_(typename decltype(opposites_)::allocator_type(creator.allocator<opposite_port_type*>()))
+    , opposites_(typename decltype(opposites_)::allocator_type(creator.allocator<opposite_type*>()))
 {}
 
 template<class T, port_direction Direction>
@@ -177,6 +177,7 @@ multiport<T, Direction>::multiport(multiport&& other) noexcept
 template<class T, port_direction Direction>
 inline
 multiport<T, Direction>& multiport<T, Direction>::operator=(multiport&& other) noexcept {
+    disconnect_all();
     id_ = other.id_;
     owner_ = other.owner_;
     opposites_ = std::move(other.opposites_);
@@ -207,20 +208,20 @@ multiport<T, Direction>::owner() const noexcept {
 }
 
 template<class T, port_direction Direction>
-inline port_list_view<typename multiport<T, Direction>::opposite_port_type>
+inline port_list_view<typename multiport<T, Direction>::opposite_type>
 multiport<T, Direction>::opposites() noexcept {
-    return port_list_view<opposite_port_type> { opposites_.data(), opposites_.size() };
+    return port_list_view<opposite_type> { opposites_.data(), opposites_.size() };
 }
 
 template<class T, port_direction Direction>
-inline port_list_view<typename multiport<T, Direction>::opposite_port_type const>
+inline port_list_view<typename multiport<T, Direction>::opposite_type const>
 multiport<T, Direction>::opposites() const noexcept {
-    return port_list_view<opposite_port_type> { opposites_.data(), opposites_.size() };
+    return port_list_view<opposite_type> { opposites_.data(), opposites_.size() };
 }
 
 template<class T, port_direction Direction>
 inline bool
-multiport<T, Direction>::connect_to(opposite_port_type& opposite) {
+multiport<T, Direction>::connect_to(opposite_type& opposite) {
     bool a = internal_connect(opposite);
     bool b = opposite.internal_connect(*this);
     if (a != b) {
@@ -231,7 +232,7 @@ multiport<T, Direction>::connect_to(opposite_port_type& opposite) {
 
 template<class T, port_direction Direction>
 inline bool
-multiport<T, Direction>::disconnect_from(opposite_port_type& opposite) {
+multiport<T, Direction>::disconnect_from(opposite_type& opposite) {
     bool a = internal_disconnect(opposite);
     bool b = opposite.internal_disconnect(*this);
     if (a != b) {
@@ -254,7 +255,7 @@ multiport<T, Direction>::disconnect_all() {
 
 template<class T, port_direction Direction>
 inline bool
-multiport<T, Direction>::internal_connect(opposite_port_type& opposite) {
+multiport<T, Direction>::internal_connect(opposite_type& opposite) {
     // NOTE: multi connections
     opposites_.emplace_back(std::addressof(opposite));
     return true;
@@ -262,7 +263,7 @@ multiport<T, Direction>::internal_connect(opposite_port_type& opposite) {
 
 template<class T, port_direction Direction>
 inline bool
-multiport<T, Direction>::internal_disconnect(opposite_port_type& opposite) {
+multiport<T, Direction>::internal_disconnect(opposite_type& opposite) {
     // NOTE: removes only 1 connection
     if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(opposite));
             iter != opposites_.end()) {
@@ -275,8 +276,8 @@ multiport<T, Direction>::internal_disconnect(opposite_port_type& opposite) {
 template<class T, port_direction Direction>
 inline bool
 multiport<T, Direction>::internal_reconnect(
-        opposite_port_type& old_opposite,
-        opposite_port_type& new_opposite) noexcept {
+        opposite_type& old_opposite,
+        opposite_type& new_opposite) noexcept {
     // NOTE: replaces only 1 connection
     if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(old_opposite));
             iter != opposites_.end()) {

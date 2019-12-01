@@ -10,9 +10,10 @@ namespace takatori::graph {
 
 class multiport_test : public ::testing::Test {};
 
-using simple_graph = simple_vertex::graph_type;
-using simple_input = simple_vertex::input_port_type;
-using simple_output = simple_vertex::input_port_type;
+using vertex = simple_vertex<multiport>;
+using simple_graph = typename vertex::graph_type;
+using simple_input = typename vertex::input_port_type;
+using simple_output = typename vertex::input_port_type;
 
 TEST_F(multiport_test, simple) {
     simple_graph g;

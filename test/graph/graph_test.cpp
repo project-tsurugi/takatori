@@ -4,6 +4,8 @@
 
 #include "simple_vertex.h"
 
+#include "takatori/graph/port.h"
+
 #include "takatori/graph/graph_element_traits.h"
 
 namespace takatori::graph {
@@ -17,9 +19,11 @@ public:
     static constexpr bool is_const_v = std::is_const_v<std::remove_reference_t<T>>;
 };
 
-static_assert(is_graph_element_v<simple_vertex>);
+using vertex = simple_vertex<port>;
 
-using traits = graph_element_traits<simple_vertex>;
+static_assert(is_graph_element_v<vertex>);
+
+using traits = graph_element_traits<vertex>;
 
 using simple_graph = traits::graph_type;
 
@@ -148,7 +152,7 @@ TEST_F(graph_test, erase_iter) {
 
 TEST_F(graph_test, insert) {
     simple_graph g;
-    simple_vertex const v { 10 };
+    vertex const v { 10 };
     auto&& r = g.insert(v);
 
     EXPECT_EQ(g.size(), 1);
@@ -160,7 +164,7 @@ TEST_F(graph_test, insert) {
 
 TEST_F(graph_test, insert_rvalue) {
     simple_graph g;
-    simple_vertex v { 10 };
+    vertex v { 10 };
     auto&& r = g.insert(std::move(v));
 
     EXPECT_EQ(g.size(), 1);
@@ -171,7 +175,7 @@ TEST_F(graph_test, insert_rvalue) {
 
 TEST_F(graph_test, emplace) {
     simple_graph g;
-    auto&& r = g.emplace<simple_vertex>(10);
+    auto&& r = g.emplace<vertex>(10);
 
     EXPECT_EQ(g.size(), 1);
     EXPECT_TRUE(g.contains(r));

@@ -9,8 +9,14 @@
 
 namespace takatori::graph {
 
-class simple_vertex : public vertex_base<simple_vertex> {
+template<template <class, port_direction> class Port>
+class simple_vertex : public vertex_base<simple_vertex<Port>, Port> {
 public:
+    using base = vertex_base<simple_vertex, Port>;
+    using graph_type = typename base::graph_type;
+    using input_port_type = typename base::input_port_type;
+    using output_port_type = typename base::output_port_type;
+
     explicit simple_vertex(int value) noexcept : value_(value) {}
 
     int value() const noexcept {

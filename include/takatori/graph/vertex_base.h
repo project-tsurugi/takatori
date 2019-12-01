@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-#include "multiport.h"
+#include "port_direction.h"
 
 #include "takatori/util/optional_ptr.h"
 #include "takatori/util/sequence_view.h"
@@ -17,8 +17,9 @@ class graph;
 /**
  * @brief an abstract implementation of vertex of graph.
  * @tparam Vertex the actual vertex type
+ * @tparam Port the port type template
  */
-template<class Vertex>
+template<class Vertex, template <class, port_direction> class Port>
 class vertex_base {
 public:
     /// @brief the vertex type
@@ -28,10 +29,10 @@ public:
     using graph_type = graph<vertex_type>;
 
     /// @brief the input port type.
-    using input_port_type = input_multiport<vertex_type>;
+    using input_port_type = Port<vertex_type, port_direction::input>;
 
     /// @brief the output port type.
-    using output_port_type = output_multiport<vertex_type>;
+    using output_port_type = Port<vertex_type, port_direction::output>;
 
     virtual ~vertex_base() = default;
     vertex_base(vertex_base const& other) = delete;

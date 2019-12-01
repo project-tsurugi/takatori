@@ -5,7 +5,7 @@
 #include "expression_kind.h"
 
 #include "takatori/graph/graph.h"
-#include "takatori/graph/multiport.h"
+#include "takatori/graph/port.h"
 
 #include "takatori/tree/tree_element_base.h"
 
@@ -24,10 +24,10 @@ public:
     using graph_type = graph::graph<expression>;
 
     /// @brief the input port type.
-    using input_port_type = graph::input_multiport<expression>;
+    using input_port_type = graph::input_port<expression>;
 
     /// @brief the output port type.
-    using output_port_type = graph::output_multiport<expression>;
+    using output_port_type = graph::output_port<expression>;
 
     ~expression() override = default;
     expression(expression const& other) = delete;
