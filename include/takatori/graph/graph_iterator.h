@@ -23,7 +23,7 @@ public:
     /// @brief the iterator type.
     using iterator_type = graph_iterator;
     /// @brief the value type
-    using value_type = std::remove_pointer_t<typename std::iterator_traits<Iter>::value_type::second_type>;
+    using value_type = std::remove_pointer_t<typename std::iterator_traits<Iter>::value_type>;
     /// @brief the pointer type.
     using pointer = std::add_pointer_t<value_type>;
     /// @brief the reference type.
@@ -123,13 +123,13 @@ graph_iterator<Iter>::graph_iterator(graph_iterator<U> other) noexcept
 template<class Iter>
 inline typename graph_iterator<Iter>::reference
 graph_iterator<Iter>::operator*() const noexcept {
-    return *iter_->second;
+    return **iter_;
 }
 
 template<class Iter>
 inline typename graph_iterator<Iter>::pointer
 graph_iterator<Iter>::operator->() const noexcept {
-    return iter_->second;
+    return *iter_;
 }
 
 template<class Iter>

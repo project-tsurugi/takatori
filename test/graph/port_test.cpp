@@ -117,7 +117,7 @@ TEST_F(port_test, dispose) {
     v1.output() >> v2.input();
     v1.output() >> v2.input();
 
-    g.erase(v2.id());
+    g.erase(v2);
 
     EXPECT_TRUE(v1.output().opposites().empty());
 }

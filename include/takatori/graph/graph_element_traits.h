@@ -13,11 +13,7 @@ namespace impl {
 
 /// @private
 template<class T>
-using graph_element_id_t = decltype(std::declval<T const&>().id());
-
-/// @private
-template<class T>
-using graph_element_on_join_t = decltype(std::declval<T&>().on_join(std::declval<graph<T>*>(), std::declval<graph_element_id_t<T>>()));
+using graph_element_on_join_t = decltype(std::declval<T&>().on_join(std::declval<graph<T>*>()));
 
 /// @private
 template<class T>
@@ -31,8 +27,7 @@ using graph_element_on_leave_t = decltype(std::declval<T&>().on_leave());
  */
 template<class T>
 using is_graph_element = std::bool_constant<
-        util::is_detected_v<impl::graph_element_id_t, T>
-        && util::is_detected_v<impl::graph_element_on_join_t, T>
+        util::is_detected_v<impl::graph_element_on_join_t, T>
         && util::is_detected_v<impl::graph_element_on_leave_t, T>>;
 
 /// @copydoc is_graph_element
@@ -49,9 +44,6 @@ struct graph_element_traits {
     /// @brief the graph element type.
     using element_type = T;
 
-    /// @brief the graph element ID type.
-    using id_type = util::detect_t<impl::graph_element_id_t, element_type>;
-
     /// @brief the graph type.
     using graph_type = graph<element_type>;
 
@@ -62,19 +54,11 @@ struct graph_element_traits {
     using const_reference = std::add_lvalue_reference_t<std::add_const_t<element_type>>;
 
     /**
-     * @brief returns the ID of the given element.
-     * @param element the target element
-     * @return the element ID
-     */
-    static id_type id(const_reference element);
-
-    /**
      * @brief tells membership information to the given element when the element was join.
      * @param element the target element
      * @param graph the owner
-     * @param id the element ID
      */
-    static void join(reference element, util::optional_ptr<graph_type> graph, id_type id);
+    static void join(reference element, util::optional_ptr<graph_type> graph);
 
     /**
      * @brief tells when the element was leave from the current graph.
@@ -85,15 +69,9 @@ struct graph_element_traits {
 };
 
 template<class T>
-inline typename graph_element_traits<T>::id_type
-graph_element_traits<T>::id(const_reference element) {
-    return element.id();
-}
-
-template<class T>
 inline void
-graph_element_traits<T>::join(reference element, util::optional_ptr<graph_type> graph, id_type id) {
-    element.on_join(graph.get(), id);
+graph_element_traits<T>::join(reference element, util::optional_ptr<graph_type> graph) {
+    element.on_join(graph.get());
 }
 
 template<class T>

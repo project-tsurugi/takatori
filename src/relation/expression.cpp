@@ -2,10 +2,6 @@
 
 namespace takatori::relation {
 
-expression::id_type expression::id() const noexcept {
-    return id_;
-}
-
 bool expression::is_orphan() const noexcept {
     return !optional_owner();
 }
@@ -28,13 +24,12 @@ util::optional_ptr<expression::graph_type const> expression::optional_owner() co
     return util::optional_ptr { owner_ };
 }
 
-void expression::on_join(graph_type* graph, id_type id) noexcept {
+void expression::on_join(graph_type* graph) noexcept {
     owner_ = graph;
-    id_ = id;
 }
 
 void expression::on_leave() noexcept {
-    on_join(nullptr, orphaned_id);
+    on_join(nullptr);
 }
 
 bool operator==(expression const& a, expression const& b) noexcept {

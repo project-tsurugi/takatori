@@ -33,23 +33,11 @@ public:
     /// @brief the output port type.
     using output_port_type = output_port<vertex_type>;
 
-    /// @brief the vertex ID type
-    using id_type = std::uint64_t;
-
-    /// @brief vertex ID for orphaned vertices.
-    static constexpr id_type orphaned_id = static_cast<id_type>(-1);
-
     virtual ~vertex_base() = default;
     vertex_base(vertex_base const& other) = delete;
     vertex_base& operator=(vertex_base const& other) = delete;
     vertex_base(vertex_base&& other) noexcept = delete;
     vertex_base& operator=(vertex_base&& other) noexcept = delete;
-
-    /**
-     * @brief returns the vertex ID.
-     * @return the vertex ID
-     */
-    virtual id_type id() const noexcept = 0;
 
     /**
      * @brief returns whether or not this vertex is orphaned.
@@ -107,15 +95,14 @@ public:
     /**
      * @brief handles when this vertex is joined into the given graph.
      * @param graph the owner graph, or nullptr to leave
-     * @param id the vertex ID, or orphaned_id to leave
      */
-    virtual void on_join(graph_type* graph, id_type id) noexcept = 0;
+    virtual void on_join(graph_type* graph) noexcept = 0;
 
     /**
      * @brief handles when this vertex is left from the joined graph.
      */
     void on_leave() noexcept {
-        on_join(nullptr, orphaned_id);
+        on_join(nullptr);
     }
 
 protected:

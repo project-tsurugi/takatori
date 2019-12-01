@@ -22,10 +22,6 @@ public:
         return *this;
     }
 
-    id_type id() const noexcept override {
-        return id_;
-    }
-
     util::optional_ptr<graph_type> optional_owner() noexcept override {
         return util::optional_ptr { owner_ };
     }
@@ -67,9 +63,8 @@ public:
         return creator.create_object<simple_vertex>(value_ + 1);
     }
 
-    void on_join(graph_type* graph, id_type id) noexcept override {
+    void on_join(graph_type* graph) noexcept override {
         owner_ = graph;
-        id_ = id;
     }
 
 private:
@@ -77,7 +72,6 @@ private:
     input_port_type input_ { *this, 0 };
     output_port_type output_ { *this, 0 };
 
-    id_type id_ { orphaned_id };
     graph_type* owner_ {};
 };
 

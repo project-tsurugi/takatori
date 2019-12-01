@@ -29,24 +29,11 @@ public:
     /// @brief the output port type.
     using output_port_type = graph::output_port<expression>;
 
-    /// @brief the vertex ID type.
-    using id_type = std::uint64_t;
-
-    /// @brief vertex ID for orphaned vertices.
-    static constexpr id_type orphaned_id = static_cast<id_type>(-1);
-
     ~expression() override = default;
     expression(expression const& other) = delete;
     expression& operator=(expression const& other) = delete;
     expression(expression&& other) noexcept = delete;
     expression& operator=(expression&& other) noexcept = delete;
-
-    /**
-     * @brief returns the vertex ID.
-     * @return the vertex ID
-     * @return orphaned_id if this expression is orphaned from the relational expression graph
-     */
-    id_type id() const noexcept;
 
     /**
      * @brief returns whether or not this vertex is orphaned.
@@ -146,9 +133,8 @@ public:
     /**
      * @brief handles when this expression is joined into the given graph.
      * @param graph the owner graph, or nullptr to leave
-     * @param id the vertex ID, or orphaned_id to leave
      */
-    void on_join(graph_type* graph, id_type id) noexcept;
+    void on_join(graph_type* graph) noexcept;
 
     /**
      * @brief handles when this vertex is left from the joined graph.
@@ -179,7 +165,6 @@ protected:
 
 private:
     graph_type* owner_ {};
-    id_type id_ { orphaned_id };
 };
 
 } // namespace takatori::relation

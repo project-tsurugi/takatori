@@ -1,8 +1,9 @@
 #pragma once
 
-#include <map>
+#include <functional>
 #include <stdexcept>
 #include <type_traits>
+#include <unordered_set>
 
 #include "graph_element_traits.h"
 #include "graph_iterator.h"
@@ -26,17 +27,14 @@ public:
     /// @brief the graph element type.
     using element_type = T;
 
-    /// @brief the element ID type.
-    using id_type = typename graph_element_traits<element_type>::id_type;
-
-    /// @brief the map entry type.
-    using entry_type = std::pair<id_type const, element_type*>;
+    /// @brief the set entry type.
+    using entry_type = element_type*;
 
     /// @brief the entity type
-    using entity_type = std::map<
-            id_type,
-            element_type*,
-            std::less<>,
+    using entity_type = std::unordered_set<
+            entry_type,
+            std::hash<entry_type>,
+            std::equal_to<>,
             util::object_allocator<entry_type>>;
 
     /// @brief the value type
@@ -77,47 +75,6 @@ public:
     explicit graph(util::object_creator creator) noexcept;
 
     /**
-     * @brief returns the element which has the given ID.
-     * @param id the element ID
-     * @return the corresponded element
-     * @throws std::domain_error if there is no such the element
-     */
-    reference at(id_type id);
-
-    /// @copydoc operator[]()
-    const_reference at(id_type id) const;
-
-    /**
-     * @brief returns the element which has the given ID.
-     * @param id the element ID
-     * @return the corresponded element
-     * @warning undefined behavior if there is no such the element
-     */
-    reference operator[](id_type id);
-
-    /// @copydoc operator[]()
-    const_reference operator[](id_type id) const;
-
-    /**
-     * @brief returns the element which has the given ID.
-     * @param id the element ID
-     * @return the corresponded element
-     * @return empty if there is no such the element
-     */
-    util::optional_ptr<value_type> find(id_type id);
-
-    /// @copydoc find()
-    util::optional_ptr<value_type const> find(id_type id) const;
-
-    /**
-     * @brief returns whether or not this graph contains the given element.
-     * @param id the element ID
-     * @return true if there is such the element
-     * @return false otherwise
-     */
-    bool contains(id_type id) const;
-
-    /**
      * @brief returns whether or not this graph contains the given element.
      * @param element the target element
      * @return true if there is such the element
@@ -149,14 +106,6 @@ public:
      * @brief removes all elements in this.
      */
     void clear() noexcept;
-
-    /**
-     * @brief removes an element.
-     * @param id the target element ID
-     * @return true if successfully removed
-     * @return false otherwise (may be no such the element)
-     */
-    bool erase(id_type id);
 
     /**
      * @brief removes an element.
@@ -192,13 +141,6 @@ public:
      */
     template<class U = element_type, class... Args>
     reference emplace(Args&&... args);
-
-    /**
-     * @brief releases an element from this graph.
-     * @param id the target element ID
-     * @return the released element
-     */
-    util::unique_object_ptr<value_type> release(id_type id) noexcept;
 
     /**
      * @brief releases the element on this graph.
@@ -277,16 +219,17 @@ public:
 
 private:
     entity_type vertices_;
-    mutable id_type next_id_ { 1 };
 
-    reference bless_element(entry_type& entry) noexcept;
+    static entry_type entry_key(const_reference element) noexcept;
+
+    reference bless_element(pointer element) noexcept;
 
     void unbless_element(pointer element) noexcept;
 
-    entry_type& prepare_element();
+    pointer insert_element(util::unique_object_ptr<value_type> element);
 
     template<class U, class... Args>
-    pointer create_element(Args&&... args);
+    util::unique_object_ptr<value_type> create_element(Args&&... args);
 
     void delete_element(pointer element);
 };
@@ -298,72 +241,16 @@ inline graph<T>::graph(util::object_creator creator) noexcept
 
 template<class T>
 inline graph<T>::~graph() {
-    for (auto&& kv : vertices_) {
-        if (auto*& v = std::get<1>(kv)) {
-            delete_element(v);
-            v = nullptr;
-        }
+    for (auto&& entry : vertices_) {
+        delete_element(entry);
     }
-}
-
-template<class T>
-inline typename graph<T>::reference
-graph<T>::at(id_type id) {
-    if (auto v = find(id)) return *v;
-    throw std::domain_error("invalid element");
-}
-
-template<class T>
-inline typename graph<T>::const_reference
-graph<T>::at(id_type id) const {
-    if (auto v = find(id)) return *v;
-    throw std::domain_error("invalid element");
-}
-
-template<class T>
-inline typename graph<T>::reference
-graph<T>::operator[](id_type id) {
-    return *find(id);
-}
-
-template<class T>
-inline typename graph<T>::const_reference
-graph<T>::operator[](id_type id) const {
-    return *find(id);
-}
-
-template<class T>
-inline util::optional_ptr<typename graph<T>::value_type>
-graph<T>::find(id_type id) {
-    if (auto iter = vertices_.find(id); iter != vertices_.end()) {
-        return util::optional_ptr { iter->second };
-    }
-    return {};
-}
-
-template<class T>
-inline util::optional_ptr<typename graph<T>::value_type const>
-graph<T>::find(id_type id) const {
-    if (auto iter = vertices_.find(id); iter != vertices_.end()) {
-        return util::optional_ptr { iter->second };
-    }
-    return {};
-}
-
-template<class T>
-inline bool
-graph<T>::contains(id_type id) const {
-    return find(id).has_value();
 }
 
 template<class T>
 inline bool
 graph<T>::contains(const_reference element) const {
-    auto id = graph_element_traits<element_type>::id(element);
-    if (auto found = find(id)) {
-        return found.get() == std::addressof(element);
-    }
-    return false;
+    auto iter = vertices_.find(entry_key(element));
+    return iter != vertices_.end();
 }
 
 template<class T>
@@ -380,39 +267,22 @@ graph<T>::size() const noexcept {
 template<class T>
 inline void
 graph<T>::reserve(graph::size_type size) {
-    // nothing to do.
-    (void) size;
+    vertices_.reserve(size);
 }
 
 template<class T>
 inline void
 graph<T>::clear() noexcept {
-    for (auto&& kv : vertices_) {
-        if (auto*& v = std::get<1>(kv)) {
-            delete_element(v);
-            v = nullptr;
-        }
+    for (auto&& entry : vertices_) {
+        delete_element(entry);
     }
     vertices_.clear();
 }
 
 template<class T>
 inline bool
-graph<T>::erase(id_type id) {
-    if (auto iter = vertices_.find(id); iter != vertices_.end()) {
-        erase(const_iterator(iter));
-        return true;
-    }
-    return false;
-}
-
-template<class T>
-inline bool
 graph<T>::erase(const_reference element) {
-    auto id = graph_element_traits<element_type>::id(element);
-    if (auto iter = vertices_.find(id);
-            iter != vertices_.end()
-            && iter->second == std::addressof(element)) {
+    if (auto iter = vertices_.find(entry_key(element)); iter != vertices_.end()) {
         erase(const_iterator(iter));
         return true;
     }
@@ -423,7 +293,7 @@ template<class T>
 inline typename graph<T>::iterator
 graph<T>::erase(graph::const_iterator position) {
     auto iter = position.unwrap();
-    delete_element(iter->second);
+    delete_element(*iter);
     auto next = vertices_.erase(iter);
     return iterator(next);
 }
@@ -432,18 +302,16 @@ template<class T>
 inline typename graph<T>::reference
 graph<T>::insert(const_reference element) {
     static_assert(util::is_clonable_v<element_type>);
-    auto&& pair = prepare_element();
-    std::get<1>(pair) = util::clone(element, get_object_creator());
-    return bless_element(pair);
+    auto entry = insert_element(util::clone_unique(element, get_object_creator()));
+    return bless_element(entry);
 }
 
 template<class T>
 inline typename graph<T>::reference
 graph<T>::insert(rvalue_reference element) {
     static_assert(util::is_clonable_v<element_type>);
-    auto&& pair = prepare_element();
-    std::get<1>(pair) = util::clone(std::move(element), get_object_creator());
-    return bless_element(pair);
+    auto entry = insert_element(util::clone_unique(std::move(element), get_object_creator()));
+    return bless_element(entry);
 }
 
 template<class T>
@@ -451,28 +319,14 @@ template<class U, class... Args>
 inline typename graph<T>::reference
 graph<T>::emplace(Args&& ... args) {
     static_assert(util::is_clonable_v<element_type>);
-    auto&& pair = prepare_element();
-    std::get<1>(pair) = create_element<U>(std::forward<Args>(args)...);
-    return bless_element(pair);
-}
-
-template<class T>
-util::unique_object_ptr<typename graph<T>::value_type>
-graph<T>::release(id_type id) noexcept {
-    if (auto iter = vertices_.find(id); iter != vertices_.end()) {
-        auto kv = release(const_iterator(iter));
-        return std::get<0>(std::move(kv));
-    }
-    return {};
+    auto&& entry = insert_element(create_element<U>(std::forward<Args>(args)...));
+    return bless_element(entry);
 }
 
 template<class T>
 inline util::unique_object_ptr<typename graph<T>::value_type>
 graph<T>::release(const_reference element) noexcept {
-    auto id = graph_element_traits<element_type>::id(element);
-    if (auto iter = vertices_.find(id);
-            iter != vertices_.end()
-            && iter->second == std::addressof(element)) {
+    if (auto iter = vertices_.find(entry_key(element)); iter != vertices_.end()) {
         auto kv = release(const_iterator(iter));
         return std::get<0>(std::move(kv));
     }
@@ -485,7 +339,7 @@ inline std::pair<
         typename graph<T>::iterator>
 graph<T>::release(graph::const_iterator position) {
     auto iter = position.unwrap();
-    auto result = get_object_creator().wrap_unique(iter->second);
+    auto result = get_object_creator().wrap_unique(*iter);
     unbless_element(result.get());
     auto next = vertices_.erase(iter);
     return std::make_pair(std::move(result), iterator { next });
@@ -567,7 +421,6 @@ template<class T>
 inline void
 graph<T>::swap(graph& other) noexcept {
     std::swap(vertices_, other.vertices_);
-    std::swap(next_id_, other.next_id_);
 }
 
 template<class T>
@@ -577,11 +430,15 @@ graph<T>::get_object_creator() const noexcept {
 }
 
 template<class T>
+inline typename graph<T>::entry_type
+graph<T>::entry_key(const_reference element) noexcept {
+    return const_cast<entry_type>(std::addressof(element));  // NOLINT
+}
+
+template<class T>
 inline typename graph<T>::reference
-graph<T>::bless_element(entry_type& entry) noexcept {
-    auto id = std::get<0>(entry);
-    auto* element = std::get<1>(entry);
-    graph_element_traits<element_type>::join(*element, *this, id);
+graph<T>::bless_element(pointer element) noexcept {
+    graph_element_traits<element_type>::join(*element, *this);
     return *element;
 }
 
@@ -594,21 +451,21 @@ graph<T>::unbless_element(pointer element) noexcept {
 }
 
 template<class T>
-inline typename graph<T>::entry_type&
-graph<T>::prepare_element() {
-    auto id = next_id_++;
-    auto [iter, success] = vertices_.emplace(id, nullptr);
+inline typename graph<T>::pointer
+graph<T>::insert_element(util::unique_object_ptr<value_type> element) {
+    auto [iter, success] = vertices_.emplace(element.get());
     if (!success) {
         throw std::logic_error("conflict element ID");
     }
+    element.release();
     return *iter;
 }
 
 template<class T>
 template<class U, class... Args>
-inline typename graph<T>::pointer
+inline util::unique_object_ptr<typename graph<T>::value_type>
 graph<T>::create_element(Args&& ... args) {
-    return get_object_creator().template create_object<U>(std::forward<Args>(args)...);
+    return get_object_creator().template create_unique<U>(std::forward<Args>(args)...);
 }
 
 template<class T>
