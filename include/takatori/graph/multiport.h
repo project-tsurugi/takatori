@@ -14,19 +14,19 @@
 namespace takatori::graph {
 
 template<class T, port_direction Direction>
-class port;
+class multiport;
 
 /**
  * @brief the input port type.
  */
 template<class T>
-using input_port = port<T, port_direction::input>;
+using input_multiport = multiport<T, port_direction::input>;
 
 /**
  * @brief the output port type.
  */
 template<class T>
-using output_port = port<T, port_direction::output>;
+using output_multiport = multiport<T, port_direction::output>;
 
 /**
  * @brief the view of port list.
@@ -35,12 +35,12 @@ template<class Port>
 using port_list_view = util::reference_list_view<util::double_pointer_extractor<Port>>;
 
 /**
- * @brief represents an input/output port of graph nodes.
+ * @brief represents an input/output port of graph nodes, which can have multiple opposites.
  * @tparam T the node type
  * @tparam Direction the port direction
  */
 template<class T, port_direction Direction>
-class port final {
+class multiport final {
 public:
     /// @brief the vertex type
     using node_type = T;
@@ -52,7 +52,7 @@ public:
     static constexpr direction_type direction = Direction;
 
     /// @brief the opposite port type.
-    using opposite_port_type = port<T, ~direction>;
+    using opposite_port_type = multiport<T, ~direction>;
 
     /// @brief the ID type of the ports.
     using id_type = std::uint64_t;
@@ -64,19 +64,19 @@ public:
      * @param creator the object creator
      * @warning don't invoke this outside of owner node
      */
-    explicit port(node_type& owner, id_type id = 0, util::object_creator creator = {}) noexcept;
+    explicit multiport(node_type& owner, id_type id = 0, util::object_creator creator = {}) noexcept;
 
-    ~port();
+    ~multiport();
 
-    port(port const& other) = delete;
-    port& operator=(port const& other) = delete;
+    multiport(multiport const& other) = delete;
+    multiport& operator=(multiport const& other) = delete;
 
     /**
      * @brief constructs a new object.
      * @param other the move source
      * @warning this is designed for STL like containers, developers should not use this directly
      */
-    port(port&& other) noexcept;
+    multiport(multiport&& other) noexcept;
 
     /**
      * @brief assigns the given object.
@@ -84,7 +84,7 @@ public:
      * @return this
      * @warning this is designed for STL like containers, developers should not use this directly
      */
-    port& operator=(port&& other) noexcept;
+    multiport& operator=(multiport&& other) noexcept;
 
     /**
      * @brief returns the port ID.
@@ -143,12 +143,12 @@ private:
     bool internal_disconnect(opposite_port_type& opposite);
     bool internal_reconnect(opposite_port_type& old_opposite, opposite_port_type& new_opposite) noexcept;
 
-    friend class port<node_type, ~direction>;
+    friend class multiport<node_type, ~direction>;
 };
 
 template<class T, port_direction Direction>
 inline
-port<T, Direction>::port(node_type& owner, port::id_type id, util::object_creator creator) noexcept
+multiport<T, Direction>::multiport(node_type& owner, multiport::id_type id, util::object_creator creator) noexcept
     : id_(id)
     , owner_(std::addressof(owner))
     , opposites_(typename decltype(opposites_)::allocator_type(creator.allocator<opposite_port_type*>()))
@@ -156,13 +156,13 @@ port<T, Direction>::port(node_type& owner, port::id_type id, util::object_creato
 
 template<class T, port_direction Direction>
 inline
-port<T, Direction>::~port() {
+multiport<T, Direction>::~multiport() {
     disconnect_all();
 }
 
 template<class T, port_direction Direction>
 inline
-port<T, Direction>::port(port&& other) noexcept
+multiport<T, Direction>::multiport(multiport&& other) noexcept
     : id_(other.id_)
     , owner_(other.owner_)
     , opposites_(std::move(other.opposites_))
@@ -176,7 +176,7 @@ port<T, Direction>::port(port&& other) noexcept
 
 template<class T, port_direction Direction>
 inline
-port<T, Direction>& port<T, Direction>::operator=(port&& other) noexcept {
+multiport<T, Direction>& multiport<T, Direction>::operator=(multiport&& other) noexcept {
     id_ = other.id_;
     owner_ = other.owner_;
     opposites_ = std::move(other.opposites_);
@@ -189,38 +189,38 @@ port<T, Direction>& port<T, Direction>::operator=(port&& other) noexcept {
 }
 
 template<class T, port_direction Direction>
-inline constexpr typename port<T, Direction>::id_type
-port<T, Direction>::id() const noexcept {
+inline constexpr typename multiport<T, Direction>::id_type
+multiport<T, Direction>::id() const noexcept {
     return id_;
 }
 
 template<class T, port_direction Direction>
-inline constexpr typename port<T, Direction>::node_type&
-port<T, Direction>::owner() noexcept {
+inline constexpr typename multiport<T, Direction>::node_type&
+multiport<T, Direction>::owner() noexcept {
     return *owner_;
 }
 
 template<class T, port_direction Direction>
-inline constexpr typename port<T, Direction>::node_type const&
-port<T, Direction>::owner() const noexcept {
+inline constexpr typename multiport<T, Direction>::node_type const&
+multiport<T, Direction>::owner() const noexcept {
     return *owner_;
 }
 
 template<class T, port_direction Direction>
-inline port_list_view<typename port<T, Direction>::opposite_port_type>
-port<T, Direction>::opposites() noexcept {
+inline port_list_view<typename multiport<T, Direction>::opposite_port_type>
+multiport<T, Direction>::opposites() noexcept {
     return port_list_view<opposite_port_type> { opposites_.data(), opposites_.size() };
 }
 
 template<class T, port_direction Direction>
-inline port_list_view<typename port<T, Direction>::opposite_port_type const>
-port<T, Direction>::opposites() const noexcept {
+inline port_list_view<typename multiport<T, Direction>::opposite_port_type const>
+multiport<T, Direction>::opposites() const noexcept {
     return port_list_view<opposite_port_type> { opposites_.data(), opposites_.size() };
 }
 
 template<class T, port_direction Direction>
 inline bool
-port<T, Direction>::connect_to(opposite_port_type& opposite) {
+multiport<T, Direction>::connect_to(opposite_port_type& opposite) {
     bool a = internal_connect(opposite);
     bool b = opposite.internal_connect(*this);
     if (a != b) {
@@ -231,7 +231,7 @@ port<T, Direction>::connect_to(opposite_port_type& opposite) {
 
 template<class T, port_direction Direction>
 inline bool
-port<T, Direction>::disconnect_from(opposite_port_type& opposite) {
+multiport<T, Direction>::disconnect_from(opposite_port_type& opposite) {
     bool a = internal_disconnect(opposite);
     bool b = opposite.internal_disconnect(*this);
     if (a != b) {
@@ -242,7 +242,7 @@ port<T, Direction>::disconnect_from(opposite_port_type& opposite) {
 
 template<class T, port_direction Direction>
 inline void
-port<T, Direction>::disconnect_all() {
+multiport<T, Direction>::disconnect_all() {
     for (auto*& opposite : opposites_) {
         if (opposite != nullptr) {
             opposite->internal_disconnect(*this);
@@ -254,7 +254,7 @@ port<T, Direction>::disconnect_all() {
 
 template<class T, port_direction Direction>
 inline bool
-port<T, Direction>::internal_connect(opposite_port_type& opposite) {
+multiport<T, Direction>::internal_connect(opposite_port_type& opposite) {
     // NOTE: multi connections
     opposites_.emplace_back(std::addressof(opposite));
     return true;
@@ -262,7 +262,7 @@ port<T, Direction>::internal_connect(opposite_port_type& opposite) {
 
 template<class T, port_direction Direction>
 inline bool
-port<T, Direction>::internal_disconnect(opposite_port_type& opposite) {
+multiport<T, Direction>::internal_disconnect(opposite_port_type& opposite) {
     // NOTE: removes only 1 connection
     if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(opposite));
             iter != opposites_.end()) {
@@ -274,7 +274,7 @@ port<T, Direction>::internal_disconnect(opposite_port_type& opposite) {
 
 template<class T, port_direction Direction>
 inline bool
-port<T, Direction>::internal_reconnect(
+multiport<T, Direction>::internal_reconnect(
         opposite_port_type& old_opposite,
         opposite_port_type& new_opposite) noexcept {
     // NOTE: replaces only 1 connection
@@ -294,7 +294,7 @@ port<T, Direction>::internal_reconnect(
  * @return the downstream port
  */
 template<class T>
-inline input_port<T>& operator<<(input_port<T>& downstream, output_port<T>& upstream) {
+inline input_multiport<T>& operator<<(input_multiport<T>& downstream, output_multiport<T>& upstream) {
     downstream.connect_to(upstream);
     return downstream;
 }
@@ -307,7 +307,7 @@ inline input_port<T>& operator<<(input_port<T>& downstream, output_port<T>& upst
  * @return the upstream port
  */
 template<class T>
-inline output_port<T>& operator>>(output_port<T>& upstream, input_port<T>& downstream) {
+inline output_multiport<T>& operator>>(output_multiport<T>& upstream, input_multiport<T>& downstream) {
     upstream.connect_to(downstream);
     return upstream;
 }
@@ -321,7 +321,7 @@ inline output_port<T>& operator>>(output_port<T>& upstream, input_port<T>& downs
  * @return the output
  */
 template<class T, port_direction Direction>
-inline std::ostream& operator<<(std::ostream& out, port<T, Direction> const& value) {
+inline std::ostream& operator<<(std::ostream& out, multiport<T, Direction> const& value) {
     return out << Direction << "[" << value.id() << "]"
                << "@" << util::print_support { value.owner() };
 }

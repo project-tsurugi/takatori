@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <type_traits>
 #include <unordered_set>
+#include <utility>
 
 #include "graph_element_traits.h"
 #include "graph_iterator.h"
@@ -220,18 +221,40 @@ public:
 private:
     entity_type vertices_;
 
-    static entry_type entry_key(const_reference element) noexcept;
+    static constexpr entry_type entry_key(const_reference element) noexcept {
+        return const_cast<entry_type>(std::addressof(element));  // NOLINT
+    }
 
-    reference bless_element(pointer element) noexcept;
+    reference bless_element(pointer element) noexcept {
+        graph_element_traits<element_type>::join(*element, *this);
+        return *element;
+    }
 
-    void unbless_element(pointer element) noexcept;
+    void unbless_element(pointer element) noexcept {
+        if (element != nullptr) {
+            graph_element_traits<element_type>::leave(*element);
+        }
+    }
 
-    pointer insert_element(util::unique_object_ptr<value_type> element);
+    pointer insert_element(util::unique_object_ptr<value_type> element) {
+        auto [iter, success] = vertices_.emplace(element.get());
+        if (!success) {
+            throw std::logic_error("conflict element ID");
+        }
+        element.release();
+        return *iter;
+    }
 
     template<class U, class... Args>
-    util::unique_object_ptr<value_type> create_element(Args&&... args);
+    util::unique_object_ptr<value_type> create_element(Args&&... args) {
+        return get_object_creator().template create_unique<U>(std::forward<Args>(args)...);
+    }
 
-    void delete_element(pointer element);
+    void delete_element(pointer element) {
+        if (element != nullptr) {
+            get_object_creator().delete_object(element);
+        }
+    }
 };
 
 template<class T>
@@ -427,53 +450,6 @@ template<class T>
 inline util::object_creator
 graph<T>::get_object_creator() const noexcept {
     return util::object_creator { vertices_.get_allocator() };
-}
-
-template<class T>
-inline typename graph<T>::entry_type
-graph<T>::entry_key(const_reference element) noexcept {
-    return const_cast<entry_type>(std::addressof(element));  // NOLINT
-}
-
-template<class T>
-inline typename graph<T>::reference
-graph<T>::bless_element(pointer element) noexcept {
-    graph_element_traits<element_type>::join(*element, *this);
-    return *element;
-}
-
-template<class T>
-inline void
-graph<T>::unbless_element(pointer element) noexcept {
-    if (element != nullptr) {
-        graph_element_traits<element_type>::leave(*element);
-    }
-}
-
-template<class T>
-inline typename graph<T>::pointer
-graph<T>::insert_element(util::unique_object_ptr<value_type> element) {
-    auto [iter, success] = vertices_.emplace(element.get());
-    if (!success) {
-        throw std::logic_error("conflict element ID");
-    }
-    element.release();
-    return *iter;
-}
-
-template<class T>
-template<class U, class... Args>
-inline util::unique_object_ptr<typename graph<T>::value_type>
-graph<T>::create_element(Args&& ... args) {
-    return get_object_creator().template create_unique<U>(std::forward<Args>(args)...);
-}
-
-template<class T>
-inline void
-graph<T>::delete_element(pointer element) {
-    if (element != nullptr) {
-        get_object_creator().delete_object(element);
-    }
 }
 
 } // namespace takatori::graph

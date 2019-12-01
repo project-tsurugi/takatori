@@ -110,7 +110,7 @@ add_test_executable(tree/tree_element_vector_forward_test.cpp)
 
 # graph models
 add_test_executable(graph/graph_test.cpp)
-add_test_executable(graph/port_test.cpp)
+add_test_executable(graph/multiport_test.cpp)
 
 # utilities
 add_test_executable(util/clonable_test.cpp)

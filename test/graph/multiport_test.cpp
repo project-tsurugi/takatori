@@ -1,4 +1,4 @@
-#include "takatori/graph/port.h"
+#include "takatori/graph/multiport.h"
 
 #include <gtest/gtest.h>
 
@@ -8,13 +8,13 @@
 
 namespace takatori::graph {
 
-class port_test : public ::testing::Test {};
+class multiport_test : public ::testing::Test {};
 
 using simple_graph = simple_vertex::graph_type;
 using simple_input = simple_vertex::input_port_type;
 using simple_output = simple_vertex::input_port_type;
 
-TEST_F(port_test, simple) {
+TEST_F(multiport_test, simple) {
     simple_graph g;
     auto&& v = g.emplace(100);
 
@@ -23,7 +23,7 @@ TEST_F(port_test, simple) {
     EXPECT_TRUE(v.input().opposites().empty());
 }
 
-TEST_F(port_test, connect) {
+TEST_F(multiport_test, connect) {
     simple_graph g;
     auto&& v1 = g.emplace(100);
     auto&& v2 = g.emplace(200);
@@ -58,7 +58,7 @@ TEST_F(port_test, connect) {
     }
 }
 
-TEST_F(port_test, connect_multi) {
+TEST_F(multiport_test, connect_multi) {
     simple_graph g;
     auto&& v1 = g.emplace(100);
     auto&& v2 = g.emplace(200);
@@ -96,7 +96,7 @@ TEST_F(port_test, connect_multi) {
     EXPECT_TRUE(v2.input().opposites().empty());
 }
 
-TEST_F(port_test, disconnect_all) {
+TEST_F(multiport_test, disconnect_all) {
     simple_graph g;
     auto&& v1 = g.emplace(100);
     auto&& v2 = g.emplace(200);
@@ -109,7 +109,7 @@ TEST_F(port_test, disconnect_all) {
     EXPECT_TRUE(v2.input().opposites().empty());
 }
 
-TEST_F(port_test, dispose) {
+TEST_F(multiport_test, dispose) {
     simple_graph g;
     auto&& v1 = g.emplace(100);
     auto&& v2 = g.emplace(200);
@@ -122,7 +122,7 @@ TEST_F(port_test, dispose) {
     EXPECT_TRUE(v1.output().opposites().empty());
 }
 
-TEST_F(port_test, move_ctor) {
+TEST_F(multiport_test, move_ctor) {
     simple_graph g;
     auto&& v1 = g.emplace(100);
     auto&& v2 = g.emplace(200);
@@ -147,7 +147,7 @@ TEST_F(port_test, move_ctor) {
     EXPECT_EQ(&v1.output().opposites()[0], &p);
 }
 
-TEST_F(port_test, move_assign) {
+TEST_F(multiport_test, move_assign) {
     simple_graph g;
     auto&& v1 = g.emplace(100);
     auto&& v2 = g.emplace(200);
@@ -172,7 +172,7 @@ TEST_F(port_test, move_assign) {
     EXPECT_EQ(&v1.output().opposites()[0], &p);
 }
 
-TEST_F(port_test, output) {
+TEST_F(multiport_test, output) {
     simple_graph g;
     auto&& v1 = g.emplace(100);
     std::cout << v1.input() << std::endl;

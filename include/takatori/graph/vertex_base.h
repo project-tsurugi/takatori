@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-#include "port.h"
+#include "multiport.h"
 
 #include "takatori/util/optional_ptr.h"
 #include "takatori/util/sequence_view.h"
@@ -28,10 +28,10 @@ public:
     using graph_type = graph<vertex_type>;
 
     /// @brief the input port type.
-    using input_port_type = input_port<vertex_type>;
+    using input_port_type = input_multiport<vertex_type>;
 
     /// @brief the output port type.
-    using output_port_type = output_port<vertex_type>;
+    using output_port_type = output_multiport<vertex_type>;
 
     virtual ~vertex_base() = default;
     vertex_base(vertex_base const& other) = delete;
