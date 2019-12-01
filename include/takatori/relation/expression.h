@@ -4,25 +4,78 @@
 
 #include "expression_kind.h"
 
-#include "takatori/graph/vertex_base.h"
+#include "takatori/graph/graph.h"
+#include "takatori/graph/port.h"
 
 #include "takatori/tree/tree_element_base.h"
 
 #include "takatori/util/object_creator.h"
 #include "takatori/util/optional_ptr.h"
+#include "takatori/util/sequence_view.h"
 
 namespace takatori::relation {
 
 /**
  * @brief a root model of relational algebra expressions.
  */
-class expression : public graph::vertex_base<expression>, public tree::tree_element_base {
+class expression : public tree::tree_element_base {
 public:
+    /// @brief the graph type
+    using graph_type = graph::graph<expression>;
+
     /// @brief the input port type.
     using input_port_type = graph::input_port<expression>;
 
     /// @brief the output port type.
     using output_port_type = graph::output_port<expression>;
+
+    /// @brief the vertex ID type.
+    using id_type = std::uint64_t;
+
+    /// @brief vertex ID for orphaned vertices.
+    static constexpr id_type orphaned_id = static_cast<id_type>(-1);
+
+    ~expression() override = default;
+    expression(expression const& other) = delete;
+    expression& operator=(expression const& other) = delete;
+    expression(expression&& other) noexcept = delete;
+    expression& operator=(expression&& other) noexcept = delete;
+
+    /**
+     * @brief returns the vertex ID.
+     * @return the vertex ID
+     * @return orphaned_id if this expression is orphaned from the relational expression graph
+     */
+    id_type id() const noexcept;
+
+    /**
+     * @brief returns whether or not this vertex is orphaned.
+     * @return true if this vertex does not have the owner graph
+     * @return false otherwise
+     */
+    bool is_orphan() const noexcept;
+
+    /**
+     * @brief returns the graph which owns this vertex.
+     * @return the owner
+     * @throws std::domain_error if this vertex is orphaned
+     * @see is_orphaned()
+     * @see optional_owner()
+     */
+    graph_type& owner();
+
+    /// @copydoc owner
+    graph_type const& owner() const;
+
+    /**
+     * @brief returns the graph which owns this expression.
+     * @return the owner
+     * @return empty if this vertex is orphaned
+     */
+    util::optional_ptr<graph_type> optional_owner() noexcept;
+
+    /// @copydoc optional_owner()
+    util::optional_ptr<graph_type const> optional_owner() const noexcept;
 
     /**
      * @brief returns the kind of this expression.
@@ -34,19 +87,19 @@ public:
      * @brief returns list of input ports.
      * @return input ports
      */
-    util::sequence_view<input_port_type> input_ports() noexcept override = 0;
+    virtual util::sequence_view<input_port_type> input_ports() noexcept = 0;
 
     /// @copydoc input_ports()
-    util::sequence_view<input_port_type const> input_ports() const noexcept override = 0;
+    virtual util::sequence_view<input_port_type const> input_ports() const noexcept = 0;
 
     /**
      * @brief returns list of output ports.
      * @return output ports
      */
-    util::sequence_view<output_port_type> output_ports() noexcept override = 0;
+    virtual util::sequence_view<output_port_type> output_ports() noexcept = 0;
 
     /// @copydoc output_ports()
-    util::sequence_view<output_port_type const> output_ports() const noexcept override = 0;
+    virtual util::sequence_view<output_port_type const> output_ports() const noexcept = 0;
 
     /**
      * @brief returns a clone of this object.
@@ -61,23 +114,6 @@ public:
 
     /// @copydoc clone()
     virtual expression* clone(util::object_creator creator) && = 0;
-
-    /**
-     * @brief returns the vertex ID.
-     * @return the vertex ID
-     * @return orphaned_id if this expression is orphaned from the relational expression graph
-     */
-    id_type id() const noexcept final;
-
-    /**
-     * @brief returns the graph which owns this expression.
-     * @return the owner
-     * @return empty if this vertex is orphaned
-     */
-    util::optional_ptr<graph_type> optional_owner() noexcept final;
-
-    /// @copydoc optional_owner()
-    util::optional_ptr<graph_type const> optional_owner() const noexcept final;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -112,7 +148,12 @@ public:
      * @param graph the owner graph, or nullptr to leave
      * @param id the vertex ID, or orphaned_id to leave
      */
-    void on_join(graph_type* graph, id_type id) noexcept final;
+    void on_join(graph_type* graph, id_type id) noexcept;
+
+    /**
+     * @brief handles when this vertex is left from the joined graph.
+     */
+    void on_leave() noexcept;
 
 protected:
     /**

@@ -36,7 +36,7 @@ public:
     using entity_type = std::map<
             id_type,
             element_type*,
-            std::less<id_type>,
+            std::less<>,
             util::object_allocator<entry_type>>;
 
     /// @brief the value type
