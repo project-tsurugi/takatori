@@ -30,7 +30,8 @@ find_package(Boost 1.65
     COMPONENTS container
     REQUIRED)
 
-find_package(Doxygen)
+find_package(Doxygen
+    OPTIONAL_COMPONENTS dot)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)

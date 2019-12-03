@@ -17,3 +17,4 @@ WARN_LOGFILE           = @CMAKE_CURRENT_BINARY_DIR@/doxygen-warn.log
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
 GENERATE_MAN           = NO
+HAVE_DOT               = @DOXYGEN_HAVE_DOT@
