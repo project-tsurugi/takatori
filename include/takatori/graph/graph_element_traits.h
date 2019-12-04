@@ -54,14 +54,14 @@ struct graph_element_traits {
     using const_reference = std::add_lvalue_reference_t<std::add_const_t<element_type>>;
 
     /**
-     * @brief tells membership information to the given element when the element was join.
+     * @brief tells membership information to the given element when the element joins.
      * @param element the target element
      * @param graph the owner
      */
     static void join(reference element, util::optional_ptr<graph_type> graph);
 
     /**
-     * @brief tells when the element was leave from the current graph.
+     * @brief tells when the element leaves from the current graph.
      * @details If the element has been a member of some graph, this does nothing.
      * @param element the target element
      */
