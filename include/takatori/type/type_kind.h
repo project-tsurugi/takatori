@@ -66,10 +66,10 @@ enum class type_kind {
      * @brief compile error type.
      * @attention this must not appear on runtime.
      */
-    error, // FIXME: impl
+    error,
 
     /// @brief custom type for compiler or third party extension.
-    extension, // FIXME: impl
+    extension,
 };
 
 /**

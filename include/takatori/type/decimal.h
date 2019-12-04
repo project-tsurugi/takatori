@@ -103,6 +103,9 @@ decimal::scale() const noexcept {
     return scale_;
 }
 
+/**
+ * @brief type_of for decimal.
+ */
 template<> struct type_of<decimal::tag> : util::meta_type<decimal> {};
 
 } // namespace takatori::type
