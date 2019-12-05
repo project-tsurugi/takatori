@@ -7,6 +7,7 @@ add_library(takatori
     type/bit.cpp
     type/time_of_day.cpp
     type/time_point.cpp
+    type/declared.cpp
     type/extension.cpp
 
     # value

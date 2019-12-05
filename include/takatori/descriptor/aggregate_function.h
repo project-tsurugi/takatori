@@ -7,6 +7,6 @@ namespace takatori::descriptor {
 /**
  * @brief describes an aggregate function.
  */
-using aggregate_function = element<descriptor_kind::function>;
+using aggregate_function = element<descriptor_kind::aggregate_function>;
 
 } // namespace takatori::descriptor

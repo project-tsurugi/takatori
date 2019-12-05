@@ -1,19 +1,20 @@
 #pragma once
 
-#include "../relation/test_utils.h"
+#include "testing/descriptors.h"
+#include "scalar/test_utils.h"
 
 namespace takatori::plan {
 
-using relation::value_object;
-using relation::value_of;
-using relation::vardesc;
-using relation::funcdesc;
-using relation::constant;
-using relation::varref;
+using testing::value_of;
+using testing::vardesc;
+using testing::funcdesc;
+using testing::tabledesc;
+using testing::exchangedesc;
+using testing::columndesc;
+using testing::aggdesc;
 
-using relation::tabledesc;
-using relation::exchangedesc;
-using relation::columndesc;
-using relation::aggdesc;
+using scalar::value_of;
+using scalar::constant;
+using scalar::varref;
 
 } // namespace takatori::plan

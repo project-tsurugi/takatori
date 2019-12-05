@@ -36,6 +36,7 @@ add_test_executable(type/character_type_test.cpp)
 add_test_executable(type/bit_type_test.cpp)
 add_test_executable(type/time_of_day_type_test.cpp)
 add_test_executable(type/time_point_type_test.cpp)
+add_test_executable(type/declared_type_test.cpp)
 add_test_executable(type/extension_type_test.cpp)
 add_test_executable(type/type_dispatch_test.cpp)
 

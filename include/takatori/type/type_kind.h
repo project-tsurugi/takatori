@@ -63,10 +63,12 @@ enum class type_kind {
     row_id, // FIXME: impl
 
     /**
-     * @brief compile error type.
-     * @attention this must not appear on runtime.
+     * @brief declared type (a.k.a. user defined type).
+     * @details declared type can be described as a combination of non-declared types (usually record type),
+     *      but it can change the behavior of type related operations like operator overloading.
+     * @see takatori::descriptor::declared_type
      */
-    error,
+    declared,
 
     /// @brief custom type for compiler or third party extension.
     extension,
@@ -109,7 +111,7 @@ constexpr inline std::string_view to_string_view(type_kind value) noexcept {
         case kind::unknown: return "unknown"sv;
         case kind::row_reference: return "row_reference"sv;
         case kind::row_id: return "row_id"sv;
-        case kind::error: return "error"sv;
+        case kind::declared: return "declared"sv;
         case kind::extension: return "extension"sv;
     }
     std::abort();

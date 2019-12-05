@@ -92,7 +92,7 @@ protected:
     bool equals(data const& other) const noexcept override;
     std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
-    
+
 private:
     bool varying_;
     std::optional<size_type> length_;
