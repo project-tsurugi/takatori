@@ -9,11 +9,11 @@ type_kind character::kind() const noexcept {
 }
 
 character* character::clone(util::object_creator creator) const& {
-    return creator.create_object<character>(varying_, length_);
+    return creator.create_object<character>(varying_t { varying_ }, length_);
 }
 
 character* character::clone(util::object_creator creator) && {
-    return creator.create_object<character>(varying_, std::move(length_));
+    return creator.create_object<character>(varying_t { varying_ }, std::move(length_));
 }
 
 bool operator==(character const& a, character const& b) noexcept {

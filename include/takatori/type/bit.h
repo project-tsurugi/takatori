@@ -31,10 +31,11 @@ public:
 
     /**
      * @brief creates a new instance which represents flexible-length bit sequences (a.k.a. VARBIT).
+     * @param varying the bit sequence length becomes flexible if enabled, otherwise fixed
      * @param length the max number of bits in the sequence,
      *               or empty for flexible size bit sequences
      */
-    explicit constexpr bit(varying_t, std::optional<size_type> length = {}) noexcept;
+    explicit constexpr bit(varying_t varying, std::optional<size_type> length = {}) noexcept;
 
     ~bit() override = default;
     bit(bit const& other) = delete;
@@ -97,25 +98,18 @@ private:
     bool varying_;
     std::optional<size_type> length_;
 
-    explicit constexpr bit(bool is_varying, std::optional<size_type> length) noexcept;
-
     friend class util::object_creator;
 };
 
 constexpr
-bit::bit(bool is_varying, std::optional<size_type> length) noexcept
-    : varying_(is_varying)
-    , length_(std::move(length))
-{}
-
-constexpr
 bit::bit(bit::size_type length) noexcept
-    : bit(false, length)
+    : bit(~type::varying, length)
 {}
 
 constexpr
-bit::bit(varying_t, std::optional<size_type> length) noexcept
-    : bit(true, std::move(length))
+bit::bit(varying_t varying, std::optional<size_type> length) noexcept
+    : varying_(varying.enabled())
+    , length_(std::move(length))
 {}
 
 constexpr bool

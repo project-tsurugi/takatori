@@ -23,6 +23,12 @@ TEST_F(bit_type_test, varying) {
     EXPECT_EQ(t.length().value_or(9999), 9999);
 }
 
+TEST_F(bit_type_test, not_varying) {
+    bit t { ~varying, 100 };
+    EXPECT_FALSE(t.varying());
+    EXPECT_EQ(t.length(), 100);
+}
+
 TEST_F(bit_type_test, parameters) {
     bit t { varying, 4000 };
     EXPECT_TRUE(t.varying());

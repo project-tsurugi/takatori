@@ -31,12 +31,13 @@ public:
     explicit constexpr character(character::size_type length) noexcept;
 
     /**
-     * @brief creates a new instance which represents flexible-length character sequences (a.k.a. VARCHAR).
+     * @brief creates a new instance which represents either fixed- or flexible-length character sequences (a.k.a. CHAR or VARCHAR).
      * FIXME: national
+     * @param varying the character string length becomes flexible if enabled, otherwise fixed
      * @param length the max number of units in the character sequence,
      *               or empty for flexible size character sequences
      */
-    explicit constexpr character(varying_t, std::optional<size_type> length = {}) noexcept;
+    explicit constexpr character(varying_t varying, std::optional<size_type> length = {}) noexcept;
 
     ~character() override = default;
     character(character const& other) = delete;
@@ -99,8 +100,6 @@ private:
     bool varying_;
     std::optional<size_type> length_;
 
-    explicit constexpr character(bool is_varying, std::optional<size_type> length) noexcept;
-
     // FIXME: national
 
     friend class util::object_creator;
@@ -108,17 +107,12 @@ private:
 
 constexpr
 character::character(character::size_type length) noexcept
-    : character(false, length)
+    : character(~type::varying, length)
 {}
 
 constexpr
-character::character(varying_t, std::optional<size_type> length) noexcept
-    : character(true, std::move(length))
-{}
-
-constexpr
-character::character(bool is_varying, std::optional<size_type> length) noexcept
-    : varying_(is_varying)
+character::character(varying_t varying, std::optional<size_type> length) noexcept
+    : varying_(varying.enabled())
     , length_(std::move(length))
 {}
 

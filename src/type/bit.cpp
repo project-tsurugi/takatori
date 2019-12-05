@@ -9,11 +9,11 @@ type_kind bit::kind() const noexcept {
 }
 
 bit* bit::clone(util::object_creator creator) const& {
-    return creator.create_object<bit>(varying_, length_);
+    return creator.create_object<bit>(varying_t { varying_ }, length_);
 }
 
 bit* bit::clone(util::object_creator creator) && {
-    return creator.create_object<bit>(varying_, std::move(length_));
+    return creator.create_object<bit>(varying_t { varying_ }, std::move(length_));
 }
 
 bool operator==(bit const& a, bit const& b) noexcept {
