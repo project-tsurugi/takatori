@@ -116,7 +116,7 @@
 基本型は、それ以上に分解できないデータに与えられる型である。
 ただし、一般的にアトムと分類しない「文字列」や「日付と時刻」等についても、利便性のために基本型として取り扱っている。
 
-`bool`
+`boolean`
 ~ 真偽値
 
   * パラメーター
@@ -205,7 +205,7 @@
 ~ 時刻
 
   * パラメーター
-    * `timezone?` - タイムゾーン
+    * `time_zone?` - タイムゾーン
   * 特性
     * なし
 
@@ -213,19 +213,20 @@
 ~ 日時
 
   * パラメーター
-    * `timezone?` - タイムゾーン
+    * `time_zone?` - タイムゾーン
   * 特性
     * なし
 
-`interval`
+`time_interval`
 ~ 時間間隔
 
   * パラメーター
     * なし
   * 特性
-    * 以下の2種類のフィールドからなる
-      * *year-month field* - 月を元としたフィールド
-      * *day-time field* - 秒を元としたフィールド
+    * 以下の3種類のフィールドからなる
+      * *month field* - 月を元としたフィールド
+      * *day field* - 日を元としたフィールド
+      * *time field* - 秒を元としたフィールド
     * フィールド間で桁上がりは行われない
 
 ----
@@ -233,7 +234,7 @@ notes:
 
 * `character` で文字列の長さが満たない場合、現状は常に padding される前提
   * 等価比較を行う場合、 padding も一致しない限り同値にならない
-* TBD: `timezone` 未指定の場合のセマンティクス
+* TBD: `time_zone` 未指定の場合のセマンティクス
 * TODO: LOB
 
 ### 複合型
@@ -343,14 +344,14 @@ notes:
 真偽値型分類 (*boolean type category*)
 ~ 真偽値に分類されるデータ型の分類
 
-  * `bool`
+  * `boolean`
   * `unknown`
 
 数値型分類 (*numeric type category*)
 ~ 数値に分類されるデータ型の分類
 
   * `int`
-  * `numeric`
+  * `decimal`
   * `float`
   * `unknown`
 
@@ -379,7 +380,7 @@ notes:
 時間間隔型分類 (*time interval type category*)
 ~ 時間間隔を表すデータ型の分類
 
-  * `interval`
+  * `time_interval`
   * `unknown`
 
 コレクション型分類 (*collection type category*)
@@ -408,8 +409,8 @@ notes:
 
 | 変換元 | 変換先 |
 |:-:|:-:|
-| `bool` | `bool` |
-| `unknown` | `bool` |
+| `boolean` | `boolean` |
+| `unknown` | `boolean` |
 
 ### 二項真偽値昇格
 
@@ -418,10 +419,10 @@ notes:
 それぞれの項のデータ型に対する、型変換後のデータ型は以下のとおりである。
 ただし、「左のデータ型と上のデータ型を二項真偽値昇格する場合に、左のデータ型がどのデータ型になるか」を表している。
 
-|   | `bool` | `unknown` |
+|   | `boolean` | `unknown` |
 |--:|--:|--:|
-| `bool` | `bool` | `bool` |
-| `unknown` | `bool` | `bool` |
+| `boolean` | `boolean` | `boolean` |
+| `unknown` | `boolean` | `boolean` |
 
 ### 単項数値昇格
 
@@ -435,7 +436,7 @@ notes:
 | `int2` | **`int4`** |
 | `int4` | `int4` |
 | `int8` | `int8` |
-| `numeric(p,s)` | `numeric(p,s)` |
+| `decimal(p,s)` | `decimal(p,s)` |
 | `float4` | `float4` |
 | `float8` | `float8` |
 | `unknown` | **`int4`** |
@@ -447,18 +448,18 @@ notes:
 それぞれの項のデータ型に対する、型変換後のデータ型は以下のとおりである。
 ただし、「左のデータ型と上のデータ型を二項数値昇格する場合に、左のデータ型がどのデータ型になるか」を表している。
 
-|   | `int1` | `int2` | `int4` | `int8` | `numeric` |  `float4` | `float8` | `unknown` |
+|   | `int1` | `int2` | `int4` | `int8` | `decimal` |  `float4` | `float8` | `unknown` |
 |--:|--:|--:|--:|--:|--:|--:|--:|--:|
-| `int1` | **`int4`** | **`int4`** | `int4` | `int8` | `numeric(3)` | `float4` | `float8` | **`int4`** |
-| `int2` | **`int4`** | **`int4`** | `int4` | `int8` | `numeric(5)` | `float4` | `float8` | **`int4`** |
-| `int4` | `int4` | `int4` | `int4` | `int8` | `numeric(10)` | `float8` | `float8` | `int4` |
-| `int8` | `int8` | `int8` | `int8` | `int8` | `numeric(19)` | `float8` | `float8` | `int8` |
-| `numeric(p,s)` | `numeric(p,s)` | `numeric(p,s)` | `numeric(p,s)` | `numeric(p,s)` | `numeric(p,s)` | `float8`| `float8` | `numeric(p,s)` |
+| `int1` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal(3)` | `float4` | `float8` | **`int4`** |
+| `int2` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal(5)` | `float4` | `float8` | **`int4`** |
+| `int4` | `int4` | `int4` | `int4` | `int8` | `decimal(10)` | `float8` | `float8` | `int4` |
+| `int8` | `int8` | `int8` | `int8` | `int8` | `decimal(19)` | `float8` | `float8` | `int8` |
+| `decimal(p,s)` | `decimal(p,s)` | `decimal(p,s)` | `decimal(p,s)` | `decimal(p,s)` | `decimal(p,s)` | `float8`| `float8` | `decimal(p,s)` |
 | `float4` | `float4` | `float4` | `float8` | `float8` | `float8` | `float8` | `float8` | `float4` |
 | `float8` | `float8` | `float8` | `float8` | `float8` | `float8` | `float8` | `float8` | `float8` |
-| `unknown` | **`int4`** | **`int4`** | `int4` | `int8` | `numeric(0, 0)` |  `float4` | `float8` | **`int4`** |
+| `unknown` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal(0, 0)` |  `float4` | `float8` | **`int4`** |
 
-このように、二項数値昇格では `numeric` の精度とスケールを揃えないで演算を行う可能性がある。
+このように、二項数値昇格では `decimal` の精度とスケールを揃えないで演算を行う可能性がある。
 
 ----
 notes:
@@ -539,8 +540,8 @@ notes:
 | `time_point` | `time_point` |
 | `unknown` | `time_point` |
 
-なお、昇格時にそれぞれの `timezone` プロパティは失われない。
-`unknown` から昇格した際には、 `timezone` プロパティの指定がないものとして扱う。
+なお、昇格時にそれぞれの `time_zone` プロパティは失われない。
+`unknown` から昇格した際には、 `time_zone` プロパティの指定がないものとして扱う。
 
 ### 二項時間昇格
 
@@ -571,8 +572,8 @@ notes:
 
 | 変換元 | 変換先 |
 |:-:|:-:|
-| `interval` | `interval` |
-| `unknown` | `interval` |
+| `time_interval` | `time_interval` |
+| `unknown` | `time_interval` |
 
 ### 二項時間間隔昇格
 
@@ -580,10 +581,10 @@ notes:
 
 それぞれの項のデータ型に対する、型変換後のデータ型は以下のとおりである。
 
-|   | `interval` | `unknown` |
+|   | `time_interval` | `unknown` |
 |--:|--:|--:|
-| `interval` | `interval` | `interval` |
-| `unknown` | `interval` | `interval` |
+| `time_interval` | `time_interval` | `time_interval` |
+| `unknown` | `time_interval` | `time_interval` |
 
 ### 単一化変換
 
@@ -624,14 +625,14 @@ notes:
 
 代入変換が可能な型の組み合わせは以下のとおりである。
 
-| from \ to | `bool` | `int1` | `int2` | `int4` | `int8` | `numeric` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `date` | `time_of_day` | `time_point` | `interval` | `array` | `record` |
+| from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `date` | `time_of_day` | `time_point` | `time_interval` | `array` | `record` |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|              `bool` | v | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+|           `boolean` | v | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 |              `int1` | - | v | v | v | v | D | v | v | - | - | - | - | - | - | - | - | - | - |
 |              `int2` | - | D | v | v | v | D | v | v | - | - | - | - | - | - | - | - | - | - |
 |              `int4` | - | D | D | v | v | D | v | v | - | - | - | - | - | - | - | - | - | - |
 |              `int8` | - | D | D | D | v | D | v | v | - | - | - | - | - | - | - | - | - | - |
-|           `numeric` | - | D | D | D | D | D | v | v | - | - | - | - | - | - | - | - | - | - |
+|           `decimal` | - | D | D | D | D | D | v | v | - | - | - | - | - | - | - | - | - | - |
 |            `float4` | - | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - | - | - |
 |            `float8` | - | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - | - | - |
 |         `character` | - | - | - | - | - | - | - | - | D | D | - | - | - | - | - | - | - | - |
@@ -641,7 +642,7 @@ notes:
 |              `date` | - | - | - | - | - | - | - | - | - | - | - | - | v | - | v | - | - | - |
 |       `time_of_day` | - | - | - | - | - | - | - | - | - | - | - | - | - | v | v | - | - | - |
 |        `time_point` | - | - | - | - | - | - | - | - | - | - | - | - | D | D | v | - | - | - |
-|          `interval` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | v | - | - |
+|     `time_interval` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | v | - | - |
 |             `array` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | 1 | - |
 |            `record` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | 2 |
 |           `unknown` | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v |
@@ -689,11 +690,11 @@ notes:
 
 | 要求される型分類 | キャスト変換先のデータ型 |
 |:-:|:--|
-| 真偽値型分類 | `bool`
+| 真偽値型分類 | `boolean`
 | 数値型分類 | 文字列の内容を「数値定数」として解釈
 | ビット列型分類 | 文字列の内容を「ビット列定数」として解釈
 | 時間型分類 | `time_point`
-| 時間間隔型分類 | `interval`
+| 時間間隔型分類 | `time_interval`
 | コレクション型分類 | `array`
 
 ただし、 `E` が多重定義されており、かつ要求される型分類が複数存在する場合、定数変換は行わない。
@@ -743,14 +744,14 @@ notes:
 
 キャスト変換が可能な型の組み合わせは以下のとおりである。
 
-| from \ to | `bool` | `int1` | `int2` | `int4` | `int8` | `numeric` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `date` | `time_of_day` | `time_point` | `interval` | `array` | `record` |
+| from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `date` | `time_of_day` | `time_point` | `time_interval` | `array` | `record` |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|              `bool` | v | - | - | - | - | - | - | - | v | v | - | - | - | - | - | - | - | - |
+|           `boolean` | v | - | - | - | - | - | - | - | v | v | - | - | - | - | - | - | - | - |
 |              `int1` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
 |              `int2` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
 |              `int4` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
 |              `int8` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
-|           `numeric` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
+|           `decimal` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
 |            `float4` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
 |            `float8` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
 |         `character` | D | D | D | D | D | D | D | D | v | D | D | D | D | D | D | D | D | D |
@@ -760,7 +761,7 @@ notes:
 |              `date` | - | - | - | - | - | - | - | - | v | v | - | - | v | - | v | - | - | - |
 |       `time_of_day` | - | - | - | - | - | - | - | - | v | v | - | - | - | v | v | - | - | - |
 |        `time_point` | - | - | - | - | - | - | - | - | v | v | - | - | v | v | v | - | - | - |
-|          `interval` | - | - | - | - | - | - | - | - | v | v | - | - | - | - | - | v | - | - |
+|     `time_interval` | - | - | - | - | - | - | - | - | v | v | - | - | - | - | - | v | - | - |
 |             `array` | - | - | - | - | - | - | - | - | v | v | - | - | - | - | - | - | 1 | - |
 |            `record` | - | - | - | - | - | - | - | - | v | v | - | - | - | - | - | - | - | 2 |
 |           `unknown` | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v |
@@ -882,9 +883,9 @@ notes:
     1. 小数点および指数のいずれも含まない数値
        * `int(width=4)` に収まればそのデータ型
        * `int(width=4)` に収まらず、 `int(width=8)` に収まればそのデータ型
-       * `int(width=8)` に収まらなければ、 `numeric` のうち必要十分な `precision` をもち、かつ `scale=0` のデータ型
+       * `int(width=8)` に収まらなければ、 `decimal` のうち必要十分な `precision` をもち、かつ `scale=0` のデータ型
     2. 小数点または指数のいずれかまたは両方を含む数値
-       * `numeric` のうち必要十分な `precision` と `scale` をもつデータ型
+       * `decimal` のうち必要十分な `precision` と `scale` をもつデータ型
 
   その他の定数
   ~ そのほかの定数は、文字列を `cast` 式によって変換することで得られる。
@@ -956,7 +957,7 @@ notes:
 
     * 事前条件 - なし
     * 型変換 - 恒等変換
-    * 結果型 - `bool`
+    * 結果型 - `boolean`
     * 特性
       * 定数式可
 
@@ -1087,17 +1088,17 @@ notes:
 
     なお、実際にどのような `v'` が選ばれるかはシステムに依存する。
 
-  `int` ~ `numeric`
+  `int` ~ `decimal`
   ~ `v` が `T` の表現可能な要素である場合、 `v` が式の評価結果となる。
     そうでない場合、実行エラーとなる (overflow)。
 
-  `float` ~ `numeric`
+  `float` ~ `decimal`
   ~ `v` が `T` の表現可能な数値の最小値から最大値の範囲に収まっている場合、 `v` に近しい `T` の表現可能な数値 `v'` が式の評価結果となる。
     そうでない場合、実行エラーとなる (overflow)。
 
     なお、実際にどのような `v'` が選ばれるかはシステムに依存する。
 
-  `numeric` ~ `numeric`
+  `decimal` ~ `decimal`
   ~ `v` を `T` の `scale` に合わせて小数部を丸めたものを `v'` とする。
     ただし、この丸め方はシステムによって定義される (TBD)。
     丸めによって表現する値が変わる場合、 **精度が失われる**。
@@ -1184,7 +1185,7 @@ notes:
   `record` ~ `record`
   ~ TBD
 
-  文字列型分類 ~ `bool`
+  文字列型分類 ~ `boolean`
   ~ 文字列を表す `v` に対し、前後の空白文字を取り除き、英字アルファベットを小文字化したものを `v'` とする。
 
     `v'` が文字列 "true" と一致するかまたはその1文字以上の接頭辞である場合、式の評価結果は `true` となる。
@@ -1196,7 +1197,7 @@ notes:
   文字列型分類 ~ 数値型分類
   ~ 文字列を表す `v` に対し、前後の空白文字を取り除いたものを `v'` とする。
 
-    `v'` が数値を表す文字列である場合、その数値を表現可能な `numeric` を `S` とし、対応する数値を `v''` とする。
+    `v'` が数値を表す文字列である場合、その数値を表現可能な `decimal` を `S` とし、対応する数値を `v''` とする。
     式の評価結果は、 `v''` に対して `S' ~ T` のキャストを行った結果となる。
 
     `v'` が数値を表す文字列でない場合、実行エラー (format error) となる。
@@ -1261,7 +1262,7 @@ notes:
     * 事前条件 - `left`, `right` がいずれも数値型分類であること
     * 型変換 - 二項数値昇格
     * 結果型 - 二項数値昇格の結果型によって異なる
-      * `numeric` 以外 - 二項数値昇格の結果と同じ
+      * `decimal` 以外 - 二項数値昇格の結果と同じ
     * 評価概要
       * 二項のいずれかが特殊値: 特殊値
     * 特性
@@ -1311,7 +1312,7 @@ notes:
 
     * 事前条件 - `left`, `right` がいずれも真偽値型分類であること
     * 型変換 - 二項真偽値昇格
-    * 結果型 - `bool`
+    * 結果型 - `boolean`
     * 評価概要
     * 特性
       * 定数式可
@@ -1324,7 +1325,7 @@ notes:
 
     * 共通分類 - 算術演算
     * 結果型
-      * `left:numeric(p, s)', 'right:numeric(q, t)` - `numeric(max(p-s, q-t) + max(s,t) + 1, max(s,t))`
+      * `left:decimal(p, s)', 'right:decimal(q, t)` - `decimal(max(p-s, q-t) + max(s,t) + 1, max(s,t))`
     * 評価概要
       * 二項がいずれも正常値: `left`, `right` の算術和
 
@@ -1358,7 +1359,7 @@ notes:
 
     * 共通分類 - 算術演算
     * 結果型 - 二項数値昇格の結果型によって異なる
-      * `left:numeric(p, s)', 'right:numeric(q, t)` - `numeric(max(p-s, q-t) + max(s,t) + 1, max(s,t))`
+      * `left:decimal(p, s)', 'right:decimal(q, t)` - `decimal(max(p-s, q-t) + max(s,t) + 1, max(s,t))`
     * 評価概要
       * 二項がいずれも正常値: `left`, `right` の算術差
 
@@ -1367,7 +1368,7 @@ notes:
 
     * 事前条件 - `left` が時間型分類であり、 `right` が時間間隔型分類である
     * 型変換 - `left` を単項時間昇格, `right` を単項時間間隔昇格
-    * 結果型 - `interval`
+    * 結果型 - `time_interval`
     * 評価概要
       * いずれも正常値: `left` から `right` を引いた結果
       * いずれかが特殊値: 特殊値
@@ -1392,7 +1393,7 @@ notes:
 
     * 共通分類 - 算術演算
     * 結果型 - 二項数値昇格の結果型によって異なる
-      * `left:numeric(p, s)', 'right:numeric(q, t)` - `numeric(p + q, s + t)`
+      * `left:decimal(p, s)', 'right:decimal(q, t)` - `decimal(p + q, s + t)`
     * 評価概要
       * 二項がいずれも正常値: `left`, `right` の算術積
 
@@ -1401,7 +1402,7 @@ notes:
 
     * 事前条件 - `left` が数値型分類であり、 `right` が時間間隔型分類であること、またはその逆
     * 型変換 - 数値型分類を単項時間昇格, 時間間隔型分類を単項時間間隔昇格
-    * 結果型 - `interval`
+    * 結果型 - `time_interval`
     * 評価概要
       * いずれも正常値: スカラー値と時間間隔の積
       * いずれかが特殊値: 特殊値
@@ -1413,7 +1414,7 @@ notes:
 
     * 共通分類 - 算術演算
     * 結果型 - 二項数値昇格の結果型によって異なる
-      * `left:numeric(p, s)', 'right:numeric(q, t)` - `numeric(p + q, s + t)`
+      * `left:decimal(p, s)', 'right:decimal(q, t)` - `decimal(p + q, s + t)`
     * 評価概要
       * 二項がいずれも正常値: `left`, `right` の算術商
     * 特性
@@ -1424,7 +1425,7 @@ notes:
 
     * 事前条件 - `left` が時間間隔型分類であり、 `right` が数値型分類であること、またはその逆
     * 型変換 - 時間間隔型分類を単項時間間隔昇格, 数値型分類を単項時間昇格
-    * 結果型 - `interval`
+    * 結果型 - `time_interval`
     * 評価概要
       * いずれも正常値: 時間間隔の商
       * いずれかが特殊値: 特殊値
@@ -1436,7 +1437,7 @@ notes:
 
     * 共通分類 - 算術演算
     * 結果型 - 二項数値昇格の結果型によって異なる
-      * `left:numeric(p, s)', 'right:numeric(q, t)` - `numeric(p + q, s + t)`
+      * `left:decimal(p, s)', 'right:decimal(q, t)` - `decimal(p + q, s + t)`
     * 評価概要
       * 二項がいずれも正常値: `left`, `right` の算術剰余
     * 特性
@@ -1506,7 +1507,7 @@ notes:
     * `right` - 右項
     * `collation_ref?` - 照合方式への参照
   * 型変換 - 単一化変換
-  * 結果型 - `bool`
+  * 結果型 - `boolean`
   * 評価概要
     * 二項がいずれも正常値: 後述
     * 二項のいずれかが特殊値: 特殊値
@@ -1566,7 +1567,7 @@ notes:
     * `escape` - 照合パターンのエスケープ文字
   * 事前条件 -  `match`, `pattern`, `escape` がいずれも文字列型分類であること
   * 型変換 - `match`, `pattern`, `escape` をそれぞれ単一化変換
-  * 結果型 - `bool`
+  * 結果型 - `boolean`
   * 評価概要
     * `match`, `pattern`, `escape` のいずれかが特殊値である場合: 特殊値
     * `escape` が 2 **characters** 以上の場合: 特殊値
@@ -1714,7 +1715,7 @@ notes:
     * `collation_ref?` - 照合方式への参照
   * 事前条件 - `right` が配列型かつ、下記の型変換が可能
   * 型変換 -  `left` の型と、 `array` の要素型を単一化変換
-  * 結果型 - `bool`
+  * 結果型 - `boolean`
   * 評価概要
     * `left` と `right` のそれぞれの要素について `compare_kind`, `collation_ref` の組み合わせで `compare` 式と同等の評価を行う
       * `quantifier=all` の場合:
@@ -1791,7 +1792,7 @@ notes:
     * `query` - 副問合せ
   * 事前条件 - なし
   * 型変換 -  なし
-  * 結果型 - `bool`
+  * 結果型 - `boolean`
   * 評価概要
     * `query` の問い合わせを実行し、問合せ結果のリレーションを `U` とおく
       * `U` 0行である場合: `false`
@@ -1814,7 +1815,7 @@ notes:
     * 副問合せの `emit` が単一の列を出力する
     * 下記の型変換が可能
   * 型変換 -  `left` の型と、 `query` の出力列の型を単一化変換
-  * 結果型 - `bool`
+  * 結果型 - `boolean`
   * 評価概要
     * `query` の問い合わせを実行し、問合せ結果の出力列をそれぞれ `right` とおき、 `left` とそれぞれの `right`, `compare_kind`, `collation_ref` の組み合わせで `compare` 式と同等の評価を行う
       * `quantifier=all` の場合:
@@ -1833,7 +1834,7 @@ notes:
 * `character *`, `bit *` の `length` を実行時情報とするかどうか
   * テーブルに保存する際には上記は必須だが、実行時表現を考えるとこれらはデータ内に埋め込んでしまってもよさそう
   * `variant` のみという手もあるが、現状は実行時にはほぼ `variant` にしてから演算している
-* `numeric` の `precision` や `scale` を実行時情報とするかどうか
+* `decimal` の `precision` や `scale` を実行時情報とするかどうか
   * 上記と同様
 * `array` の最大長をやめる？
   * 上記と同様
