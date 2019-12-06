@@ -101,6 +101,7 @@ add_test_executable(relation/step/take_cogroup_test.cpp)
 add_test_executable(relation/step/offer_test.cpp)
 add_test_executable(relation/intermediate/relation_intermediate_dispatch_test.cpp)
 add_test_executable(relation/step/relation_step_dispatch_test.cpp)
+add_test_executable(relation/details/graph_merger_test.cpp)
 
 # step execution plan models
 add_test_executable(plan/process_test.cpp)

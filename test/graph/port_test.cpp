@@ -19,7 +19,7 @@ TEST_F(port_test, simple) {
     simple_graph g;
     auto&& v = g.emplace(100);
 
-    EXPECT_EQ(v.input().id(), 0);
+    EXPECT_EQ(v.input().index(), 0);
     EXPECT_EQ(&v.input().owner(), &v);
     EXPECT_FALSE(v.input().opposite());
 }

@@ -10,6 +10,7 @@
 #include "graph_iterator.h"
 
 #include "takatori/util/clonable.h"
+#include "takatori/util/downcast.h"
 #include "takatori/util/object_creator.h"
 #include "takatori/util/optional_ptr.h"
 
@@ -136,13 +137,34 @@ public:
 
     /**
      * @brief inserts a copy of the given element into this graph.
+     * @tparam U the element type
      * @param element the element
      * @return the added element
      */
-    reference insert(const_reference element);
+    template<
+            class U,
+            class = std::enable_if_t<
+                    std::is_convertible_v<U, const_reference>>>
+    U& insert(U&& element);
 
-    /// @copydoc insert()
-    reference insert(rvalue_reference element);
+    /**
+     * @brief inserts the given element into this graph.
+     * @details if the allocator of the element is not compatible to this graph,
+     *      this inserts a copy of the element.
+     * @tparam U the element type
+     * @tparam D the deleter type
+     * @param element the element
+     * @return the added element
+     * @throw if the element is absent
+     * @see get_object_creator()
+     * @see util::object_creator::is_instance()
+     */
+    template<
+            class U,
+            class D,
+            class = std::enable_if_t<
+                    std::is_convertible_v<U, const_reference>>>
+    U& insert(std::unique_ptr<U, D> element);
 
     /**
      * @brief creates a new element and inserts it into this graph.
@@ -167,6 +189,13 @@ public:
      * @return a pair of the removed element, and the next position of the released element
      */
     std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position);
+
+    /**
+     * @brief merges vertices and their connections into this graph.
+     * @param other the source graph
+     * @throws std::invalid_argument if get_object_creator() != other.get_object_creator()
+     */
+    void merge(graph&& other);
 
     /**
      * @brief returns a forward iterator which points the beginning of this container.
@@ -353,19 +382,28 @@ graph<T>::erase(graph::const_iterator position) {
 }
 
 template<class T>
-inline typename graph<T>::reference
-graph<T>::insert(const_reference element) {
+template<class U, class>
+inline U&
+graph<T>::insert(U&& element) {
     static_assert(util::is_clonable_v<element_type>);
-    auto entry = insert_element(util::clone_unique(element, get_object_creator()));
-    return bless_element(entry);
+    auto entry = insert_element(util::clone_unique(std::forward<U>(element), get_object_creator()));
+    bless_element(entry);
+    return *entry;
 }
 
 template<class T>
-inline typename graph<T>::reference
-graph<T>::insert(rvalue_reference element) {
-    static_assert(util::is_clonable_v<element_type>);
-    auto entry = insert_element(util::clone_unique(std::move(element), get_object_creator()));
-    return bless_element(entry);
+template<class U, class D, class>
+inline U&
+graph<T>::insert(std::unique_ptr<U, D> element) {
+    if (!element) {
+        throw std::invalid_argument("element must not be absent");
+    }
+    if (!get_object_creator().is_instance(element)) {
+        return insert(util::clone_unique(std::move(*element), get_object_creator()));
+    }
+    auto entry = insert_element(std::move(element));
+    bless_element(entry);
+    return *entry;
 }
 
 template<class T>
@@ -401,6 +439,18 @@ graph<T>::release(graph::const_iterator position) {
 }
 
 template<class T>
+void graph<T>::merge(graph&& other) {
+    if (get_object_creator() != other.get_object_creator()) {
+        throw std::invalid_argument("inconsistent allocator");
+    }
+    for (auto* v : other.vertices_) {
+        bless_element(v);
+    }
+    vertices_.merge(other.vertices_);
+    other.clear();
+}
+
+template<class T>
 inline typename graph<T>::iterator
 graph<T>::begin() noexcept {
     return iterator { vertices_.begin() };
@@ -415,7 +465,7 @@ graph<T>::begin() const noexcept {
 template<class T>
 inline typename graph<T>::const_iterator
 graph<T>::cbegin() const noexcept {
-    return iterator { vertices_.cbegin() };
+    return const_iterator { vertices_.cbegin() };
 }
 
 template<class T>
@@ -433,7 +483,7 @@ graph<T>::end() const noexcept {
 template<class T>
 inline typename graph<T>::const_iterator
 graph<T>::cend() const noexcept {
-    return iterator { vertices_.cend() };
+    return const_iterator { vertices_.cend() };
 }
 
 template<class T>
@@ -476,6 +526,12 @@ template<class T>
 inline void
 graph<T>::swap(graph& other) noexcept {
     std::swap(vertices_, other.vertices_);
+    for (auto* v : vertices_) {
+        bless_element(v);
+    }
+    for (auto* v : other.vertices_) {
+        other.bless_element(v);
+    }
 }
 
 template<class T>

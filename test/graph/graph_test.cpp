@@ -1,5 +1,8 @@
 #include "takatori/graph/graph.h"
 
+#include <iterator>
+#include <type_traits>
+
 #include <gtest/gtest.h>
 
 #include "simple_vertex.h"
@@ -26,6 +29,8 @@ static_assert(is_graph_element_v<vertex>);
 using traits = graph_element_traits<vertex>;
 
 using simple_graph = traits::graph_type;
+
+static_assert(std::is_same_v<typename std::iterator_traits<simple_graph::iterator>::iterator_category, std::bidirectional_iterator_tag>);
 
 TEST_F(graph_test, simple) {
     simple_graph g;
@@ -218,7 +223,38 @@ TEST_F(graph_test, insert_rvalue) {
 
     EXPECT_EQ(g.size(), 1);
     EXPECT_TRUE(g.contains(r));
-    EXPECT_EQ(r.value(), 11); // +1 on copy
+    EXPECT_EQ(r.value(), 11); // +1 on move
+    EXPECT_EQ(r.optional_owner().get(), &g);
+}
+
+TEST_F(graph_test, insert_unique_ptr) {
+    util::object_creator c;
+    auto v = c.create_unique<vertex>(10);
+    auto* p = v.get();
+
+    simple_graph g { c };
+    auto&& r = g.insert(std::move(v));
+
+    EXPECT_EQ(g.size(), 1);
+    EXPECT_TRUE(g.contains(r));
+    EXPECT_EQ(&r, p);
+    EXPECT_EQ(r.value(), 10);
+    EXPECT_EQ(r.optional_owner().get(), &g);
+}
+
+TEST_F(graph_test, insert_unique_ptr_custom) {
+    util::pmr::monotonic_buffer_resource mbr;
+    util::object_creator c { &mbr };
+    auto v = c.create_unique<vertex>(10);
+    auto* p = v.get();
+
+    simple_graph g;
+    auto&& r = g.insert(std::move(v));
+
+    EXPECT_EQ(g.size(), 1);
+    EXPECT_TRUE(g.contains(r));
+    EXPECT_NE(&r, p);
+    EXPECT_EQ(r.value(), 11); // +1 on move
     EXPECT_EQ(r.optional_owner().get(), &g);
 }
 
@@ -291,6 +327,80 @@ TEST_F(graph_test, release_iter) {
     ASSERT_EQ(g.size(), 2);
     EXPECT_TRUE(g.contains(v1));
     EXPECT_TRUE(g.contains(v3));
+}
+
+TEST_F(graph_test, merge) {
+    simple_graph g;
+    auto&& r1 = g.emplace<vertex>(10);
+    auto&& r2 = g.emplace<vertex>(20);
+    r1.output() >> r2.input();
+
+    simple_graph h;
+    auto&& r3 = h.emplace<vertex>(30);
+    auto&& r4 = h.emplace<vertex>(40);
+    r3.output() >> r4.input();
+
+    g.merge(std::move(h));
+
+    EXPECT_EQ(g.size(), 4);
+    EXPECT_TRUE(g.contains(r1));
+    EXPECT_TRUE(g.contains(r2));
+    EXPECT_TRUE(g.contains(r3));
+    EXPECT_TRUE(g.contains(r4));
+
+    EXPECT_EQ(h.size(), 0);
+
+    EXPECT_EQ(&r1.owner(), &g);
+    EXPECT_EQ(&r2.owner(), &g);
+    EXPECT_EQ(&r3.owner(), &g);
+    EXPECT_EQ(&r4.owner(), &g);
+
+    EXPECT_EQ(r1.value(), 10);
+    EXPECT_EQ(r2.value(), 20);
+    EXPECT_EQ(r3.value(), 30);
+    EXPECT_EQ(r4.value(), 40);
+
+    EXPECT_EQ(r1.output().opposite().get(), &r2.input());
+    EXPECT_EQ(r2.input().opposite().get(), &r1.output());
+    EXPECT_EQ(r3.output().opposite().get(), &r4.input());
+    EXPECT_EQ(r4.input().opposite().get(), &r3.output());
+}
+
+TEST_F(graph_test, swap) {
+    simple_graph g;
+    auto&& r1 = g.emplace<vertex>(10);
+    auto&& r2 = g.emplace<vertex>(20);
+    r1.output() >> r2.input();
+
+    simple_graph h;
+    auto&& r3 = h.emplace<vertex>(30);
+    auto&& r4 = h.emplace<vertex>(40);
+    r3.output() >> r4.input();
+
+    g.swap(h);
+
+    EXPECT_EQ(g.size(), 2);
+    EXPECT_TRUE(g.contains(r3));
+    EXPECT_TRUE(g.contains(r4));
+
+    EXPECT_EQ(h.size(), 2);
+    EXPECT_TRUE(h.contains(r1));
+    EXPECT_TRUE(h.contains(r2));
+
+    EXPECT_EQ(&r1.owner(), &h);
+    EXPECT_EQ(&r2.owner(), &h);
+    EXPECT_EQ(&r3.owner(), &g);
+    EXPECT_EQ(&r4.owner(), &g);
+
+    EXPECT_EQ(r1.value(), 10);
+    EXPECT_EQ(r2.value(), 20);
+    EXPECT_EQ(r3.value(), 30);
+    EXPECT_EQ(r4.value(), 40);
+
+    EXPECT_EQ(r1.output().opposite().get(), &r2.input());
+    EXPECT_EQ(r2.input().opposite().get(), &r1.output());
+    EXPECT_EQ(r3.output().opposite().get(), &r4.input());
+    EXPECT_EQ(r4.input().opposite().get(), &r3.output());
 }
 
 TEST_F(graph_test, object_creator) {

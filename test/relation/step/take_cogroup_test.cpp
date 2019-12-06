@@ -39,6 +39,19 @@ TEST_F(take_cogroup_test, simple) {
         }
         EXPECT_EQ(g.mandatory(), false);
     }
+
+    EXPECT_EQ(&expr.output().owner(), &expr);
+
+    {
+        auto p = expr.input_ports();
+        ASSERT_EQ(p.size(), 0);
+    }
+    {
+        auto p = expr.output_ports();
+        ASSERT_EQ(p.size(), 1);
+        EXPECT_EQ(&p[0], &expr.output());
+        EXPECT_TRUE(is_valid_port_list(p));
+    }
 }
 
 TEST_F(take_cogroup_test, mandatory) {

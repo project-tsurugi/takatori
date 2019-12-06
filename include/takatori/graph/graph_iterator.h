@@ -22,8 +22,10 @@ class graph_iterator {
 public:
     /// @brief the iterator type.
     using iterator_type = graph_iterator;
-    /// @brief the value type
+    /// @brief the value type.
     using value_type = std::remove_pointer_t<typename std::iterator_traits<Iter>::value_type>;
+    /// @brief the difference type.
+    using difference_type = typename std::iterator_traits<Iter>::difference_type;
     /// @brief the pointer type.
     using pointer = std::add_pointer_t<value_type>;
     /// @brief the reference type.

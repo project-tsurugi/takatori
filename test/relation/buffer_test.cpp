@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+#include "test_utils.h"
+
 #include "takatori/util/clonable.h"
 
 namespace takatori::relation {
@@ -26,10 +28,12 @@ TEST_F(buffer_test, simple) {
         auto p = expr.input_ports();
         ASSERT_EQ(p.size(), 1);
         EXPECT_EQ(&p[0], &expr.input());
+        EXPECT_TRUE(is_valid_port_list(p));
     }
     {
         auto p = expr.output_ports();
         ASSERT_EQ(p.size(), 2);
+        EXPECT_TRUE(is_valid_port_list(p));
     }
 }
 

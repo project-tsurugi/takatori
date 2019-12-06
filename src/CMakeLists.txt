@@ -112,6 +112,7 @@ add_library(takatori
     relation/details/key_pair_element.cpp
     relation/details/union_element.cpp
     relation/details/cogroup_element.cpp
+    relation/details/graph_merger.cpp
 
     # plan
     plan/step.cpp

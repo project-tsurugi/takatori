@@ -48,17 +48,17 @@ public:
     /// @brief the opposite port type.
     using opposite_type = port<T, ~direction>;
 
-    /// @brief the ID type of the ports.
-    using id_type = std::uint64_t;
+    /// @brief the port index type.
+    using index_type = std::size_t;
 
     /**
      * @brief constructs a new object.
      * @param owner the owner node
-     * @param id the port ID (in node)
+     * @param index the index where this port on the container
      * @param creator the object creator (only for API compatibility with multiport)
      * @warning don't invoke this outside of owner node
      */
-    explicit port(node_type& owner, id_type id = 0, util::object_creator creator = {}) noexcept;
+    explicit port(node_type& owner, index_type index = 0, util::object_creator creator = {}) noexcept;
 
     ~port();
 
@@ -81,10 +81,10 @@ public:
     port& operator=(port&& other) noexcept;
 
     /**
-     * @brief returns the port ID.
-     * @return the port ID (in node).
+     * @brief returns the index where this port on the parent container.
+     * @return the port index (0-origin).
      */
-    constexpr id_type id() const noexcept;
+    constexpr index_type index() const noexcept;
 
     /**
      * @brief returns the node which owns this port.
@@ -128,7 +128,7 @@ public:
     void disconnect_all();
 
 private:
-    id_type id_;
+    index_type index_;
     node_type* owner_;
     opposite_type* opposite_ {};
 
@@ -140,8 +140,8 @@ private:
 
 template<class T, port_direction Direction>
 inline
-port<T, Direction>::port(node_type& owner, id_type id, util::object_creator) noexcept
-    : id_(id)
+port<T, Direction>::port(node_type& owner, index_type index, util::object_creator) noexcept
+    : index_(index)
     , owner_(std::addressof(owner))
 {}
 
@@ -154,7 +154,7 @@ port<T, Direction>::~port() {
 template<class T, port_direction Direction>
 inline
 port<T, Direction>::port(port&& other) noexcept
-    : id_(other.id_)
+    : index_(other.index_)
     , owner_(other.owner_)
     , opposite_(other.opposite_)
 {
@@ -168,7 +168,7 @@ template<class T, port_direction Direction>
 inline
 port<T, Direction>& port<T, Direction>::operator=(port&& other) noexcept {
     internal_disconnect();
-    id_ = other.id_;
+    index_ = other.index_;
     owner_ = other.owner_;
     opposite_ = other.opposite_;
     other.opposite_ = nullptr;
@@ -179,9 +179,9 @@ port<T, Direction>& port<T, Direction>::operator=(port&& other) noexcept {
 }
 
 template<class T, port_direction Direction>
-inline constexpr typename port<T, Direction>::id_type
-port<T, Direction>::id() const noexcept {
-    return id_;
+inline constexpr typename port<T, Direction>::index_type
+port<T, Direction>::index() const noexcept {
+    return index_;
 }
 
 template<class T, port_direction Direction>
@@ -303,7 +303,7 @@ inline output_port<T>& operator>>(output_port<T>& upstream, input_port<T>& downs
  */
 template<class T, port_direction Direction>
 inline std::ostream& operator<<(std::ostream& out, port<T, Direction> const& value) {
-    return out << Direction << "[" << value.id() << "]"
+    return out << Direction << "[" << value.index() << "]"
                << "@" << util::print_support { value.owner() };
 }
 

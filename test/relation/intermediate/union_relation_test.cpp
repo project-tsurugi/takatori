@@ -39,11 +39,13 @@ TEST_F(union_relation_test, simple) {
         ASSERT_EQ(p.size(), 2);
         EXPECT_EQ(&p[0], &expr.left());
         EXPECT_EQ(&p[1], &expr.right());
+        EXPECT_TRUE(is_valid_port_list(p));
     }
     {
         auto p = expr.output_ports();
         ASSERT_EQ(p.size(), 1);
         EXPECT_EQ(&p[0], &expr.output());
+        EXPECT_TRUE(is_valid_port_list(p));
     }
 }
 
