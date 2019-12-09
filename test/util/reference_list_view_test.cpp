@@ -5,6 +5,8 @@
 
 #include <gtest/gtest.h>
 
+#include "takatori/util/reference_vector.h"
+
 namespace takatori::util {
 
 class reference_list_view_test : public ::testing::Test {};
@@ -40,6 +42,21 @@ TEST_F(reference_list_view_test, pointer_size) {
 TEST_F(reference_list_view_test, pointer_range) {
     std::array<int, 5> a { 1, 2, 3, 4, 5 };
     reference_list_view v { &a[1], &a[4] };
+
+    ASSERT_EQ(v.size(), 3);
+    EXPECT_EQ(v[0], 2);
+    EXPECT_EQ(v[1], 3);
+    EXPECT_EQ(v[2], 4);
+}
+
+TEST_F(reference_list_view_test, reference_iterator) {
+    reference_vector<int> a;
+    a.emplace_back(1);
+    a.emplace_back(2);
+    a.emplace_back(3);
+    a.emplace_back(4);
+    a.emplace_back(5);
+    reference_list_view v { a.begin() + 1, a.end() - 1 };
 
     ASSERT_EQ(v.size(), 3);
     EXPECT_EQ(v[0], 2);

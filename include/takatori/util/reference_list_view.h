@@ -51,6 +51,14 @@ public:
 
     /**
      * @brief creates a new instance.
+     * @param first iterator of the first sequence data (inclusive)
+     * @param last iterator of the last sequence data (exclusive)
+     * @attention if first > last, this consider the sequence is empty
+     */
+    explicit constexpr reference_list_view(iterator first, iterator last) noexcept;
+
+    /**
+     * @brief creates a new instance.
      * @tparam Container the container type
      * @param container the container
      */
@@ -185,6 +193,11 @@ reference_list_view(T* const*, T* const*)
                 double_pointer_extractor<T>>>;
 
 /// @private
+template<class E>
+reference_list_view(reference_iterator<E>, reference_iterator<E>)
+-> reference_list_view<E>;
+
+/// @private
 template<class Container>
 reference_list_view(Container& container) -> reference_list_view<
         std::enable_if_t<
@@ -209,6 +222,12 @@ inline constexpr
 reference_list_view<T>::reference_list_view(cursor_type first, cursor_type last) noexcept
     : first_(first)
     , last_(last)
+{}
+
+template<class Extractor>
+constexpr reference_list_view<Extractor>::reference_list_view(iterator first, iterator last) noexcept
+    : first_(first.cursor_)
+    , last_(last.cursor_)
 {}
 
 template<class Extractor>

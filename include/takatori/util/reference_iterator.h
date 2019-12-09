@@ -9,6 +9,9 @@
 namespace takatori::util {
 
 template<class Extractor>
+class reference_list_view;
+
+template<class Extractor>
 class reference_iterator;
 
 template<class T1, class T2>
@@ -199,6 +202,8 @@ private:
     cursor_type cursor_;
 
     template<class U> friend class reference_iterator;
+
+    friend class reference_list_view<Extractor>;
 
     template<class T1, class T2>
     friend constexpr bool operator==(reference_iterator<T1> a, reference_iterator<T2> b) noexcept; // NOLINT(readability-redundant-declaration)
