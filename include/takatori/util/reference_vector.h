@@ -678,21 +678,29 @@ reference_vector(std::initializer_list<T>) -> reference_vector<T>;
 template<class T>
 reference_vector(object_creator, std::initializer_list<T>) -> reference_vector<T>;
 
+/// @cond TEMPLATE_DEFS
+
 template<class T, class C>
 template<class U, class>
-reference_vector<T, C>::reference_vector(std::initializer_list<U> list, object_creator creator) : storage_(creator) {
+reference_vector<T, C>::reference_vector(std::initializer_list<U> list, object_creator creator)
+    : storage_(creator)
+{
     assign(list);
 }
 
 template<class T, class C>
 template<class Iter, class>
-inline reference_vector<T, C>::reference_vector(Iter first, Iter last, object_creator creator) : storage_(creator) {
+inline reference_vector<T, C>::reference_vector(Iter first, Iter last, object_creator creator)
+    : storage_(creator)
+{
     assign(first, last);
 }
 
 template<class T, class C>
 template<class U, class D, class>
-inline reference_vector<T, C>::reference_vector(reference_vector<U, D> other) noexcept : storage_(other.storage_.creator_) {
+inline reference_vector<T, C>::reference_vector(reference_vector<U, D> other) noexcept
+    : storage_(other.storage_.creator_)
+{
     auto&& src = other.storage_.elements_;
     unsafe_assign(src.begin(), src.end());
     src.clear();
@@ -1091,6 +1099,8 @@ reference_vector<T, C>::unsafe_put(const_iterator position, pointer element) {
     *iter = element;
     return *element;
 }
+
+/// @endcond
 
 /**
  * @brief returns whether or not the both vectors have equivalent elements.

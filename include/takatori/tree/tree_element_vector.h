@@ -426,6 +426,8 @@ private:
 template<class T, class C>
 tree_element_vector(util::reference_vector<T, C>) -> tree_element_vector<T>;
 
+/// @cond TEMPLATE_DEFS
+
 template<class T>
 inline tree_element_vector<T>::tree_element_vector(parent_type& parent, util::object_creator creator) noexcept
     : parent_(std::addressof(parent)), elements_(creator) {}
@@ -576,6 +578,8 @@ tree_element_vector<T>::release_elements() noexcept {
     util::reference_vector<value_type, C> result { std::move(elements_) };
     return result;
 }
+
+/// @endcond
 
 /**
  * @brief returns whether or not the both vectors have equivalent elements.
