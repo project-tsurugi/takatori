@@ -48,28 +48,20 @@ clone(T&& object, object_creator creator = {}) {
     return std::forward<T>(object).clone(creator);
 }
 
-/**
- * @brief returns a clone of the given object.
- * @tparam T the object type
- * @param object the object to clone
- * @param creator object creator for creating clones
- * @return the created clone
- */
+/// @copydoc clone(T&&, object_creator)
 template<class T>
-inline std::enable_if_t<is_clonable_v<T>, T*>
+inline std::enable_if_t<
+        is_clonable_v<T>,
+        std::add_pointer_t<std::remove_cv_t<T>>>
 clone(std::reference_wrapper<T> object, object_creator creator = {}) {
     return object.get().clone(creator);
 }
 
-/**
- * @brief returns a clone of the given object.
- * @tparam T the object type
- * @param object the object to clone
- * @param creator object creator for creating clones
- * @return the created clone
- */
+/// @copydoc clone(T&&, object_creator)
 template<class T>
-inline std::enable_if_t<is_clonable_v<T>, T*>
+inline std::enable_if_t<
+        is_clonable_v<T>,
+        std::add_pointer_t<std::remove_cv_t<T>>>
 clone(rvalue_reference_wrapper<T> object, object_creator creator = {}) {
     return object.get().clone(creator);
 }
@@ -80,7 +72,7 @@ clone(rvalue_reference_wrapper<T> object, object_creator creator = {}) {
  * @param object the object to clone
  * @param creator object creator for creating clones
  * @return the created clone
- * @return nullptr if input is nullptr
+ * @return `nullptr` if the object is absent
  */
 template<class T>
 inline std::enable_if_t<is_clonable_v<T>, T*>
@@ -92,15 +84,40 @@ clone(T const* object, object_creator creator = {}) {
 /**
  * @brief returns a clone of the given object.
  * @tparam T the object type
+ * @tparam D the deleter type
  * @param object the object to clone
  * @param creator object creator for creating clones
  * @return the created clone
- * @return nullptr if input is nullptr
+ * @return empty if the object is absent
  */
-template<class T>
-inline std::enable_if_t<is_clonable_v<T>, T*>
-clone(rvalue_ptr<T> object, object_creator creator = {}) {
+template<class T, class D>
+inline std::enable_if_t<
+        is_clonable_v<T>,
+        std::add_pointer_t<std::remove_cv_t<T>>>
+clone(std::unique_ptr<T, D> const& object, object_creator creator = {}) {
     if (!static_cast<bool>(object)) return nullptr;
+    return object->clone(creator);
+}
+
+/// @copydoc clone(std::unique_ptr<T, D> const&, object_creator)
+template<class T, class D>
+inline std::enable_if_t<
+        is_clonable_v<T>,
+        std::add_pointer_t<std::remove_cv_t<T>>>
+clone(std::unique_ptr<T, D>&& object, object_creator creator = {}) {
+    if (!static_cast<bool>(object)) return {};
+    // FIXME: deep clone?
+    if (creator.is_instance(object)) return object.release();
+    return (std::move(*object)).clone(creator);
+}
+
+/// @copydoc clone(T const*, object_creator)
+template<class T>
+inline std::enable_if_t<
+        is_clonable_v<T>,
+        std::add_pointer_t<std::remove_cv_t<T>>>
+clone(rvalue_ptr<T> object, object_creator creator = {}) {
+    if (!static_cast<bool>(object)) return {};
     return object.value().clone(creator);
 }
 

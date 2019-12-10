@@ -32,11 +32,7 @@ util::unique_object_ptr<E> forward(util::object_creator creator, std::unique_ptr
     if (!element) {
         return { nullptr, util::object_deleter(creator) };
     }
-    // FIXME: deep clone?
-    if (creator.is_instance(element)) {
-        return util::unique_object_ptr<E>(element.release(), util::object_deleter(creator));
-    }
-    return util::clone_unique(std::move(*element), creator);
+    return util::clone_unique(std::move(element), creator);
 }
 
 } // namespace takatori::util
