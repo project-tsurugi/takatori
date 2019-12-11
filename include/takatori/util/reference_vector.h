@@ -207,6 +207,7 @@ public:
      * @brief constructs a new object.
      * @tparam C the source copier type
      * @param other the source object
+     * @param creator the object creator
      */
     template<class C>
     explicit reference_vector(reference_vector<T, C> const& other, object_creator creator);
@@ -215,6 +216,7 @@ public:
      * @brief constructs a new object.
      * @tparam C the source copier type
      * @param other the source object
+     * @param creator the object creator
      */
     template<class C>
     explicit reference_vector(reference_vector<T, C>&& other, object_creator creator);
