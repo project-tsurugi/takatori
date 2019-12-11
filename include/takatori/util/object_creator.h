@@ -318,7 +318,10 @@ inline void object_creator::deallocate(void* pointer, std::size_t bytes, std::si
 
 template<class T>
 inline void object_deleter::operator()(T* object) {
-    creator_.delete_object(object);
+    // NOTE: shared_ptr may pass nullptr
+    if (object != nullptr) {
+        creator_.delete_object(object);
+    }
 }
 
 template<class T>
@@ -338,7 +341,7 @@ inline std::shared_ptr<T> object_creator::create_shared(Args&& ... args) {
 
 template<class T>
 inline std::shared_ptr<T> object_creator::wrap_shared(T* object) {
-    return std::shared_ptr<T>(object, object_deleter { *this }, allocator(std::in_place_type<T>));
+    return std::shared_ptr<T>(object, object_deleter { *this }, allocator<T>());
 }
 
 /// @private
