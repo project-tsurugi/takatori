@@ -327,6 +327,65 @@ TEST_F(reference_vector_test, conversion_assign) {
     EXPECT_EQ(&c[2], ps[2]);
 }
 
+TEST_F(reference_vector_test, copy_with_creator) {
+    reference_vector<int> v;
+    v.emplace_back(1);
+    v.emplace_back(2);
+    v.emplace_back(3);
+
+    pmr::monotonic_buffer_resource r;
+    object_creator custom { &r };
+
+    reference_vector<int> c { v, custom };
+    EXPECT_EQ(c.get_object_creator(), custom);
+    ASSERT_EQ(c.size(), 3);
+    EXPECT_EQ(c[0], 1);
+    EXPECT_EQ(c[1], 2);
+    EXPECT_EQ(c[2], 3);
+
+    EXPECT_NE(&c[0], &v[0]);
+    EXPECT_NE(&c[1], &v[1]);
+    EXPECT_NE(&c[2], &v[2]);
+}
+
+TEST_F(reference_vector_test, move_with_creator) {
+    reference_vector<int> v;
+    v.emplace_back(1);
+    v.emplace_back(2);
+    v.emplace_back(3);
+
+    pmr::monotonic_buffer_resource r;
+    object_creator custom { &r };
+
+    reference_vector<int> c { std::move(v), custom };
+    EXPECT_EQ(c.get_object_creator(), custom);
+    ASSERT_EQ(c.size(), 3);
+    EXPECT_EQ(c[0], 1);
+    EXPECT_EQ(c[1], 2);
+    EXPECT_EQ(c[2], 3);
+
+    EXPECT_TRUE(v.empty()); // NOLINT
+}
+
+TEST_F(reference_vector_test, move_with_creator_compatible) {
+    pmr::monotonic_buffer_resource r;
+    object_creator custom { &r };
+
+    reference_vector<int> v { custom };
+    v.emplace_back(1);
+    v.emplace_back(2);
+    v.emplace_back(3);
+
+    reference_vector<int> c { std::move(v), custom };
+    EXPECT_EQ(c.get_object_creator(), custom);
+    ASSERT_EQ(c.size(), 3);
+    EXPECT_EQ(c[0], 1);
+    EXPECT_EQ(c[1], 2);
+    EXPECT_EQ(c[2], 3);
+
+    EXPECT_TRUE(v.empty()); // NOLINT
+}
+
 TEST_F(reference_vector_test, at) {
     reference_vector v { 1, 2, 3 };
 

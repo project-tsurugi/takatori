@@ -204,6 +204,22 @@ public:
     reference_vector(reference_vector<U, C> other) noexcept; // NOLINT
 
     /**
+     * @brief constructs a new object.
+     * @tparam C the source copier type
+     * @param other the source object
+     */
+    template<class C>
+    explicit reference_vector(reference_vector<T, C> const& other, object_creator creator);
+
+    /**
+     * @brief constructs a new object.
+     * @tparam C the source copier type
+     * @param other the source object
+     */
+    template<class C>
+    explicit reference_vector(reference_vector<T, C>&& other, object_creator creator);
+
+    /**
      * @brief returns an element at the position.
      * @param position the element index on this vector
      * @return the element on the position
@@ -704,6 +720,34 @@ inline reference_vector<T, C>::reference_vector(reference_vector<U, D> other) no
     auto&& src = other.storage_.elements_;
     unsafe_assign(src.begin(), src.end());
     src.clear();
+}
+
+template<class T, class Copier>
+template<class C>
+reference_vector<T, Copier>::reference_vector(reference_vector<T, C> const& other, object_creator creator)
+    : storage_(creator)
+{
+    reserve(other.size());
+    for (auto&& e : other) {
+        push_back(e);
+    }
+}
+
+template<class T, class Copier>
+template<class C>
+reference_vector<T, Copier>::reference_vector(reference_vector<T, C>&& other, object_creator creator)
+    : storage_(creator)
+{
+    if (other.get_object_creator() == creator) {
+        storage_.elements_ = std::move(other.storage_.elements_);
+        other.storage_.elements_.clear(); // may be already empty
+    } else {
+        reserve(other.size());
+        for (auto&& e : other) {
+            push_back(std::move(e));
+        }
+        other.clear();
+    }
 }
 
 template<class T, class C>
