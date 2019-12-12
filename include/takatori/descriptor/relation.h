@@ -5,7 +5,7 @@
 namespace takatori::descriptor {
 
 /**
- * @brief describes an external relation (table, index, broadcast data, or etc.).
+ * @brief describes an external relation (index, broadcast exchange, or etc.).
  */
 using relation = element<descriptor_kind::relation>;
 

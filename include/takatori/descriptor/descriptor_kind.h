@@ -14,7 +14,7 @@ enum class descriptor_kind {
     /// @brief describes a variable, or named value.
     variable,
 
-    /// @brief describes an external relation (table, index, broadcast data, or etc.).
+    /// @brief describes an external relation (index, broadcast data, or etc.).
     relation,
 
     /// @brief describes a function.

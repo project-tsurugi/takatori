@@ -36,7 +36,7 @@ public:
     /**
      * @brief creates a new object.
      * @param operator_kind the write operation kind
-     * @param destination the target external relation, must represent a table
+     * @param destination the target external relation, must represent an index to distinguish individual entries
      * @param keys the column mappings between the input relation and the destination table for identifying target rows
      * @param columns the column mappings between the input relation and the destination table for setting row contents
      * @param creator the object creator for internal elements
@@ -51,7 +51,7 @@ public:
     /**
      * @brief creates a new object.
      * @param operator_kind the write operation kind
-     * @param destination the target external relation, must represent a table
+     * @param destination the target external relation, must represent an index to distinguish individual entries
      * @param keys the column mappings between the input relation and the destination table for identifying target rows
      * @param columns the column mappings between the input relation and the destination table for setting row contents
      */
@@ -113,7 +113,7 @@ public:
 
     /**
      * @brief sets the destination relation.
-     * @param destination the destination relation, must be a table
+     * @param destination the destination relation, must represent an index to distinguish individual entries
      * @return this
      */
     write& destination(descriptor::relation destination) noexcept;
