@@ -79,6 +79,18 @@ exchange& operator>>(exchange& upstream, process& downstream) {
     return upstream.add_downstream(downstream);
 }
 
+bool operator==(exchange const& a, exchange const& b) noexcept {
+    return a.equals(b);
+}
+
+bool operator!=(exchange const& a, exchange const& b) noexcept {
+    return !(a == b);
+}
+
+std::ostream& operator<<(std::ostream& out, exchange const& value) {
+    return value.print_to(out);
+}
+
 exchange::exchange(util::object_creator creator) noexcept
         : upstreams_(creator.allocator<process*>())
         , downstreams_(creator.allocator<process*>())

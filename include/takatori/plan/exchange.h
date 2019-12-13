@@ -141,6 +141,32 @@ public:
      */
     friend exchange& operator>>(exchange& upstream, process& downstream);
 
+    /**
+     * @brief returns whether or not the two elements are equivalent.
+     * @param a the first element
+     * @param b the second element
+     * @return true if a == b
+     * @return false otherwise
+     */
+    friend bool operator==(exchange const& a, exchange const& b) noexcept;
+
+    /**
+     * @brief returns whether or not the two elements are different.
+     * @param a the first element
+     * @param b the second element
+     * @return true if a != b
+     * @return false otherwise
+     */
+    friend bool operator!=(exchange const& a, exchange const& b) noexcept;
+
+    /**
+     * @brief appends string representation of the given value.
+     * @param out the target output
+     * @param value the target value
+     * @return the output
+     */
+    friend std::ostream& operator<<(std::ostream& out, exchange const& value);
+
 protected:
     /**
      * @brief creates a new object.
