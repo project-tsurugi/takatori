@@ -8,7 +8,7 @@
 namespace takatori::util {
 
 /**
- * @brief printing support for printable objects.
+ * @brief printing support for vectors.
  * @tparam T the target type
  * @tparam Allocator the allocator type
  */
