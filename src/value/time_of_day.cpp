@@ -1,4 +1,4 @@
-#include "takatori/value/time_of_day.h"
+#include <takatori/value/time_of_day.h>
 
 namespace takatori::value {
 

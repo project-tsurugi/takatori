@@ -4,14 +4,14 @@
 
 #include "expression_kind.h"
 
-#include "takatori/graph/graph.h"
-#include "takatori/graph/port.h"
+#include <takatori/graph/graph.h>
+#include <takatori/graph/port.h>
 
-#include "takatori/tree/tree_element_base.h"
+#include <takatori/tree/tree_element_base.h>
 
-#include "takatori/util/object_creator.h"
-#include "takatori/util/optional_ptr.h"
-#include "takatori/util/sequence_view.h"
+#include <takatori/util/object_creator.h>
+#include <takatori/util/optional_ptr.h>
+#include <takatori/util/sequence_view.h>
 
 namespace takatori::relation {
 

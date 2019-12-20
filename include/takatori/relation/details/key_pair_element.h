@@ -3,7 +3,7 @@
 #include <functional>
 #include <iostream>
 
-#include "takatori/descriptor/variable.h"
+#include <takatori/descriptor/variable.h>
 
 namespace takatori::relation::details {
 

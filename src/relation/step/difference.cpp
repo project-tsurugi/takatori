@@ -1,6 +1,6 @@
-#include "takatori/relation/step/difference.h"
+#include <takatori/relation/step/difference.h>
 
-#include "takatori/util/downcast.h"
+#include <takatori/util/downcast.h>
 
 namespace takatori::relation::step {
 

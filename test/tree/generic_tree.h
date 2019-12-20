@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "takatori/tree/tree_element.h"
+#include <takatori/tree/tree_element.h>
 
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/optional_ptr.h>
 
 namespace takatori::tree {
 

@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <utility>
 
-#include "takatori/util/object.h"
-#include "takatori/util/downcast.h"
+#include <takatori/util/object.h>
+#include <takatori/util/downcast.h>
 
 namespace takatori::testing {
 

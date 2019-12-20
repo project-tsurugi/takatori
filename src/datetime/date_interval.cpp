@@ -1,4 +1,4 @@
-#include "takatori/datetime/date_interval.h"
+#include <takatori/datetime/date_interval.h>
 
 #include "../util/iomanip_util.h"
 

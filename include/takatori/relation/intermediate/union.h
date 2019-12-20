@@ -9,10 +9,10 @@
 #include "../expression_kind.h"
 #include "../details/union_element.h"
 
-#include "takatori/descriptor/variable.h"
+#include <takatori/descriptor/variable.h>
 
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::intermediate {
 

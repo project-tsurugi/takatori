@@ -5,11 +5,11 @@
 
 #include "value_object.h"
 
-#include "takatori/descriptor/variable.h"
-#include "takatori/descriptor/relation.h"
-#include "takatori/descriptor/function.h"
-#include "takatori/descriptor/aggregate_function.h"
-#include "takatori/descriptor/declared_type.h"
+#include <takatori/descriptor/variable.h>
+#include <takatori/descriptor/relation.h>
+#include <takatori/descriptor/function.h>
+#include <takatori/descriptor/aggregate_function.h>
+#include <takatori/descriptor/declared_type.h>
 
 namespace takatori::testing {
 

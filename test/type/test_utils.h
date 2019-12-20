@@ -2,7 +2,7 @@
 
 #include <string_view>
 
-#include "takatori/datetime/time_zone.h"
+#include <takatori/datetime/time_zone.h>
 
 #include "testing/descriptors.h"
 

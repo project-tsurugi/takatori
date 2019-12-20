@@ -1,4 +1,4 @@
-#include "takatori/util/pointer_traits.h"
+#include <takatori/util/pointer_traits.h>
 
 #include <memory>
 #include <optional>

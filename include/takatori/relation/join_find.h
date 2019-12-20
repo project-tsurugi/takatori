@@ -10,17 +10,17 @@
 #include "details/search_key_element.h"
 #include "details/mapping_element.h"
 
-#include "takatori/descriptor/relation.h"
-#include "takatori/descriptor/variable.h"
+#include <takatori/descriptor/relation.h>
+#include <takatori/descriptor/variable.h>
 
-#include "takatori/tree/tree_fragment_vector.h"
+#include <takatori/tree/tree_fragment_vector.h>
 
-#include "takatori/scalar/expression.h"
+#include <takatori/scalar/expression.h>
 
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
-#include "takatori/util/rvalue_ptr.h"
-#include "takatori/util/rvalue_reference_wrapper.h"
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
+#include <takatori/util/rvalue_ptr.h>
+#include <takatori/util/rvalue_reference_wrapper.h>
 
 namespace takatori::relation {
 

@@ -10,10 +10,10 @@
 #include "step_kind.h"
 #include "group_mode.h"
 
-#include "takatori/relation/sort_direction.h"
-#include "takatori/relation/details/sort_key_element.h"
+#include <takatori/relation/sort_direction.h>
+#include <takatori/relation/details/sort_key_element.h>
 
-#include "takatori/util/object_creator.h"
+#include <takatori/util/object_creator.h>
 
 namespace takatori::plan {
 

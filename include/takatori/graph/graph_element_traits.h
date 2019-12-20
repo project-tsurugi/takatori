@@ -1,7 +1,7 @@
 #pragma once
 
-#include "takatori/util/detect.h"
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/detect.h>
+#include <takatori/util/optional_ptr.h>
 
 namespace takatori::graph {
 

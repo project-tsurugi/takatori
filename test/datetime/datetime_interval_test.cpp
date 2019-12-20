@@ -1,8 +1,8 @@
-#include "takatori/datetime/datetime_interval.h"
+#include <takatori/datetime/datetime_interval.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/datetime/interval.h"
+#include <takatori/datetime/interval.h>
 
 namespace takatori::datetime {
 

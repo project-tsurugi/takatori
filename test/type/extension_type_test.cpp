@@ -1,10 +1,10 @@
-#include "takatori/type/extension.h"
+#include <takatori/type/extension.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
-#include "takatori/util/downcast.h"
-#include "takatori/util/hash.h"
+#include <takatori/util/clonable.h>
+#include <takatori/util/downcast.h>
+#include <takatori/util/hash.h>
 
 namespace takatori::type {
 

@@ -1,8 +1,8 @@
-#include "takatori/type/character.h"
+#include <takatori/type/character.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::type {
 

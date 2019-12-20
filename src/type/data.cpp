@@ -1,4 +1,4 @@
-#include "takatori/type/data.h"
+#include <takatori/type/data.h>
 
 namespace takatori::type {
 

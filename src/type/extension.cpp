@@ -1,6 +1,6 @@
-#include "takatori/type/extension.h"
+#include <takatori/type/extension.h>
 
-#include "takatori/util/downcast.h"
+#include <takatori/util/downcast.h>
 
 namespace takatori::type {
 

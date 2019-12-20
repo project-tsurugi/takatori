@@ -1,4 +1,4 @@
-#include "takatori/graph/graph.h"
+#include <takatori/graph/graph.h>
 
 #include <iterator>
 #include <type_traits>
@@ -7,9 +7,9 @@
 
 #include "simple_vertex.h"
 
-#include "takatori/graph/port.h"
+#include <takatori/graph/port.h>
 
-#include "takatori/graph/graph_element_traits.h"
+#include <takatori/graph/graph_element_traits.h>
 
 namespace takatori::graph {
 

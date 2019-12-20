@@ -1,4 +1,4 @@
-#include "takatori/datetime/time_of_day.h"
+#include <takatori/datetime/time_of_day.h>
 
 #include "../util/iomanip_util.h"
 

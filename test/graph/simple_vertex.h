@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "takatori/graph/vertex_base.h"
+#include <takatori/graph/vertex_base.h>
 
-#include "takatori/util/object_creator.h"
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/object_creator.h>
+#include <takatori/util/optional_ptr.h>
 
 namespace takatori::graph {
 

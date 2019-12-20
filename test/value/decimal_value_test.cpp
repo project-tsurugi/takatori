@@ -1,8 +1,8 @@
-#include "takatori/value/decimal.h"
+#include <takatori/value/decimal.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::value {
 

@@ -3,7 +3,7 @@
 #include "testing/descriptors.h"
 #include "scalar/test_utils.h"
 
-#include "takatori/relation/expression.h"
+#include <takatori/relation/expression.h>
 
 namespace takatori::relation {
 

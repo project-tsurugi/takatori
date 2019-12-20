@@ -1,8 +1,8 @@
-#include "takatori/type/time_point.h"
+#include <takatori/type/time_point.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 #include "test_utils.h"
 

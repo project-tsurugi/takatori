@@ -1,4 +1,4 @@
-#include "takatori/scalar/immediate.h"
+#include <takatori/scalar/immediate.h>
 
 #include <type_traits>
 
@@ -6,10 +6,10 @@
 
 #include "test_utils.h"
 
-#include "takatori/type/int.h"
-#include "takatori/value/int.h"
+#include <takatori/type/int.h>
+#include <takatori/value/int.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::scalar {
 

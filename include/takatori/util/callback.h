@@ -4,8 +4,8 @@
 #include <type_traits>
 #include <utility>
 
-#include "takatori/util/downcast.h"
-#include "takatori/util/infect_qualifier.h"
+#include <takatori/util/downcast.h>
+#include <takatori/util/infect_qualifier.h>
 
 namespace takatori::util {
 

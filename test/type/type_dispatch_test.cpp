@@ -1,4 +1,4 @@
-#include "takatori/type/dispatch.h"
+#include <takatori/type/dispatch.h>
 
 #include <gtest/gtest.h>
 

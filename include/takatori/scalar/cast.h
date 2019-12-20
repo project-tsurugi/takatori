@@ -9,12 +9,12 @@
 #include "expression_kind.h"
 #include "cast_loss_policy.h"
 
-#include "takatori/type/data.h"
+#include <takatori/type/data.h>
 
-#include "takatori/util/enum_tag.h"
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/enum_tag.h>
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
+#include <takatori/util/optional_ptr.h>
 
 namespace takatori::scalar {
 

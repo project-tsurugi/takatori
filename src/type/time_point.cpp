@@ -1,6 +1,6 @@
-#include "takatori/type/time_point.h"
+#include <takatori/type/time_point.h>
 
-#include "takatori/util/downcast.h"
+#include <takatori/util/downcast.h>
 
 namespace takatori::type {
 

@@ -1,6 +1,6 @@
-#include "takatori/type/decimal.h"
+#include <takatori/type/decimal.h>
 
-#include "takatori/util/downcast.h"
+#include <takatori/util/downcast.h>
 
 namespace takatori::type {
 

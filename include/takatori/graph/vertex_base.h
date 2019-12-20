@@ -6,8 +6,8 @@
 
 #include "port_direction.h"
 
-#include "takatori/util/optional_ptr.h"
-#include "takatori/util/sequence_view.h"
+#include <takatori/util/optional_ptr.h>
+#include <takatori/util/sequence_view.h>
 
 namespace takatori::graph {
 

@@ -1,4 +1,4 @@
-#include "takatori/value/character.h"
+#include <takatori/value/character.h>
 
 namespace takatori::value {
 

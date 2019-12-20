@@ -5,8 +5,8 @@
 #include "../expression.h"
 #include "../expression_kind.h"
 
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::step {
 

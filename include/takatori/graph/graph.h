@@ -9,10 +9,10 @@
 #include "graph_element_traits.h"
 #include "graph_iterator.h"
 
-#include "takatori/util/clonable.h"
-#include "takatori/util/downcast.h"
-#include "takatori/util/object_creator.h"
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/clonable.h>
+#include <takatori/util/downcast.h>
+#include <takatori/util/object_creator.h>
+#include <takatori/util/optional_ptr.h>
 
 namespace takatori::graph {
 

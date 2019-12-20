@@ -1,4 +1,4 @@
-#include "takatori/value/decimal.h"
+#include <takatori/value/decimal.h>
 
 #include <string_view>
 

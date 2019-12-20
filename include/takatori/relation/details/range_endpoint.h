@@ -5,14 +5,14 @@
 
 #include "../endpoint_kind.h"
 
-#include "takatori/tree/tree_fragment_vector.h"
-#include "takatori/tree/tree_fragment_vector_forward.h"
+#include <takatori/tree/tree_fragment_vector.h>
+#include <takatori/tree/tree_fragment_vector_forward.h>
 
-#include "takatori/descriptor/relation.h"
+#include <takatori/descriptor/relation.h>
 
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
-#include "takatori/util/rvalue_reference_wrapper.h"
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
+#include <takatori/util/rvalue_reference_wrapper.h>
 
 namespace takatori::relation::details {
 

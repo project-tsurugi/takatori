@@ -8,8 +8,8 @@
 #include "expression_kind.h"
 #include "match_operator.h"
 
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
 
 namespace takatori::scalar {
 

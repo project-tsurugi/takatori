@@ -32,7 +32,7 @@
 
 //#include "extension.h"
 
-#include "takatori/util/callback.h"
+#include <takatori/util/callback.h>
 
 namespace takatori::scalar {
 

@@ -1,4 +1,4 @@
-#include "takatori/util/enum_set.h"
+#include <takatori/util/enum_set.h>
 
 #include <gtest/gtest.h>
 

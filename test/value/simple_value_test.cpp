@@ -1,11 +1,11 @@
-#include "takatori/value/simple_value.h"
-#include "takatori/value/int.h"
-#include "takatori/value/float.h"
-#include "takatori/value/unknown.h"
+#include <takatori/value/simple_value.h>
+#include <takatori/value/int.h>
+#include <takatori/value/float.h>
+#include <takatori/value/unknown.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::value {
 

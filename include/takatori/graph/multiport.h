@@ -7,9 +7,9 @@
 
 #include "port_direction.h"
 
-#include "takatori/util/object_creator.h"
-#include "takatori/util/print_support.h"
-#include "takatori/util/reference_list_view.h"
+#include <takatori/util/object_creator.h>
+#include <takatori/util/print_support.h>
+#include <takatori/util/reference_list_view.h>
 
 namespace takatori::graph {
 

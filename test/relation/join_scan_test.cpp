@@ -1,4 +1,4 @@
-#include "takatori/relation/join_scan.h"
+#include <takatori/relation/join_scan.h>
 
 #include <type_traits>
 
@@ -6,9 +6,9 @@
 
 #include "test_utils.h"
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
-#include "takatori/relation/find.h"
+#include <takatori/relation/find.h>
 
 namespace takatori::relation {
 

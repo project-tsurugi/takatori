@@ -1,11 +1,11 @@
-#include "takatori/util/reference_list_view.h"
+#include <takatori/util/reference_list_view.h>
 
 #include <array>
 #include <vector>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/reference_vector.h"
+#include <takatori/util/reference_vector.h>
 
 namespace takatori::util {
 

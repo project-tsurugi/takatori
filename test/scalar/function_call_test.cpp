@@ -1,4 +1,4 @@
-#include "takatori/scalar/function_call.h"
+#include <takatori/scalar/function_call.h>
 
 #include <type_traits>
 
@@ -6,7 +6,7 @@
 
 #include "test_utils.h"
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::scalar {
 

@@ -5,8 +5,8 @@
 #include <string>
 #include <string_view>
 
-#include "takatori/util/enum_tag.h"
-#include "takatori/util/meta_type.h"
+#include <takatori/util/enum_tag.h>
+#include <takatori/util/meta_type.h>
 
 namespace takatori::scalar {
 

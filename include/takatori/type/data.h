@@ -5,7 +5,7 @@
 
 #include "type_kind.h"
 
-#include "takatori/util/object_creator.h"
+#include <takatori/util/object_creator.h>
 
 namespace takatori::type {
 

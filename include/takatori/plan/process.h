@@ -7,12 +7,12 @@
 #include "step.h"
 #include "step_kind.h"
 
-#include "takatori/relation/expression.h"
+#include <takatori/relation/expression.h>
 
-#include "takatori/graph/graph.h"
+#include <takatori/graph/graph.h>
 
-#include "takatori/util/object_creator.h"
-#include "takatori/util/reference_vector.h"
+#include <takatori/util/object_creator.h>
+#include <takatori/util/reference_vector.h>
 
 namespace takatori::plan {
 

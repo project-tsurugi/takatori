@@ -3,9 +3,9 @@
 #include <memory>
 #include <type_traits>
 
-#include "takatori/util/detect.h"
-#include "takatori/util/meta_type.h"
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/detect.h>
+#include <takatori/util/meta_type.h>
+#include <takatori/util/optional_ptr.h>
 
 namespace takatori::tree {
 

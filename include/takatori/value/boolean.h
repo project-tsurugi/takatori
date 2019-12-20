@@ -3,7 +3,7 @@
 #include "value_kind.h"
 #include "simple_value.h"
 
-#include "takatori/util/meta_type.h"
+#include <takatori/util/meta_type.h>
 
 namespace takatori::value {
 

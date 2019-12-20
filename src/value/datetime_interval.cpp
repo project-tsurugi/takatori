@@ -1,4 +1,4 @@
-#include "takatori/value/datetime_interval.h"
+#include <takatori/value/datetime_interval.h>
 
 namespace takatori::value {
 

@@ -11,14 +11,14 @@
 #include "details/mapping_element.h"
 #include "details/range_endpoint.h"
 
-#include "takatori/descriptor/relation.h"
-#include "takatori/descriptor/variable.h"
+#include <takatori/descriptor/relation.h>
+#include <takatori/descriptor/variable.h>
 
-#include "takatori/scalar/expression.h"
+#include <takatori/scalar/expression.h>
 
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
-#include "takatori/util/rvalue_ptr.h"
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
+#include <takatori/util/rvalue_ptr.h>
 
 namespace takatori::relation {
 

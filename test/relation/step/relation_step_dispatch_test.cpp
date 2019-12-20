@@ -1,10 +1,10 @@
-#include "takatori/relation/step/dispatch.h"
+#include <takatori/relation/step/dispatch.h>
 
 #include <gtest/gtest.h>
 
 #include "../test_utils.h"
 
-#include "takatori/relation/intermediate/distinct.h"
+#include <takatori/relation/intermediate/distinct.h>
 
 namespace takatori::relation::step {
 

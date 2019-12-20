@@ -2,16 +2,16 @@
 
 #include <iostream>
 
-#include "takatori/scalar/expression.h"
+#include <takatori/scalar/expression.h>
 
-#include "takatori/descriptor/variable.h"
+#include <takatori/descriptor/variable.h>
 
-#include "takatori/tree/tree_element_util.h"
-#include "takatori/tree/tree_element_forward.h"
+#include <takatori/tree/tree_element_util.h>
+#include <takatori/tree/tree_element_forward.h>
 
-#include "takatori/util/clonable.h"
-#include "takatori/util/object_creator.h"
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/clonable.h>
+#include <takatori/util/object_creator.h>
+#include <takatori/util/optional_ptr.h>
 
 namespace takatori::scalar::details {
 

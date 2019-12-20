@@ -4,11 +4,11 @@
 #include <initializer_list>
 #include <vector>
 
-#include "takatori/descriptor/relation.h"
+#include <takatori/descriptor/relation.h>
 
 #include "mapping_element.h"
 
-#include "takatori/util/object_creator.h"
+#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::details {
 

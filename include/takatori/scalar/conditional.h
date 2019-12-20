@@ -9,13 +9,13 @@
 #include "expression.h"
 #include "expression_kind.h"
 #include "details/conditional_alternative.h"
-#include "takatori/tree/tree_fragment_vector.h"
+#include <takatori/tree/tree_fragment_vector.h>
 
-#include "takatori/util/object_creator.h"
-#include "takatori/util/optional_ptr.h"
-#include "takatori/util/rvalue_ptr.h"
-#include "takatori/util/rvalue_reference_wrapper.h"
-#include "takatori/util/meta_type.h"
+#include <takatori/util/object_creator.h>
+#include <takatori/util/optional_ptr.h>
+#include <takatori/util/rvalue_ptr.h>
+#include <takatori/util/rvalue_reference_wrapper.h>
+#include <takatori/util/meta_type.h>
 
 namespace takatori::scalar {
 

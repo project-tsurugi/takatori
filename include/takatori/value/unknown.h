@@ -4,7 +4,7 @@
 #include "simple_value.h"
 #include "unknown_kind.h"
 
-#include "takatori/util/meta_type.h"
+#include <takatori/util/meta_type.h>
 
 namespace takatori::value {
 

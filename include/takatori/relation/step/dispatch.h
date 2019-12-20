@@ -27,7 +27,7 @@
 #include "take_cogroup.h"
 #include "offer.h"
 
-#include "takatori/util/callback.h"
+#include <takatori/util/callback.h>
 
 namespace takatori::relation::step {
 

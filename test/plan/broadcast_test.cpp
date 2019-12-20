@@ -1,10 +1,10 @@
-#include "takatori/plan/broadcast.h"
+#include <takatori/plan/broadcast.h>
 
 #include <gtest/gtest.h>
 
 #include "test_utils.h"
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::plan {
 

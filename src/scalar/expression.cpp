@@ -1,6 +1,6 @@
-#include "takatori/scalar/expression.h"
+#include <takatori/scalar/expression.h>
 
-#include "takatori/util/downcast.h"
+#include <takatori/util/downcast.h>
 
 namespace takatori::scalar {
 

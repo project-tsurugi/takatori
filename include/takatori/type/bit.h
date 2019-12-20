@@ -6,7 +6,7 @@
 #include "data.h"
 #include "varying.h"
 
-#include "takatori/util/meta_type.h"
+#include <takatori/util/meta_type.h>
 
 namespace takatori::type {
 

@@ -1,4 +1,4 @@
-#include "takatori/util/standard_memory_resource.h"
+#include <takatori/util/standard_memory_resource.h>
 
 #include <gtest/gtest.h>
 

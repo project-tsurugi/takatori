@@ -1,8 +1,8 @@
-#include "takatori/scalar/details/conditional_alternative.h"
-#include "takatori/scalar/conditional.h"
+#include <takatori/scalar/details/conditional_alternative.h>
+#include <takatori/scalar/conditional.h>
 
-#include "takatori/tree/tree_element_util.h"
-#include "takatori/tree/tree_element_forward.h"
+#include <takatori/tree/tree_element_util.h>
+#include <takatori/tree/tree_element_forward.h>
 
 namespace takatori::scalar::details {
 

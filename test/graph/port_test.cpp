@@ -1,10 +1,10 @@
-#include "takatori/graph/port.h"
+#include <takatori/graph/port.h>
 
 #include <gtest/gtest.h>
 
 #include "simple_vertex.h"
 
-#include "takatori/graph/graph.h"
+#include <takatori/graph/graph.h>
 
 namespace takatori::graph {
 

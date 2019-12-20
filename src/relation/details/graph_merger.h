@@ -2,10 +2,10 @@
 
 #include <unordered_map>
 
-#include "takatori/relation/expression.h"
+#include <takatori/relation/expression.h>
 
-#include "takatori/graph/graph.h"
-#include "takatori/graph/port.h"
+#include <takatori/graph/graph.h>
+#include <takatori/graph/port.h>
 
 namespace takatori::relation::details {
 

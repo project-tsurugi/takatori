@@ -1,4 +1,4 @@
-#include "takatori/scalar/conditional.h"
+#include <takatori/scalar/conditional.h>
 
 #include <type_traits>
 
@@ -6,7 +6,7 @@
 
 #include "test_utils.h"
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::scalar {
 

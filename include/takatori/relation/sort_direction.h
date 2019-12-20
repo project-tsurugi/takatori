@@ -6,7 +6,7 @@
 
 #include <cstdlib>
 
-#include "takatori/util/enum_tag.h"
+#include <takatori/util/enum_tag.h>
 
 namespace takatori::relation {
 

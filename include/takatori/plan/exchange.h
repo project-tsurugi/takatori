@@ -7,11 +7,11 @@
 #include "step.h"
 #include "step_kind.h"
 
-#include "takatori/descriptor/variable.h"
+#include <takatori/descriptor/variable.h>
 
-#include "takatori/util/object_creator.h"
-#include "takatori/util/reference_vector.h"
-#include "takatori/util/sequence_view.h"
+#include <takatori/util/object_creator.h>
+#include <takatori/util/reference_vector.h>
+#include <takatori/util/sequence_view.h>
 
 namespace takatori::plan {
 

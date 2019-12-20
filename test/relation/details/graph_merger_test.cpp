@@ -4,11 +4,11 @@
 
 #include "../test_utils.h"
 
-#include "takatori/relation/filter.h"
-#include "takatori/relation/buffer.h"
-#include "takatori/relation/intermediate/union.h"
+#include <takatori/relation/filter.h>
+#include <takatori/relation/buffer.h>
+#include <takatori/relation/intermediate/union.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::relation::details {
 

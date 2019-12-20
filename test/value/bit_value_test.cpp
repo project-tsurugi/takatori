@@ -1,8 +1,8 @@
-#include "takatori/value/bit.h"
+#include <takatori/value/bit.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::value {
 

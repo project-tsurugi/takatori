@@ -5,7 +5,7 @@
 
 #include "../sort_direction.h"
 
-#include "takatori/descriptor/variable.h"
+#include <takatori/descriptor/variable.h>
 
 namespace takatori::relation::details {
 

@@ -1,9 +1,9 @@
-#include "takatori/relation/details/aggregate_element.h"
+#include <takatori/relation/details/aggregate_element.h>
 
 #include <utility>
 
-#include "takatori/util/hash.h"
-#include "takatori/util/vector_print_support.h"
+#include <takatori/util/hash.h>
+#include <takatori/util/vector_print_support.h>
 
 namespace takatori::relation::details {
 

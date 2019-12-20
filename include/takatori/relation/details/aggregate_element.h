@@ -4,10 +4,10 @@
 #include <initializer_list>
 #include <vector>
 
-#include "takatori/descriptor/aggregate_function.h"
-#include "takatori/descriptor/variable.h"
+#include <takatori/descriptor/aggregate_function.h>
+#include <takatori/descriptor/variable.h>
 
-#include "takatori/util/object_creator.h"
+#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::details {
 

@@ -1,4 +1,4 @@
-#include "takatori/datetime/date_interval.h"
+#include <takatori/datetime/date_interval.h>
 
 #include <gtest/gtest.h>
 

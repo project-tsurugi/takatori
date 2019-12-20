@@ -1,8 +1,8 @@
-#include "takatori/relation/intermediate/escape.h"
+#include <takatori/relation/intermediate/escape.h>
 
-#include "takatori/util/downcast.h"
-#include "takatori/util/vector_print_support.h"
-#include "takatori/util/pair_print_support.h"
+#include <takatori/util/downcast.h>
+#include <takatori/util/vector_print_support.h>
+#include <takatori/util/pair_print_support.h>
 
 namespace takatori::relation::intermediate {
 

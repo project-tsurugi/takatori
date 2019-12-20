@@ -1,4 +1,4 @@
-#include "takatori/relation/expression.h"
+#include <takatori/relation/expression.h>
 
 #include "details/graph_merger.h"
 

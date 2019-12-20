@@ -1,8 +1,8 @@
-#include "takatori/type/time_of_day.h"
+#include <takatori/type/time_of_day.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 #include "test_utils.h"
 

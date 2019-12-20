@@ -1,4 +1,4 @@
-#include "takatori/datetime/time_point.h"
+#include <takatori/datetime/time_point.h>
 
 #include <gtest/gtest.h>
 

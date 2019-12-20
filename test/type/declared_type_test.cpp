@@ -1,9 +1,9 @@
-#include "takatori/type/declared.h"
+#include <takatori/type/declared.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
-#include "takatori/util/hash.h"
+#include <takatori/util/clonable.h>
+#include <takatori/util/hash.h>
 
 #include "test_utils.h"
 

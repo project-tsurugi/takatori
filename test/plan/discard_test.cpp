@@ -1,8 +1,8 @@
-#include "takatori/plan/discard.h"
+#include <takatori/plan/discard.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::plan {
 

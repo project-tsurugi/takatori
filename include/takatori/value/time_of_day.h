@@ -5,10 +5,10 @@
 #include "value_kind.h"
 #include "simple_value.h"
 
-#include "takatori/datetime/time_of_day.h"
+#include <takatori/datetime/time_of_day.h>
 
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
 
 namespace takatori::value {
 

@@ -14,7 +14,7 @@
 #include "broadcast.h"
 #include "discard.h"
 
-#include "takatori/util/callback.h"
+#include <takatori/util/callback.h>
 
 namespace takatori::plan {
 

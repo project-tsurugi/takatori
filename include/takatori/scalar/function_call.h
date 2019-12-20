@@ -8,13 +8,13 @@
 #include "expression.h"
 #include "expression_kind.h"
 
-#include "takatori/tree/tree_element_vector.h"
-#include "takatori/descriptor/function.h"
+#include <takatori/tree/tree_element_vector.h>
+#include <takatori/descriptor/function.h>
 
-#include "takatori/util/meta_type.h"
-#include "takatori/util/object_creator.h"
-#include "takatori/util/reference_vector.h"
-#include "takatori/util/rvalue_reference_wrapper.h"
+#include <takatori/util/meta_type.h>
+#include <takatori/util/object_creator.h>
+#include <takatori/util/reference_vector.h>
+#include <takatori/util/rvalue_reference_wrapper.h>
 
 namespace takatori::scalar {
 

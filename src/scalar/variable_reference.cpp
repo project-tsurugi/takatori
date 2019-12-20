@@ -1,6 +1,6 @@
-#include "takatori/scalar/variable_reference.h"
+#include <takatori/scalar/variable_reference.h>
 
-#include "takatori/util/downcast.h"
+#include <takatori/util/downcast.h>
 
 namespace takatori::scalar {
 

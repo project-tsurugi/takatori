@@ -1,7 +1,7 @@
-#include "takatori/relation/intermediate/distinct.h"
+#include <takatori/relation/intermediate/distinct.h>
 
-#include "takatori/util/downcast.h"
-#include "takatori/util/vector_print_support.h"
+#include <takatori/util/downcast.h>
+#include <takatori/util/vector_print_support.h>
 
 namespace takatori::relation::intermediate {
 

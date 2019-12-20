@@ -1,4 +1,4 @@
-#include "takatori/util/sequence_view.h"
+#include <takatori/util/sequence_view.h>
 
 #include <array>
 #include <vector>

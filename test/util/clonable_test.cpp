@@ -1,12 +1,12 @@
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 #include <functional>
 #include <string>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/rvalue_ptr.h"
-#include "takatori/util/rvalue_reference_wrapper.h"
+#include <takatori/util/rvalue_ptr.h>
+#include <takatori/util/rvalue_reference_wrapper.h>
 
 namespace takatori::util {
 

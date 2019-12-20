@@ -1,6 +1,6 @@
-#include "takatori/type/time_of_day.h"
+#include <takatori/type/time_of_day.h>
 
-#include "takatori/util/downcast.h"
+#include <takatori/util/downcast.h>
 
 namespace takatori::type {
 

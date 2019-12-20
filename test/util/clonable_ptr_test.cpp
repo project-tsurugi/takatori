@@ -1,4 +1,4 @@
-#include "takatori/util/clonable_ptr.h"
+#include <takatori/util/clonable_ptr.h>
 
 #include <memory>
 #include <string>
@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/pointer_traits.h"
+#include <takatori/util/pointer_traits.h>
 
 namespace takatori::util {
 

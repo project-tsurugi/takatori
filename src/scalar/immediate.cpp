@@ -1,7 +1,7 @@
-#include "takatori/scalar/immediate.h"
+#include <takatori/scalar/immediate.h>
 
-#include "takatori/util/clonable.h"
-#include "takatori/util/downcast.h"
+#include <takatori/util/clonable.h>
+#include <takatori/util/downcast.h>
 
 namespace takatori::scalar {
 

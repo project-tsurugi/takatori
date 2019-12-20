@@ -6,7 +6,7 @@
 #include "date_interval.h"
 #include "time_interval.h"
 
-#include "takatori/util/hash.h"
+#include <takatori/util/hash.h>
 
 namespace takatori::datetime {
 

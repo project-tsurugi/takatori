@@ -1,4 +1,4 @@
-#include "takatori/util/infect_qualifier.h"
+#include <takatori/util/infect_qualifier.h>
 
 #include <gtest/gtest.h>
 

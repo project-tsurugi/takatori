@@ -3,7 +3,7 @@
 #include "data.h"
 #include "type_kind.h"
 
-#include "takatori/util/downcast.h"
+#include <takatori/util/downcast.h>
 
 namespace takatori::type {
 

@@ -5,7 +5,7 @@
 #include "type_kind.h"
 #include "data.h"
 
-#include "takatori/util/meta_type.h"
+#include <takatori/util/meta_type.h>
 
 namespace takatori::type {
 

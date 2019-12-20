@@ -1,7 +1,7 @@
-#include "takatori/relation/buffer.h"
+#include <takatori/relation/buffer.h>
 
-#include "takatori/util/clonable.h"
-#include "takatori/util/downcast.h"
+#include <takatori/util/clonable.h>
+#include <takatori/util/downcast.h>
 
 namespace takatori::relation {
 

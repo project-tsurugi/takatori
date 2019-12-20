@@ -3,7 +3,7 @@
 #include "tree_fragment_traits.h"
 #include "tree_element_util.h"
 
-#include "takatori/util/reference_vector.h"
+#include <takatori/util/reference_vector.h>
 
 namespace takatori::tree {
 

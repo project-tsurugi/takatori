@@ -1,11 +1,11 @@
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/optional_ptr.h>
 
 #include <functional>
 #include <string>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/pointer_traits.h"
+#include <takatori/util/pointer_traits.h>
 
 namespace takatori::util {
 

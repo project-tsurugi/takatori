@@ -1,4 +1,4 @@
-#include "takatori/plan/aggregate.h"
+#include <takatori/plan/aggregate.h>
 
 #include <algorithm>
 
@@ -6,7 +6,7 @@
 
 #include "test_utils.h"
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::plan {
 

@@ -1,11 +1,11 @@
-#include "takatori/type/simple_type.h"
-#include "takatori/type/int.h"
-#include "takatori/type/float.h"
-#include "takatori/type/unknown.h"
+#include <takatori/type/simple_type.h>
+#include <takatori/type/int.h>
+#include <takatori/type/float.h>
+#include <takatori/type/unknown.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/util/clonable.h"
+#include <takatori/util/clonable.h>
 
 namespace takatori::type {
 

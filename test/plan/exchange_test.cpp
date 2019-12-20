@@ -1,11 +1,11 @@
-#include "takatori/plan/exchange.h"
+#include <takatori/plan/exchange.h>
 
 #include <gtest/gtest.h>
 
-#include "takatori/plan/process.h"
-#include "takatori/plan/discard.h"
+#include <takatori/plan/process.h>
+#include <takatori/plan/discard.h>
 
-#include "takatori/relation/step/limit.h"
+#include <takatori/relation/step/limit.h>
 
 namespace takatori::plan {
 

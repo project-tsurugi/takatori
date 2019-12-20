@@ -7,9 +7,9 @@
 
 #include "descriptor_kind.h"
 
-#include "takatori/util/hash.h"
-#include "takatori/util/object.h"
-#include "takatori/util/optional_ptr.h"
+#include <takatori/util/hash.h>
+#include <takatori/util/object.h>
+#include <takatori/util/optional_ptr.h>
 
 namespace takatori::descriptor {
 

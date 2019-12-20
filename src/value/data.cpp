@@ -1,4 +1,4 @@
-#include "takatori/value/data.h"
+#include <takatori/value/data.h>
 
 namespace takatori::value {
 
