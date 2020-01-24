@@ -1,9 +1,8 @@
 #include <takatori/relation/scan.h>
 
-#include <takatori/tree/tree_element_forward.h>
-
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
+#include <takatori/util/optional_print_support.h>
 #include <takatori/util/vector_print_support.h>
 
 namespace takatori::relation {
@@ -13,24 +12,28 @@ scan::scan(
         std::vector<column, util::object_allocator<column>> columns,
         endpoint lower,
         endpoint upper,
+        std::optional<std::size_t> limit,
         util::object_creator creator) noexcept
     : output_(*this, 0, creator)
     , source_(std::move(source))
     , columns_(std::move(columns))
     , lower_(tree::bless_element(*this, std::move(lower)))
     , upper_(tree::bless_element(*this, std::move(upper)))
+    , limit_(std::move(limit))
 {}
 
 scan::scan(
         descriptor::relation source,
         std::initializer_list<util::rvalue_reference_wrapper<column>> columns,
         endpoint lower,
-        endpoint upper)
+        endpoint upper,
+        std::optional<std::size_t> limit)
     : scan(
             std::move(source),
             { columns.begin(), columns.end() },
             std::move(lower),
-            std::move(upper))
+            std::move(upper),
+            std::move(limit))
 {}
 
 scan::scan(scan const& other, util::object_creator creator)
@@ -39,6 +42,7 @@ scan::scan(scan const& other, util::object_creator creator)
             { other.columns_, creator.allocator<column>() },
             endpoint { other.lower_, creator },
             endpoint { other.upper_, creator },
+            other.limit_,
             creator)
 {}
 
@@ -48,6 +52,7 @@ scan::scan(scan&& other, util::object_creator creator)
             { std::move(other.columns_), creator.allocator<column>() },
             endpoint { std::move(other.lower_), creator },
             endpoint { std::move(other.upper_), creator },
+            std::move(other.limit_),
             creator)
 {}
 
@@ -120,11 +125,21 @@ scan::endpoint const& scan::upper() const noexcept {
     return upper_;
 }
 
+std::optional<std::size_t> const& scan::limit() const noexcept {
+    return limit_;
+}
+
+scan& scan::limit(std::optional<std::size_t> limit) noexcept {
+    limit_ = std::move(limit);
+    return *this;
+}
+
 bool operator==(scan const& a, scan const& b) noexcept {
     return a.source() == b.source()
         && a.columns() == b.columns()
         && a.lower() == b.lower()
-        && a.upper() == b.upper();
+        && a.upper() == b.upper()
+        && a.limit() == b.limit();
 }
 
 bool operator!=(scan const& a, scan const& b) noexcept {
@@ -136,7 +151,8 @@ std::ostream& operator<<(std::ostream& out, scan const& value) {
                << "source=" << value.source() << ", "
                << "columns=" << util::print_support { value.columns() } << ", "
                << "lower=" << value.lower() << ", "
-               << "upper=" << value.upper() << ")";
+               << "upper=" << value.upper() << ", "
+               << "limit=" << util::print_support { value.limit() } << ")";
 }
 
 bool scan::equals(expression const& other) const noexcept {

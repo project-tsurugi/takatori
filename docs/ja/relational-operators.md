@@ -274,6 +274,7 @@ SQLの処理にはこのグループ表をもとにしたほうがやりやす�
         * `prefixed_exclusive` - 端点及びそのサブキーを含まない
     * `upper?` - キー範囲の上限
       * `lower` と同一の構造
+    * `limit?` - 最大件数
   * その他の特性
     * `keys` によって指定する列は、対象リレーションのキー全体と一致するか、またはその接頭辞でなければならない
     * `{lower.upper}.keys.variable` によって指定する列は、対象のキーの接頭辞と一致しなければならない
@@ -350,6 +351,7 @@ notes:
     * `join_kind=full_outer` は選択不可
     * `{lower,upper}.keys.column` によって指定する列は、対象のキーの接頭辞と一致しなければならない
     * `join_kind={semi,anti}` の場合、 `columns.destination` の列は実際には定義されない
+    * `scan` にあった `limit` はセマンティクスが複雑になるため不採用
 
 ----
 notes:

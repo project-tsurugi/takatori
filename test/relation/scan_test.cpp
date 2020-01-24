@@ -70,6 +70,7 @@ TEST_F(scan_test, simple) {
         }
         EXPECT_EQ(b.kind(), endpoint_kind::exclusive);
     }
+    EXPECT_EQ(expr.limit(), std::nullopt);
 
     {
         auto p = expr.input_ports();
@@ -113,6 +114,23 @@ TEST_F(scan_test, full) {
         ASSERT_EQ(b.keys().size(), 0);
         EXPECT_EQ(b.kind(), endpoint_kind::unbound);
     }
+}
+
+TEST_F(scan_test, limit) {
+    scan expr {
+            tabledesc("T"),
+            {
+                    scan::column {
+                            columndesc("C1"),
+                            vardesc(1),
+                    },
+            },
+            {},
+            {},
+            100
+    };
+
+    EXPECT_EQ(expr.limit(), 100);
 }
 
 TEST_F(scan_test, multiple) {
@@ -247,6 +265,7 @@ TEST_F(scan_test, clone) {
                     },
                     endpoint_kind::exclusive,
             },
+            100,
     };
 
     auto copy = util::clone_unique(expr);
@@ -277,6 +296,7 @@ TEST_F(scan_test, clone_move) {
                     },
                     endpoint_kind::exclusive,
             },
+            100,
     };
 
     auto copy = util::clone_unique(expr);
@@ -311,6 +331,7 @@ TEST_F(scan_test, output) {
                     },
                     endpoint_kind::exclusive,
             },
+            100,
     };
 
     std::cout << expr << std::endl;

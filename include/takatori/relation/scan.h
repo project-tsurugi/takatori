@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <optional>
 #include <vector>
 
 #include "expression.h"
@@ -41,6 +42,7 @@ public:
      * @param columns the target columns to scan
      * @param lower the lower end-point specification
      * @param upper the upper end-point specification
+     * @param limit the maximum number of output records
      * @param creator the object creator for internal elements
      */
     explicit scan(
@@ -48,6 +50,7 @@ public:
             std::vector<column, util::object_allocator<column>> columns,
             endpoint lower,
             endpoint upper,
+            std::optional<std::size_t> limit,
             util::object_creator creator = {}) noexcept;
 
     /**
@@ -56,13 +59,15 @@ public:
      * @param columns the target columns to scan
      * @param lower the lower end-point specification
      * @param upper the upper end-point specification
+     * @param limit the maximum number of output records
      * @attention this may take copies of arguments
      */
     explicit scan(
             descriptor::relation source,
             std::initializer_list<util::rvalue_reference_wrapper<column>> columns,
             endpoint lower = {},
-            endpoint upper = {});
+            endpoint upper = {},
+            std::optional<std::size_t> limit = {});
 
     /**
      * @brief creates a new object.
@@ -136,6 +141,20 @@ public:
     endpoint const& upper() const noexcept;
 
     /**
+     * @brief returns the maximum number of output records.
+     * @return the maximum number of output records
+     * @return empty if it is unlimited
+     */
+    std::optional<std::size_t> const& limit() const noexcept;
+
+    /**
+     * @brief sets the maximum number of output records.
+     * @param limit the maximum number
+     * @return this
+     */
+    scan& limit(std::optional<std::size_t> limit) noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
@@ -173,6 +192,7 @@ private:
     std::vector<column, util::object_allocator<column>> columns_;
     endpoint lower_;
     endpoint upper_;
+    std::optional<std::size_t> limit_;
 };
 
 /**
