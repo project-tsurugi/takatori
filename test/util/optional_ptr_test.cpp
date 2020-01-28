@@ -230,7 +230,7 @@ TEST_F(optional_reference_test, iter_const) {
 TEST_F(optional_reference_test, invoke) {
     std::function<int(int)> f = [](auto x) { return x + 1; };
     optional_ptr ref {f };
-    EXPECT_EQ(f(100), 101);
+    EXPECT_EQ(ref(100), 101);
 }
 
 TEST_F(optional_reference_test, less) {
@@ -255,7 +255,7 @@ TEST_F(optional_reference_test, less) {
 TEST_F(optional_reference_test, static_cast) {
     Sub x;
     optional_ptr<Sub> subref {x };
-    auto baseref = static_cast<optional_ptr<Sub>>(subref);
+    auto baseref = static_cast<optional_ptr<Base>>(subref);
     EXPECT_EQ(dynamic_cast<Sub*>(baseref.get()), &x);
 }
 
