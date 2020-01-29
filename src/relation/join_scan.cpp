@@ -7,6 +7,8 @@
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
 
+#include <takatori/util/vector_print_support.h>
+
 namespace takatori::relation {
 
 join_scan::join_scan(
