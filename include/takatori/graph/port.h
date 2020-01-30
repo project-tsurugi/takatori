@@ -98,7 +98,7 @@ public:
     /**
      * @brief returns the opposite port.
      * @return the opposite port
-     * @return emity if this port is not connected
+     * @return empty if this port is not connected
      */
     util::optional_ptr<opposite_type> opposite() noexcept;
 
