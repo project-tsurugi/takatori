@@ -1562,7 +1562,7 @@ notes:
     * `match_kind` - 照合の種類
       * `like` - `LIKE` 照合
       * `similar` - `SIMILAR TO` 照合
-    * `match` - 照合される値
+    * `input` - 照合される値
     * `pattern` - 照合パターン
     * `escape` - 照合パターンのエスケープ文字
   * 事前条件 -  `match`, `pattern`, `escape` がいずれも文字列型分類であること
@@ -1586,22 +1586,22 @@ notes:
     * `alternatives+` - 条件の一覧
       * `condition` - 条件式
       * `body` - 条件が成立する場合に評価する式
-    * `else?` - いずれも条件が成立しない場合に評価する式
+    * `default_expression?` - いずれも条件が成立しない場合に評価する式
   * 事前条件
     * `alternatives.condition` は真偽値型分類であること
-    * `else` が存在しない場合、 `alternatives.body` は単一化変換を行えること
-    * `else` が存在する場合、 `alternatives.body` と `else` は単一化変換を行えること
+    * `default_expression` が存在しない場合、 `alternatives.body` は単一化変換を行えること
+    * `default_expression` が存在する場合、 `alternatives.body` と `default_expression` は単一化変換を行えること
   * 型変換
     * 条件部
       * `alternatives.condition` をそれぞれ単項真偽値昇格
     * 結果部
-      * `else` がない場合 - `alternatives.body` の単一化変換
-      * `else` がある場合 - `alternatives.body`, `else` の単一化変換
+      * `default_expression` がない場合 - `alternatives.body` の単一化変換
+      * `default_expression` がある場合 - `alternatives.body`, `default_expression` の単一化変換
   * 結果型 - 型変換の結果
   * 評価概要
     * `alternatives.condition` が `true` となるもののうち、初めに出現するものに対応する `alternatives.body` の評価結果
-    * `alternatives.condition` が `true` となるものがなく、かつ `else` が存在する - `else` の評価結果
-    * `alternatives.condition` が `true` となるものがなく、かつ `else` が存在しない - 特殊値
+    * `alternatives.condition` が `true` となるものがなく、かつ `default_expression` が存在する - `default_expression` の評価結果
+    * `alternatives.condition` が `true` となるものがなく、かつ `default_expression` が存在しない - 特殊値
   * 特性
     * 定数式可
     * 部分式の評価を短絡化する
