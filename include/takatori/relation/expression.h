@@ -4,6 +4,8 @@
 
 #include "expression_kind.h"
 
+#include <takatori/document/region.h>
+
 #include <takatori/graph/graph.h>
 #include <takatori/graph/port.h>
 
@@ -102,6 +104,15 @@ public:
     virtual expression* clone(util::object_creator creator) && = 0;
 
     /**
+     * @brief returns the document region of this element.
+     * @return the document region
+     */
+    document::region& region() noexcept;
+
+    /// @copydoc region()
+    document::region const& region() const noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
@@ -164,6 +175,7 @@ protected:
 
 private:
     graph_type* owner_ {};
+    document::region region_ {};
 };
 
 /**

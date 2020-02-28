@@ -7,6 +7,8 @@
 
 #include "descriptor_kind.h"
 
+#include <takatori/document/region.h>
+
 #include <takatori/util/hash.h>
 #include <takatori/util/object.h>
 #include <takatori/util/optional_ptr.h>
@@ -49,8 +51,18 @@ public:
      */
     std::shared_ptr<util::object> const& shared_entity() const noexcept { return entity_; }
 
+    /**
+     * @brief returns the document region of this element.
+     * @return the document region
+     */
+    document::region& region() noexcept { return region_; }
+
+    /// @copydoc region()
+    document::region const& region() const noexcept { return region_; }
+
 private:
     std::shared_ptr<util::object> entity_;
+    document::region region_ {};
 };
 
 /**

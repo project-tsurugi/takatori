@@ -343,7 +343,7 @@ inline void swap(optional_ptr<T>& a, optional_ptr<T>& b) noexcept { a.swap(b); }
  * @return false otherwise
  */
 template<class T, class U>
-inline bool operator==(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept {
+inline constexpr bool operator==(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept {
     if (!a) return b.empty();
     if (!b) return false;
     return *a == *b;
@@ -351,13 +351,13 @@ inline bool operator==(optional_ptr<T> const& a, optional_ptr<U> const& b) noexc
 
 /// @copydoc operator==()
 template<class T, class U>
-inline bool operator==(optional_ptr<T> const& a, U const& b) noexcept {
+inline constexpr bool operator==(optional_ptr<T> const& a, U const& b) noexcept {
     return a && *a == b;
 }
 
 /// @copydoc operator==()
 template<class T, class U>
-inline bool operator==(T const& a, optional_ptr<U> const& b) noexcept { return b == a; }
+inline constexpr bool operator==(T const& a, optional_ptr<U> const& b) noexcept { return b == a; }
 
 /**
  * @brief returns whether or not the reference is absent.
@@ -393,15 +393,15 @@ inline constexpr bool operator==(std::nullptr_t, optional_ptr<T> const& ref) noe
  * @return false otherwise
  */
 template<class T, class U>
-inline bool operator!=(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return !(a == b); }
+inline constexpr bool operator!=(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return !(a == b); }
 
 /// @copydoc operator!=()
 template<class T, class U>
-inline bool operator!=(optional_ptr<T> const& a, U const& b) noexcept { return !(a == b); }
+inline constexpr bool operator!=(optional_ptr<T> const& a, U const& b) noexcept { return !(a == b); }
 
 /// @copydoc operator!=()
 template<class T, class U>
-inline bool operator!=(T const& a, optional_ptr<U> const& b) noexcept { return !(a == b); }
+inline constexpr bool operator!=(T const& a, optional_ptr<U> const& b) noexcept { return !(a == b); }
 
 /**
  * @brief returns whether or not the reference is present.
@@ -438,7 +438,7 @@ inline constexpr bool operator!=(std::nullptr_t, optional_ptr<T> const& ref) noe
  * @return false otherwise
  */
 template<class T, class U>
-inline bool operator<(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept {
+inline constexpr bool operator<(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept {
     if (!a) return b.has_value();
     if (!b) return false;
     return *a < *b;
@@ -446,11 +446,11 @@ inline bool operator<(optional_ptr<T> const& a, optional_ptr<U> const& b) noexce
 
 /// @copydoc operator<()
 template<class T, class U>
-inline bool operator<(optional_ptr<T> const& a, U const& b) noexcept { return a ? *a < b : true; }
+inline constexpr bool operator<(optional_ptr<T> const& a, U const& b) noexcept { return a ? *a < b : true; }
 
 /// @copydoc operator<()
 template<class T, class U>
-inline bool operator<(T const& a, optional_ptr<U> const& b) noexcept { return b ? a < *b : false; }
+inline constexpr bool operator<(T const& a, optional_ptr<U> const& b) noexcept { return b ? a < *b : false; }
 
 /**
  * @brief returns whether or not the first reference is greater than the second one.
@@ -463,15 +463,15 @@ inline bool operator<(T const& a, optional_ptr<U> const& b) noexcept { return b 
  * @return false otherwise
  */
 template<class T, class U>
-inline bool operator>(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return b < a; }
+inline constexpr bool operator>(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return b < a; }
 
 /// @copydoc operator>()
 template<class T, class U>
-inline bool operator>(optional_ptr<T> const& a, U const& b) noexcept { return b < a; }
+inline constexpr bool operator>(optional_ptr<T> const& a, U const& b) noexcept { return b < a; }
 
 /// @copydoc operator>()
 template<class T, class U>
-inline bool operator>(T const& a, optional_ptr<U> const& b) noexcept { return b < a; }
+inline constexpr bool operator>(T const& a, optional_ptr<U> const& b) noexcept { return b < a; }
 
 /**
  * @brief returns whether or not the first reference is less than or equal to the second one.
@@ -485,15 +485,15 @@ inline bool operator>(T const& a, optional_ptr<U> const& b) noexcept { return b 
  * @return false otherwise
  */
 template<class T, class U>
-inline bool operator<=(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return !(b < a); }
+inline constexpr bool operator<=(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return !(b < a); }
 
 /// @copydoc operator<=()
 template<class T, class U>
-inline bool operator<=(optional_ptr<T> const& a, U const& b) noexcept { return !(b < a); }
+inline constexpr bool operator<=(optional_ptr<T> const& a, U const& b) noexcept { return !(b < a); }
 
 /// @copydoc operator<=()
 template<class T, class U>
-inline bool operator<=(T const& a, optional_ptr<U> const& b) noexcept { return !(b < a); }
+inline constexpr bool operator<=(T const& a, optional_ptr<U> const& b) noexcept { return !(b < a); }
 
 /**
  * @brief returns whether or not the first reference is greater than or equal to the second one.
@@ -506,15 +506,15 @@ inline bool operator<=(T const& a, optional_ptr<U> const& b) noexcept { return !
  * @return false otherwise
  */
 template<class T, class U>
-inline bool operator>=(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return !(a < b); }
+inline constexpr bool operator>=(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return !(a < b); }
 
 /// @copydoc operator>=()
 template<class T, class U>
-inline bool operator>=(optional_ptr<T> const& a, U const& b) noexcept { return !(a < b); }
+inline constexpr bool operator>=(optional_ptr<T> const& a, U const& b) noexcept { return !(a < b); }
 
 /// @copydoc operator>=()
 template<class T, class U>
-inline bool operator>=(T const& a, optional_ptr<U> const& b) noexcept { return !(a < b); }
+inline constexpr bool operator>=(T const& a, optional_ptr<U> const& b) noexcept { return !(a < b); }
 
 /**
  * @brief converts the reference by dynamic pointer cast.

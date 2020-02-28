@@ -4,6 +4,8 @@
 
 #include "expression_kind.h"
 
+#include <takatori/document/region.h>
+
 #include <takatori/tree/tree_element_base.h>
 
 #include <takatori/util/object_creator.h>
@@ -81,6 +83,15 @@ public:
     util::optional_ptr<expression const> parent_expression() const noexcept;
 
     /**
+     * @brief returns the document region of this element.
+     * @return the document region
+     */
+    document::region& region() noexcept;
+
+    /// @copydoc region()
+    document::region const& region() const noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @param a the first element
      * @param b the second element
@@ -107,7 +118,6 @@ public:
     friend std::ostream& operator<<(std::ostream& out, expression const& value);
 
 protected:
-
     /**
      * @brief returns whether or not this expressions is equivalent to the target one.
      * @param other the target expression
@@ -125,6 +135,7 @@ protected:
 
 private:
     parent_type* parent_ {};
+    document::region region_ {};
 };
 
 } // namespace takatori::scalar

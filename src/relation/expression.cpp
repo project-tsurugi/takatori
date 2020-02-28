@@ -26,6 +26,14 @@ util::optional_ptr<expression::graph_type const> expression::optional_owner() co
     return util::optional_ptr { owner_ };
 }
 
+document::region& expression::region() noexcept {
+    return region_;
+}
+
+document::region const& expression::region() const noexcept {
+    return region_;
+}
+
 void expression::on_join(graph_type* graph) noexcept {
     owner_ = graph;
 }

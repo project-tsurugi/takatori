@@ -124,6 +124,9 @@ add_library(takatori
     plan/broadcast.cpp
     plan/discard.cpp
 
+    # document
+    document/basic_document.cpp
+
     # util
     util/object_creator.cpp
 )

@@ -24,6 +24,14 @@ util::optional_ptr<expression const> expression::parent_expression() const noexc
     return util::optional_ptr { util::downcast<expression>(parent_element()) };
 }
 
+document::region& expression::region() noexcept {
+    return region_;
+}
+
+document::region const& expression::region() const noexcept {
+    return region_;
+}
+
 bool operator==(expression const& a, expression const& b) noexcept {
     return a.equals(b);
 }
