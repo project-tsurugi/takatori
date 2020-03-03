@@ -59,13 +59,18 @@ public:
     /**
      * @brief creates a new object.
      * @param cursor the cursor of beginning of the iterator
+     * @param extractor the cursor extractor
      */
-    explicit constexpr reference_iterator(cursor_type cursor) noexcept : cursor_(cursor) {}
+    explicit constexpr reference_iterator(cursor_type cursor, extractor_type extractor = {}) noexcept
+        : cursor_(cursor)
+        , extractor_(std::move(extractor))
+    {}
 
     /**
      * @brief creates a new object.
      * @tparam U the extractor type of source iterator
      * @param other the source iterator
+     * @param extractor the cursor extractor
      */
     template<
             class U,
@@ -73,14 +78,17 @@ public:
                     std::is_constructible_v<
                             cursor_type,
                             typename reference_iterator<U>::cursor_type>>>
-    constexpr reference_iterator(reference_iterator<U> other) noexcept : cursor_(other.cursor_) {} // NOLINT
+    constexpr reference_iterator(reference_iterator<U> other, extractor_type extractor = {}) noexcept // NOLINT
+        : cursor_(other.cursor_)
+        , extractor_(extractor)
+    {}
 
     /**
      * @brief returns the value reference where this iterator pointing.
      * @return reference of the current value
      */
     constexpr reference operator*() const noexcept {
-        return extractor_type::get(cursor_);
+        return extractor_.get(cursor_);
     }
 
     /**
@@ -97,7 +105,7 @@ public:
      * @return reference of the target value
      */
     constexpr reference operator[](difference_type offset) const noexcept {
-        return extractor_type::get(extractor_type::advance(cursor_, offset));
+        return extractor_.get(extractor_.advance(cursor_, offset));
     }
 
     /**
@@ -105,7 +113,7 @@ public:
      * @return this
      */
     constexpr iterator_type& operator++() noexcept {
-        cursor_ = extractor_type::advance(cursor_, +1);
+        cursor_ = extractor_.advance(cursor_, +1);
         return *this;
     }
 
@@ -124,7 +132,7 @@ public:
      * @return this
      */
     constexpr iterator_type& operator--() noexcept {
-        cursor_ = extractor_type::advance(cursor_, -1);
+        cursor_ = extractor_.advance(cursor_, -1);
         return *this;
     }
 
@@ -144,7 +152,7 @@ public:
      * @return this
      */
     iterator_type& operator+=(difference_type difference) noexcept {
-        cursor_ = extractor_type::advance(cursor_, difference);
+        cursor_ = extractor_.advance(cursor_, difference);
         return *this;
     }
 
@@ -174,7 +182,7 @@ public:
      * @return this
      */
     iterator_type& operator-=(difference_type difference) noexcept {
-        cursor_ = extractor_type::advance(cursor_, -difference);
+        cursor_ = extractor_.advance(cursor_, -difference);
         return *this;
     }
 
@@ -200,6 +208,7 @@ public:
 
 private:
     cursor_type cursor_;
+    extractor_type extractor_;
 
     template<class U> friend class reference_iterator;
 

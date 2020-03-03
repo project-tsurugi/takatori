@@ -31,7 +31,9 @@ struct smart_pointer_extractor {
      * @param cursor the target cursor
      * @return the reference
      */
-    static constexpr reference get(cursor_type cursor) noexcept { return pointer_traits<smart_pointer>::value(*cursor); }
+    constexpr reference get(cursor_type cursor) const noexcept {
+        return pointer_traits<smart_pointer>::value(*cursor);
+    }
 
     /**
      * @brief advances the cursor
@@ -39,7 +41,9 @@ struct smart_pointer_extractor {
      * @param offset the cursor offset
      * @return the advanced cursor
      */
-    static constexpr cursor_type advance(cursor_type cursor, difference_type offset) noexcept { return cursor + offset; } // NOLINT
+    constexpr cursor_type advance(cursor_type cursor, difference_type offset) const noexcept {
+        return cursor + offset; // NOLINT
+    }
 };
 
 } // namespace takatori::util

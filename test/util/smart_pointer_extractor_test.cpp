@@ -21,23 +21,23 @@ TEST_F(smart_pointer_extractor_test, unique) {
     v.emplace_back(std::make_unique<int>(2));
     v.emplace_back(std::make_unique<int>(3));
 
-    using ext = smart_pointer_extractor<std::unique_ptr<int>>;
+    smart_pointer_extractor<std::unique_ptr<int>> ext;
 
-    ext::cursor_type it = v.data();
-    ext::cursor_type end = ext::advance(it, 3);
+    decltype(ext)::cursor_type it = v.data();
+    decltype(ext)::cursor_type end = ext.advance(it, 3);
 
     ASSERT_NE(it, end);
-    EXPECT_EQ(ext::get(it), 1);
+    EXPECT_EQ(ext.get(it), 1);
 
-    it = ext::advance(it, 1);
+    it = ext.advance(it, 1);
     ASSERT_NE(it, end);
-    EXPECT_EQ(ext::get(it), 2);
+    EXPECT_EQ(ext.get(it), 2);
 
-    it = ext::advance(it, 1);
+    it = ext.advance(it, 1);
     ASSERT_NE(it, end);
-    EXPECT_EQ(ext::get(it), 3);
+    EXPECT_EQ(ext.get(it), 3);
 
-    it = ext::advance(it, 1);
+    it = ext.advance(it, 1);
     EXPECT_EQ(it, end);
 }
 
@@ -47,23 +47,23 @@ TEST_F(smart_pointer_extractor_test, shared) {
     v.emplace_back(std::make_shared<int>(2));
     v.emplace_back(std::make_shared<int>(3));
 
-    using ext = smart_pointer_extractor<std::shared_ptr<int>>;
+    smart_pointer_extractor<std::shared_ptr<int>> ext;
 
-    ext::cursor_type it = v.data();
-    ext::cursor_type end = ext::advance(it, 3);
+    decltype(ext)::cursor_type it = v.data();
+    decltype(ext)::cursor_type end = ext.advance(it, 3);
 
     ASSERT_NE(it, end);
-    EXPECT_EQ(ext::get(it), 1);
+    EXPECT_EQ(ext.get(it), 1);
 
-    it = ext::advance(it, 1);
+    it = ext.advance(it, 1);
     ASSERT_NE(it, end);
-    EXPECT_EQ(ext::get(it), 2);
+    EXPECT_EQ(ext.get(it), 2);
 
-    it = ext::advance(it, 1);
+    it = ext.advance(it, 1);
     ASSERT_NE(it, end);
-    EXPECT_EQ(ext::get(it), 3);
+    EXPECT_EQ(ext.get(it), 3);
 
-    it = ext::advance(it, 1);
+    it = ext.advance(it, 1);
     EXPECT_EQ(it, end);
 }
 

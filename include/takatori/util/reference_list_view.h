@@ -38,29 +38,33 @@ public:
      * @brief creates a new instance.
      * @param first pointer to the first sequence data (inclusive)
      * @param size the number of elements
+     * @param extractor the cursor extractor
      */
-    explicit constexpr reference_list_view(cursor_type first, size_type size) noexcept;
+    explicit constexpr reference_list_view(cursor_type first, size_type size, extractor_type extractor = {}) noexcept;
 
     /**
      * @brief creates a new instance.
      * @param first pointer to the first sequence data (inclusive)
      * @param last pointer to the last sequence data (exclusive)
+     * @param extractor the cursor extractor
      * @attention if first > last, this consider the sequence is empty
      */
-    explicit constexpr reference_list_view(cursor_type first, cursor_type last) noexcept;
+    explicit constexpr reference_list_view(cursor_type first, cursor_type last, extractor_type extractor = {}) noexcept;
 
     /**
      * @brief creates a new instance.
      * @param first iterator of the first sequence data (inclusive)
      * @param last iterator of the last sequence data (exclusive)
+     * @param extractor the cursor extractor
      * @attention if first > last, this consider the sequence is empty
      */
-    explicit constexpr reference_list_view(iterator first, iterator last) noexcept;
+    explicit constexpr reference_list_view(iterator first, iterator last, extractor_type extractor = {}) noexcept;
 
     /**
      * @brief creates a new instance.
      * @tparam Container the container type
      * @param container the container
+     * @param extractor the cursor extractor
      */
     template<
             class Container,
@@ -71,7 +75,7 @@ public:
                     && std::is_convertible_v<
                             decltype(std::declval<Container&>().size()),
                             size_type>>>
-    explicit constexpr reference_list_view(Container& container) noexcept;
+    explicit constexpr reference_list_view(Container& container, extractor_type extractor = {}) noexcept;
 
     /**
      * @brief returns an element at the position.
@@ -143,6 +147,7 @@ public:
 private:
     cursor_type first_;
     cursor_type last_;
+    extractor_type extractor_;
 
     template<class U>
     friend class reference_list_view;
@@ -212,60 +217,75 @@ reference_list_view(Container& container) -> reference_list_view<
 
 template<class T>
 inline constexpr
-reference_list_view<T>::reference_list_view(cursor_type first, reference_list_view::size_type size) noexcept
+reference_list_view<T>::reference_list_view(
+        cursor_type first,
+        size_type size,
+        extractor_type extractor) noexcept
     : first_(first)
-    , last_(extractor_type::advance(first_, static_cast<difference_type>(size)))
+    , last_(extractor.advance(first_, static_cast<difference_type>(size)))
+    , extractor_(std::move(extractor))
 {}
 
 template<class T>
 inline constexpr
-reference_list_view<T>::reference_list_view(cursor_type first, cursor_type last) noexcept
+reference_list_view<T>::reference_list_view(
+        cursor_type first,
+        cursor_type last,
+        extractor_type extractor) noexcept
     : first_(first)
     , last_(last)
+    , extractor_(std::move(extractor))
 {}
 
 template<class Extractor>
-constexpr reference_list_view<Extractor>::reference_list_view(iterator first, iterator last) noexcept
+constexpr reference_list_view<Extractor>::reference_list_view(
+        iterator first,
+        iterator last,
+        extractor_type extractor) noexcept
     : first_(first.cursor_)
     , last_(last.cursor_)
+    , extractor_(std::move(extractor))
 {}
 
 template<class Extractor>
 template<class Container, class>
-constexpr reference_list_view<Extractor>::reference_list_view(Container& container) noexcept
+constexpr reference_list_view<Extractor>::reference_list_view(
+        Container& container,
+        extractor_type extractor) noexcept
     : first_(container.data())
-    , last_(extractor_type::advance(first_, static_cast<difference_type>(container.size())))
+    , last_(extractor.advance(first_, static_cast<difference_type>(container.size())))
+    , extractor_(std::move(extractor))
 {}
 
 template<class T>
 inline constexpr typename reference_list_view<T>::reference
 reference_list_view<T>::at(size_type position) const {
-    auto iter = extractor_type::advance(first_, static_cast<difference_type>(position));
+    auto iter = extractor_.advance(first_, static_cast<difference_type>(position));
     if (iter >= last_) {
         throw std::out_of_range("invalid position");
     }
-    return extractor_type::get(iter);
+    return extractor_.get(iter);
 }
 
 template<class T>
 inline constexpr typename reference_list_view<T>::reference
 reference_list_view<T>::operator[](size_type position) const {
-    auto iter = extractor_type::advance(first_, static_cast<difference_type>(position));
-    return extractor_type::get(iter);
+    auto iter = extractor_.advance(first_, static_cast<difference_type>(position));
+    return extractor_.get(iter);
 }
 
 template<class T>
 inline constexpr typename reference_list_view<T>::reference
 reference_list_view<T>::front() const {
     auto iter = first_;
-    return extractor_type::get(iter);
+    return extractor_.get(iter);
 }
 
 template<class T>
 inline constexpr typename reference_list_view<T>::reference
 reference_list_view<T>::back() const {
-    auto iter = extractor_type::advance(last_, -1);
-    return extractor_type::get(iter);
+    auto iter = extractor_.advance(last_, -1);
+    return extractor_.get(iter);
 }
 
 template<class T>

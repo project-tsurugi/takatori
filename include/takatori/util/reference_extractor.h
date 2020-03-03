@@ -27,7 +27,9 @@ struct pointer_extractor {
      * @param cursor the target cursor
      * @return the reference
      */
-    static constexpr reference get(cursor_type cursor) noexcept { return *cursor; }
+    constexpr reference get(cursor_type cursor) const noexcept {
+        return *cursor;
+    }
 
     /**
      * @brief advances the cursor
@@ -35,7 +37,9 @@ struct pointer_extractor {
      * @param offset the cursor offset
      * @return the advanced cursor
      */
-    static constexpr cursor_type advance(cursor_type cursor, difference_type offset) noexcept { return cursor + offset; } // NOLINT
+    constexpr cursor_type advance(cursor_type cursor, difference_type offset) const noexcept {
+        return cursor + offset; // NOLINT
+    }
 };
 
 /**
@@ -60,7 +64,9 @@ struct double_pointer_extractor {
      * @param cursor the target cursor
      * @return the reference
      */
-    static constexpr reference get(cursor_type cursor) noexcept { return **cursor; }
+    constexpr reference get(cursor_type cursor) const noexcept {
+        return **cursor;
+    }
 
     /**
      * @brief advances the cursor
@@ -68,7 +74,9 @@ struct double_pointer_extractor {
      * @param offset the cursor offset
      * @return the advanced cursor
      */
-    static constexpr cursor_type advance(cursor_type cursor, difference_type offset) noexcept { return cursor + offset; } // NOLINT
+    constexpr cursor_type advance(cursor_type cursor, difference_type offset) const noexcept {
+        return cursor + offset; // NOLINT
+    }
 };
 
 } // namespace takatori::util
