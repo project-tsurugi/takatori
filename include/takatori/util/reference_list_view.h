@@ -305,13 +305,13 @@ reference_list_view<T>::size() const noexcept {
 template<class T>
 inline constexpr typename reference_list_view<T>::iterator
 reference_list_view<T>::begin() const noexcept {
-    return iterator(first_);
+    return iterator(first_, extractor_);
 }
 
 template<class T>
 inline constexpr typename reference_list_view<T>::iterator
 reference_list_view<T>::end() const noexcept {
-    return iterator(last_);
+    return iterator(last_, extractor_);
 }
 
 template<class T>

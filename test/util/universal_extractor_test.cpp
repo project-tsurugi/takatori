@@ -7,21 +7,7 @@
 
 namespace takatori::util {
 
-class universal_extractor_test : public ::testing::Test {
-public:
-    template<class T, class C>
-    static std::function<T&(void*)> getter() {
-        return [](void* cursor) {
-            return **static_cast<C*>(cursor);
-        };
-    }
-    template<class C>
-    static std::function<void*(void*, std::ptrdiff_t)> advancer() {
-        return [](void* cursor, std::ptrdiff_t offset) {
-            return static_cast<void*>(static_cast<C*>(cursor) + offset); // NOLINT
-        };
-    }
-};
+class universal_extractor_test : public ::testing::Test {};
 
 TEST_F(universal_extractor_test, unique) {
     std::vector<std::unique_ptr<int>> v;

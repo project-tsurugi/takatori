@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 
 #include <takatori/util/reference_vector.h>
+#include <takatori/util/universal_extractor.h>
 
 namespace takatori::util {
 
@@ -168,4 +169,32 @@ TEST_F(reference_list_view_test, rbegin_rend) {
     ASSERT_EQ(iter, v.rend());
 }
 
+TEST_F(reference_list_view_test, universal_begin_end) {
+    std::array<int, 3> a { 1, 2, 3 };
+    universal_extractor<int> ext {
+            [](void* cursor) -> int& {
+                return *static_cast<int*>(cursor);
+            },
+            [](void* cursor, std::ptrdiff_t offset) {
+                return static_cast<void*>(static_cast<int*>(cursor) + offset);
+            },
+    };
+
+    reference_list_view<universal_extractor<int>> v { a, ext };
+
+    auto iter = v.begin();
+    ASSERT_NE(iter, v.end());
+    EXPECT_EQ(*iter, 1);
+
+    ++iter;
+    ASSERT_NE(iter, v.end());
+    EXPECT_EQ(*iter, 2);
+
+    ++iter;
+    ASSERT_NE(iter, v.end());
+    EXPECT_EQ(*iter, 3);
+
+    ++iter;
+    ASSERT_EQ(iter, v.end());
+}
 } // namespace takatori::util
