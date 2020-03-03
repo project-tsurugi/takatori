@@ -3,6 +3,7 @@
 #include <iostream>
 #include <utility>
 #include <optional>
+#include <string_view>
 
 #include "document.h"
 
@@ -15,9 +16,6 @@ namespace takatori::document {
  */
 class region {
 public:
-    /// @brief the invalid offset.
-    static inline constexpr std::size_t npos = document::npos;
-
     /**
      * @brief creates a new instance, which represents "unknown region".
      */
@@ -39,6 +37,17 @@ public:
     {}
 
     /**
+     * @brief creates a new instance.
+     * @param source reference to the source document
+     * @param first the beginning position on the document (inclusive)
+     * @param last the ending position on the document (exclusive)
+     */
+    region(
+            document const& source,
+            document::position_type first,
+            document::position_type last = {}) noexcept;
+
+    /**
      * @brief returns the source document.
      * @return the source document
      * @return empty if the region is undefined
@@ -46,6 +55,13 @@ public:
     constexpr util::optional_ptr<document const> source() const noexcept {
         return util::optional_ptr<document const> { source_ };
     }
+
+    /**
+     * @brief return the source contents.
+     * @return the source contents
+     * @return empty if the region is undefined
+     */
+    std::optional<std::string_view> contents() const noexcept;
 
     /**
      * @brief returns the region beginning offset on the source document.
@@ -63,8 +79,8 @@ public:
      * @return empty if it is not defined
      */
     constexpr std::optional<std::size_t> last() const noexcept {
-        if (first_ == npos) return {};
-        return { first_ };
+        if (last_ == npos) return {};
+        return { last_ };
     }
 
     /**
@@ -84,20 +100,14 @@ public:
      * @return the beginning position (inclusive)
      * @return invalid position if it is not defined
      */
-    document::position_type first_position() const noexcept {
-        if (source_ == nullptr || first_ == npos) return {};
-        return source_->position(first_);
-    }
+    document::position_type first_position() const noexcept;
 
     /**
      * @brief returns the region ending position on the source document.
      * @return the ending position (exclusive)
      * @return invalid position if it is not defined
      */
-    std::optional<document::position_type> last_position() const noexcept {
-        if (source_ == nullptr || last_ == npos) return {};
-        return source_->position(last_);
-    }
+    std::optional<document::position_type> last_position() const noexcept;
 
     /**
      * @brief returns whether or not the line number is known.
@@ -112,6 +122,8 @@ private:
     document const* source_ {};
     std::size_t first_ { npos };
     std::size_t last_ { npos };
+
+    static inline constexpr std::size_t npos = document::npos;
 };
 
 /**
@@ -142,19 +154,6 @@ inline constexpr bool operator!=(region const& a, region const& b) noexcept {
  * @param value the target document
  * @return the written output stream
  */
-inline std::ostream& operator<<(std::ostream& out, region const& value) {
-    if (auto source = value.source()) {
-        out << source->location();
-        if (auto first = value.first_position()) {
-            out << ":" << first;
-            if (auto gap = value.gap()) {
-                out << "+" << gap.value();
-            }
-        }
-    } else {
-        out << "(unknown)";
-    }
-    return out;
-}
+std::ostream& operator<<(std::ostream& out, region const& value);
 
 } // namespace takatori::document

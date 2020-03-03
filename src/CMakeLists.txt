@@ -126,6 +126,7 @@ add_library(takatori
 
     # document
     document/basic_document.cpp
+    document/region.cpp
 
     # util
     util/object_creator.cpp

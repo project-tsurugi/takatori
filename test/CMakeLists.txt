@@ -128,6 +128,7 @@ add_test_executable(graph/multiport_test.cpp)
 
 # document models
 add_test_executable(document/basic_document_test.cpp)
+add_test_executable(document/region_test.cpp)
 
 # utilities
 add_test_executable(util/clonable_test.cpp)

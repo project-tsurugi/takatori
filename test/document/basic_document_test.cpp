@@ -62,4 +62,12 @@ TEST_F(basic_document_test, eol) {
     EXPECT_EQ(doc.offset({ 5, 0 }), document::npos);
 }
 
+TEST_F(basic_document_test, output) {
+    std::string location { "testing.sql" };
+    std::string contents { "Hello, world!" };
+    basic_document doc { location, contents, };
+
+    std::cout << doc << std::endl;
+}
+
 } // namespace takatori::document
