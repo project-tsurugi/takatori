@@ -5,15 +5,12 @@ namespace takatori::util {
 /**
  * @brief a tag to distinguish which the operation means "post visit".
  */
-struct post_visit_t {
+struct post_visit {
 
     /**
      * @brief creates a new instance.
      */
-    explicit constexpr post_visit_t() = default;
+    explicit constexpr post_visit() = default;
 };
-
-/// @brief an instance of post_visit_t.
-inline constexpr post_visit_t post_visit;
 
 } // namespace takatori::util

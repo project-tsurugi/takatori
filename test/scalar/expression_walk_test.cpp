@@ -68,7 +68,7 @@ TEST_F(expression_walk_test, immediate) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, immediate const&) {
+        void operator()(post_visit, immediate const&) {
             set(a, 1);
         }
     };
@@ -95,7 +95,7 @@ TEST_F(expression_walk_test, variable_reference) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, variable_reference const&) {
+        void operator()(post_visit, variable_reference const&) {
             set(a, 1);
         }
     };
@@ -121,7 +121,7 @@ TEST_F(expression_walk_test, unary) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, unary const&) {
+        void operator()(post_visit, unary const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {
@@ -152,7 +152,7 @@ TEST_F(expression_walk_test, cast) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, cast const&) {
+        void operator()(post_visit, cast const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {
@@ -184,7 +184,7 @@ TEST_F(expression_walk_test, binary) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, binary const&) {
+        void operator()(post_visit, binary const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {
@@ -216,7 +216,7 @@ TEST_F(expression_walk_test, compare) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, compare const&) {
+        void operator()(post_visit, compare const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {
@@ -248,7 +248,7 @@ TEST_F(expression_walk_test, match) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, match const&) {
+        void operator()(post_visit, match const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {
@@ -281,7 +281,7 @@ TEST_F(expression_walk_test, conditional) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, conditional const&) {
+        void operator()(post_visit, conditional const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {
@@ -316,7 +316,7 @@ TEST_F(expression_walk_test, coalesce) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, coalesce const&) {
+        void operator()(post_visit, coalesce const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {
@@ -350,7 +350,7 @@ TEST_F(expression_walk_test, let) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, let const&) {
+        void operator()(post_visit, let const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {
@@ -385,7 +385,7 @@ TEST_F(expression_walk_test, function_call) {
             set(a, 0);
             return recursive;
         }
-        void operator()(post_visit_t, function_call const&) {
+        void operator()(post_visit, function_call const&) {
             set(a, 1);
         }
         bool operator()(immediate const& expr) {

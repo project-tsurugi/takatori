@@ -145,8 +145,8 @@ private:
 
     template<class Callback, class Expr, class... Args>
     void do_post(Callback&& callback, Expr&& expr, Args&&... args) {
-        if constexpr (std::is_invocable_v<Callback, util::post_visit_t, Expr, Args...>) {
-            std::invoke(std::forward<Callback>(callback), util::post_visit, std::forward<Expr>(expr), std::forward<Args>(args)...);
+        if constexpr (std::is_invocable_v<Callback, util::post_visit, Expr, Args...>) {
+            std::invoke(std::forward<Callback>(callback), util::post_visit {}, std::forward<Expr>(expr), std::forward<Args>(args)...);
         }
     }
 
@@ -245,9 +245,6 @@ private:
 
 } // namespace impl
 
-/// @copydoc takatori::util::post_visit_t
-using util::post_visit_t;
-
 /// @copydoc takatori::util::post_visit
 using util::post_visit;
 
@@ -258,7 +255,7 @@ using util::post_visit;
  *      If the above function returns `true`, then this invokes `bool Callback::operator()(U&, Args...)`
  *      for each member expression of `T` recursively.
  *      After invoking callback functions for each `T`'s member, finally this invokes
- *      `bool Callback::operator()(T&, post_visit_t, Args...)` only if it is declared.
+ *      `X Callback::operator()(post_visit, T&, Args...)` only if it is declared.
  * @attention You must declare all callback functions for individual subclasses,
  *      or declare Callback::operator()(expression&, Args...) as "default" callback function.
  * @tparam Callback the callback object type
@@ -280,7 +277,7 @@ inline void walk(Callback&& callback, expression& object, Args&&... args) {
  *      If the above function returns `true`, then this invokes `bool Callback::operator()(U const&, Args...)`
  *      for each member expression of `T` recursively.
  *      After invoking callback functions for each `T`'s member, finally this invokes
- *      `bool Callback::operator()(T const&, post_visit_t, Args...)` only if it is declared.
+ *      `X Callback::operator()(post_visit, T const&, Args...)` only if it is declared.
  * @attention You must declare all callback functions for individual subclasses,
  *      or declare Callback::operator()(expression const&, Args...) as "default" callback function.
  * @tparam Callback the callback object type
