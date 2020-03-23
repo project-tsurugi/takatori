@@ -38,9 +38,9 @@ TEST_F(let_test, simple) {
 TEST_F(let_test, multiple) {
     let expr {
             {
-                    let::declarator {vardesc(1), constant(2) },
-                    let::declarator {vardesc(3), constant(4) },
-                    let::declarator {vardesc(5), constant(6) },
+                    let::declarator { vardesc(1), constant(2) },
+                    let::declarator { vardesc(3), constant(4) },
+                    let::declarator { vardesc(5), constant(6) },
             },
             varref(1),
     };

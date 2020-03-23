@@ -17,15 +17,15 @@ let::let(
 
 let::let(
         declarator&& variable,
-        util::rvalue_ptr<expression> body)
+        expression&& body)
     : let(
         { util::rvalue_reference_wrapper { std::move(variable) } },
-        body)
+        std::move(body))
 {}
 
 let::let(
         std::initializer_list<util::rvalue_reference_wrapper<declarator>> variables,
-        util::rvalue_ptr<expression> body)
+        expression&& body)
     : let(
             { variables.begin(), variables.end() },
             util::clone_unique(body))

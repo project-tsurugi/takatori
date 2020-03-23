@@ -12,7 +12,6 @@
 
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
-#include <takatori/util/rvalue_ptr.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 #include <takatori/util/meta_type.h>
 
@@ -44,7 +43,7 @@ public:
      * @param body the body expression
      * @attention this may take copies of given expressions
      */
-    explicit let(declarator&& variable, util::rvalue_ptr<expression> body);
+    explicit let(declarator&& variable, expression&& body);
 
     /**
      * @brief creates a new object.
@@ -54,7 +53,7 @@ public:
      */
     explicit let(
             std::initializer_list<util::rvalue_reference_wrapper<declarator>> variables,
-            util::rvalue_ptr<expression> body);
+            expression&& body);
 
     /**
      * @brief creates a new object.
