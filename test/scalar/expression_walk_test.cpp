@@ -411,4 +411,24 @@ TEST_F(expression_walk_test, function_call) {
     check_only_first(d.a);
 }
 
+TEST_F(expression_walk_test, pre_void) {
+    struct cb {
+        std::array<bool, 2> a {};
+        int operator()(expression const&) { std::abort(); }
+        void operator()(immediate const&) {
+            set(a, 0);
+        }
+        void operator()(post_visit, immediate const&) {
+            set(a, 1);
+        }
+    };
+    cb c;
+    immediate expr {
+            value::int4(1),
+            type::int4(),
+    };
+    walk(c, expr);
+    check(c.a);
+}
+
 } // namespace takatori::scalar

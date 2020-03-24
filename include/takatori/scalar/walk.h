@@ -140,7 +140,12 @@ public:
 private:
     template<class Callback, class Expr, class... Args>
     bool do_pre(Callback&& callback, Expr&& expr, Args&&... args) {
-        return std::invoke(std::forward<Callback>(callback), std::forward<Expr>(expr), std::forward<Args>(args)...);
+        if constexpr (std::is_same_v<std::invoke_result_t<Callback, Expr, Args...>, void>) { // NOLINT
+            std::invoke(std::forward<Callback>(callback), std::forward<Expr>(expr), std::forward<Args>(args)...);
+            return true;
+        } else { // NOLINT
+            return std::invoke(std::forward<Callback>(callback), std::forward<Expr>(expr), std::forward<Args>(args)...);
+        }
     }
 
     template<class Callback, class Expr, class... Args>
@@ -258,6 +263,8 @@ using util::post_visit;
  *      `X Callback::operator()(post_visit, T&, Args...)` only if it is declared.
  * @attention You must declare all callback functions for individual subclasses,
  *      or declare Callback::operator()(expression&, Args...) as "default" callback function.
+ * @note The result type of each callback function can be `void` instead of `bool`.
+ *      In that case, this considers as if it always returns `true`.
  * @tparam Callback the callback object type
  * @tparam Args the callback argument types
  * @param callback the callback object
@@ -280,6 +287,8 @@ inline void walk(Callback&& callback, expression& object, Args&&... args) {
  *      `X Callback::operator()(post_visit, T const&, Args...)` only if it is declared.
  * @attention You must declare all callback functions for individual subclasses,
  *      or declare Callback::operator()(expression const&, Args...) as "default" callback function.
+ * @note The result type of each callback function can be `void` instead of `bool`.
+ *      In that case, this considers as if it always returns `true`.
  * @tparam Callback the callback object type
  * @tparam Args the callback argument types
  * @param callback the callback object
