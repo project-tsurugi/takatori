@@ -6,6 +6,7 @@
 
 #include <cstdlib>
 
+#include <takatori/util/enum_set.h>
 #include <takatori/util/enum_tag.h>
 
 namespace takatori::value {
@@ -62,6 +63,12 @@ enum class value_kind {
     /// @brief custom values for compiler or third party extension.
     extension, // FIXME: impl
 };
+
+/// @brief a set of value_kind.
+using value_kind_set = util::enum_set<
+        value_kind,
+        value_kind::unknown,
+        value_kind::extension>;
 
 /**
  * @brief provides implementation type for the value_kind.

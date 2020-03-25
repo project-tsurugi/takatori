@@ -6,6 +6,7 @@
 
 #include <cstdlib>
 
+#include <takatori/util/enum_set.h>
 #include <takatori/util/enum_tag.h>
 
 namespace takatori::type {
@@ -73,6 +74,12 @@ enum class type_kind {
     /// @brief custom type for compiler or third party extension.
     extension,
 };
+
+/// @brief a set of type_kind.
+using type_kind_set = util::enum_set<
+        type_kind,
+        type_kind::boolean,
+        type_kind::extension>;
 
 /**
  * @brief provides implementation type for the type_kind.

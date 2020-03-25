@@ -6,6 +6,8 @@
 
 #include <cstdlib>
 
+#include <takatori/util/enum_set.h>
+
 namespace takatori::plan {
 
 /**
@@ -27,6 +29,12 @@ enum class step_kind {
 
     /// FIXME: transitive closure
 };
+
+/// @brief a set of step_kind.
+using step_kind_set = util::enum_set<
+        step_kind,
+        step_kind::process,
+        step_kind::discard>;
 
 /**
  * @brief returns string representation of the value.

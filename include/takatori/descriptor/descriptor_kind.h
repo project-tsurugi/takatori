@@ -4,6 +4,10 @@
 #include <string>
 #include <string_view>
 
+#include <cstdlib>
+
+#include <takatori/util/enum_set.h>
+
 namespace takatori::descriptor {
 
 /**
@@ -26,6 +30,12 @@ enum class descriptor_kind {
     /// @brief describes a declared type.
     declared_type,
 };
+
+/// @brief a set of descriptor_kind.
+using descriptor_kind_set = util::enum_set<
+        descriptor_kind,
+        descriptor_kind::variable,
+        descriptor_kind::declared_type>;
 
 /**
  * @brief returns string representation of the value.

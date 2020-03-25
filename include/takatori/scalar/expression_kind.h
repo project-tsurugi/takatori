@@ -5,6 +5,10 @@
 #include <string_view>
 #include <utility>
 
+#include <cstdlib>
+
+#include <takatori/util/enum_set.h>
+
 namespace takatori::scalar {
 
 /**
@@ -78,6 +82,12 @@ enum class expression_kind {
     /// @brief custom expression for compiler or third party extension.
     extension, // FIXME: impl
 };
+
+/// @brief a set of expression_kind.
+using expression_kind_set = util::enum_set<
+        expression_kind,
+        expression_kind::immediate,
+        expression_kind::extension>;
 
 /**
  * @brief provides implementation type for the expression_kind.
