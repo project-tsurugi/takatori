@@ -10,7 +10,7 @@ namespace takatori::util {
  * @brief builds character strings using `operator<<`.
  * @details This performs like as std::ostream even if it is in R-value context:
  *      @code
- *      using sb = ::takatori::util::string_builder
+ *      using sb = ::takatori::util::string_builder;
  *      throw std::domain_error(sb {}
  *              << "error at "
  *              << some_value
