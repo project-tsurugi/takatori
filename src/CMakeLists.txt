@@ -130,6 +130,7 @@ add_library(takatori
 
     # util
     util/object_creator.cpp
+    util/string_builder.cpp
 )
 
 add_executable(takatori-exec
