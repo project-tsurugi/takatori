@@ -87,6 +87,7 @@ add_library(takatori
     relation/write.cpp
 
     # relation - misc.
+    relation/graph.cpp
     relation/intermediate/escape.cpp
 
     # relation - dealing with group relations
@@ -123,6 +124,7 @@ add_library(takatori
     plan/aggregate.cpp
     plan/broadcast.cpp
     plan/discard.cpp
+    plan/graph.cpp
 
     # document
     document/basic_document.cpp

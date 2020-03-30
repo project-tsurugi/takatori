@@ -126,6 +126,7 @@ add_test_executable(tree/tree_element_vector_forward_test.cpp)
 add_test_executable(graph/graph_test.cpp)
 add_test_executable(graph/port_test.cpp)
 add_test_executable(graph/multiport_test.cpp)
+add_test_executable(graph/topological_sort_test.cpp)
 
 # document models
 add_test_executable(document/basic_document_test.cpp)
