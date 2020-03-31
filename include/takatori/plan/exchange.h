@@ -80,8 +80,7 @@ public:
     /**
      * @brief adds a exchange input.
      * @details if the given process is already an upstream of this exchange, this operation does nothing.
-     * @attention this operation may invalidate the result of predecessors(), upstreams(),
-     *      successors() of the upstream, and downstreams() of the upstream.
+     * @attention this operation may invalidate the result of upstreams(), and upstreams' downstreams().
      * @param upstream the upstream process
      * @return this
      */
@@ -90,8 +89,7 @@ public:
     /**
      * @brief removes a exchange input.
      * @details if the given process is not an upstream of this exchange, this operation does nothing.
-     * @attention this operation may invalidate the result of predecessors(), upstreams(),
-     *      successors() of the upstream, and downstreams() of the upstream.
+     * @attention this operation may invalidate the result of upstreams(), and upstreams' downstreams().
      * @param upstream the upstream process
      * @return this
      */
@@ -108,8 +106,7 @@ public:
     /**
      * @brief adds a exchange output.
      * @details if the given process is already a downstream of this exchange, this operation does nothing.
-     * @attention this operation may invalidate the result of successors(), downstreams(),
-     *      predecessors() of the downstream, and upstreams() of the downstream
+     * @attention this operation may invalidate the result of downstreams(), and downstreams' upstreams()
      * @param downstream the downstream process
      * @return this
      */
@@ -118,8 +115,7 @@ public:
     /**
      * @brief removes a exchange output.
      * @details if the given process is not a downstream of this exchange, this operation does nothing.
-     * @attention this operation may invalidate the result of successors(), downstreams(),
-     *      predecessors() of the downstream, and upstreams() of the downstream
+     * @attention this operation may invalidate the result of downstreams(), and downstreams' upstreams()
      * @param downstream the downstream process
      * @return this
      */

@@ -112,8 +112,7 @@ public:
     /**
      * @brief adds a process input.
      * @details if the given exchange is already an upstream of this process, this operation does nothing.
-     * @attention this operation may invalidate the result of predecessors(), upstreams(),
-     *      successors() of the upstream, and downstreams() of the upstream.
+     * @attention this operation may invalidate the result of upstreams(), and upstreams' downstreams().
      * @param upstream the upstream exchange
      * @return this
      */
@@ -122,8 +121,7 @@ public:
     /**
      * @brief removes a process input.
      * @details if the given exchange is not an upstream of this process, this operation does nothing.
-     * @attention this operation may invalidate the result of predecessors(), upstreams(),
-     *      successors() of the upstream, and downstreams() of the upstream.
+     * @attention this operation may invalidate the result of upstreams(), and upstreams' downstreams().
      * @param upstream the upstream exchange
      * @return this
      */
@@ -140,8 +138,7 @@ public:
     /**
      * @brief adds a process output.
      * @details if the given exchange is already a downstream of this process, this operation does nothing.
-     * @attention this operation may invalidate the result of successors(), downstreams(),
-     *      predecessors() of the downstream, and upstreams() of the downstream
+     * @attention this operation may invalidate the result of downstreams(), and downstreams' upstreams()
      * @param downstream the downstream exchange
      * @return this
      */
@@ -150,8 +147,7 @@ public:
     /**
      * @brief removes a process output.
      * @details if the given exchange is not a downstream of this process, this operation does nothing.
-     * @attention this operation may invalidate the result of successors(), downstreams(),
-     *      predecessors() of the downstream, and upstreams() of the downstream
+     * @attention this operation may invalidate the result of downstreams(), and downstreams' upstreams()
      * @param downstream the downstream exchange
      * @return this
      */
