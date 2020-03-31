@@ -64,7 +64,12 @@ public:
      */
     graph() = default;
 
-    ~graph();
+    ~graph() {
+        for (auto&& entry : vertices_) {
+            delete_element(entry);
+        }
+    }
+
     graph(graph const& other) = delete;
     graph& operator=(graph const& other) = delete;
 
@@ -72,20 +77,35 @@ public:
      * @brief creates a new object.
      * @param other the move source
      */
-    graph(graph&& other) noexcept;
+    graph(graph&& other) noexcept
+        : vertices_(std::move(other.vertices_))
+    {
+        for (auto* e : vertices_) {
+            bless_element(e);
+        }
+    }
 
     /**
      * @brief assigns the given object.
      * @param other the move source
      * @return this
      */
-    graph& operator=(graph&& other) noexcept;
+    graph& operator=(graph&& other) noexcept {
+        clear();
+        vertices_ = std::move(other.vertices_);
+        for (auto* e : vertices_) {
+            bless_element(e);
+        }
+        return *this;
+    }
 
     /**
      * @brief creates a new object.
      * @param creator the object creator
      */
-    explicit graph(util::object_creator creator) noexcept;
+    explicit graph(util::object_creator creator) noexcept
+        : vertices_(creator.allocator<entry_type>())
+    {}
 
     /**
      * @brief returns whether or not this graph contains the given element.
@@ -93,32 +113,46 @@ public:
      * @return true if there is such the element
      * @return false otherwise
      */
-    bool contains(const_reference element) const;
+    bool contains(const_reference element) const {
+        auto iter = vertices_.find(entry_key(element));
+        return iter != vertices_.end();
+    }
 
     /**
      * @brief returns whether or not this is empty.
      * @return true if this is empty
      * @return false otherwise
      */
-    bool empty() const noexcept;
+    bool empty() const noexcept {
+        return vertices_.empty();
+    }
 
     /**
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    size_type size() const noexcept;
+    size_type size() const noexcept {
+        return vertices_.size();
+    }
 
     /**
      * @brief reserves the capacity.
      * @param size the number of elements to store without expanding this container
      * @attention this is an optional feature
      */
-    void reserve(size_type size);
+    void reserve(size_type size) {
+        vertices_.reserve(size);
+    }
 
     /**
      * @brief removes all elements in this.
      */
-    void clear() noexcept;
+    void clear() noexcept {
+        for (auto&& entry : vertices_) {
+            delete_element(entry);
+        }
+        vertices_.clear();
+    }
 
     /**
      * @brief removes an element.
@@ -126,14 +160,25 @@ public:
      * @return true if successfully removed
      * @return false otherwise (may be no such the element)
      */
-    bool erase(const_reference element);
+    bool erase(const_reference element) {
+        if (auto iter = vertices_.find(entry_key(element)); iter != vertices_.end()) {
+            erase(const_iterator(iter));
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @brief removes an element on the given iterator.
      * @param position the target element position
      * @return the next position of the erased element
      */
-    iterator erase(const_iterator position);
+    iterator erase(const_iterator position) {
+        auto iter = position.unwrap();
+        delete_element(*iter);
+        auto next = vertices_.erase(iter);
+        return iterator(next);
+    }
 
     /**
      * @brief inserts a copy of the given element into this graph.
@@ -145,7 +190,12 @@ public:
             class U,
             class = std::enable_if_t<
                     std::is_convertible_v<U, const_reference>>>
-    U& insert(U&& element);
+    U& insert(U&& element) {
+        static_assert(util::is_clonable_v<element_type>);
+        auto entry = insert_element(util::clone_unique(std::forward<U>(element), get_object_creator()));
+        bless_element(entry);
+        return *entry;
+    }
 
     /**
      * @brief inserts the given element into this graph.
@@ -164,7 +214,17 @@ public:
             class D,
             class = std::enable_if_t<
                     std::is_convertible_v<U, const_reference>>>
-    U& insert(std::unique_ptr<U, D> element);
+    U& insert(std::unique_ptr<U, D> element) {
+        if (!element) {
+            throw std::invalid_argument("element must not be absent");
+        }
+        if (!get_object_creator().is_instance(element)) {
+            return insert(util::clone_unique(std::move(*element), get_object_creator()));
+        }
+        auto entry = insert_element(std::move(element));
+        bless_element(entry);
+        return *entry;
+    }
 
     /**
      * @brief creates a new element and inserts it into this graph.
@@ -174,89 +234,149 @@ public:
      * @return the inserted element
      */
     template<class U = element_type, class... Args>
-    U& emplace(Args&&... args);
+    U& emplace(Args&&... args) {
+        static_assert(util::is_clonable_v<element_type>);
+        auto entry = insert_element(create_element<U>(std::forward<Args>(args)...));
+        bless_element(entry);
+        return *entry;
+    }
 
     /**
      * @brief releases the element on this graph.
      * @param element the target element
      * @return the released element
      */
-    util::unique_object_ptr<value_type> release(const_reference element) noexcept;
+    util::unique_object_ptr<value_type> release(const_reference element) noexcept {
+        if (auto iter = vertices_.find(entry_key(element)); iter != vertices_.end()) {
+            auto kv = release(const_iterator(iter));
+            return std::get<0>(std::move(kv));
+        }
+        return {};
+    }
 
     /**
      * @brief removes an element on the given iterator.
      * @param position the target position
      * @return a pair of the removed element, and the next position of the released element
      */
-    std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position);
+    std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position) {
+        auto iter = position.unwrap();
+        auto result = get_object_creator().wrap_unique(*iter);
+        unbless_element(result.get());
+        auto next = vertices_.erase(iter);
+        return std::make_pair(std::move(result), iterator { next });
+    }
 
     /**
      * @brief merges vertices and their connections into this graph.
      * @param other the source graph
      * @throws std::invalid_argument if get_object_creator() != other.get_object_creator()
      */
-    void merge(graph&& other);
+    void merge(graph&& other) {
+        if (get_object_creator() != other.get_object_creator()) {
+            throw std::invalid_argument("inconsistent allocator");
+        }
+        for (auto* v : other.vertices_) {
+            bless_element(v);
+        }
+        vertices_.merge(other.vertices_);
+        other.clear();
+    }
 
     /**
      * @brief returns a forward iterator which points the beginning of this container.
      * @return the iterator of beginning (inclusive)
      */
-    iterator begin() noexcept;
+    iterator begin() noexcept {
+        return iterator { vertices_.begin() };
+    }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept;
+    const_iterator begin() const noexcept {
+        return cbegin();
+    }
 
     /// @copydoc begin()
-    const_iterator cbegin() const noexcept;
+    const_iterator cbegin() const noexcept {
+        return const_iterator { vertices_.cbegin() };
+    }
 
     /**
      * @brief returns a forward iterator which points the ending of this container.
      * @return the iterator of ending (exclusive)
      */
-    iterator end() noexcept;
+    iterator end() noexcept {
+        return iterator { vertices_.end() };
+    }
 
     /// @copydoc end()
-    const_iterator end() const noexcept;
+    const_iterator end() const noexcept {
+        return cend();
+    }
 
     /// @copydoc end()
-    const_iterator cend() const noexcept;
+    const_iterator cend() const noexcept {
+        return const_iterator { vertices_.cend() };
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed beginning of this container.
      * @return the reversed iterator of beginning (inclusive)
      */
-    std::reverse_iterator<iterator> rbegin() noexcept;
+    std::reverse_iterator<iterator> rbegin() noexcept {
+        return std::make_reverse_iterator(end());
+    }
 
     /// @copydoc rbegin()
-    std::reverse_iterator<const_iterator> rbegin() const noexcept;
+    std::reverse_iterator<const_iterator> rbegin() const noexcept {
+        return crbegin();
+    }
 
     /// @copydoc rbegin()
-    std::reverse_iterator<const_iterator> crbegin() const noexcept;
+    std::reverse_iterator<const_iterator> crbegin() const noexcept {
+        return std::make_reverse_iterator(cend());
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed ending of this container.
      * @return the reversed iterator of ending (exclusive)
      */
-    std::reverse_iterator<iterator> rend() noexcept;
+    std::reverse_iterator<iterator> rend() noexcept {
+        return std::make_reverse_iterator(begin());
+    }
 
     /// @copydoc rend()
-    std::reverse_iterator<const_iterator> rend() const noexcept;
+    std::reverse_iterator<const_iterator> rend() const noexcept {
+        return crend();
+    }
 
     /// @copydoc rend()
-    std::reverse_iterator<const_iterator> crend() const noexcept;
+    std::reverse_iterator<const_iterator> crend() const noexcept {
+        return std::make_reverse_iterator(cbegin());
+    }
 
     /**
      * @brief exchanges contents between this and the given graph.
      * @details This also exchanges their object_creator.
      * @param other the target graph
      */
-    void swap(graph& other) noexcept;
+    void swap(graph& other) noexcept {
+        std::swap(vertices_, other.vertices_);
+        for (auto* v : vertices_) {
+            bless_element(v);
+        }
+        for (auto* v : other.vertices_) {
+            other.bless_element(v);
+        }
+    }
 
     /**
      * @brief returns the object creator to create/delete objects in this container.
      * @return the object creator for this container
      */
-    util::object_creator get_object_creator() const noexcept;
+    util::object_creator get_object_creator() const noexcept {
+        return util::object_creator { vertices_.get_allocator() };
+    }
 
 private:
     entity_type vertices_;
@@ -297,247 +417,5 @@ private:
         }
     }
 };
-
-template<class T>
-graph<T>::graph(graph&& other) noexcept
-    : vertices_(std::move(other.vertices_))
-{
-    for (auto* e : vertices_) {
-        bless_element(e);
-    }
-}
-
-template<class T>
-graph<T>& graph<T>::operator=(graph&& other) noexcept {
-    clear();
-    vertices_ = std::move(other.vertices_);
-    for (auto* e : vertices_) {
-        bless_element(e);
-    }
-    return *this;
-}
-
-template<class T>
-inline graph<T>::graph(util::object_creator creator) noexcept
-    : vertices_(creator.allocator<entry_type>())
-{}
-
-template<class T>
-inline graph<T>::~graph() {
-    for (auto&& entry : vertices_) {
-        delete_element(entry);
-    }
-}
-
-template<class T>
-inline bool
-graph<T>::contains(const_reference element) const {
-    auto iter = vertices_.find(entry_key(element));
-    return iter != vertices_.end();
-}
-
-template<class T>
-bool graph<T>::empty() const noexcept {
-    return vertices_.empty();
-}
-
-template<class T>
-inline typename graph<T>::size_type
-graph<T>::size() const noexcept {
-    return vertices_.size();
-}
-
-template<class T>
-inline void
-graph<T>::reserve(graph::size_type size) {
-    vertices_.reserve(size);
-}
-
-template<class T>
-inline void
-graph<T>::clear() noexcept {
-    for (auto&& entry : vertices_) {
-        delete_element(entry);
-    }
-    vertices_.clear();
-}
-
-template<class T>
-inline bool
-graph<T>::erase(const_reference element) {
-    if (auto iter = vertices_.find(entry_key(element)); iter != vertices_.end()) {
-        erase(const_iterator(iter));
-        return true;
-    }
-    return false;
-}
-
-template<class T>
-inline typename graph<T>::iterator
-graph<T>::erase(graph::const_iterator position) {
-    auto iter = position.unwrap();
-    delete_element(*iter);
-    auto next = vertices_.erase(iter);
-    return iterator(next);
-}
-
-template<class T>
-template<class U, class>
-inline U&
-graph<T>::insert(U&& element) {
-    static_assert(util::is_clonable_v<element_type>);
-    auto entry = insert_element(util::clone_unique(std::forward<U>(element), get_object_creator()));
-    bless_element(entry);
-    return *entry;
-}
-
-template<class T>
-template<class U, class D, class>
-inline U&
-graph<T>::insert(std::unique_ptr<U, D> element) {
-    if (!element) {
-        throw std::invalid_argument("element must not be absent");
-    }
-    if (!get_object_creator().is_instance(element)) {
-        return insert(util::clone_unique(std::move(*element), get_object_creator()));
-    }
-    auto entry = insert_element(std::move(element));
-    bless_element(entry);
-    return *entry;
-}
-
-template<class T>
-template<class U, class... Args>
-inline U&
-graph<T>::emplace(Args&& ... args) {
-    static_assert(util::is_clonable_v<element_type>);
-    auto entry = insert_element(create_element<U>(std::forward<Args>(args)...));
-    bless_element(entry);
-    return *entry;
-}
-
-template<class T>
-inline util::unique_object_ptr<typename graph<T>::value_type>
-graph<T>::release(const_reference element) noexcept {
-    if (auto iter = vertices_.find(entry_key(element)); iter != vertices_.end()) {
-        auto kv = release(const_iterator(iter));
-        return std::get<0>(std::move(kv));
-    }
-    return {};
-}
-
-template<class T>
-inline std::pair<
-        util::unique_object_ptr<typename graph<T>::value_type>,
-        typename graph<T>::iterator>
-graph<T>::release(graph::const_iterator position) {
-    auto iter = position.unwrap();
-    auto result = get_object_creator().wrap_unique(*iter);
-    unbless_element(result.get());
-    auto next = vertices_.erase(iter);
-    return std::make_pair(std::move(result), iterator { next });
-}
-
-template<class T>
-void graph<T>::merge(graph&& other) {
-    if (get_object_creator() != other.get_object_creator()) {
-        throw std::invalid_argument("inconsistent allocator");
-    }
-    for (auto* v : other.vertices_) {
-        bless_element(v);
-    }
-    vertices_.merge(other.vertices_);
-    other.clear();
-}
-
-template<class T>
-inline typename graph<T>::iterator
-graph<T>::begin() noexcept {
-    return iterator { vertices_.begin() };
-}
-
-template<class T>
-inline typename graph<T>::const_iterator
-graph<T>::begin() const noexcept {
-    return cbegin();
-}
-
-template<class T>
-inline typename graph<T>::const_iterator
-graph<T>::cbegin() const noexcept {
-    return const_iterator { vertices_.cbegin() };
-}
-
-template<class T>
-inline typename graph<T>::iterator
-graph<T>::end() noexcept {
-    return iterator { vertices_.end() };
-}
-
-template<class T>
-inline typename graph<T>::const_iterator
-graph<T>::end() const noexcept {
-    return cend();
-}
-
-template<class T>
-inline typename graph<T>::const_iterator
-graph<T>::cend() const noexcept {
-    return const_iterator { vertices_.cend() };
-}
-
-template<class T>
-inline std::reverse_iterator<typename graph<T>::iterator>
-graph<T>::rbegin() noexcept {
-    return std::make_reverse_iterator(end());
-}
-
-template<class T>
-inline std::reverse_iterator<typename graph<T>::const_iterator>
-graph<T>::rbegin() const noexcept {
-    return crbegin();
-}
-
-template<class T>
-inline std::reverse_iterator<typename graph<T>::const_iterator>
-graph<T>::crbegin() const noexcept {
-    return std::make_reverse_iterator(cend());
-}
-
-template<class T>
-inline std::reverse_iterator<typename graph<T>::iterator>
-graph<T>::rend() noexcept {
-    return std::make_reverse_iterator(begin());
-}
-
-template<class T>
-inline std::reverse_iterator<typename graph<T>::const_iterator>
-graph<T>::rend() const noexcept {
-    return crend();
-}
-
-template<class T>
-inline std::reverse_iterator<typename graph<T>::const_iterator>
-graph<T>::crend() const noexcept {
-    return std::make_reverse_iterator(cbegin());
-}
-
-template<class T>
-inline void
-graph<T>::swap(graph& other) noexcept {
-    std::swap(vertices_, other.vertices_);
-    for (auto* v : vertices_) {
-        bless_element(v);
-    }
-    for (auto* v : other.vertices_) {
-        other.bless_element(v);
-    }
-}
-
-template<class T>
-inline util::object_creator
-graph<T>::get_object_creator() const noexcept {
-    return util::object_creator { vertices_.get_allocator() };
-}
 
 } // namespace takatori::graph
