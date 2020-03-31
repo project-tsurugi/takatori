@@ -155,6 +155,23 @@ public:
     }
 
     /**
+     * @brief find for an element.
+     * @param element the target element
+     * @return the element position
+     * @return end() if it is not found
+     */
+    iterator find(const_reference element) {
+        auto iter = vertices_.find(entry_key(element));
+        return iterator(iter);
+    }
+
+    /// @copydoc find()
+    const_iterator find(const_reference element) const {
+        auto iter = vertices_.find(entry_key(element));
+        return const_iterator(iter);
+    }
+
+    /**
      * @brief removes an element.
      * @param element the target element
      * @return true if successfully removed

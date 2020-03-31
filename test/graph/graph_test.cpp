@@ -154,6 +154,40 @@ TEST_F(graph_test, clear) {
     EXPECT_EQ(g.size(), 0);
 }
 
+TEST_F(graph_test, find) {
+    simple_graph g;
+
+    g.emplace(100);
+    auto&& v2 = g.emplace(200);
+    g.emplace(300);
+
+    auto it0 = g.find(v2);
+    ASSERT_NE(it0, g.end());
+    EXPECT_EQ(&*it0, &v2);
+
+    vertex vx { 999 };
+    auto it1 = g.find(vx);
+    ASSERT_EQ(it1, g.end());
+}
+
+TEST_F(graph_test, find_const) {
+    simple_graph mg;
+
+    mg.emplace(100);
+    auto&& v2 = mg.emplace(200);
+    mg.emplace(300);
+
+    auto&& g = make_const(mg);
+
+    auto it0 = g.find(v2);
+    ASSERT_NE(it0, g.end());
+    EXPECT_EQ(&*it0, &v2);
+
+    vertex vx { 999 };
+    auto it1 = g.find(vx);
+    ASSERT_EQ(it1, g.end());
+}
+
 TEST_F(graph_test, erase) {
     simple_graph g;
     auto&& v1 = g.emplace(100);
