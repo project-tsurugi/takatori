@@ -1,8 +1,71 @@
 #include <takatori/relation/graph.h>
 
+#include <stdexcept>
+
+#include <cassert>
+
+#include <takatori/util/string_builder.h>
+
 #include "../graph/topological_sort.h"
 
+#include "details/graph_merger.h"
+
 namespace takatori::relation {
+
+using ::takatori::util::string_builder;
+
+void merge_into(
+        graph_type const& source,
+        graph_type& destination,
+        util::object_creator creator) {
+    details::graph_merger merger { destination, creator };
+    merger.add(source);
+    merger.resolve();
+}
+
+void merge_into(
+        graph_type&& source,
+        graph_type& destination,
+        util::object_creator creator) {
+    details::graph_merger merger { destination, creator };
+    merger.add(std::move(source));
+    merger.resolve();
+}
+
+graph_type release(graph_type& source, util::sequence_view<expression const*> elements) {
+    graph_type results { source.get_object_creator() };
+    std::vector<expression*, util::object_allocator<expression*>> migrated {
+            source.get_object_creator().template allocator<expression*>(),
+    };
+    migrated.reserve(elements.size());
+
+    // migrate all elements in the source graph
+    results.reserve(elements.size());
+    for (auto* element : elements) {
+        if (auto entity = source.release(*element)) {
+            auto&& r = results.insert(std::move(entity));
+            assert(std::addressof(r) == element); // NOLINT
+            migrated.emplace_back(std::addressof(r));
+        } else {
+            throw std::invalid_argument(string_builder {}
+                    << "migration target must be in the source graph: "
+                    << *element
+                    << string_builder::to_string);
+        }
+    }
+
+    // disconnect between released and left expressions
+    for (auto* element : migrated) {
+        for (auto&& p : element->input_ports()) {
+            if (auto opposite = p.opposite();
+                    opposite
+                            && !results.contains(opposite->owner())) {
+                p.disconnect_from(*opposite);
+            }
+        }
+    }
+    return results;
+}
 
 template<class T>
 static void upstreams0(T& expr, std::function<void(T&)> const& consumer) {

@@ -178,22 +178,4 @@ private:
     document::region region_ {};
 };
 
-/**
- * @brief merges expressions in the source graph into the destination.
- * @details this may create a a copy of each expression in source, but reorganize the connections between expressions.
- * @param source the source graph
- * @param destination the destination graph
- * @param creator the object creator (for working space)
- */
-void merge_into(
-        expression::graph_type const& source,
-        expression::graph_type& destination,
-        util::object_creator creator = {});
-
-/// @copydoc merge_into()
-void merge_into(
-        expression::graph_type&& source,
-        expression::graph_type& destination,
-        util::object_creator creator = {});
-
 } // namespace takatori::relation

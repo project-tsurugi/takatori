@@ -1,7 +1,5 @@
 #include <takatori/relation/expression.h>
 
-#include "details/graph_merger.h"
-
 namespace takatori::relation {
 
 bool expression::is_orphan() const noexcept {
@@ -40,7 +38,6 @@ void expression::on_join(graph_type* graph) noexcept {
 
 void expression::on_leave() noexcept {
     owner_ = nullptr;
-    // FIXME: dispose all connections?
 }
 
 bool operator==(expression const& a, expression const& b) noexcept {
@@ -53,24 +50,6 @@ bool operator!=(expression const& a, expression const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, expression const& value) {
     return value.print_to(out);
-}
-
-void merge_into(
-        expression::graph_type const& source,
-        expression::graph_type& destination,
-        util::object_creator creator) {
-    details::graph_merger merger { destination, creator };
-    merger.add(source);
-    merger.resolve();
-}
-
-void merge_into(
-        expression::graph_type&& source,
-        expression::graph_type& destination,
-        util::object_creator creator) {
-    details::graph_merger merger { destination, creator };
-    merger.add(std::move(source));
-    merger.resolve();
 }
 
 } // namespace takatori::relation

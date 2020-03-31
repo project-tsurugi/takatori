@@ -5,8 +5,8 @@
 namespace takatori::relation::details {
 
 graph_merger::graph_merger(graph_merger::graph_type& destination, util::object_creator creator) noexcept
-        : destination_(destination)
-        , mappings_(creator.allocator<node_mapping_entry_type>())
+    : destination_(destination)
+    , mappings_(creator.allocator<node_mapping_entry_type>())
 {}
 
 graph_merger& graph_merger::add(graph_merger::graph_type const& source) {

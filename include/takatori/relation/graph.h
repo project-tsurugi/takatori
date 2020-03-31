@@ -4,6 +4,7 @@
 
 #include <takatori/graph/graph.h>
 #include <takatori/util/object_creator.h>
+#include <takatori/util/sequence_view.h>
 
 #include "expression.h"
 
@@ -19,6 +20,35 @@ using consumer_type = std::function<void(expression&)>;
 
 /// @brief the consumer type for const objects.
 using const_consumer_type = std::function<void(expression const&)>;
+
+/**
+ * @brief merges expressions in the source graph into the destination.
+ * @details this may create a a copy of each expression in source, but reorganize the connections between expressions.
+ * @param source the source graph
+ * @param destination the destination graph
+ * @param creator the object creator (for working space)
+ */
+void merge_into(
+        graph_type const& source,
+        graph_type& destination,
+        util::object_creator creator = {});
+
+/// @copydoc merge_into()
+void merge_into(
+        graph_type&& source,
+        graph_type& destination,
+        util::object_creator creator = {});
+
+/**
+ * @brief releases the expressions in the source graph, and creates a new graph which contains the released expressions.
+ * @details The connections will be kept between released expressions,
+ *      but disconnected between released and left expressions.
+ * @attention the migration target elements must be available even if the source was changed
+ * @param elements the elements in the source graph to migrate
+ * @param source the source graph
+ * @throws std::invalid_argument if some target elements are not in the source graph
+ */
+graph_type release(graph_type& source, util::sequence_view<expression const*> elements);
 
 /**
  * @brief enumerates upstream expressions.

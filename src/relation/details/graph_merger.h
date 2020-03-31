@@ -3,9 +3,7 @@
 #include <unordered_map>
 
 #include <takatori/relation/expression.h>
-
-#include <takatori/graph/graph.h>
-#include <takatori/graph/port.h>
+#include <takatori/relation/graph.h>
 
 namespace takatori::relation::details {
 

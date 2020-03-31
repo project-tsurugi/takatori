@@ -30,13 +30,13 @@ public:
         explicit constexpr to_string_t() = default;
     };
 
+    /// @brief an operator tag to return the built string.
+    static constexpr to_string_t to_string {};
+
     /**
      * @brief creates a new instance.
      */
     string_builder() = default;
-
-    /// @brief an operator tag to return the built string.
-    static constexpr to_string_t to_string {};
 
     /**
      * @brief appends string representation of the given value.
