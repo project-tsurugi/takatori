@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 
+#include <takatori/util/enum_set.h>
 #include <takatori/util/enum_tag.h>
 
 namespace takatori::relation {
@@ -24,6 +25,12 @@ enum class write_kind {
     /// @brief inserts rows, or overwrites if any target rows already exist
     insert_or_update,
 };
+
+/// @brief a set of write_kind.
+using write_kind_set = util::enum_set<
+        write_kind,
+        write_kind::insert,
+        write_kind::insert_or_update>;
 
 /**
  * @brief returns string representation of the value.

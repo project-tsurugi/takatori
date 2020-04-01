@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 
+#include <takatori/util/enum_set.h>
 #include <takatori/util/enum_tag.h>
 
 namespace takatori::relation {
@@ -26,6 +27,12 @@ enum class join_kind {
     /// @brief left anti join
     anti,
 };
+
+/// @brief a set of join_kind.
+using join_kind_set = util::enum_set<
+        join_kind,
+        join_kind::inner,
+        join_kind::anti>;
 
 /**
  * @brief returns string representation of the value.

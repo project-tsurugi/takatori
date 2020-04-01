@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 
+#include <takatori/util/enum_set.h>
 #include <takatori/util/enum_tag.h>
 
 namespace takatori::relation {
@@ -31,6 +32,12 @@ enum class endpoint_kind {
     /// @brief excludes entries which contain the end-point key as prefix.
     prefixed_exclusive,
 };
+
+/// @brief a set of endpoint_kind.
+using endpoint_kind_set = util::enum_set<
+        endpoint_kind,
+        endpoint_kind::unbound,
+        endpoint_kind::prefixed_exclusive>;
 
 /**
  * @brief returns string representation of the value.
