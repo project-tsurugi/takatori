@@ -24,7 +24,10 @@ public:
      * @brief creates a new instance.
      * @param source the source relation, must be refer the source exchange
      * @param columns the column mappings between the upstream exchange and output relation
-     * @param mandatory whether or not this group is mandatory
+     * @param mandatory whether or not this group is mandatory:
+     *      The mandatory group never become empty, that is, the co-group row will not be generated if the mandatory
+     *      group is empty. Or if it is not a mandatory group, co-group row will be always generated even if some
+     *      groups are empty.
      */
     explicit cogroup_element(
             descriptor::relation source,
@@ -35,7 +38,10 @@ public:
      * @brief creates a new instance.
      * @param source the source relation, must be refer the source exchange
      * @param columns the column mappings between the upstream exchange and output relation
-     * @param mandatory whether or not this group is mandatory
+     * @param mandatory whether or not this group is mandatory:
+     *      The mandatory group never become empty, that is, the co-group row will not be generated if the mandatory
+     *      group is empty. Or if it is not a mandatory group, co-group row will be always generated even if some
+     *      groups are empty.
      */
     cogroup_element(
             descriptor::relation source,
