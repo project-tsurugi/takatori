@@ -17,27 +17,27 @@ static_assert(std::is_same_v<type_of_t<scan::tag>, scan>);
 
 TEST_F(scan_test, simple) {
     scan expr {
-        tabledesc("T"),
-        {
-            scan::column {
-                columndesc("C1"),
-                vardesc(1),
+            tabledesc("T"),
+            {
+                    {
+                            columndesc("C1"),
+                            vardesc(1),
+                    },
             },
-        },
-        {
-                scan::key {
-                    columndesc("C2"),
-                    constant(0),
+            {
+                    scan::key {
+                            columndesc("C2"),
+                            constant(0),
+                    },
+                    endpoint_kind::inclusive,
             },
-            endpoint_kind::inclusive,
-        },
-        {
-            scan::key {
-                    columndesc("C2"),
-                    constant(100),
+            {
+                    scan::key {
+                            columndesc("C2"),
+                            constant(100),
+                    },
+                    endpoint_kind::exclusive,
             },
-            endpoint_kind::exclusive,
-        },
     };
 
     EXPECT_EQ(&expr.output().owner(), &expr);
@@ -89,7 +89,7 @@ TEST_F(scan_test, full) {
     scan expr {
             tabledesc("T"),
             {
-                    scan::column {
+                    {
                             columndesc("C1"),
                             vardesc(1),
                     },
@@ -120,7 +120,7 @@ TEST_F(scan_test, limit) {
     scan expr {
             tabledesc("T"),
             {
-                    scan::column {
+                    {
                             columndesc("C1"),
                             vardesc(1),
                     },
@@ -135,51 +135,51 @@ TEST_F(scan_test, limit) {
 
 TEST_F(scan_test, multiple) {
     scan expr {
-        tabledesc("T"),
-        {
-                scan::column {
-                columndesc("C1"),
-                vardesc(1),
-            },
-                scan::column {
-                    columndesc("C2"),
-                    vardesc(2),
-            },
-                scan::column {
-                    columndesc("C3"),
-                    vardesc(3),
-            },
-        },
-        {
+            tabledesc("T"),
             {
-                    scan::key {
-                    columndesc("C4"),
-                    constant(4),
-                },
-                    scan::key {
-                    columndesc("C5"),
-                    constant(5),
-                },
-                    scan::key {
-                    columndesc("C6"),
-                    constant(6),
-                },
+                    {
+                            columndesc("C1"),
+                            vardesc(1),
+                    },
+                    {
+                            columndesc("C2"),
+                            vardesc(2),
+                    },
+                    {
+                            columndesc("C3"),
+                            vardesc(3),
+                    },
             },
-            endpoint_kind::prefixed_exclusive,
-        },
-        {
             {
-                    scan::key {
-                    columndesc("C4"),
-                    constant(4),
-                },
-                    scan::key {
-                    columndesc("C5"),
-                    constant(5),
-                },
+                    {
+                            scan::key {
+                                    columndesc("C4"),
+                                    constant(4),
+                            },
+                            scan::key {
+                                    columndesc("C5"),
+                                    constant(5),
+                            },
+                            scan::key {
+                                    columndesc("C6"),
+                                    constant(6),
+                            },
+                    },
+                    endpoint_kind::prefixed_exclusive,
             },
-            endpoint_kind::prefixed_inclusive,
-        },
+            {
+                    {
+                            scan::key {
+                                    columndesc("C4"),
+                                    constant(4),
+                            },
+                            scan::key {
+                                    columndesc("C5"),
+                                    constant(5),
+                            },
+                    },
+                    endpoint_kind::prefixed_inclusive,
+            },
     };
 
     EXPECT_EQ(&expr.output().owner(), &expr);
@@ -246,7 +246,7 @@ TEST_F(scan_test, clone) {
     scan expr {
             tabledesc("T"),
             {
-                    scan::column {
+                    {
                             columndesc("C1"),
                             vardesc(1),
                     },

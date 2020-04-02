@@ -24,7 +24,7 @@ scan::scan(
 
 scan::scan(
         descriptor::relation source,
-        std::initializer_list<util::rvalue_reference_wrapper<column>> columns,
+        std::initializer_list<column> columns,
         endpoint lower,
         endpoint upper,
         std::optional<std::size_t> limit)
