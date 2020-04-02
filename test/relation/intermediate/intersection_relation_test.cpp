@@ -26,8 +26,8 @@ TEST_F(intersecton_relation_test, simple) {
     EXPECT_EQ(&expr.right().owner(), &expr);
     EXPECT_EQ(&expr.output().owner(), &expr);
 
-    ASSERT_EQ(expr.key_pairs().size(), 1);
     EXPECT_EQ(expr.quantifier(), set_quantifier::all);
+    ASSERT_EQ(expr.key_pairs().size(), 1);
     {
         auto&& p = expr.key_pairs()[0];
         EXPECT_EQ(p.left(), vardesc(1));

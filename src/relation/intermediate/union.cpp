@@ -7,6 +7,7 @@
 namespace takatori::relation::intermediate {
 
 union_::union_(
+        quantifier_kind quantifier,
         std::vector<mapping, util::object_allocator<mapping>> mappings,
         util::object_creator creator) noexcept
     : inputs_({
@@ -14,21 +15,28 @@ union_::union_(
             input_port_type { *this, right_index, creator },
     })
     , output_(*this, 0, creator)
+    , quantifier_(quantifier)
     , mappings_(std::move(mappings))
 {}
 
-union_::union_(std::initializer_list<mapping> mappings)
-    : union_({ mappings.begin(), mappings.end() })
+union_::union_(
+        std::initializer_list<mapping> mappings,
+        quantifier_kind quantifier)
+    : union_(
+            quantifier,
+            { mappings.begin(), mappings.end() })
 {}
 
 union_::union_(union_ const& other, util::object_creator creator)
     : union_(
+            other.quantifier_,
             decltype(mappings_) { other.mappings_, creator.allocator<mapping>() },
             creator)
 {}
 
 union_::union_(union_&& other, util::object_creator creator)
     : union_(
+            other.quantifier_,
             decltype(mappings_) { other.mappings_, creator.allocator<mapping>() },
             creator)
 {}
@@ -85,6 +93,15 @@ union_::output_port_type const& union_::output() const noexcept {
     return output_;
 }
 
+union_::quantifier_kind union_::quantifier() const noexcept {
+    return quantifier_;
+}
+
+union_& union_::quantifier(quantifier_kind quantifier) noexcept {
+    quantifier_ = quantifier;
+    return *this;
+}
+
 std::vector<union_::mapping, util::object_allocator<union_::mapping>>& union_::mappings() noexcept {
     return mappings_;
 }
@@ -94,7 +111,8 @@ std::vector<union_::mapping, util::object_allocator<union_::mapping>> const& uni
 }
 
 bool operator==(union_ const& a, union_ const& b) noexcept {
-    return a.mappings() == b.mappings();
+    return a.quantifier() == b.quantifier()
+            && a.mappings() == b.mappings();
 }
 
 bool operator!=(union_ const& a, union_ const& b) noexcept {
@@ -103,6 +121,7 @@ bool operator!=(union_ const& a, union_ const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, union_ const& value) {
     return out << value.kind() << "("
+               << "quantifier=" << value.quantifier() << ", "
                << "mappings=" << util::print_support { value.mappings() } << ")";
 }
 

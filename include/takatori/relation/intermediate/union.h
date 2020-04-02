@@ -7,6 +7,7 @@
 
 #include "../expression.h"
 #include "../expression_kind.h"
+#include "../set_quantifier.h"
 #include "../details/union_element.h"
 
 #include <takatori/descriptor/variable.h>
@@ -24,16 +25,21 @@ public:
     /// @brief the column mapping from the right relation into left relation.
     using mapping = details::union_element;
 
+    /// @brief the set quantifier type.
+    using quantifier_kind = set_quantifier;
+
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::union_relation;
 
     /**
      * @brief creates a new object.
+     * @param quantifier the set quantifier of this operation
      * @param mappings the column mappings on input/output relations:
      *      the succeeding operators only can refer the destination columns declared in here
      * @param creator the object creator for internal elements
      */
     explicit union_(
+            quantifier_kind quantifier,
             std::vector<mapping, util::object_allocator<mapping>> mappings,
             util::object_creator creator = {}) noexcept;
 
@@ -41,8 +47,11 @@ public:
      * @brief creates a new object.
      * @param mappings the column mappings on input/output relations:
      *      the succeeding operators only can refer the destination columns declared in here
+     * @param quantifier the set quantifier of this operation
      */
-    union_(std::initializer_list<mapping> mappings);
+    union_(
+            std::initializer_list<mapping> mappings,
+            quantifier_kind quantifier = quantifier_kind::all);
 
     /**
      * @brief creates a new object.
@@ -94,6 +103,19 @@ public:
     output_port_type const& output() const noexcept;
 
     /**
+     * @brief returns the set quantifier kind of this operation.
+     * @return the set quantifier kind
+     */
+    quantifier_kind quantifier() const noexcept;
+
+    /**
+     * @brief sets the set quantifier kind of this operation.
+     * @param quantifier the quantifier kind
+     * @return this
+     */
+    union_& quantifier(quantifier_kind quantifier) noexcept;
+
+    /**
      * @brief returns the column mappings on input/output relations:
      *      the succeeding operators only can refer the destination columns declared in here
      * @return the column mappings
@@ -138,6 +160,7 @@ protected:
 private:
     std::array<input_port_type, 2> inputs_;
     output_port_type output_;
+    quantifier_kind quantifier_;
     std::vector<mapping, util::object_allocator<mapping>> mappings_;
 
     static inline constexpr std::size_t left_index = 0;

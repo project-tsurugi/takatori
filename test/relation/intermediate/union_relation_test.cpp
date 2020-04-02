@@ -22,6 +22,7 @@ TEST_F(union_relation_test, simple) {
             { vardesc(1), vardesc(2), vardesc(3) },
     };
 
+    EXPECT_EQ(expr.quantifier(), set_quantifier::all);
     ASSERT_EQ(expr.mappings().size(), 1);
     {
         auto&& m = expr.mappings()[0];
@@ -47,6 +48,17 @@ TEST_F(union_relation_test, simple) {
         EXPECT_EQ(&p[0], &expr.output());
         EXPECT_TRUE(is_valid_port_list(p));
     }
+}
+
+TEST_F(union_relation_test, quantifier) {
+    union_ expr {
+            {
+                    { vardesc(1), vardesc(2), vardesc(3) },
+            },
+            set_quantifier::distinct,
+    };
+
+    EXPECT_EQ(expr.quantifier(), set_quantifier::distinct);
 }
 
 TEST_F(union_relation_test, multiple) {
@@ -107,9 +119,12 @@ TEST_F(union_relation_test, outer) {
 
 TEST_F(union_relation_test, clone) {
     union_ expr {
-            { vardesc(1), {}, vardesc(3) },
-            { {}, vardesc(5), vardesc(6) },
-            { vardesc(7), vardesc(8), vardesc(9) },
+            {
+                    { vardesc(1), {}, vardesc(3) },
+                    { {}, vardesc(5), vardesc(6) },
+                    { vardesc(7), vardesc(8), vardesc(9) },
+            },
+            set_quantifier::distinct,
     };
 
     auto copy = util::clone_unique(expr);
@@ -119,9 +134,12 @@ TEST_F(union_relation_test, clone) {
 
 TEST_F(union_relation_test, clone_move) {
     union_ expr {
-            { vardesc(1), {}, vardesc(3) },
-            { {}, vardesc(5), vardesc(6) },
-            { vardesc(7), vardesc(8), vardesc(9) },
+            {
+                    { vardesc(1), {}, vardesc(3) },
+                    { {}, vardesc(5), vardesc(6) },
+                    { vardesc(7), vardesc(8), vardesc(9) },
+            },
+            set_quantifier::distinct,
     };
 
     auto copy = util::clone_unique(expr);
@@ -135,9 +153,12 @@ TEST_F(union_relation_test, clone_move) {
 
 TEST_F(union_relation_test, output) {
     union_ expr {
-            { vardesc(1), {}, vardesc(3) },
-            { {}, vardesc(5), vardesc(6) },
-            { vardesc(7), vardesc(8), vardesc(9) },
+            {
+                    { vardesc(1), {}, vardesc(3) },
+                    { {}, vardesc(5), vardesc(6) },
+                    { vardesc(7), vardesc(8), vardesc(9) },
+            },
+            set_quantifier::distinct,
     };
 
     std::cout << expr << std::endl;

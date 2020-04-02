@@ -554,6 +554,9 @@ DML系演算子は、リレーションの出力を行わない関係演算子�
       * `left?` - 第一入力リレーション上の列ID
       * `right?` - 第二入力リレーション上の列ID
       * `destination` - 出力リレーション上の列ID
+    * `quantifier` - 量子化の種類
+      * `all` - 入力を多重集合として扱う
+      * `distinct` - 入力を集合として扱い、集合における和を計算する
   * その他の特性
     * 下流の演算子では、 `columns.destination` で指定した列のみが利用可能
     * `OUTER UNION` や `UNION JOIN` は `columns.{left, right}` を空にすることで実現
@@ -739,10 +742,10 @@ notes:
 * `join_relation` -> `shuffle` エクスチェンジ + `join_group` (またはその他の `join_*` 系演算子)
 * `aggregate_relation` -> `shuffle` エクスチェンジ + `aggregate_group`
 * `distinct_relation` -> `shuffle` エクスチェンジ + `flatten_group`
-* `limit_relation` -> `shuffle` エクスチェンジ + `flatten_group`
+* `limit_relation` -> `forwar` エクスチェンジ、または `shuffle` エクスチェンジ + `flatten_group`
 * `intersection_relation` -> `shuffle` エクスチェンジ + `intersection_group`
 * `difference_relation` -> `shuffle` エクスチェンジ + `difference_group`
-* `union_relation` -> `forward` エクスチェンジ
+* `union_relation` -> `forward` エクスチェンジ、または `shuffle` エクスチェンジ + `flatten_group`
 * `escape` -> ステップ実行計画では不要
 
 上記はいずれも、その処理の一部または全部をエクスチェンジで行うべき演算子である。
