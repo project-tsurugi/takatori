@@ -7,6 +7,12 @@ namespace takatori::util {
 
 /**
  * @brief a wrapper class of R-value references.
+ * @details This is designed to pass non-copyable values into std::initializer_list.
+ *      You can declare `std::initializer_list<rvalue_reference_wrapper<T>>` parameter,
+ *      and then you can pass rvalue references as an initializer list.
+ *      To build a `std::vector<T>` (or similar collection) from the above parameter,
+ *      you can simply pass the iterator range of the initializer list to the vector's constructor.
+ *       It behave as like std::move_iterator by `rvalue_reference_wrapper<T>::operator T&&()`.
  * @tparam T the value type
  */
 template<class T>
