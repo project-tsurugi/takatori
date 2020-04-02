@@ -504,6 +504,7 @@ DML系演算子は、リレーションの出力を行わない関係演算子�
     * `keys*` - ソートキーの一覧
       * `variable` - 列ID
       * `direction` - `ascendant` または `descendant`
+    * `limit?` - 最大出力件数
   * その他の特性
     * ソートキーの一覧は後述のステップ実行計画では無視される
 
@@ -752,7 +753,7 @@ notes:
 
 * `join_find` : 外部リレーションに `broadcast` エクスチェンジを指定できる
 * `join_scan` : 外部リレーションに `broadcast` エクスチェンジを指定できる
-* `emit` : ソート関連のプロパティが無視される (`shuffle` エクスチェンジ + `flatten_group` で代替)
+* `emit` : ソート、行数制限関連のプロパティが無視される (`shuffle` エクスチェンジ + `flatten_group` で代替)
 
 ### グループ系 (ステップ実行計画)
 

@@ -28,6 +28,7 @@ TEST_F(emit_test, simple) {
         EXPECT_EQ(c.name(), std::nullopt);
     }
     ASSERT_EQ(expr.keys().size(), 0);
+    EXPECT_EQ(expr.limit(), std::nullopt);
     {
         auto p = expr.input_ports();
         ASSERT_EQ(p.size(), 1);
@@ -148,6 +149,18 @@ TEST_F(emit_test, key_multiple) {
     }
 }
 
+TEST_F(emit_test, limit) {
+    emit expr {
+            {
+                    { vardesc(1), },
+            },
+            {},
+            100,
+    };
+
+    EXPECT_EQ(expr.limit(), 100);
+}
+
 TEST_F(emit_test, clone) {
     emit expr {
             {
@@ -160,6 +173,7 @@ TEST_F(emit_test, clone) {
                     { vardesc(20), sort_direction::descendant },
                     vardesc(30),
             },
+            100,
     };
 
     auto copy = util::clone_unique(expr);
@@ -179,6 +193,7 @@ TEST_F(emit_test, clone_move) {
                     { vardesc(20), sort_direction::descendant },
                     vardesc(30),
             },
+            100,
     };
 
     auto copy = util::clone_unique(expr);
@@ -202,6 +217,7 @@ TEST_F(emit_test, output) {
                     { vardesc(20), sort_direction::descendant },
                     vardesc(30),
             },
+            100,
     };
 
     std::cout << expr << std::endl;

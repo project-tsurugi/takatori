@@ -9,18 +9,22 @@ namespace takatori::relation {
 emit::emit(
         std::vector<column, util::object_allocator<column>> columns,
         std::vector<key, util::object_allocator<key>> keys,
+        std::optional<size_type> limit,
         util::object_creator creator) noexcept
     : input_(*this, 0, creator)
     , columns_(std::move(columns))
     , keys_(std::move(keys))
+    , limit_(std::move(limit))
 {}
 
 emit::emit(
         std::initializer_list<column> columns,
-        std::initializer_list<key> keys)
+        std::initializer_list<key> keys,
+        std::optional<size_type> limit)
     : emit(
             { columns.begin(), columns.end() },
-            { keys.begin(), keys.end() })
+            { keys.begin(), keys.end() },
+            std::move(limit))
 {}
 
 
@@ -28,6 +32,7 @@ emit::emit(emit const& other, util::object_creator creator)
     : emit(
             { other.columns_, creator.allocator<column>() },
             { other.keys_, creator.allocator<column>() },
+            other.limit_,
             creator)
 {}
 
@@ -35,6 +40,7 @@ emit::emit(emit&& other, util::object_creator creator)
     : emit(
             { std::move(other.columns_), creator.allocator<column>() },
             { std::move(other.keys_), creator.allocator<column>() },
+            std::move(other.limit_),
             creator)
 {}
 
@@ -91,9 +97,19 @@ std::vector<emit::key, util::object_allocator<emit::key>> const& emit::keys() co
     return keys_;
 }
 
+std::optional<emit::size_type> const& emit::limit() const noexcept {
+    return limit_;
+}
+
+emit& emit::limit(std::optional<emit::size_type> limit) noexcept {
+    limit_ = std::move(limit);
+    return *this;
+}
+
 bool operator==(emit const& a, emit const& b) noexcept {
     return a.columns() == b.columns()
-        && a.keys() == b.keys();
+        && a.keys() == b.keys()
+        && a.limit() == b.limit();
 }
 
 bool operator!=(emit const& a, emit const& b) noexcept {
@@ -103,7 +119,8 @@ bool operator!=(emit const& a, emit const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, emit const& value) {
     return out << value.kind() << "("
                << "columns=" << util::print_support { value.columns() } << ", "
-               << "keys=" << util::print_support { value.keys() } << ")";
+               << "keys=" << util::print_support { value.keys() } << ", "
+               << "limit=" << util::print_support { value.limit() } << ")";
 }
 
 bool emit::equals(expression const& other) const noexcept {

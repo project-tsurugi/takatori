@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <optional>
 #include <vector>
 
 #include "expression.h"
@@ -18,6 +19,9 @@ namespace takatori::relation {
  */
 class emit : public expression {
 public:
+    /// @brief type of the number of rows.
+    using size_type = std::size_t;
+
     /// @brief emit column type.
     using column = details::emit_element;
 
@@ -32,18 +36,21 @@ public:
      * @param columns the columns to be emitted in the input relation
      * @param keys the sort key which represents how sort the emitting rows
      * @param creator the object creator for internal elements
-     * @attention the sort key is only available in intermediate execution plan;
+     * @param limit the maximum number of rows to emit
+     * @attention the sort key and row number limit are only available in intermediate execution plan;
      *      it will be omitted in the step execution plan
      */
     explicit emit(
             std::vector<column, util::object_allocator<column>> columns,
             std::vector<key, util::object_allocator<key>> keys,
+            std::optional<size_type> limit = {},
             util::object_creator creator = {}) noexcept;
 
     /**
      * @brief creates a new object.
      * @param columns the columns to be emitted in the input relation
      * @param keys the key to sort the emitting rows
+     * @param limit the maximum number of rows to emit
      * @attention compiler may confuse when both the column name and sort direction were omitted.
      * for example, the following code snippet constructs an expression with 2 columns and 0 key elements:
      * @code {.cpp}
@@ -70,11 +77,14 @@ public:
      * }
      * @endcode
      * Finally, the above snippet achieves to constructs an expresion with 1 column and 2 key elements.
-     * @attention the sort key is only available in intermediate execution plan;
+     * @attention the sort key and row number limit are only available in intermediate execution plan;
      *      it will be omitted in the step execution plan
      * @attention this may take copies of the given arguments
      */
-    emit(std::initializer_list<column> columns, std::initializer_list<key> keys = {});
+    emit(
+            std::initializer_list<column> columns,
+            std::initializer_list<key> keys = {},
+            std::optional<size_type> limit = {});
 
     /**
      * @brief creates a new object.
@@ -128,6 +138,20 @@ public:
     std::vector<key, util::object_allocator<key>> const& keys() const noexcept;
 
     /**
+     * @brief returns the max number of exchange rows.
+     * @return the number of exchange rows limit
+     * @return empty if it is unlimited
+     */
+    std::optional<size_type> const& limit() const noexcept;
+
+    /**
+     * @brief sets the max number of exchange rows.
+     * @param limit the number of exchange rows limit
+     * @return this
+     */
+    emit& limit(std::optional<size_type> limit) noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
@@ -163,6 +187,7 @@ private:
     input_port_type input_;
     std::vector<column, util::object_allocator<column>> columns_;
     std::vector<key, util::object_allocator<key>> keys_;
+    std::optional<size_type> limit_ {};
 };
 
 /**
