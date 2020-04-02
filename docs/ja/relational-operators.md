@@ -448,6 +448,9 @@ notes:
     * `count` - 行数
     * `group_key*` - グループ化キーの一覧
       * 列ID
+    * `sort_keys*` - ソートキーの一覧
+      * `variable` - 列ID
+      * `direction` - `ascendant` または `descendant`
   * その他の特性
     * なし
 

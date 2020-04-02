@@ -8,23 +8,30 @@ namespace takatori::relation::intermediate {
 limit::limit(
         size_type count,
         std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
+        std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
         util::object_creator creator) noexcept
     : input_(*this, 0, creator)
     , output_(*this, 0, creator)
     , count_(count)
     , group_keys_(std::move(group_keys))
+    , sort_keys_(std::move(sort_keys))
 {}
 
 limit::limit(
         size_type count,
-        std::initializer_list<descriptor::variable> group_keys)
-    : limit(count, { group_keys.begin(), group_keys.end() })
+        std::initializer_list<descriptor::variable> group_keys,
+        std::initializer_list<sort_key> sort_keys)
+    : limit(
+            count,
+            { group_keys.begin(), group_keys.end() },
+            { sort_keys.begin(), sort_keys.end() })
 {}
 
 limit::limit(limit const& other, util::object_creator creator)
     : limit(
             other.count_,
             { other.group_keys_, creator.allocator<descriptor::variable>() },
+            { other.sort_keys_, creator.allocator<sort_key>() },
             creator)
 {}
 
@@ -32,6 +39,7 @@ limit::limit(limit&& other, util::object_creator creator)
     : limit(
             other.count_,
             { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
+            { std::move(other.sort_keys_), creator.allocator<sort_key>() },
             creator)
 {}
 
@@ -96,9 +104,18 @@ std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> 
     return group_keys_;
 }
 
+std::vector<limit::sort_key, util::object_allocator<limit::sort_key>>& limit::sort_keys() noexcept {
+    return sort_keys_;
+}
+
+std::vector<limit::sort_key, util::object_allocator<limit::sort_key>> const& limit::sort_keys() const noexcept {
+    return sort_keys_;
+}
+
 bool operator==(limit const& a, limit const& b) noexcept {
     return a.count() == b.count()
-        && a.group_keys() == b.group_keys();
+        && a.group_keys() == b.group_keys()
+        && a.sort_keys() == b.sort_keys();
 }
 
 bool operator!=(limit const& a, limit const& b) noexcept {
@@ -108,7 +125,8 @@ bool operator!=(limit const& a, limit const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, limit const& value) {
     return out << value.kind() << "("
                << "count=" << value.count() << ", "
-               << "group_keys=" << util::print_support { value.group_keys() } << ")";
+               << "group_keys=" << util::print_support { value.group_keys() } << ", "
+               << "sort_keys=" << util::print_support { value.sort_keys() } << ")";
 }
 
 bool limit::equals(expression const& other) const noexcept {

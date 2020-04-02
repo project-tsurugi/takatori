@@ -7,6 +7,7 @@
 
 #include "../expression.h"
 #include "../expression_kind.h"
+#include "../details/sort_key_element.h"
 
 #include <takatori/descriptor/variable.h>
 
@@ -23,6 +24,9 @@ public:
     /// @brief type of the number of rows.
     using size_type = std::size_t;
 
+    /// @brief sort key type.
+    using sort_key = details::sort_key_element;
+
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::limit_relation;
 
@@ -30,21 +34,25 @@ public:
      * @brief creates a new object.
      * @param count the number of rows to keep in the input relation or each partition
      * @param group_keys the partitioning key columns on the input relation, or empty to limit for whole relation
+     * @param sort_keys the sort key: this operation will keep rows from head of the sorted relation, if it is defined
      * @param creator the object creator for internal elements
      */
     explicit limit(
             size_type count,
             std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
+            std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
             util::object_creator creator = {}) noexcept;
 
     /**
      * @brief creates a new object.
      * @param count the number of rows to keep in the input relation
      * @param group_keys the grouping key columns on the input relation, or empty to limit for whole relation
+     * @param sort_keys the sort key: this operation will keep rows from head of the sorted relation, if it is defined
      */
     explicit limit(
             size_type count,
-            std::initializer_list<descriptor::variable> group_keys = {});
+            std::initializer_list<descriptor::variable> group_keys = {},
+            std::initializer_list<sort_key> sort_keys = {});
 
     /**
      * @brief creates a new object.
@@ -109,6 +117,15 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
 
     /**
+     * @brief returns the sort key.
+     * @return the sort key
+     */
+    std::vector<sort_key, util::object_allocator<sort_key>>& sort_keys() noexcept;
+
+    /// @brief sort_keys()
+    std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
@@ -145,6 +162,7 @@ private:
     output_port_type output_;
     size_type count_;
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_;
+    std::vector<sort_key, util::object_allocator<sort_key>> sort_keys_;
 };
 
 } // namespace takatori::relation::intermediate

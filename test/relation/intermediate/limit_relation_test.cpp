@@ -22,6 +22,7 @@ TEST_F(limit_relation_test, simple) {
 
     ASSERT_EQ(expr.count(), 10);
     ASSERT_EQ(expr.group_keys().size(), 0);
+    ASSERT_EQ(expr.sort_keys().size(), 0);
 
     {
         auto p = expr.input_ports();
@@ -40,7 +41,7 @@ TEST_F(limit_relation_test, simple) {
     EXPECT_EQ(&expr.output().owner(), &expr);
 }
 
-TEST_F(limit_relation_test, grouping) {
+TEST_F(limit_relation_test, group_keys) {
     limit expr {
             5,
             {
@@ -55,6 +56,36 @@ TEST_F(limit_relation_test, grouping) {
     EXPECT_EQ(expr.group_keys()[0], vardesc(1));
     EXPECT_EQ(expr.group_keys()[1], vardesc(2));
     EXPECT_EQ(expr.group_keys()[2], vardesc(3));
+}
+
+TEST_F(limit_relation_test, sort_keys) {
+    limit expr {
+            5,
+            {},
+            {
+                    { vardesc(10) },
+                    { vardesc(20), sort_direction::descendant },
+                    { vardesc(30), sort_direction::ascendant },
+            },
+    };
+
+    ASSERT_EQ(expr.count(), 5);
+    ASSERT_EQ(expr.sort_keys().size(), 3);
+    {
+        auto&& k = expr.sort_keys()[0];
+        EXPECT_EQ(k.variable(), vardesc(10));
+        EXPECT_EQ(k.direction(), sort_direction::ascendant);
+    }
+    {
+        auto&& k = expr.sort_keys()[1];
+        EXPECT_EQ(k.variable(), vardesc(20));
+        EXPECT_EQ(k.direction(), sort_direction::descendant);
+    }
+    {
+        auto&& k = expr.sort_keys()[2];
+        EXPECT_EQ(k.variable(), vardesc(30));
+        EXPECT_EQ(k.direction(), sort_direction::ascendant);
+    }
 }
 
 TEST_F(limit_relation_test, clone) {
