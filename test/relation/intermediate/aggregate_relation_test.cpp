@@ -27,8 +27,8 @@ TEST_F(aggregate_relation_test, simple) {
             },
     };
 
-    ASSERT_EQ(expr.keys().size(), 1);
-    EXPECT_EQ(expr.keys()[0], vardesc(1));
+    ASSERT_EQ(expr.group_keys().size(), 1);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
 
     ASSERT_EQ(expr.columns().size(), 1);
     {
@@ -64,7 +64,7 @@ TEST_F(aggregate_relation_test, empty_keys) {
             },
     };
 
-    ASSERT_EQ(expr.keys().size(), 0);
+    ASSERT_EQ(expr.group_keys().size(), 0);
 
     ASSERT_EQ(expr.columns().size(), 1);
     {
@@ -88,10 +88,10 @@ TEST_F(aggregate_relation_test, multiple_keys) {
             },
     };
 
-    ASSERT_EQ(expr.keys().size(), 3);
-    EXPECT_EQ(expr.keys()[0], vardesc(1));
-    EXPECT_EQ(expr.keys()[1], vardesc(2));
-    EXPECT_EQ(expr.keys()[2], vardesc(3));
+    ASSERT_EQ(expr.group_keys().size(), 3);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
+    EXPECT_EQ(expr.group_keys()[1], vardesc(2));
+    EXPECT_EQ(expr.group_keys()[2], vardesc(3));
 
     ASSERT_EQ(expr.columns().size(), 1);
     {
@@ -113,8 +113,8 @@ TEST_F(aggregate_relation_test, empty_argument) {
             }
     };
 
-    ASSERT_EQ(expr.keys().size(), 1);
-    EXPECT_EQ(expr.keys()[0], vardesc(1));
+    ASSERT_EQ(expr.group_keys().size(), 1);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
 
     ASSERT_EQ(expr.columns().size(), 1);
     {
@@ -135,8 +135,8 @@ TEST_F(aggregate_relation_test, multiple_arguments) {
             }
     };
 
-    ASSERT_EQ(expr.keys().size(), 1);
-    EXPECT_EQ(expr.keys()[0], vardesc(1));
+    ASSERT_EQ(expr.group_keys().size(), 1);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
 
     ASSERT_EQ(expr.columns().size(), 1);
     {
@@ -161,8 +161,8 @@ TEST_F(aggregate_relation_test, multiple_columns) {
             }
     };
 
-    ASSERT_EQ(expr.keys().size(), 1);
-    EXPECT_EQ(expr.keys()[0], vardesc(1));
+    ASSERT_EQ(expr.group_keys().size(), 1);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
 
     ASSERT_EQ(expr.columns().size(), 3);
     {

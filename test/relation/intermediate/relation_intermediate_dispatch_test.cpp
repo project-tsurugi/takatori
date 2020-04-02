@@ -12,7 +12,7 @@ class relation_intermediate_dispatch_test : public ::testing::Test {};
 
 TEST_F(relation_intermediate_dispatch_test, simple) {
     struct cb {
-        int operator()(distinct const& op) { return value_of<int>(op.keys()[0]); }
+        int operator()(distinct const& op) { return value_of<int>(op.group_keys()[0]); }
         int operator()(expression const&) { return 0; }
     };
     distinct e { vardesc(1) };

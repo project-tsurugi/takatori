@@ -27,9 +27,9 @@ TEST_F(intersecton_relation_test, simple) {
     EXPECT_EQ(&expr.output().owner(), &expr);
 
     EXPECT_EQ(expr.quantifier(), set_quantifier::all);
-    ASSERT_EQ(expr.key_pairs().size(), 1);
+    ASSERT_EQ(expr.group_key_pairs().size(), 1);
     {
-        auto&& p = expr.key_pairs()[0];
+        auto&& p = expr.group_key_pairs()[0];
         EXPECT_EQ(p.left(), vardesc(1));
         EXPECT_EQ(p.right(), vardesc(2));
     }
@@ -66,19 +66,19 @@ TEST_F(intersecton_relation_test, multiple) {
             { vardesc(5), vardesc(6) },
     };
 
-    ASSERT_EQ(expr.key_pairs().size(), 3);
+    ASSERT_EQ(expr.group_key_pairs().size(), 3);
     {
-        auto&& p = expr.key_pairs()[0];
+        auto&& p = expr.group_key_pairs()[0];
         EXPECT_EQ(p.left(), vardesc(1));
         EXPECT_EQ(p.right(), vardesc(2));
     }
     {
-        auto&& p = expr.key_pairs()[1];
+        auto&& p = expr.group_key_pairs()[1];
         EXPECT_EQ(p.left(), vardesc(3));
         EXPECT_EQ(p.right(), vardesc(4));
     }
     {
-        auto&& p = expr.key_pairs()[2];
+        auto&& p = expr.group_key_pairs()[2];
         EXPECT_EQ(p.left(), vardesc(5));
         EXPECT_EQ(p.right(), vardesc(6));
     }

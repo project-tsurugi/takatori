@@ -6,32 +6,32 @@
 namespace takatori::relation::intermediate {
 
 aggregate::aggregate(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> keys,
+        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
         std::vector<column, util::object_allocator<column>> columns,
         util::object_creator creator) noexcept
     : input_(*this, 0, creator)
     , output_(*this, 0, creator)
-    , keys_(std::move(keys))
+    , group_keys_(std::move(group_keys))
     , columns_(std::move(columns))
 {}
 
 aggregate::aggregate(
-        std::initializer_list<descriptor::variable> keys,
+        std::initializer_list<descriptor::variable> group_keys,
         std::initializer_list<column> columns)
     : aggregate(
-            { keys.begin(), keys.end() },
+            { group_keys.begin(), group_keys.end() },
             { columns.begin(), columns.end() })
 {}
 
 aggregate::aggregate(aggregate const& other, util::object_creator creator)
     : aggregate(
-            { other.keys_, creator.allocator<descriptor::variable>() },
+            { other.group_keys_, creator.allocator<descriptor::variable>() },
             { other.columns_, creator.allocator<column>() })
 {}
 
 aggregate::aggregate(aggregate&& other, util::object_creator creator)
     : aggregate(
-            { std::move(other.keys_), creator.allocator<descriptor::variable>() },
+            { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
             { std::move(other.columns_), creator.allocator<column>() })
 {}
 
@@ -79,12 +79,12 @@ aggregate::output_port_type const& aggregate::output() const noexcept {
     return output_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& aggregate::keys() noexcept {
-    return keys_;
+std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& aggregate::group_keys() noexcept {
+    return group_keys_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& aggregate::keys() const noexcept {
-    return keys_;
+std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& aggregate::group_keys() const noexcept {
+    return group_keys_;
 }
 
 std::vector<aggregate::column, util::object_allocator<aggregate::column>>& aggregate::columns() noexcept {
@@ -96,7 +96,7 @@ std::vector<aggregate::column, util::object_allocator<aggregate::column>> const&
 }
 
 bool operator==(aggregate const& a, aggregate const& b) noexcept {
-    return a.keys() == b.keys()
+    return a.group_keys() == b.group_keys()
         && a.columns() == b.columns();
 }
 
@@ -106,7 +106,7 @@ bool operator!=(aggregate const& a, aggregate const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, aggregate const& value) {
     return out << value.kind() << "("
-               << "keys=" << util::print_support { value.keys() } << ", "
+               << "group_keys=" << util::print_support { value.group_keys() } << ", "
                << "columns=" << util::print_support { value.columns() } << ")";
 }
 

@@ -22,8 +22,8 @@ TEST_F(distinct_relation_test, simple) {
             vardesc(1),
     };
 
-    ASSERT_EQ(expr.keys().size(), 1);
-    EXPECT_EQ(expr.keys()[0], vardesc(1));
+    ASSERT_EQ(expr.group_keys().size(), 1);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
 
     {
         auto p = expr.input_ports();
@@ -49,10 +49,10 @@ TEST_F(distinct_relation_test, multiple) {
             vardesc(3),
     };
 
-    ASSERT_EQ(expr.keys().size(), 3);
-    EXPECT_EQ(expr.keys()[0], vardesc(1));
-    EXPECT_EQ(expr.keys()[1], vardesc(2));
-    EXPECT_EQ(expr.keys()[2], vardesc(3));
+    ASSERT_EQ(expr.group_keys().size(), 3);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
+    EXPECT_EQ(expr.group_keys()[1], vardesc(2));
+    EXPECT_EQ(expr.group_keys()[2], vardesc(3));
 }
 
 TEST_F(distinct_relation_test, clone) {

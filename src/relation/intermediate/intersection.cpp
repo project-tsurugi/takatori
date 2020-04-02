@@ -7,7 +7,7 @@ namespace takatori::relation::intermediate {
 
 intersection::intersection(
         quantifier_kind quantifier,
-        std::vector<key_pair, util::object_allocator<key_pair>> key_pairs,
+        std::vector<group_key_pair, util::object_allocator<group_key_pair>> group_key_pairs,
         util::object_creator creator) noexcept
     : inputs_({
             input_port_type { *this, left_index, creator },
@@ -15,28 +15,28 @@ intersection::intersection(
     })
     , output_(*this, 0, creator)
     , quantifier_(quantifier)
-    , key_pairs_(std::move(key_pairs))
+    , group_key_pairs_(std::move(group_key_pairs))
 {}
 
 intersection::intersection(
-        std::initializer_list<key_pair> key_pairs,
+        std::initializer_list<group_key_pair> group_key_pairs,
         quantifier_kind quantifier)
     : intersection(
             quantifier,
-            { key_pairs.begin(), key_pairs.end() })
+            { group_key_pairs.begin(), group_key_pairs.end() })
 {}
 
 intersection::intersection(intersection const& other, util::object_creator creator)
     : intersection(
             other.quantifier_,
-            decltype(key_pairs_) { other.key_pairs_, creator.allocator<key_pair>() },
+            decltype(group_key_pairs_) { other.group_key_pairs_, creator.allocator<group_key_pair>() },
             creator)
 {}
 
 intersection::intersection(intersection&& other, util::object_creator creator)
     : intersection(
             other.quantifier_,
-            decltype(key_pairs_) { std::move(other.key_pairs_), creator.allocator<key_pair>() },
+            decltype(group_key_pairs_) { std::move(other.group_key_pairs_), creator.allocator<group_key_pair>() },
             creator)
 {}
 
@@ -101,17 +101,17 @@ intersection& intersection::quantifier(quantifier_kind quantifier) noexcept {
     return *this;
 }
 
-std::vector<intersection::key_pair, util::object_allocator<intersection::key_pair>>& intersection::key_pairs() noexcept {
-    return key_pairs_;
+std::vector<intersection::group_key_pair, util::object_allocator<intersection::group_key_pair>>& intersection::group_key_pairs() noexcept {
+    return group_key_pairs_;
 }
 
-std::vector<intersection::key_pair, util::object_allocator<intersection::key_pair>> const& intersection::key_pairs() const noexcept {
-    return key_pairs_;
+std::vector<intersection::group_key_pair, util::object_allocator<intersection::group_key_pair>> const& intersection::group_key_pairs() const noexcept {
+    return group_key_pairs_;
 }
 
 bool operator==(intersection const& a, intersection const& b) noexcept {
     return a.quantifier() == b.quantifier()
-            && a.key_pairs() == b.key_pairs();
+            && a.group_key_pairs() == b.group_key_pairs();
 }
 
 bool operator!=(intersection const& a, intersection const& b) noexcept {
@@ -121,7 +121,7 @@ bool operator!=(intersection const& a, intersection const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, intersection const& value) {
     return out << value.kind() << "("
                << "quantifier=" << value.quantifier() << ", "
-               << "key_pairs=" << util::print_support { value.key_pairs() } << ")";
+               << "group_key_pairs=" << util::print_support { value.group_key_pairs() } << ")";
 }
 
 bool intersection::equals(expression const& other) const noexcept {

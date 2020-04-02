@@ -23,20 +23,20 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param keys the key columns on the input relation:
+     * @param group_keys the key columns on the input relation:
      *      this operation distinguishes individual rows by these keys
      * @param creator the object creator for internal elements
      */
     explicit distinct(
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> keys,
+            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
             util::object_creator creator = {}) noexcept;
 
     /**
      * @brief creates a new object.
-     * @param keys the key columns on the input relation:
+     * @param group_keys the key columns on the input relation:
      *      this operation distinguishes individual rows by these keys
      */
-    distinct(std::initializer_list<descriptor::variable> keys);
+    distinct(std::initializer_list<descriptor::variable> group_keys);
 
     /**
      * @brief creates a new object.
@@ -82,10 +82,10 @@ public:
      * @brief returns the distinct key columns on the input relation.
      * @return the distinct keys
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& keys() noexcept;
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
-    /// @copydoc keys()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& keys() const noexcept;
+    /// @copydoc group_keys()
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -122,7 +122,7 @@ protected:
 private:
     input_port_type input_;
     output_port_type output_;
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> keys_;
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_;
 };
 
 } // namespace takatori::relation::intermediate

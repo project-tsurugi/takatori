@@ -6,26 +6,26 @@
 namespace takatori::relation::intermediate {
 
 distinct::distinct(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> keys,
+        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
         util::object_creator creator) noexcept
     : input_(*this, 0, creator)
     , output_(*this, 0, creator)
-    , keys_(std::move(keys))
+    , group_keys_(std::move(group_keys))
 {}
 
-distinct::distinct(std::initializer_list<descriptor::variable> keys)
-    : distinct({ keys.begin(), keys.end() })
+distinct::distinct(std::initializer_list<descriptor::variable> group_keys)
+    : distinct({ group_keys.begin(), group_keys.end() })
 {}
 
 distinct::distinct(distinct const& other, util::object_creator creator)
     : distinct(
-            decltype(keys_) { other.keys_, creator.allocator<descriptor::variable>() },
+            decltype(group_keys_) { other.group_keys_, creator.allocator<descriptor::variable>() },
             creator)
 {}
 
 distinct::distinct(distinct&& other, util::object_creator creator)
     : distinct(
-            decltype(keys_) { std::move(other.keys_), creator.allocator<descriptor::variable>() },
+            decltype(group_keys_) { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
             creator)
 {}
 
@@ -73,16 +73,16 @@ distinct::output_port_type const& distinct::output() const noexcept {
     return output_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& distinct::keys() noexcept {
-    return keys_;
+std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& distinct::group_keys() noexcept {
+    return group_keys_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& distinct::keys() const noexcept {
-    return keys_;
+std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& distinct::group_keys() const noexcept {
+    return group_keys_;
 }
 
 bool operator==(distinct const& a, distinct const& b) noexcept {
-    return a.keys() == b.keys();
+    return a.group_keys() == b.group_keys();
 }
 
 bool operator!=(distinct const& a, distinct const& b) noexcept {
@@ -91,7 +91,7 @@ bool operator!=(distinct const& a, distinct const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, distinct const& value) {
     return out << value.kind() << "("
-               << "keys=" << util::print_support { value.keys() } << ")";
+               << "group_keys=" << util::print_support { value.group_keys() } << ")";
 }
 
 bool distinct::equals(expression const& other) const noexcept {

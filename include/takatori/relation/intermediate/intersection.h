@@ -23,7 +23,7 @@ namespace takatori::relation::intermediate {
 class intersection : public expression {
 public:
     /// @brief the key pair type
-    using key_pair = details::key_pair_element;
+    using group_key_pair = details::key_pair_element;
 
     /// @brief the set quantifier type.
     using quantifier_kind = set_quantifier;
@@ -34,23 +34,23 @@ public:
     /**
      * @brief creates a new object.
      * @param quantifier the set quantifier of this operation
-     * @param key_pairs the key element pairs:
+     * @param group_key_pairs the key element pairs:
      *      this operation distinguishes individual rows by these keys
      * @param creator the object creator for internal elements
      */
     explicit intersection(
             quantifier_kind quantifier,
-            std::vector<key_pair, util::object_allocator<key_pair>> key_pairs,
+            std::vector<group_key_pair, util::object_allocator<group_key_pair>> group_key_pairs,
             util::object_creator creator = {}) noexcept;
 
     /**
      * @brief creates a new object.
-     * @param key_pairs the key element pairs:
+     * @param group_key_pairs the key element pairs:
      *      this operation distinguishes individual rows by these keys
      * @param quantifier the set quantifier of this operation
      */
     intersection(
-            std::initializer_list<key_pair> key_pairs,
+            std::initializer_list<group_key_pair> group_key_pairs,
             quantifier_kind quantifier = quantifier_kind::all);
 
     /**
@@ -119,10 +119,10 @@ public:
      * @brief returns the key columns on the input relations.
      * @return the key columns
      */
-    std::vector<key_pair, util::object_allocator<key_pair>>& key_pairs() noexcept;
+    std::vector<group_key_pair, util::object_allocator<group_key_pair>>& group_key_pairs() noexcept;
 
-    /// @copydoc key_pairs()
-    std::vector<key_pair, util::object_allocator<key_pair>> const& key_pairs() const noexcept;
+    /// @copydoc group_key_pairs()
+    std::vector<group_key_pair, util::object_allocator<group_key_pair>> const& group_key_pairs() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -160,7 +160,7 @@ private:
     std::array<input_port_type, 2> inputs_;
     output_port_type output_;
     quantifier_kind quantifier_;
-    std::vector<key_pair, util::object_allocator<key_pair>> key_pairs_;
+    std::vector<group_key_pair, util::object_allocator<group_key_pair>> group_key_pairs_;
 
     static inline constexpr std::size_t left_index = 0;
     static inline constexpr std::size_t right_index = left_index + 1;

@@ -8,22 +8,22 @@ namespace takatori::relation {
 
 emit::emit(
         std::vector<column, util::object_allocator<column>> columns,
-        std::vector<key, util::object_allocator<key>> keys,
+        std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
         std::optional<size_type> limit,
         util::object_creator creator) noexcept
     : input_(*this, 0, creator)
     , columns_(std::move(columns))
-    , keys_(std::move(keys))
+    , sort_keys_(std::move(sort_keys))
     , limit_(std::move(limit))
 {}
 
 emit::emit(
         std::initializer_list<column> columns,
-        std::initializer_list<key> keys,
+        std::initializer_list<sort_key> sort_keys,
         std::optional<size_type> limit)
     : emit(
             { columns.begin(), columns.end() },
-            { keys.begin(), keys.end() },
+            { sort_keys.begin(), sort_keys.end() },
             std::move(limit))
 {}
 
@@ -31,7 +31,7 @@ emit::emit(
 emit::emit(emit const& other, util::object_creator creator)
     : emit(
             { other.columns_, creator.allocator<column>() },
-            { other.keys_, creator.allocator<column>() },
+            { other.sort_keys_, creator.allocator<sort_key>() },
             other.limit_,
             creator)
 {}
@@ -39,7 +39,7 @@ emit::emit(emit const& other, util::object_creator creator)
 emit::emit(emit&& other, util::object_creator creator)
     : emit(
             { std::move(other.columns_), creator.allocator<column>() },
-            { std::move(other.keys_), creator.allocator<column>() },
+            { std::move(other.sort_keys_), creator.allocator<sort_key>() },
             std::move(other.limit_),
             creator)
 {}
@@ -89,12 +89,12 @@ std::vector<emit::column, util::object_allocator<emit::column>> const& emit::col
     return columns_;
 }
 
-std::vector<emit::key, util::object_allocator<emit::key>>& emit::keys() noexcept {
-    return keys_;
+std::vector<emit::sort_key, util::object_allocator<emit::sort_key>>& emit::sort_keys() noexcept {
+    return sort_keys_;
 }
 
-std::vector<emit::key, util::object_allocator<emit::key>> const& emit::keys() const noexcept {
-    return keys_;
+std::vector<emit::sort_key, util::object_allocator<emit::sort_key>> const& emit::sort_keys() const noexcept {
+    return sort_keys_;
 }
 
 std::optional<emit::size_type> const& emit::limit() const noexcept {
@@ -108,7 +108,7 @@ emit& emit::limit(std::optional<emit::size_type> limit) noexcept {
 
 bool operator==(emit const& a, emit const& b) noexcept {
     return a.columns() == b.columns()
-        && a.keys() == b.keys()
+        && a.sort_keys() == b.sort_keys()
         && a.limit() == b.limit();
 }
 
@@ -119,7 +119,7 @@ bool operator!=(emit const& a, emit const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, emit const& value) {
     return out << value.kind() << "("
                << "columns=" << util::print_support { value.columns() } << ", "
-               << "keys=" << util::print_support { value.keys() } << ", "
+               << "sort_keys=" << util::print_support { value.sort_keys() } << ", "
                << "limit=" << util::print_support { value.limit() } << ")";
 }
 

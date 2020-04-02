@@ -21,7 +21,7 @@ TEST_F(limit_relation_test, simple) {
     limit expr { 10 };
 
     ASSERT_EQ(expr.count(), 10);
-    ASSERT_EQ(expr.keys().size(), 0);
+    ASSERT_EQ(expr.group_keys().size(), 0);
 
     {
         auto p = expr.input_ports();
@@ -51,10 +51,10 @@ TEST_F(limit_relation_test, grouping) {
     };
 
     ASSERT_EQ(expr.count(), 5);
-    ASSERT_EQ(expr.keys().size(), 3);
-    EXPECT_EQ(expr.keys()[0], vardesc(1));
-    EXPECT_EQ(expr.keys()[1], vardesc(2));
-    EXPECT_EQ(expr.keys()[2], vardesc(3));
+    ASSERT_EQ(expr.group_keys().size(), 3);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
+    EXPECT_EQ(expr.group_keys()[1], vardesc(2));
+    EXPECT_EQ(expr.group_keys()[2], vardesc(3));
 }
 
 TEST_F(limit_relation_test, clone) {

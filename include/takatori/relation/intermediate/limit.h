@@ -29,22 +29,22 @@ public:
     /**
      * @brief creates a new object.
      * @param count the number of rows to keep in the input relation or each partition
-     * @param keys the partitioning key columns on the input relation, or empty to limit for whole relation
+     * @param group_keys the partitioning key columns on the input relation, or empty to limit for whole relation
      * @param creator the object creator for internal elements
      */
     explicit limit(
             size_type count,
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> keys,
+            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
             util::object_creator creator = {}) noexcept;
 
     /**
      * @brief creates a new object.
      * @param count the number of rows to keep in the input relation
-     * @param keys the grouping key columns on the input relation, or empty to limit for whole relation
+     * @param group_keys the grouping key columns on the input relation, or empty to limit for whole relation
      */
     explicit limit(
             size_type count,
-            std::initializer_list<descriptor::variable> keys = {});
+            std::initializer_list<descriptor::variable> group_keys = {});
 
     /**
      * @brief creates a new object.
@@ -103,10 +103,10 @@ public:
      * @brief returns the limit key columns on the input relation.
      * @return the limit keys
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& keys() noexcept;
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
-    /// @copydoc keys()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& keys() const noexcept;
+    /// @copydoc group_keys()
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -144,7 +144,7 @@ private:
     input_port_type input_;
     output_port_type output_;
     size_type count_;
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> keys_;
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_;
 };
 
 } // namespace takatori::relation::intermediate

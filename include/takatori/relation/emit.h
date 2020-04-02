@@ -26,7 +26,7 @@ public:
     using column = details::emit_element;
 
     /// @brief sort key type.
-    using key = details::sort_key_element;
+    using sort_key = details::sort_key_element;
 
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::emit;
@@ -34,7 +34,7 @@ public:
     /**
      * @brief creates a new object.
      * @param columns the columns to be emitted in the input relation
-     * @param keys the sort key which represents how sort the emitting rows
+     * @param sort_keys the sort key which represents how sort the emitting rows
      * @param creator the object creator for internal elements
      * @param limit the maximum number of rows to emit
      * @attention the sort key and row number limit are only available in intermediate execution plan;
@@ -42,14 +42,14 @@ public:
      */
     explicit emit(
             std::vector<column, util::object_allocator<column>> columns,
-            std::vector<key, util::object_allocator<key>> keys,
+            std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
             std::optional<size_type> limit = {},
             util::object_creator creator = {}) noexcept;
 
     /**
      * @brief creates a new object.
      * @param columns the columns to be emitted in the input relation
-     * @param keys the key to sort the emitting rows
+     * @param sort_keys the key to sort the emitting rows
      * @param limit the maximum number of rows to emit
      * @attention compiler may confuse when both the column name and sort direction were omitted.
      * for example, the following code snippet constructs an expression with 2 columns and 0 key elements:
@@ -71,7 +71,7 @@ public:
      *         var(1),
      *     },
      *     {
-     *         emit::key { var(2) },
+     *         emit::sort_key { var(2) },
      *         { var(3), sort_direction::ascendant, },
      *     },
      * }
@@ -83,7 +83,7 @@ public:
      */
     emit(
             std::initializer_list<column> columns,
-            std::initializer_list<key> keys = {},
+            std::initializer_list<sort_key> sort_keys = {},
             std::optional<size_type> limit = {});
 
     /**
@@ -132,10 +132,10 @@ public:
      * @attention this is only available in intermediate execution plan;
      *      it will be omitted in the step execution plan
      */
-    std::vector<key, util::object_allocator<key>>& keys() noexcept;
+    std::vector<sort_key, util::object_allocator<sort_key>>& sort_keys() noexcept;
 
-    /// @brief keys()
-    std::vector<key, util::object_allocator<key>> const& keys() const noexcept;
+    /// @brief sort_keys()
+    std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;
 
     /**
      * @brief returns the max number of exchange rows.
@@ -186,7 +186,7 @@ protected:
 private:
     input_port_type input_;
     std::vector<column, util::object_allocator<column>> columns_;
-    std::vector<key, util::object_allocator<key>> keys_;
+    std::vector<sort_key, util::object_allocator<sort_key>> sort_keys_;
     std::optional<size_type> limit_ {};
 };
 

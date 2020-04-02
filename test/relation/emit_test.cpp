@@ -27,7 +27,7 @@ TEST_F(emit_test, simple) {
         EXPECT_EQ(c.source(), vardesc(1));
         EXPECT_EQ(c.name(), std::nullopt);
     }
-    ASSERT_EQ(expr.keys().size(), 0);
+    ASSERT_EQ(expr.sort_keys().size(), 0);
     EXPECT_EQ(expr.limit(), std::nullopt);
     {
         auto p = expr.input_ports();
@@ -80,20 +80,20 @@ TEST_F(emit_test, column_multiple) {
     }
 }
 
-TEST_F(emit_test, key) {
+TEST_F(emit_test, sort_key) {
     emit expr {
             {
                     vardesc(1),
             },
             {
-                    emit::key { vardesc(10), },
+                    emit::sort_key { vardesc(10), },
             },
     };
 
     ASSERT_EQ(expr.columns().size(), 1);
-    ASSERT_EQ(expr.keys().size(), 1);
+    ASSERT_EQ(expr.sort_keys().size(), 1);
     {
-        auto&& k = expr.keys()[0];
+        auto&& k = expr.sort_keys()[0];
         EXPECT_EQ(k.variable(), vardesc(10));
         EXPECT_EQ(k.direction(), sort_direction::ascendant);
     }
@@ -110,9 +110,9 @@ TEST_F(emit_test, key_desc) {
     };
 
     ASSERT_EQ(expr.columns().size(), 1);
-    ASSERT_EQ(expr.keys().size(), 1);
+    ASSERT_EQ(expr.sort_keys().size(), 1);
     {
-        auto&& k = expr.keys()[0];
+        auto&& k = expr.sort_keys()[0];
         EXPECT_EQ(k.variable(), vardesc(10));
         EXPECT_EQ(k.direction(), sort_direction::descendant);
     }
@@ -131,19 +131,19 @@ TEST_F(emit_test, key_multiple) {
     };
 
     ASSERT_EQ(expr.columns().size(), 1);
-    ASSERT_EQ(expr.keys().size(), 3);
+    ASSERT_EQ(expr.sort_keys().size(), 3);
     {
-        auto&& k = expr.keys()[0];
+        auto&& k = expr.sort_keys()[0];
         EXPECT_EQ(k.variable(), vardesc(10));
         EXPECT_EQ(k.direction(), sort_direction::ascendant);
     }
     {
-        auto&& k = expr.keys()[1];
+        auto&& k = expr.sort_keys()[1];
         EXPECT_EQ(k.variable(), vardesc(20));
         EXPECT_EQ(k.direction(), sort_direction::descendant);
     }
     {
-        auto&& k = expr.keys()[2];
+        auto&& k = expr.sort_keys()[2];
         EXPECT_EQ(k.variable(), vardesc(30));
         EXPECT_EQ(k.direction(), sort_direction::ascendant);
     }

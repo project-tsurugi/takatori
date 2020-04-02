@@ -28,22 +28,22 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param keys the grouping key columns on the input relation, or empty if aggregates whole the input relation
+     * @param group_keys the grouping key columns on the input relation, or empty if aggregates whole the input relation
      * @param columns the individual columns aggregation
      * @param creator the object creator for internal elements
      */
     explicit aggregate(
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> keys,
+            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
             std::vector<column, util::object_allocator<column>> columns,
             util::object_creator creator = {}) noexcept;
 
     /**
      * @brief creates a new object.
-     * @param keys the grouping key columns on the input relation
+     * @param group_keys the grouping key columns on the input relation
      * @param columns the individual columns aggregation
      */
     explicit aggregate(
-            std::initializer_list<descriptor::variable> keys,
+            std::initializer_list<descriptor::variable> group_keys,
             std::initializer_list<column> columns);
 
     /**
@@ -91,10 +91,10 @@ public:
      * @return the aggregate keys
      * @return empty if this operator aggregates the whole input relation as a single group
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& keys() noexcept;
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
-    /// @copydoc keys()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& keys() const noexcept;
+    /// @copydoc group_keys()
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
 
     /**
      * @brief returns the individual columns aggregation.
@@ -140,7 +140,7 @@ protected:
 private:
     input_port_type input_;
     output_port_type output_;
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> keys_;
+    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_;
     std::vector<column, util::object_allocator<column>> columns_;
 };
 
