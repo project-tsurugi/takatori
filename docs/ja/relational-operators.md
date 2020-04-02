@@ -458,6 +458,9 @@ notes:
   * 入力数: 2
   * 列の公開: 第一入力リレーションのみ
   * プロパティ
+    * `quantifier` - 量子化の種類
+      * `all` - 入力を多重集合として扱う
+      * `distinct` - 入力を集合として扱う
     * `key_pairs*` - グループ化キーの一覧
       * 列ID * 2
   * その他の特性
@@ -470,6 +473,9 @@ notes:
   * 入力数: 2
   * 列の公開: 第一入力リレーションのみ
   * プロパティ
+    * `quantifier` - 量子化の種類
+      * `all` - 入力を多重集合として扱う
+      * `distinct` - 入力を集合として扱う
     * `key_pairs*` - グループ化キーの一覧
       * 列ID * 2
   * その他の特性
@@ -479,7 +485,6 @@ notes:
 notes:
 
 * `limit` は「グループごとに行数を制限」という拡張を行っている
-* `INTERSECT/MINUS DISTINCT` は事前に `distinct` をしておくか、 `distinct` と semi/anti-join の組み合わせで実現できる
 
 ### DML系
 

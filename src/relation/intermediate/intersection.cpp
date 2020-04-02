@@ -6,6 +6,7 @@
 namespace takatori::relation::intermediate {
 
 intersection::intersection(
+        quantifier_kind quantifier,
         std::vector<key_pair, util::object_allocator<key_pair>> key_pairs,
         util::object_creator creator) noexcept
     : inputs_({
@@ -13,21 +14,28 @@ intersection::intersection(
             input_port_type { *this, right_index, creator },
     })
     , output_(*this, 0, creator)
+    , quantifier_(quantifier)
     , key_pairs_(std::move(key_pairs))
 {}
 
-intersection::intersection(std::initializer_list<key_pair> key_pairs)
-    : intersection({ key_pairs.begin(), key_pairs.end() })
+intersection::intersection(
+        std::initializer_list<key_pair> key_pairs,
+        quantifier_kind quantifier)
+    : intersection(
+            quantifier,
+            { key_pairs.begin(), key_pairs.end() })
 {}
 
 intersection::intersection(intersection const& other, util::object_creator creator)
     : intersection(
+            other.quantifier_,
             decltype(key_pairs_) { other.key_pairs_, creator.allocator<key_pair>() },
             creator)
 {}
 
 intersection::intersection(intersection&& other, util::object_creator creator)
     : intersection(
+            other.quantifier_,
             decltype(key_pairs_) { std::move(other.key_pairs_), creator.allocator<key_pair>() },
             creator)
 {}
@@ -84,6 +92,15 @@ intersection::output_port_type const& intersection::output() const noexcept {
     return output_;
 }
 
+intersection::quantifier_kind intersection::quantifier() const noexcept {
+    return quantifier_;
+}
+
+intersection& intersection::quantifier(quantifier_kind quantifier) noexcept {
+    quantifier_ = quantifier;
+    return *this;
+}
+
 std::vector<intersection::key_pair, util::object_allocator<intersection::key_pair>>& intersection::key_pairs() noexcept {
     return key_pairs_;
 }
@@ -93,7 +110,8 @@ std::vector<intersection::key_pair, util::object_allocator<intersection::key_pai
 }
 
 bool operator==(intersection const& a, intersection const& b) noexcept {
-    return a.key_pairs() == b.key_pairs();
+    return a.quantifier() == b.quantifier()
+            && a.key_pairs() == b.key_pairs();
 }
 
 bool operator!=(intersection const& a, intersection const& b) noexcept {
@@ -102,6 +120,7 @@ bool operator!=(intersection const& a, intersection const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, intersection const& value) {
     return out << value.kind() << "("
+               << "quantifier=" << value.quantifier() << ", "
                << "key_pairs=" << util::print_support { value.key_pairs() } << ")";
 }
 

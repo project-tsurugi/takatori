@@ -7,6 +7,7 @@
 
 #include "../expression.h"
 #include "../expression_kind.h"
+#include "../set_quantifier.h"
 #include "../details/key_pair_element.h"
 
 #include <takatori/descriptor/variable.h>
@@ -24,16 +25,21 @@ public:
     /// @brief the key pair type
     using key_pair = details::key_pair_element;
 
+    /// @brief the set quantifier type.
+    using quantifier_kind = set_quantifier;
+
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::intersection_relation;
 
     /**
      * @brief creates a new object.
+     * @param quantifier the set quantifier of this operation
      * @param key_pairs the key element pairs:
      *      this operation distinguishes individual rows by these keys
      * @param creator the object creator for internal elements
      */
     explicit intersection(
+            quantifier_kind quantifier,
             std::vector<key_pair, util::object_allocator<key_pair>> key_pairs,
             util::object_creator creator = {}) noexcept;
 
@@ -41,8 +47,11 @@ public:
      * @brief creates a new object.
      * @param key_pairs the key element pairs:
      *      this operation distinguishes individual rows by these keys
+     * @param quantifier the set quantifier of this operation
      */
-    intersection(std::initializer_list<key_pair> key_pairs);
+    intersection(
+            std::initializer_list<key_pair> key_pairs,
+            quantifier_kind quantifier = quantifier_kind::all);
 
     /**
      * @brief creates a new object.
@@ -94,6 +103,19 @@ public:
     output_port_type const& output() const noexcept;
 
     /**
+     * @brief returns the set quantifier kind of this operation.
+     * @return the set quantifier kind
+     */
+    quantifier_kind quantifier() const noexcept;
+
+    /**
+     * @brief sets the set quantifier kind of this operation.
+     * @param quantifier the quantifier kind
+     * @return this
+     */
+    intersection& quantifier(quantifier_kind quantifier) noexcept;
+
+    /**
      * @brief returns the key columns on the input relations.
      * @return the key columns
      */
@@ -137,6 +159,7 @@ protected:
 private:
     std::array<input_port_type, 2> inputs_;
     output_port_type output_;
+    quantifier_kind quantifier_;
     std::vector<key_pair, util::object_allocator<key_pair>> key_pairs_;
 
     static inline constexpr std::size_t left_index = 0;

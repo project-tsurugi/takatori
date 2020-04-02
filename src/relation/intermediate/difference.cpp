@@ -6,6 +6,7 @@
 namespace takatori::relation::intermediate {
 
 difference::difference(
+        quantifier_kind quantifier,
         std::vector<key_pair, util::object_allocator<key_pair>> key_pairs,
         util::object_creator creator) noexcept
     : inputs_({
@@ -13,21 +14,28 @@ difference::difference(
             input_port_type { *this, right_index, creator },
     })
     , output_(*this, 0, creator)
+    , quantifier_(quantifier)
     , key_pairs_(std::move(key_pairs))
 {}
 
-difference::difference(std::initializer_list<key_pair> key_pairs)
-    : difference({ key_pairs.begin(), key_pairs.end() })
+difference::difference(
+        std::initializer_list<key_pair> key_pairs,
+        quantifier_kind quantifier)
+    : difference(
+            quantifier,
+            { key_pairs.begin(), key_pairs.end() })
 {}
 
 difference::difference(difference const& other, util::object_creator creator)
     : difference(
+            other.quantifier_,
             decltype(key_pairs_) { other.key_pairs_, creator.allocator<key_pair>() },
             creator)
 {}
 
 difference::difference(difference&& other, util::object_creator creator)
     : difference(
+            other.quantifier_,
             decltype(key_pairs_) { std::move(other.key_pairs_), creator.allocator<key_pair>() },
             creator)
 {}
@@ -84,6 +92,15 @@ difference::output_port_type const& difference::output() const noexcept {
     return output_;
 }
 
+difference::quantifier_kind difference::quantifier() const noexcept {
+    return quantifier_;
+}
+
+difference& difference::quantifier(quantifier_kind quantifier) noexcept {
+    quantifier_ = quantifier;
+    return *this;
+}
+
 std::vector<difference::key_pair, util::object_allocator<difference::key_pair>>& difference::key_pairs() noexcept {
     return key_pairs_;
 }
@@ -93,7 +110,8 @@ std::vector<difference::key_pair, util::object_allocator<difference::key_pair>> 
 }
 
 bool operator==(difference const& a, difference const& b) noexcept {
-    return a.key_pairs() == b.key_pairs();
+    return a.quantifier() == b.quantifier()
+            && a.key_pairs() == b.key_pairs();
 }
 
 bool operator!=(difference const& a, difference const& b) noexcept {
@@ -102,6 +120,7 @@ bool operator!=(difference const& a, difference const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, difference const& value) {
     return out << value.kind() << "("
+               << "quantifier=" << value.quantifier() << ", "
                << "key_pairs=" << util::print_support { value.key_pairs() } << ")";
 }
 

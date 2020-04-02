@@ -27,6 +27,7 @@ TEST_F(intersecton_relation_test, simple) {
     EXPECT_EQ(&expr.output().owner(), &expr);
 
     ASSERT_EQ(expr.key_pairs().size(), 1);
+    EXPECT_EQ(expr.quantifier(), set_quantifier::all);
     {
         auto&& p = expr.key_pairs()[0];
         EXPECT_EQ(p.left(), vardesc(1));
@@ -46,6 +47,16 @@ TEST_F(intersecton_relation_test, simple) {
         EXPECT_EQ(&p[0], &expr.output());
         EXPECT_TRUE(is_valid_port_list(p));
     }
+}
+
+TEST_F(intersecton_relation_test, quantifier) {
+    intersection expr {
+            {
+                    { vardesc(1), vardesc(2) },
+            },
+            set_quantifier::distinct,
+    };
+    EXPECT_EQ(expr.quantifier(), set_quantifier::distinct);
 }
 
 TEST_F(intersecton_relation_test, multiple) {
@@ -75,9 +86,12 @@ TEST_F(intersecton_relation_test, multiple) {
 
 TEST_F(intersecton_relation_test, clone) {
     intersection expr {
-            { vardesc(1), vardesc(2) },
-            { vardesc(3), vardesc(4) },
-            { vardesc(5), vardesc(6) },
+            {
+                    { vardesc(1), vardesc(2) },
+                    { vardesc(3), vardesc(4) },
+                    { vardesc(5), vardesc(6) },
+            },
+            set_quantifier::distinct,
     };
 
     auto copy = util::clone_unique(expr);
@@ -87,9 +101,12 @@ TEST_F(intersecton_relation_test, clone) {
 
 TEST_F(intersecton_relation_test, clone_move) {
     intersection expr {
-            { vardesc(1), vardesc(2) },
-            { vardesc(3), vardesc(4) },
-            { vardesc(5), vardesc(6) },
+            {
+                    { vardesc(1), vardesc(2) },
+                    { vardesc(3), vardesc(4) },
+                    { vardesc(5), vardesc(6) },
+            },
+            set_quantifier::distinct,
     };
 
     auto copy = util::clone_unique(expr);
@@ -103,9 +120,12 @@ TEST_F(intersecton_relation_test, clone_move) {
 
 TEST_F(intersecton_relation_test, output) {
     intersection expr {
-            { vardesc(1), vardesc(2) },
-            { vardesc(3), vardesc(4) },
-            { vardesc(5), vardesc(6) },
+            {
+                    { vardesc(1), vardesc(2) },
+                    { vardesc(3), vardesc(4) },
+                    { vardesc(5), vardesc(6) },
+            },
+            set_quantifier::distinct,
     };
 
     std::cout << expr << std::endl;
