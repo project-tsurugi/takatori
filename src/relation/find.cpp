@@ -22,7 +22,7 @@ find::find(
 
 find::find(
         descriptor::relation source,
-        std::initializer_list<util::rvalue_reference_wrapper<column>> columns,
+        std::initializer_list<column> columns,
         std::initializer_list<util::rvalue_reference_wrapper<key>> keys)
     : find(
             std::move(source),

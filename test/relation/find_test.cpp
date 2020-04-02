@@ -17,19 +17,19 @@ static_assert(std::is_same_v<type_of_t<find::tag>, find>);
 
 TEST_F(find_test, simple) {
     find expr {
-        tabledesc("T"),
-        {
-            find::column {
-                columndesc("C1"),
-                vardesc(1),
+            tabledesc("T"),
+            {
+                    {
+                            columndesc("C1"),
+                            vardesc(1),
+                    },
             },
-        },
-        {
-            find::key {
-                columndesc("C2"),
-                constant(2),
+            {
+                    find::key {
+                            columndesc("C2"),
+                            constant(2),
+                    },
             },
-        },
     };
 
     EXPECT_EQ(&expr.output().owner(), &expr);
@@ -65,15 +65,15 @@ TEST_F(find_test, multiple) {
     find expr {
             tabledesc("T"),
             {
-                    find::column {
+                    {
                             columndesc("C1"),
                             vardesc(1),
                     },
-                    find::column {
+                    {
                             columndesc("C2"),
                             vardesc(2),
                     },
-                    find::column {
+                    {
                             columndesc("C3"),
                             vardesc(3),
                     },
@@ -134,15 +134,15 @@ TEST_F(find_test, clone) {
     find expr {
             tabledesc("T"),
             {
-                    find::column {
+                    {
                             columndesc("C1"),
                             vardesc(1),
                     },
-                    find::column {
+                    {
                             columndesc("C2"),
                             vardesc(2),
                     },
-                    find::column {
+                    {
                             columndesc("C3"),
                             vardesc(3),
                     },
@@ -172,15 +172,15 @@ TEST_F(find_test, clone_move) {
     find expr {
             tabledesc("T"),
             {
-                    find::column {
+                    {
                             columndesc("C1"),
                             vardesc(1),
                     },
-                    find::column {
+                    {
                             columndesc("C2"),
                             vardesc(2),
                     },
-                    find::column {
+                    {
                             columndesc("C3"),
                             vardesc(3),
                     },
@@ -214,15 +214,15 @@ TEST_F(find_test, output) {
     find expr {
             tabledesc("T"),
             {
-                    find::column {
+                    {
                             columndesc("C1"),
                             vardesc(1),
                     },
-                    find::column {
+                    {
                             columndesc("C2"),
                             vardesc(2),
                     },
-                    find::column {
+                    {
                             columndesc("C3"),
                             vardesc(3),
                     },
