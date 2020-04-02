@@ -12,7 +12,8 @@ namespace takatori::util {
  *      and then you can pass rvalue references as an initializer list.
  *      To build a `std::vector<T>` (or similar collection) from the above parameter,
  *      you can simply pass the iterator range of the initializer list to the vector's constructor.
- *       It behave as like std::move_iterator by `rvalue_reference_wrapper<T>::operator T&&()`.
+ *       It behave as like std::move_iterator by implicit conversion operator of rvalue_reference_wrapper which
+ *       provides rvalue reference of the component.
  * @tparam T the value type
  */
 template<class T>
