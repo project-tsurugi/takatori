@@ -4,7 +4,7 @@
 
 #include <takatori/plan/discard.h>
 
-#include <takatori/relation/step/limit.h>
+#include <takatori/relation/buffer.h>
 
 namespace takatori::plan {
 
@@ -17,7 +17,7 @@ TEST_F(process_test, simple) {
     auto&& p = g.emplace<process>();
 
     auto&& ops = p.operators();
-    ops.emplace<relation::step::limit>(1);
+    ops.emplace<relation::buffer>(2);
 }
 
 TEST_F(process_test, upstream) {
@@ -98,7 +98,7 @@ TEST_F(process_test, output) {
     graph::graph<step> g;
     auto&& p = g.emplace<process>();
     auto&& ops = p.operators();
-    ops.emplace<relation::step::limit>(1);
+    ops.emplace<relation::buffer>(2);
 
     std::cout << p << std::endl;
 }

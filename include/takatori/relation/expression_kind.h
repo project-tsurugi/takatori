@@ -68,10 +68,6 @@ enum class expression_kind {
     join_group,
     /// @brief aggregates columns in group.
     aggregate_group,
-    /// @brief removes duplication in group.
-    distinct_group,
-    /// @brief limits the number of rows in group.
-    limit_group,
     /// @brief obtains intersection of two groups.
     intersection_group,
     /// @brief obtains difference of two groups.
@@ -136,8 +132,6 @@ constexpr inline std::string_view to_string_view(expression_kind value) noexcept
         case kind::escape: return "escape"sv;
         case kind::join_group: return "join_group"sv;
         case kind::aggregate_group: return "aggregate_group"sv;
-        case kind::distinct_group: return "distinct_group"sv;
-        case kind::limit_group: return "limit_group"sv;
         case kind::intersection_group: return "intersection_group"sv;
         case kind::difference_group: return "difference_group"sv;
         case kind::flatten_group: return "flatten_group"sv;
@@ -190,8 +184,6 @@ inline constexpr bool is_available_in_intermediate_plan(expression_kind value) {
 
         case kind::join_group:
         case kind::aggregate_group:
-        case kind::distinct_group:
-        case kind::limit_group:
         case kind::intersection_group:
         case kind::difference_group:
         case kind::flatten_group:
@@ -228,8 +220,6 @@ inline constexpr bool is_available_in_step_plan(expression_kind value) {
         case kind::write:
         case kind::join_group:
         case kind::aggregate_group:
-        case kind::distinct_group:
-        case kind::limit_group:
         case kind::intersection_group:
         case kind::difference_group:
         case kind::flatten_group:

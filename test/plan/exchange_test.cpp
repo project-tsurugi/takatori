@@ -5,8 +5,6 @@
 #include <takatori/plan/process.h>
 #include <takatori/plan/discard.h>
 
-#include <takatori/relation/step/limit.h>
-
 namespace takatori::plan {
 
 class exchange_test : public ::testing::Test {};
