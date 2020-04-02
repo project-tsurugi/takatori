@@ -17,8 +17,6 @@
 
 #include "join.h"
 #include "aggregate.h"
-#include "distinct.h"
-#include "limit.h"
 #include "intersection.h"
 #include "difference.h"
 #include "flatten.h"
@@ -55,8 +53,6 @@ inline auto dispatch_expression(Callback&& callback, E&& object, Args&&... args)
 
         case join::tag: return util::polymorphic_callback<join>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case aggregate::tag: return util::polymorphic_callback<aggregate>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
-        case distinct::tag: return util::polymorphic_callback<distinct>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
-        case limit::tag: return util::polymorphic_callback<limit>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case intersection::tag: return util::polymorphic_callback<intersection>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case difference::tag: return util::polymorphic_callback<difference>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case flatten::tag: return util::polymorphic_callback<flatten>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);

@@ -93,8 +93,6 @@ add_library(takatori
     # relation - dealing with group relations
     relation/step/join.cpp
     relation/step/aggregate.cpp
-    relation/step/distinct.cpp
-    relation/step/limit.cpp
     relation/step/intersection.cpp
     relation/step/difference.cpp
     relation/step/flatten.cpp

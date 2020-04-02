@@ -4,7 +4,7 @@
 
 #include "../test_utils.h"
 
-#include <takatori/relation/step/distinct.h>
+#include <takatori/relation/step/flatten.h>
 
 namespace takatori::relation::intermediate {
 
@@ -47,7 +47,7 @@ TEST_F(relation_intermediate_dispatch_test, unsupported) {
     struct cb {
         int operator()(expression const&) { return 0; }
     };
-    step::distinct e;
+    step::flatten e;
     EXPECT_THROW(dispatch(cb {}, e), std::invalid_argument);
 }
 

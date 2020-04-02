@@ -685,9 +685,11 @@ notes:
 
 * `forward` エクスチェンジ
   * 入力された1個以上のリレーションの多重集合和を、一階のリレーションとして出力する
+    * 全体の行数を制限することもできる
 * `shuffle` エクスチェンジ
   * 入力された1個以上のリレーションの多重集合和に対し、指定されたキーでグループ化したグループ表を出力する
     * 各グループ内の行を指定の方法でソートすることもできる
+    * グループごとの行数を制限することもできる
 * `broadcast` エクスチェンジ
   * 入力された1個以上のリレーションの多重集合和を出力する
     * 出力されたリレーションは関係演算子の明示的な入力としては取り扱わず、任意の処理を施した結果を演算子から直接参照できる
@@ -735,8 +737,8 @@ notes:
 
 * `join_relation` -> `shuffle` エクスチェンジ + `join_group` (またはその他の `join_*` 系演算子)
 * `aggregate_relation` -> `shuffle` エクスチェンジ + `aggregate_group`
-* `distinct_relation` -> `shuffle` エクスチェンジ + `distinct_group`
-* `limit_relation` -> `shuffle` エクスチェンジ + `limit_group`
+* `distinct_relation` -> `shuffle` エクスチェンジ + `flatten_group`
+* `limit_relation` -> `shuffle` エクスチェンジ + `flatten_group`
 * `intersection_relation` -> `shuffle` エクスチェンジ + `intersection_group`
 * `difference_relation` -> `shuffle` エクスチェンジ + `difference_group`
 * `union_relation` -> `forward` エクスチェンジ
@@ -747,7 +749,7 @@ notes:
 ### 一部の挙動が変化する演算子
 
 以下の演算子は、中間実行計画とステップ実行計画で一部の挙動が変化する。
- 
+
 * `join_find` : 外部リレーションに `broadcast` エクスチェンジを指定できる
 * `join_scan` : 外部リレーションに `broadcast` エクスチェンジを指定できる
 * `emit` : ソート関連のプロパティが無視される (`shuffle` エクスチェンジ + `flatten_group` で代替)
@@ -808,28 +810,6 @@ notes:
     * 行IDを再生成する
     * リレーション全体を集計している場合、「0件のグループ」に対する処理が必要になる
 
-`distinct_group` (`step::distinct`)
-~ グループごとに行を1行に制限する。
-
-  * 共通構造: なし
-  * 入力形式: グループ表
-  * 列の公開: すべて
-  * プロパティ
-    * なし
-  * その他の特性
-    * なし
-
-`limit_group` (`step::limit`)
-~ グループごとに行を指定の行数に制限する。
-
-  * 共通構造: なし
-  * 入力形式: グループ表
-  * 列の公開: すべて
-  * プロパティ
-    * `count` - 行数
-  * その他の特性
-    * なし
-
 `intersection_group` (`step::intersection`)
 ~ 2組のグループごとに、第一グループの行数を第二グループの行数に制限する。
 
@@ -866,9 +846,9 @@ notes:
 ----
 notes:
 
-* `limit_group` がリレーション全体に対する行数制限である場合、 `forward` エクスチェンジ内で行数を制限してもよさそう
+* `limit`, `distinct` は基本的にエクスチェンジ内で行数の制限を行い、特別な演算子を用意しない
 * `flatten_group` は二階のリレーションを平坦化して一回のリレーションを出力する
-  * `distinct_group` などが `shuffle` エクスチェンジ内で完結するようになったときに、代わりに配置されることを想定している
+  * `distinct` などが `shuffle` エクスチェンジ内で完結するようになったときに、代わりに配置されることを想定している
 
 ### エクスチェンジ系
 
