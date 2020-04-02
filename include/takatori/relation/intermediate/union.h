@@ -35,7 +35,8 @@ public:
      * @brief creates a new object.
      * @param quantifier the set quantifier of this operation
      * @param mappings the column mappings on input/output relations:
-     *      the succeeding operators only can refer the destination columns declared in here
+     *      the succeeding operators only can refer the destination columns declared in here.
+     *      If `quantifier=distinct`, each input column must not be absent
      * @param creator the object creator for internal elements
      */
     explicit union_(
@@ -46,7 +47,8 @@ public:
     /**
      * @brief creates a new object.
      * @param mappings the column mappings on input/output relations:
-     *      the succeeding operators only can refer the destination columns declared in here
+     *      the succeeding operators only can refer the destination columns declared in here.
+     *      If `quantifier=distinct`, each input column must not be absent
      * @param quantifier the set quantifier of this operation
      */
     union_(

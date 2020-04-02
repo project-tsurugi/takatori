@@ -563,6 +563,7 @@ DML系演算子は、リレーションの出力を行わない関係演算子�
   * その他の特性
     * 下流の演算子では、 `columns.destination` で指定した列のみが利用可能
     * `OUTER UNION` や `UNION JOIN` は `columns.{left, right}` を空にすることで実現
+    * `quantifier=distinct` の場合、 `columns.{left, right}` はいずれも空であってはならない
     * 行IDを再生成してもよい (しなくてもよいケースがありそう)
 
 `escape` (`intermediate::escape`)
