@@ -130,7 +130,7 @@
      * 主に以下の関係演算子の一部または全部に対応する
        * `join` - sort merge join の際に、sort までを行う
        * `aggregate` - `GROUP BY` 相当
-       * `distinct` - 同値類にごとの行数を高々1行に制限
+       * `distinct` - 同値類ごとの行数を高々1行に制限
        * `limit` - グループ化した状態での `limit` や, `TOP N` 相当
        * `sort` - グループを分割しないことで、リレーション全体をグループとして後段の入力にとれる
   3. `broadcast`
