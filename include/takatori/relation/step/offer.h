@@ -29,7 +29,9 @@ public:
     /**
      * @brief creates a new instance.
      * @param destination the destination relation, must be refer the downstream exchange
-     * @param columns the column mappings between the input relation and downstream exchange
+     * @param columns the column mappings between the input relation and downstream exchange;
+     *      This may or may not cover all the columns on the target relation.
+     *      The unspecified columns are treated as `unknown`
      * @param creator the object creator for internal elements
      */
     explicit offer(
@@ -40,7 +42,9 @@ public:
     /**
      * @brief creates a new instance.
      * @param destination the destination relation, must be refer the destination exchange
-     * @param columns the column mappings between the upstream exchange and output relation
+     * @param columns the column mappings between the input relation and downstream exchange;
+     *      This may or may not cover all the columns on the target relation.
+     *      The unspecified columns are treated as `unknown`
      */
     explicit offer(
             descriptor::relation destination,
