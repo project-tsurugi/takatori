@@ -27,8 +27,6 @@ TEST_F(emit_test, simple) {
         EXPECT_EQ(c.source(), vardesc(1));
         EXPECT_EQ(c.name(), std::nullopt);
     }
-    ASSERT_EQ(expr.sort_keys().size(), 0);
-    EXPECT_EQ(expr.limit(), std::nullopt);
     {
         auto p = expr.input_ports();
         ASSERT_EQ(p.size(), 1);
@@ -80,100 +78,11 @@ TEST_F(emit_test, column_multiple) {
     }
 }
 
-TEST_F(emit_test, sort_key) {
-    emit expr {
-            {
-                    vardesc(1),
-            },
-            {
-                    emit::sort_key { vardesc(10), },
-            },
-    };
-
-    ASSERT_EQ(expr.columns().size(), 1);
-    ASSERT_EQ(expr.sort_keys().size(), 1);
-    {
-        auto&& k = expr.sort_keys()[0];
-        EXPECT_EQ(k.variable(), vardesc(10));
-        EXPECT_EQ(k.direction(), sort_direction::ascendant);
-    }
-}
-
-TEST_F(emit_test, key_desc) {
-    emit expr {
-            {
-                    vardesc(1),
-            },
-            {
-                    { vardesc(10), sort_direction::descendant },
-            },
-    };
-
-    ASSERT_EQ(expr.columns().size(), 1);
-    ASSERT_EQ(expr.sort_keys().size(), 1);
-    {
-        auto&& k = expr.sort_keys()[0];
-        EXPECT_EQ(k.variable(), vardesc(10));
-        EXPECT_EQ(k.direction(), sort_direction::descendant);
-    }
-}
-
-TEST_F(emit_test, key_multiple) {
-    emit expr {
-            {
-                    vardesc(1),
-            },
-            {
-                    { vardesc(10) },
-                    { vardesc(20), sort_direction::descendant },
-                    { vardesc(30), sort_direction::ascendant },
-            },
-    };
-
-    ASSERT_EQ(expr.columns().size(), 1);
-    ASSERT_EQ(expr.sort_keys().size(), 3);
-    {
-        auto&& k = expr.sort_keys()[0];
-        EXPECT_EQ(k.variable(), vardesc(10));
-        EXPECT_EQ(k.direction(), sort_direction::ascendant);
-    }
-    {
-        auto&& k = expr.sort_keys()[1];
-        EXPECT_EQ(k.variable(), vardesc(20));
-        EXPECT_EQ(k.direction(), sort_direction::descendant);
-    }
-    {
-        auto&& k = expr.sort_keys()[2];
-        EXPECT_EQ(k.variable(), vardesc(30));
-        EXPECT_EQ(k.direction(), sort_direction::ascendant);
-    }
-}
-
-TEST_F(emit_test, limit) {
-    emit expr {
-            {
-                    { vardesc(1), },
-            },
-            {},
-            100,
-    };
-
-    EXPECT_EQ(expr.limit(), 100);
-}
-
 TEST_F(emit_test, clone) {
     emit expr {
-            {
-                    { vardesc(1), "A", },
-                    { vardesc(2), "B", },
-                    vardesc(3),
-            },
-            {
-                    { vardesc(10), sort_direction::ascendant},
-                    { vardesc(20), sort_direction::descendant },
-                    vardesc(30),
-            },
-            100,
+            { vardesc(1), "A", },
+            { vardesc(2), "B", },
+            vardesc(3),
     };
 
     auto copy = util::clone_unique(expr);
@@ -183,17 +92,9 @@ TEST_F(emit_test, clone) {
 
 TEST_F(emit_test, clone_move) {
     emit expr {
-            {
-                    { vardesc(1), "A", },
-                    { vardesc(2), "B", },
-                    vardesc(3),
-            },
-            {
-                    { vardesc(10), sort_direction::ascendant},
-                    { vardesc(20), sort_direction::descendant },
-                    vardesc(30),
-            },
-            100,
+            { vardesc(1), "A", },
+            { vardesc(2), "B", },
+            vardesc(3),
     };
 
     auto copy = util::clone_unique(expr);
@@ -207,17 +108,9 @@ TEST_F(emit_test, clone_move) {
 
 TEST_F(emit_test, output) {
     emit expr {
-            {
-                    { vardesc(1), "A", },
-                    { vardesc(2), "B", },
-                    vardesc(3),
-            },
-            {
-                    { vardesc(10), sort_direction::ascendant},
-                    { vardesc(20), sort_direction::descendant },
-                    vardesc(30),
-            },
-            100,
+            { vardesc(1), "A", },
+            { vardesc(2), "B", },
+            vardesc(3),
     };
 
     std::cout << expr << std::endl;

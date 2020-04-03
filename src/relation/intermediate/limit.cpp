@@ -1,28 +1,29 @@
 #include <takatori/relation/intermediate/limit.h>
 
 #include <takatori/util/downcast.h>
+#include <takatori/util/optional_print_support.h>
 #include <takatori/util/vector_print_support.h>
 
 namespace takatori::relation::intermediate {
 
 limit::limit(
-        size_type count,
+        std::optional<size_type> count,
         std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
         std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
         util::object_creator creator) noexcept
     : input_(*this, 0, creator)
     , output_(*this, 0, creator)
-    , count_(count)
+    , count_(std::move(count))
     , group_keys_(std::move(group_keys))
     , sort_keys_(std::move(sort_keys))
 {}
 
 limit::limit(
-        size_type count,
+        std::optional<size_type> count,
         std::initializer_list<descriptor::variable> group_keys,
         std::initializer_list<sort_key> sort_keys)
     : limit(
-            count,
+            std::move(count),
             { group_keys.begin(), group_keys.end() },
             { sort_keys.begin(), sort_keys.end() })
 {}
@@ -37,7 +38,7 @@ limit::limit(limit const& other, util::object_creator creator)
 
 limit::limit(limit&& other, util::object_creator creator)
     : limit(
-            other.count_,
+            std::move(other.count_),
             { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
             { std::move(other.sort_keys_), creator.allocator<sort_key>() },
             creator)
@@ -87,12 +88,12 @@ limit::output_port_type const& limit::output() const noexcept {
     return output_;
 }
 
-limit::size_type limit::count() const noexcept {
+std::optional<limit::size_type> const& limit::count() const noexcept {
     return count_;
 }
 
-limit& limit::count(limit::size_type count) noexcept {
-    count_ = count;
+limit& limit::count(std::optional<size_type> count) noexcept {
+    count_ = std::move(count);
     return *this;
 }
 
@@ -124,7 +125,7 @@ bool operator!=(limit const& a, limit const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, limit const& value) {
     return out << value.kind() << "("
-               << "count=" << value.count() << ", "
+               << "count=" << util::print_support { value.count() } << ", "
                << "group_keys=" << util::print_support { value.group_keys() } << ", "
                << "sort_keys=" << util::print_support { value.sort_keys() } << ")";
 }

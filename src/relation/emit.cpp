@@ -8,39 +8,25 @@ namespace takatori::relation {
 
 emit::emit(
         std::vector<column, util::object_allocator<column>> columns,
-        std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
-        std::optional<size_type> limit,
         util::object_creator creator) noexcept
     : input_(*this, 0, creator)
     , columns_(std::move(columns))
-    , sort_keys_(std::move(sort_keys))
-    , limit_(std::move(limit))
 {}
 
-emit::emit(
-        std::initializer_list<column> columns,
-        std::initializer_list<sort_key> sort_keys,
-        std::optional<size_type> limit)
-    : emit(
-            { columns.begin(), columns.end() },
-            { sort_keys.begin(), sort_keys.end() },
-            std::move(limit))
+emit::emit(std::initializer_list<column> columns)
+    : emit({ columns.begin(), columns.end() })
 {}
 
 
 emit::emit(emit const& other, util::object_creator creator)
     : emit(
-            { other.columns_, creator.allocator<column>() },
-            { other.sort_keys_, creator.allocator<sort_key>() },
-            other.limit_,
+            decltype(columns_) { other.columns_, creator.allocator<column>() },
             creator)
 {}
 
 emit::emit(emit&& other, util::object_creator creator)
     : emit(
-            { std::move(other.columns_), creator.allocator<column>() },
-            { std::move(other.sort_keys_), creator.allocator<sort_key>() },
-            std::move(other.limit_),
+            decltype(columns_) { std::move(other.columns_), creator.allocator<column>() },
             creator)
 {}
 
@@ -89,27 +75,8 @@ std::vector<emit::column, util::object_allocator<emit::column>> const& emit::col
     return columns_;
 }
 
-std::vector<emit::sort_key, util::object_allocator<emit::sort_key>>& emit::sort_keys() noexcept {
-    return sort_keys_;
-}
-
-std::vector<emit::sort_key, util::object_allocator<emit::sort_key>> const& emit::sort_keys() const noexcept {
-    return sort_keys_;
-}
-
-std::optional<emit::size_type> const& emit::limit() const noexcept {
-    return limit_;
-}
-
-emit& emit::limit(std::optional<emit::size_type> limit) noexcept {
-    limit_ = std::move(limit);
-    return *this;
-}
-
 bool operator==(emit const& a, emit const& b) noexcept {
-    return a.columns() == b.columns()
-        && a.sort_keys() == b.sort_keys()
-        && a.limit() == b.limit();
+    return a.columns() == b.columns();
 }
 
 bool operator!=(emit const& a, emit const& b) noexcept {
@@ -118,9 +85,7 @@ bool operator!=(emit const& a, emit const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, emit const& value) {
     return out << value.kind() << "("
-               << "columns=" << util::print_support { value.columns() } << ", "
-               << "sort_keys=" << util::print_support { value.sort_keys() } << ", "
-               << "limit=" << util::print_support { value.limit() } << ")";
+               << "columns=" << util::print_support { value.columns() } << ")";
 }
 
 bool emit::equals(expression const& other) const noexcept {
