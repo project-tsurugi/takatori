@@ -37,7 +37,10 @@ public:
      * @param data pointer the head of sequence data
      * @param size the number of elements
      */
-    explicit constexpr sequence_view(pointer data, size_type size = 1) noexcept;
+    explicit constexpr sequence_view(pointer data, size_type size = 1) noexcept
+        : data_(data)
+        , size_(size)
+    {}
 
     /**
      * @brief creates a new instance.
@@ -45,7 +48,10 @@ public:
      * @param last pointer to the last sequence data (exclusive)
      * @attention if first > last, this consider the sequence is empty
      */
-    explicit constexpr sequence_view(pointer first, pointer last) noexcept;
+    explicit constexpr sequence_view(pointer first, pointer last) noexcept
+        : data_(first)
+        , size_(first < last ? last - first : 0)
+    {}
 
     /**
      * @brief creates a new instance.
@@ -58,7 +64,10 @@ public:
                     std::is_constructible_v<pointer, decltype(std::declval<Container>().data())>
                     && std::is_constructible_v<size_type, decltype(std::declval<Container>().size())>>
     >
-    constexpr sequence_view(Container& container) noexcept; // NOLINT
+    constexpr sequence_view(Container& container) noexcept // NOLINT
+        : data_(container.data())
+        , size_(container.size())
+    {}
 
     /**
      * @brief returns an element at the position.
@@ -66,7 +75,12 @@ public:
      * @return the element on the position
      * @throws std::out_of_bound if the position is out of bound
      */
-    constexpr reference at(size_type position) const;
+    constexpr reference at(size_type position) const {
+        if (position >= size_) {
+            throw std::out_of_range("invalid position");
+        }
+        return operator[](position);
+    }
 
     /**
      * @brief returns an element at the position.
@@ -74,65 +88,85 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    constexpr reference operator[](size_type position) const;
+    constexpr reference operator[](size_type position) const {
+        return *(data_ + position); // NOLINT
+    }
 
     /**
      * @brief returns reference of the first element
      * @return reference of the first element
      * @warning undefined behavior if this is empty
      */
-    constexpr reference front() const;
+    constexpr reference front() const {
+        return *data_; // NOLINT
+    }
 
     /**
      * @brief returns reference of the last element
      * @return reference of the last element
      * @warning undefined behavior if this is empty
      */
-    constexpr reference back() const;
+    constexpr reference back() const {
+        return *(data_ + (size_ - 1)); // NOLINT
+    }
 
     /**
      * @brief returns pointer to the head of this sequence.
      * @return pointer to this sequence.
      */
-    constexpr pointer data() const noexcept;
+    constexpr pointer data() const noexcept {
+        return data_;
+    }
 
     /**
      * @brief returns whether or not this is empty.
      * @return true if this is empty
      * @return false otherwise
      */
-    constexpr bool empty() const noexcept;
+    constexpr bool empty() const noexcept {
+        return size_ == 0;
+    }
 
     /**
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    constexpr size_type size() const noexcept;
+    constexpr size_type size() const noexcept {
+        return size_;
+    }
 
 
     /**
      * @brief returns a forward iterator which points the beginning of this sequence.
      * @return the iterator of beginning (inclusive)
      */
-    constexpr iterator begin() const noexcept;
+    constexpr iterator begin() const noexcept {
+        return iterator(data_);
+    }
 
     /**
      * @brief returns a forward iterator which points the ending of this sequence.
      * @return the iterator of ending (exclusive)
      */
-    constexpr iterator end() const noexcept;
+    constexpr iterator end() const noexcept {
+        return iterator(data_) + size_;
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed beginning of this sequence.
      * @return the reversed iterator of beginning (inclusive)
      */
-    constexpr std::reverse_iterator<iterator> rbegin() const noexcept;
+    constexpr std::reverse_iterator<iterator> rbegin() const noexcept {
+        return std::make_reverse_iterator(end());
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed ending of this sequence.
      * @return the reversed iterator of ending (exclusive)
      */
-    constexpr std::reverse_iterator<iterator> rend() const noexcept;
+    constexpr std::reverse_iterator<iterator> rend() const noexcept {
+        return std::make_reverse_iterator(begin());
+    }
 
 private:
     pointer data_ {};
@@ -154,95 +188,5 @@ sequence_view(T*, T*) -> sequence_view<T>;
 /// @private
 template<class T>
 sequence_view(T&) -> sequence_view<std::remove_pointer_t<decltype(std::declval<T>().data())>>;
-
-template<class T>
-inline constexpr
-sequence_view<T>::sequence_view(pointer data, sequence_view::size_type size) noexcept
-    : data_(data)
-    , size_(size)
-{}
-
-template<class T>
-constexpr sequence_view<T>::sequence_view(pointer first, pointer last) noexcept
-    : data_(first)
-    , size_(first < last ? last - first : 0)
-{}
-
-template<class T>
-template<class Container, class>
-inline constexpr
-sequence_view<T>::sequence_view(Container& container) noexcept
-    : data_(container.data())
-    , size_(container.size())
-{}
-
-template<class T>
-inline constexpr typename sequence_view<T>::reference
-sequence_view<T>::at(sequence_view::size_type position) const {
-    if (position >= size_) {
-        throw std::out_of_range("invalid position");
-    }
-    return operator[](position);
-}
-
-template<class T>
-inline constexpr typename sequence_view<T>::reference
-sequence_view<T>::operator[](sequence_view::size_type position) const {
-    return *(data_ + position); // NOLINT
-}
-
-template<class T>
-inline constexpr typename sequence_view<T>::reference
-sequence_view<T>::front() const {
-    return *data_; // NOLINT
-}
-
-template<class T>
-inline constexpr typename sequence_view<T>::reference
-sequence_view<T>::back() const {
-    return *(data_ + (size_ - 1)); // NOLINT
-}
-
-template<class T>
-inline constexpr typename sequence_view<T>::pointer
-sequence_view<T>::data() const noexcept {
-    return data_;
-}
-
-template<class T>
-inline constexpr bool
-sequence_view<T>::empty() const noexcept {
-    return size_ == 0;
-}
-
-template<class T>
-inline constexpr typename sequence_view<T>::size_type
-sequence_view<T>::size() const noexcept {
-    return size_;
-}
-
-template<class T>
-inline constexpr typename sequence_view<T>::iterator
-sequence_view<T>::begin() const noexcept {
-    return iterator(data_);
-}
-
-template<class T>
-inline constexpr typename sequence_view<T>::iterator
-sequence_view<T>::end() const noexcept {
-    return iterator(data_) + size_;
-}
-
-template<class T>
-inline constexpr std::reverse_iterator<typename sequence_view<T>::iterator>
-sequence_view<T>::rbegin() const noexcept {
-    return std::make_reverse_iterator(end());
-}
-
-template<class T>
-inline constexpr std::reverse_iterator<typename sequence_view<T>::iterator>
-sequence_view<T>::rend() const noexcept {
-    return std::make_reverse_iterator(begin());
-}
 
 } // namespace takatori::util

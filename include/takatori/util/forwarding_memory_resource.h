@@ -34,7 +34,8 @@ public:
     explicit forwarding_memory_resource(
             std::function<void(tag, void*, std::size_t)> hook,
             pmr::memory_resource* delegate = get_standard_memory_resource()) noexcept
-        : hook_(std::move(hook)), delegate_(delegate) {}
+        : hook_(std::move(hook)), delegate_(delegate)
+    {}
 
 protected:
     /**

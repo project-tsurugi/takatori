@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <utility>
 
 namespace takatori::util {
@@ -41,7 +42,10 @@ public:
      * @return the invocation result
      */
     constexpr result_type operator()(parameter_type argument) const {
-        return (object_->*function_ptr)(std::forward<parameter_type>(argument));
+        return std::invoke(
+                function_ptr,
+                *object_,
+                std::forward<parameter_type>(argument));
     }
 
 private:

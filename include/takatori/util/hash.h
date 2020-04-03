@@ -22,10 +22,9 @@ constexpr inline bool is_hash_support_v = is_hash_support<T>::value;
 /// @brief the prime number for hash code.
 inline constexpr std::size_t hash_prime = 31;
 
-/// @private
+/// @cond IMPL_DEFS
 namespace impl {
 
-/// @private
 struct hash {
     constexpr std::size_t operator()() const noexcept {
         return 0;
@@ -45,6 +44,7 @@ struct hash {
 };
 
 } // namespace impl
+/// @endcond
 
 /**
  * @brief returns hash code of the value list

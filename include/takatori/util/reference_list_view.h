@@ -40,7 +40,11 @@ public:
      * @param size the number of elements
      * @param extractor the cursor extractor
      */
-    explicit constexpr reference_list_view(cursor_type first, size_type size, extractor_type extractor = {}) noexcept;
+    explicit constexpr reference_list_view(cursor_type first, size_type size, extractor_type extractor = {}) noexcept
+        : first_(first)
+        , last_(extractor.advance(first_, static_cast<difference_type>(size)))
+        , extractor_(std::move(extractor))
+    {}
 
     /**
      * @brief creates a new instance.
@@ -49,7 +53,11 @@ public:
      * @param extractor the cursor extractor
      * @attention if first > last, this consider the sequence is empty
      */
-    explicit constexpr reference_list_view(cursor_type first, cursor_type last, extractor_type extractor = {}) noexcept;
+    explicit constexpr reference_list_view(cursor_type first, cursor_type last, extractor_type extractor = {}) noexcept
+        : first_(first)
+        , last_(last)
+        , extractor_(std::move(extractor))
+    {}
 
     /**
      * @brief creates a new instance.
@@ -58,7 +66,11 @@ public:
      * @param extractor the cursor extractor
      * @attention if first > last, this consider the sequence is empty
      */
-    explicit constexpr reference_list_view(iterator first, iterator last, extractor_type extractor = {}) noexcept;
+    explicit constexpr reference_list_view(iterator first, iterator last, extractor_type extractor = {}) noexcept
+        : first_(first.cursor_)
+        , last_(last.cursor_)
+        , extractor_(std::move(extractor))
+    {}
 
     /**
      * @brief creates a new instance.
@@ -75,7 +87,11 @@ public:
                     && std::is_convertible_v<
                             decltype(std::declval<Container&>().size()),
                             size_type>>>
-    explicit constexpr reference_list_view(Container& container, extractor_type extractor = {}) noexcept;
+    explicit constexpr reference_list_view(Container& container, extractor_type extractor = {}) noexcept
+        : first_(container.data())
+        , last_(extractor.advance(first_, static_cast<difference_type>(container.size())))
+        , extractor_(std::move(extractor))
+    {}
 
     /**
      * @brief returns an element at the position.
@@ -83,7 +99,13 @@ public:
      * @return the element on the position
      * @throws std::out_of_bound if the position is out of bound
      */
-    constexpr reference at(size_type position) const;
+    constexpr reference at(size_type position) const {
+        auto iter = extractor_.advance(first_, static_cast<difference_type>(position));
+        if (iter >= last_) {
+            throw std::out_of_range("invalid position");
+        }
+        return extractor_.get(iter);
+    }
 
     /**
      * @brief returns an element at the position.
@@ -91,58 +113,81 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    constexpr reference operator[](size_type position) const;
+    constexpr reference operator[](size_type position) const {
+        auto iter = extractor_.advance(first_, static_cast<difference_type>(position));
+        return extractor_.get(iter);
+    }
 
     /**
      * @brief returns reference of the first element
      * @return reference of the first element
      * @warning undefined behavior if this is empty
      */
-    constexpr reference front() const;
+    constexpr reference front() const {
+        auto iter = first_;
+        return extractor_.get(iter);
+    }
 
     /**
      * @brief returns reference of the last element
      * @return reference of the last element
      * @warning undefined behavior if this is empty
      */
-    constexpr reference back() const;
+    constexpr reference back() const {
+        auto iter = extractor_.advance(last_, -1);
+        return extractor_.get(iter);
+    }
 
     /**
      * @brief returns whether or not this is empty.
      * @return true if this is empty
      * @return false otherwise
      */
-    constexpr bool empty() const noexcept;
+    constexpr bool empty() const noexcept {
+        return first_ == last_;
+    }
 
     /**
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    constexpr size_type size() const noexcept;
+    constexpr size_type size() const noexcept {
+        auto distance = std::distance(first_, last_);
+        if (distance < 0) return 0;
+        return static_cast<size_type>(distance);
+    }
 
     /**
      * @brief returns a forward iterator which points the beginning of this sequence.
      * @return the iterator of beginning (inclusive)
      */
-    constexpr iterator begin() const noexcept;
+    constexpr iterator begin() const noexcept {
+        return iterator(first_, extractor_);
+    }
 
     /**
      * @brief returns a forward iterator which points the ending of this sequence.
      * @return the iterator of ending (exclusive)
      */
-    constexpr iterator end() const noexcept;
+    constexpr iterator end() const noexcept {
+        return iterator(last_, extractor_);
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed beginning of this sequence.
      * @return the reversed iterator of beginning (inclusive)
      */
-    constexpr std::reverse_iterator<iterator> rbegin() const noexcept;
+    constexpr std::reverse_iterator<iterator> rbegin() const noexcept {
+        return std::make_reverse_iterator(end());
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed ending of this sequence.
      * @return the reversed iterator of ending (exclusive)
      */
-    constexpr std::reverse_iterator<iterator> rend() const noexcept;
+    constexpr std::reverse_iterator<iterator> rend() const noexcept {
+        return std::make_reverse_iterator(begin());
+    }
 
 private:
     cursor_type first_;
@@ -153,10 +198,9 @@ private:
     friend class reference_list_view;
 };
 
-/// @private
+/// @cond IMPL_DEFS
 namespace impl {
 
-/// @private
 template<class T>
 using fit_extractor = std::conditional_t<
         std::is_pointer_v<T>,
@@ -164,6 +208,7 @@ using fit_extractor = std::conditional_t<
         pointer_extractor<T>>;
 
 } // namespace impl
+/// @endcond
 
 /// @private
 template<class T>
@@ -214,116 +259,5 @@ reference_list_view(Container& container) -> reference_list_view<
                         std::size_t>
                 && !std::is_pointer_v<typename impl::fit_extractor<typename Container::value_type>::value_type>,
                 impl::fit_extractor<typename Container::value_type>>>;
-
-template<class T>
-inline constexpr
-reference_list_view<T>::reference_list_view(
-        cursor_type first,
-        size_type size,
-        extractor_type extractor) noexcept
-    : first_(first)
-    , last_(extractor.advance(first_, static_cast<difference_type>(size)))
-    , extractor_(std::move(extractor))
-{}
-
-template<class T>
-inline constexpr
-reference_list_view<T>::reference_list_view(
-        cursor_type first,
-        cursor_type last,
-        extractor_type extractor) noexcept
-    : first_(first)
-    , last_(last)
-    , extractor_(std::move(extractor))
-{}
-
-template<class Extractor>
-constexpr reference_list_view<Extractor>::reference_list_view(
-        iterator first,
-        iterator last,
-        extractor_type extractor) noexcept
-    : first_(first.cursor_)
-    , last_(last.cursor_)
-    , extractor_(std::move(extractor))
-{}
-
-template<class Extractor>
-template<class Container, class>
-constexpr reference_list_view<Extractor>::reference_list_view(
-        Container& container,
-        extractor_type extractor) noexcept
-    : first_(container.data())
-    , last_(extractor.advance(first_, static_cast<difference_type>(container.size())))
-    , extractor_(std::move(extractor))
-{}
-
-template<class T>
-inline constexpr typename reference_list_view<T>::reference
-reference_list_view<T>::at(size_type position) const {
-    auto iter = extractor_.advance(first_, static_cast<difference_type>(position));
-    if (iter >= last_) {
-        throw std::out_of_range("invalid position");
-    }
-    return extractor_.get(iter);
-}
-
-template<class T>
-inline constexpr typename reference_list_view<T>::reference
-reference_list_view<T>::operator[](size_type position) const {
-    auto iter = extractor_.advance(first_, static_cast<difference_type>(position));
-    return extractor_.get(iter);
-}
-
-template<class T>
-inline constexpr typename reference_list_view<T>::reference
-reference_list_view<T>::front() const {
-    auto iter = first_;
-    return extractor_.get(iter);
-}
-
-template<class T>
-inline constexpr typename reference_list_view<T>::reference
-reference_list_view<T>::back() const {
-    auto iter = extractor_.advance(last_, -1);
-    return extractor_.get(iter);
-}
-
-template<class T>
-inline constexpr bool
-reference_list_view<T>::empty() const noexcept {
-    return first_ == last_;
-}
-
-template<class T>
-inline constexpr typename reference_list_view<T>::size_type
-reference_list_view<T>::size() const noexcept {
-    auto distance = std::distance(first_, last_);
-    if (distance < 0) return 0;
-    return static_cast<size_type>(distance);
-}
-
-template<class T>
-inline constexpr typename reference_list_view<T>::iterator
-reference_list_view<T>::begin() const noexcept {
-    return iterator(first_, extractor_);
-}
-
-template<class T>
-inline constexpr typename reference_list_view<T>::iterator
-reference_list_view<T>::end() const noexcept {
-    return iterator(last_, extractor_);
-}
-
-template<class T>
-inline constexpr std::reverse_iterator<typename reference_list_view<T>::iterator>
-reference_list_view<T>::rbegin() const noexcept {
-    return std::make_reverse_iterator(end());
-}
-
-template<class T>
-inline constexpr std::reverse_iterator<typename reference_list_view<T>::iterator>
-reference_list_view<T>::rend() const noexcept {
-    return std::make_reverse_iterator(begin());
-}
 
 } // namespace takatori::util
