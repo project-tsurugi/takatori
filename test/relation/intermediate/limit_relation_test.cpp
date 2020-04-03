@@ -109,6 +109,11 @@ TEST_F(limit_relation_test, clone) {
                     vardesc(2),
                     vardesc(3),
             },
+            {
+                    { vardesc(10) },
+                    { vardesc(20), sort_direction::descendant },
+                    { vardesc(30), sort_direction::ascendant },
+            },
     };
 
     auto copy = util::clone_unique(expr);
@@ -123,6 +128,11 @@ TEST_F(limit_relation_test, clone_move) {
                     vardesc(1),
                     vardesc(2),
                     vardesc(3),
+            },
+            {
+                    { vardesc(10) },
+                    { vardesc(20), sort_direction::descendant },
+                    { vardesc(30), sort_direction::ascendant },
             },
     };
 
@@ -142,6 +152,11 @@ TEST_F(limit_relation_test, output) {
                     vardesc(1),
                     vardesc(2),
                     vardesc(3),
+            },
+            {
+                    { vardesc(10) },
+                    { vardesc(20), sort_direction::descendant },
+                    { vardesc(30), sort_direction::ascendant },
             },
     };
 
