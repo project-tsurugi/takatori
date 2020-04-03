@@ -746,7 +746,7 @@ notes:
 * `join_relation` -> `shuffle` エクスチェンジ + `join_group` (またはその他の `join_*` 系演算子)
 * `aggregate_relation` -> `shuffle` エクスチェンジ + `aggregate_group`
 * `distinct_relation` -> `shuffle` エクスチェンジ + `flatten_group`
-* `limit_relation` -> `forwar` エクスチェンジ、または `shuffle` エクスチェンジ + `flatten_group`
+* `limit_relation` -> `forward` エクスチェンジ、または `shuffle` エクスチェンジ + `flatten_group`
 * `intersection_relation` -> `shuffle` エクスチェンジ + `intersection_group`
 * `difference_relation` -> `shuffle` エクスチェンジ + `difference_group`
 * `union_relation` -> `forward` エクスチェンジ、または `shuffle` エクスチェンジ + `flatten_group`
