@@ -1,9 +1,10 @@
 #pragma once
 
-#include <cstddef>
-
 #include <initializer_list>
+#include <optional>
 #include <vector>
+
+#include <cstddef>
 
 #include "../expression.h"
 #include "../expression_kind.h"
@@ -32,25 +33,25 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param count the number of rows to keep in the input relation or each partition
-     * @param group_keys the partitioning key columns on the input relation, or empty to limit for whole relation
-     * @param sort_keys the sort key: this operation will keep rows from head of the sorted relation, if it is defined
+     * @param count the number of rows to keep in the input relation or each group
+     * @param group_keys the group key columns on the input relation, or empty to limit for whole relation
+     * @param sort_keys the sort key: this operation will only keep the rows from head of the sorted relation
      * @param creator the object creator for internal elements
      */
     explicit limit(
-            size_type count,
+            std::optional<size_type> count,
             std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
             std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
             util::object_creator creator = {}) noexcept;
 
     /**
      * @brief creates a new object.
-     * @param count the number of rows to keep in the input relation
-     * @param group_keys the grouping key columns on the input relation, or empty to limit for whole relation
-     * @param sort_keys the sort key: this operation will keep rows from head of the sorted relation, if it is defined
+     * @param count the number of rows to keep in the input relation or each group
+     * @param group_keys the group key columns on the input relation, or empty to limit for whole relation
+     * @param sort_keys the sort key: this operation will only keep the rows from head of the sorted relation
      */
     explicit limit(
-            size_type count,
+            std::optional<size_type> count,
             std::initializer_list<descriptor::variable> group_keys = {},
             std::initializer_list<sort_key> sort_keys = {});
 
@@ -95,17 +96,18 @@ public:
     output_port_type const& output() const noexcept;
 
     /**
-     * @brief returns the maximum number of rows.
+     * @brief returns the maximum number of rows for each group.
      * @return the limit size
+     * @return empty if it is unlimited
      */
-    size_type count() const noexcept;
+    std::optional<size_type> const& count() const noexcept;
 
     /**
-     * @brief sets the maximum number of rows.
+     * @brief sets the maximum number of rows for each group.
      * @param count the limit size
      * @return this
      */
-    limit& count(size_type count) noexcept;
+    limit& count(std::optional<size_type> count) noexcept;
 
     /**
      * @brief returns the limit key columns on the input relation.
@@ -160,7 +162,7 @@ protected:
 private:
     input_port_type input_;
     output_port_type output_;
-    size_type count_;
+    std::optional<size_type> count_;
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_;
     std::vector<sort_key, util::object_allocator<sort_key>> sort_keys_;
 };

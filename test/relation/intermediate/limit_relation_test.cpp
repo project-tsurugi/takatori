@@ -88,6 +88,19 @@ TEST_F(limit_relation_test, sort_keys) {
     }
 }
 
+TEST_F(limit_relation_test, unlimited) {
+    limit expr {
+            {},
+            {
+                    vardesc(1),
+            },
+    };
+
+    ASSERT_EQ(expr.count(), std::nullopt);
+    ASSERT_EQ(expr.group_keys().size(), 1);
+    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
+}
+
 TEST_F(limit_relation_test, clone) {
     limit expr {
             5,
