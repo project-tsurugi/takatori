@@ -68,7 +68,9 @@ public:
      * @brief creates a new instance.
      * @param resource the underlying memory resource
      */
-    object_creator(pmr::memory_resource* resource = get_standard_memory_resource()) noexcept : resource_(resource) {} // NOLINT
+    constexpr object_creator(pmr::memory_resource* resource = get_standard_memory_resource()) noexcept // NOLINT
+        : resource_(resource)
+    {}
 
     /**
      * @brief creates a new instance.
@@ -76,17 +78,9 @@ public:
      * @param allocator the polymorphic allocator
      */
     template<class T>
-    object_creator(allocator_type<T> const& allocator) noexcept : object_creator(allocator.resource()) {} // NOLINT
-
-    /**
-     * @brief creates a new object and wrap it into std::unique_ptr.
-     * @tparam T the target object type
-     * @tparam Args the constructor parameter type
-     * @param args the constructor arguments
-     * @return the created object
-     */
-    template<class T, class... Args>
-    unique_object_ptr<T> create_unique(Args&&... args);
+    object_creator(allocator_type<T> const& allocator) noexcept // NOLINT
+        : object_creator(allocator.resource())
+    {}
 
     /**
      * @brief wraps an object crated by this into std::unique_ptr to delete it.
@@ -98,14 +92,16 @@ public:
     unique_object_ptr<T> wrap_unique(T* object);
 
     /**
-     * @brief creates a new object and wrap it into std::shared_ptr.
+     * @brief creates a new object and wrap it into std::unique_ptr.
      * @tparam T the target object type
      * @tparam Args the constructor parameter type
      * @param args the constructor arguments
      * @return the created object
      */
     template<class T, class... Args>
-    std::shared_ptr<T> create_shared(Args&&... args);
+    unique_object_ptr<T> create_unique(Args&&... args) {
+        return wrap_unique(create_object<T>(std::forward<Args>(args)...));
+    }
 
     /**
      * @brief wraps an object crated by this into std::shared_ptr to share it.
@@ -115,6 +111,16 @@ public:
      */
     template<class T>
     std::shared_ptr<T> wrap_shared(T* object);
+
+    /**
+     * @brief creates a new object and wrap it into std::shared_ptr.
+     * @tparam T the target object type
+     * @tparam Args the constructor parameter type
+     * @param args the constructor arguments
+     * @return the created object
+     */
+    template<class T, class... Args>
+    std::shared_ptr<T> create_shared(Args&&... args);
 
     /**
      * @brief returns whether or not the given allocator is compatible with this or an equivalent creator.
@@ -135,7 +141,15 @@ public:
      * @return false otherwise
      */
     template<class E, class D>
-    bool is_instance(std::unique_ptr<E, D> const& ptr) const noexcept;
+    bool is_instance(std::unique_ptr<E, D> const& ptr) const noexcept {
+        if constexpr (std::is_same_v<D, std::default_delete<E>> && !std::is_array_v<E>) { // NOLINT
+            return resource_->is_equal(*get_standard_memory_resource());
+        }
+        if constexpr (std::is_same_v<D, object_deleter>) { // NOLINT
+            return ptr.get_deleter().creator() == *this;
+        }
+        return false;
+    }
 
     /**
      * @brief creates a new object.
@@ -145,7 +159,16 @@ public:
      * @return the created object
      */
     template<class T, class... Args>
-    T* create_object(Args&&... args);
+    T* create_object(Args&&... args) {
+        void* pointer = allocate<T>();
+        try {
+            auto* result = construct<T>(pointer, std::forward<Args>(args)...);
+            return result;
+        } catch (...) {
+            deallocate<T>(pointer);
+            std::rethrow_exception(std::current_exception());
+        }
+    }
 
     /**
      * @brief deletes the given object which is previously created by this allocator.
@@ -153,7 +176,10 @@ public:
      * @param object the object to delete
      */
     template<class T>
-    void delete_object(T* object);
+    void delete_object(T* object) {
+        destroy<T>(object);
+        deallocate<T>(object);
+    }
 
     /**
      * @brief construct a new object on the given pointer.
@@ -163,7 +189,9 @@ public:
      * @param args the constructor arguments
      */
     template<class T, class... Args>
-    T* construct(void* pointer, Args&&... args);
+    T* construct(void* pointer, Args&&... args) {
+        return new(pointer) T(std::forward<Args>(args)...); // NOLINT(cppcoreguidelines-owning-memory)
+    }
 
     /**
      * @brief destructs the given object.
@@ -171,7 +199,12 @@ public:
      * @param object the object to destroy
      */
     template<class T>
-    void destroy(T* object);
+    void destroy(T* object) {
+        if constexpr (!std::is_trivially_destructible_v<T>) {
+            std::destroy_at(object);
+        }
+        (void) object;
+    }
 
     /**
      * @brief allocates memory space.
@@ -181,7 +214,9 @@ public:
      * @throws std::bad_alloc if failed to reserve memory space
      */
     template<class T>
-    void* allocate(std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t));
+    void* allocate(std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t)) {
+        return resource_->allocate(bytes, alignment);
+    }
 
     /**
      * @brief releases the memory space previously allocated by this.
@@ -190,7 +225,9 @@ public:
      * @param alignment the object alignment
      */
     template<class T>
-    void deallocate(void* pointer, std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t));
+    void deallocate(void* pointer, std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t)) {
+        resource_->deallocate(pointer, bytes, alignment);
+    }
 
     /**
      * @brief returns a standard allocator object for this.
@@ -198,7 +235,9 @@ public:
      * @return the standard allocator
      */
     template<class T>
-    allocator_type<T> allocator(std::in_place_type_t<T> = std::in_place_type<T>) const noexcept { return allocator_type<T>(resource_); }
+    allocator_type<T> allocator(std::in_place_type_t<T> = std::in_place_type<T>) const noexcept {
+        return allocator_type<T>(resource_);
+    }
 
     /**
      * @brief returns whether or not the two allocators are equivalent.
@@ -216,7 +255,7 @@ public:
      * @return true if the both are different
      * @return false otherwise
      */
-    friend bool operator!=(object_creator a, object_creator b) noexcept { return !(a == b); }
+    friend bool operator!=(object_creator a, object_creator b) noexcept;
 
 private:
     pmr::memory_resource* resource_;
@@ -231,7 +270,9 @@ public:
      * @brief creates a new instance.
      * @param creator the object creator
      */
-    object_deleter(object_creator creator = {}) noexcept : creator_(creator) {} // NOLINT
+    constexpr object_deleter(object_creator creator = {}) noexcept // NOLINT
+        : creator_(creator)
+    {}
 
     /**
      * @brief destroys object and releases the underlying resource of it.
@@ -239,13 +280,20 @@ public:
      * @param object pointer to the target object
      */
     template<class T>
-    void operator()(T* object);
+    void operator()(T* object) {
+        // NOTE: shared_ptr may pass nullptr
+        if (object != nullptr) {
+            creator_.delete_object(object);
+        }
+    }
 
     /**
      * @brief returns the corresponded creator.
      * @return the corresponded creator
      */
-    object_creator creator() const noexcept { return creator_; }
+    constexpr object_creator creator() const noexcept {
+        return creator_;
+    }
 
     /**
      * @brief returns whether or not the two deleter are equivalent.
@@ -263,7 +311,7 @@ public:
      * @return true if the both are different
      * @return false otherwise
      */
-    friend bool operator!=(object_deleter a, object_deleter b) noexcept { return !(a == b); }
+    friend bool operator!=(object_deleter a, object_deleter b) noexcept;
 
 private:
     object_creator creator_;
@@ -275,68 +323,9 @@ private:
  */
 object_creator standard_object_creator() noexcept;
 
-template<class T, class... Args>
-inline T* object_creator::create_object(Args&& ... args) {
-    void* pointer = allocate<T>();
-    try {
-        auto* result = construct<T>(pointer, std::forward<Args>(args)...);
-        return result;
-    } catch (...) {
-        deallocate<T>(pointer);
-        std::rethrow_exception(std::current_exception());
-    }
-}
-
-template<class T>
-inline void object_creator::delete_object(T* object) {
-    destroy<T>(object);
-    deallocate<T>(object);
-}
-
-template<class T, class... Args>
-inline T* object_creator::construct(void* pointer, Args&&... args) {
-    return new(pointer) T(std::forward<Args>(args)...); // NOLINT
-}
-
-template<class T>
-inline void object_creator::destroy(T* object) {
-    if constexpr (!std::is_trivially_destructible_v<T>) {
-        object->~T();
-    }
-    (void) object;
-}
-
-template<class T>
-inline void* object_creator::allocate(std::size_t bytes, std::size_t alignment) {
-    return resource_->allocate(bytes, alignment);
-}
-
-template<class T>
-inline void object_creator::deallocate(void* pointer, std::size_t bytes, std::size_t alignment) {
-    resource_->deallocate(pointer, bytes, alignment);
-}
-
-template<class T>
-inline void object_deleter::operator()(T* object) {
-    // NOTE: shared_ptr may pass nullptr
-    if (object != nullptr) {
-        creator_.delete_object(object);
-    }
-}
-
 template<class T>
 inline unique_object_ptr<T> object_creator::wrap_unique(T* object) {
     return unique_object_ptr<T>(object, object_deleter { *this });
-}
-
-template<class T, class... Args>
-inline unique_object_ptr<T> object_creator::create_unique(Args&& ... args) {
-    return wrap_unique(create_object<T>(std::forward<Args>(args)...));
-}
-
-template<class T, class... Args>
-inline std::shared_ptr<T> object_creator::create_shared(Args&& ... args) {
-    return wrap_shared(create_object<T>(std::forward<Args>(args)...));
 }
 
 template<class T>
@@ -344,10 +333,14 @@ inline std::shared_ptr<T> object_creator::wrap_shared(T* object) {
     return std::shared_ptr<T>(object, object_deleter { *this }, allocator<T>());
 }
 
-/// @private
+template<class T, class... Args>
+inline std::shared_ptr<T> object_creator::create_shared(Args&& ... args) {
+    return wrap_shared(create_object<T>(std::forward<Args>(args)...));
+}
+
+/// @cond IMPL_DEFS
 namespace impl {
 
-/// @private
 template<class Allocator>
 struct allocator_compatibility_tester {
     bool operator()(object_creator, Allocator const&) const noexcept {
@@ -355,7 +348,6 @@ struct allocator_compatibility_tester {
     }
 };
 
-/// @private
 template<class T>
 struct allocator_compatibility_tester<std::allocator<T>> {
     bool operator()(object_creator creator, std::allocator<T> const&) const noexcept {
@@ -366,7 +358,6 @@ struct allocator_compatibility_tester<std::allocator<T>> {
     }
 };
 
-/// @private
 template<class T>
 struct allocator_compatibility_tester<object_allocator<T>> {
     bool operator()(object_creator creator, object_allocator<T> const& allocator) const noexcept {
@@ -376,22 +367,13 @@ struct allocator_compatibility_tester<object_allocator<T>> {
         return creator == object_creator(allocator);
     }
 };
+
 } // namespace impl
+/// @endcond
 
 template<class Allocator>
 inline bool object_creator::is_compatible(Allocator const& allocator) const noexcept {
     return impl::allocator_compatibility_tester<Allocator> {}(*this, allocator);
-}
-
-template<class E, class D>
-inline bool object_creator::is_instance(std::unique_ptr<E, D> const& ptr) const noexcept {
-    if constexpr (std::is_same_v<D, std::default_delete<E>> && !std::is_array_v<E>) { // NOLINT
-        return resource_->is_equal(*get_standard_memory_resource());
-    }
-    if constexpr (std::is_same_v<D, object_deleter>) { // NOLINT
-        return ptr.get_deleter().creator() == *this;
-    }
-    return false;
 }
 
 } // namespace takatori::util
