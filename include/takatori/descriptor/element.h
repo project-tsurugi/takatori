@@ -29,36 +29,48 @@ public:
      * @brief creates a new instance.
      * @param entity the entity
      */
-    explicit element(std::shared_ptr<util::object> entity) noexcept : entity_(std::move(entity)) {}
+    explicit element(std::shared_ptr<util::object> entity) noexcept
+        : entity_(std::move(entity))
+    {}
 
     /**
      * @brief returns the descriptor entity.
      * @return the descriptor entity
      * @warning undefined behavior if the entity is absent
      */
-    util::object& entity() const noexcept { return *entity_; }
+    util::object& entity() const noexcept {
+        return *entity_;
+    }
 
     /**
      * @brief returns the descriptor entity.
      * @return the descriptor entity
      * @return empty if the entity is absent
      */
-    util::optional_ptr<util::object> optional_entity() const noexcept { return util::optional_ptr { entity_.get() }; }
+    util::optional_ptr<util::object> optional_entity() const noexcept {
+        return util::optional_ptr { entity_.get() };
+    }
 
     /**
      * @brief returns the descriptor entity.
      * @return the descriptor entity
      */
-    std::shared_ptr<util::object> const& shared_entity() const noexcept { return entity_; }
+    std::shared_ptr<util::object> const& shared_entity() const noexcept {
+        return entity_;
+    }
 
     /**
      * @brief returns the document region of this element.
      * @return the document region
      */
-    document::region& region() noexcept { return region_; }
+    document::region& region() noexcept {
+        return region_;
+    }
 
     /// @copydoc region()
-    document::region const& region() const noexcept { return region_; }
+    document::region const& region() const noexcept {
+        return region_;
+    }
 
 private:
     std::shared_ptr<util::object> entity_;
@@ -117,6 +129,6 @@ struct std::hash<takatori::descriptor::element<Kind>> {
      * @return computed hash code
      */
     std::size_t operator()(takatori::descriptor::element<Kind> const& value) const noexcept {
-        return takatori::util::hash(Kind, value.optional_entity());
+        return ::takatori::util::hash(Kind, value.optional_entity());
     }
 };

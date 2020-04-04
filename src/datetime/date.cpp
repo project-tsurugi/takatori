@@ -1,29 +1,26 @@
 #include <takatori/datetime/date.h>
 
 #include "date_util.h"
+#include "printing.h"
 
 namespace takatori::datetime {
 
-namespace {
-
-} // namespace
-
-date::date(std::uint32_t year, std::uint32_t month, std::uint32_t day) noexcept
+date::date(size_type year, size_type month, size_type day) noexcept
     : elapsed_(util::to_days_since_epoch(year, month, day))
 {}
 
-std::uint32_t date::year() const noexcept {
+date::size_type date::year() const noexcept {
     auto v = util::to_year_and_day(elapsed_);
     return v.year;
 }
 
-std::uint32_t date::month() const noexcept {
+date::size_type date::month() const noexcept {
     auto yad = util::to_year_and_day(elapsed_);
     auto v = util::to_month_and_day(yad.year, yad.day_of_year);
     return v.month;
 }
 
-std::uint32_t date::day() const noexcept {
+date::size_type date::day() const noexcept {
     auto yad = util::to_year_and_day(elapsed_);
     auto v = util::to_month_and_day(yad.year, yad.day_of_year);
     return v.day_of_month;
@@ -31,15 +28,9 @@ std::uint32_t date::day() const noexcept {
 
 std::ostream& operator<<(std::ostream& out, date value) {
     out << "date(";
-    value.print_body(out);
+    print(out, value);
     out << ")";
     return out;
-}
-
-std::ostream& date::print_body(std::ostream& out) const {
-    return out << year() << "-"
-               << month() << "-"
-               << day();
 }
 
 } // namespace takatori::datetime

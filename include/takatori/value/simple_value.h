@@ -45,7 +45,9 @@ public:
     /**
      * @brief creates a new object.
      */
-    explicit constexpr simple_value(entity_type entity = {}) noexcept : entity_(std::move(entity)) {};
+    explicit constexpr simple_value(entity_type entity = {}) noexcept
+        : entity_(std::move(entity))
+    {}
 
     ~simple_value() override = default;
     simple_value(simple_value const& other) = delete;

@@ -28,7 +28,9 @@ public:
      * FIXME: national
      * @param length the number of units in the character sequence
      */
-    explicit constexpr character(character::size_type length) noexcept;
+    explicit constexpr character(character::size_type length) noexcept
+        : character(~type::varying, length)
+    {}
 
     /**
      * @brief creates a new instance which represents either fixed- or flexible-length character sequences (a.k.a. CHAR or VARCHAR).
@@ -37,7 +39,10 @@ public:
      * @param length the max number of units in the character sequence,
      *               or empty for flexible size character sequences
      */
-    explicit constexpr character(varying_t varying, std::optional<size_type> length = {}) noexcept;
+    explicit constexpr character(varying_t varying, std::optional<size_type> length = {}) noexcept
+        : varying_(varying.enabled())
+        , length_(std::move(length))
+    {}
 
     ~character() override = default;
     character(character const& other) = delete;
@@ -54,7 +59,9 @@ public:
      * @return true if this is flexible length character sequence (a.k.a. VARCHAR)
      * @return false if this is fixed length character sequence (a.k.a. CHAR)
      */
-    constexpr bool varying() const noexcept;
+    constexpr bool varying() const noexcept {
+        return varying_;
+    }
 
     /**
      * @brief returns the max number of character octets in the character sequence.
@@ -63,7 +70,9 @@ public:
      * @return empty if it is not defined
      * @see is_varying()
      */
-    constexpr std::optional<size_type> length() const noexcept;
+    constexpr std::optional<size_type> length() const noexcept {
+        return length_;
+    }
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -104,26 +113,6 @@ private:
 
     friend class util::object_creator;
 };
-
-constexpr
-character::character(character::size_type length) noexcept
-    : character(~type::varying, length)
-{}
-
-constexpr
-character::character(varying_t varying, std::optional<size_type> length) noexcept
-    : varying_(varying.enabled())
-    , length_(std::move(length))
-{}
-
-constexpr bool
-character::varying() const noexcept {
-    return varying_;
-}
-constexpr std::optional<character::size_type>
-character::length() const noexcept {
-    return length_;
-}
 
 template<> struct type_of<character::tag> : util::meta_type<character> {};
 

@@ -30,7 +30,9 @@ public:
      * @brief creates a new instance.
      * @param value the date
      */
-    explicit constexpr date(entity_type value) noexcept;
+    explicit constexpr date(entity_type value) noexcept
+        : entity_(value)
+    {}
 
     /**
      * @brief creates a new instance from year. month, and day triple.
@@ -54,36 +56,14 @@ public:
      * @brief returns the entity value.
      * @return the entity value
      */
-    constexpr view_type get() const noexcept;
+    constexpr view_type get() const noexcept {
+        return entity_;
+    }
 
     /// @copydoc get()
-    explicit constexpr operator view_type() const noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are equivalent.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a == b
-     * @return false otherwise
-     */
-    friend constexpr bool operator==(date const& a, date const& b) noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are different.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a != b
-     * @return false otherwise
-     */
-    friend constexpr bool operator!=(date const& a, date const& b) noexcept;
-
-    /**
-     * @brief appends string representation of the given value.
-     * @param out the target output
-     * @param value the target value
-     * @return the output
-     */
-    friend std::ostream& operator<<(std::ostream& out, date const& value);
+    explicit constexpr operator view_type() const noexcept {
+        return get();
+    }
 
 protected:
     bool equals(data const& other) const noexcept override;
@@ -96,25 +76,35 @@ private:
     friend class util::object_creator;
 };
 
-inline constexpr date::date(date::entity_type value) noexcept
-    : entity_(value)
-{}
-
-inline constexpr date::view_type date::get() const noexcept {
-    return entity_;
-}
-
-inline constexpr date::operator view_type() const noexcept {
-    return get();
-}
-
+/**
+ * @brief returns whether or not the two elements are equivalent.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a == b
+ * @return false otherwise
+ */
 inline constexpr bool operator==(date const& a, date const& b) noexcept {
     return a.get() == b.get();
 }
 
+/**
+ * @brief returns whether or not the two elements are different.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a != b
+ * @return false otherwise
+ */
 inline constexpr bool operator!=(date const& a, date const& b) noexcept {
     return !(a == b);
 }
+
+/**
+ * @brief appends string representation of the given value.
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+std::ostream& operator<<(std::ostream& out, date const& value);
 
 /**
  * @brief type_of for date.

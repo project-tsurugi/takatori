@@ -30,14 +30,18 @@ public:
      * @brief creates a new instance.
      * @param value the time interval
      */
-    explicit constexpr datetime_interval(entity_type value) noexcept;
+    explicit constexpr datetime_interval(entity_type value) noexcept
+        : entity_(value)
+    {}
 
     /**
      * @brief creates a new instance.
      * @param date date interval
      * @param time time interval
      */
-    explicit constexpr datetime_interval(datetime::date_interval date, datetime::time_interval time) noexcept;
+    explicit constexpr datetime_interval(datetime::date_interval date, datetime::time_interval time) noexcept
+        : entity_(date, time)
+    {}
 
     /**
      * @brief creates a new instance.
@@ -56,7 +60,20 @@ public:
             std::int32_t hour = {},
             std::int32_t minute = {},
             std::int32_t second = {},
-            datetime::time_interval::time_unit subsecond = {}) noexcept;
+            datetime::time_interval::time_unit subsecond = {}) noexcept
+        : datetime_interval(
+                datetime::date_interval {
+                        year,
+                        month,
+                        day,
+                },
+                datetime::time_interval {
+                        hour,
+                        minute,
+                        second,
+                        subsecond,
+                })
+    {}
 
     ~datetime_interval() override = default;
     datetime_interval(datetime_interval const& other) = delete;
@@ -72,36 +89,14 @@ public:
      * @brief returns the entity value.
      * @return the entity value
      */
-    constexpr view_type get() const noexcept;
+    constexpr view_type get() const noexcept {
+        return entity_;
+    }
 
     /// @copydoc get()
-    explicit constexpr operator view_type() const noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are equivalent.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a == b
-     * @return false otherwise
-     */
-    friend constexpr bool operator==(datetime_interval const& a, datetime_interval const& b) noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are different.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a != b
-     * @return false otherwise
-     */
-    friend constexpr bool operator!=(datetime_interval const& a, datetime_interval const& b) noexcept;
-
-    /**
-     * @brief appends string representation of the given value.
-     * @param out the target output
-     * @param value the target value
-     * @return the output
-     */
-    friend std::ostream& operator<<(std::ostream& out, datetime_interval const& value);
+    explicit constexpr operator view_type() const noexcept {
+        return get();
+    }
 
 protected:
     bool equals(data const& other) const noexcept override;
@@ -114,51 +109,35 @@ private:
     friend class util::object_creator;
 };
 
-inline constexpr datetime_interval::datetime_interval(datetime_interval::entity_type value) noexcept
-    : entity_(value)
-{}
-
-inline constexpr datetime_interval::datetime_interval(datetime::date_interval date, datetime::time_interval time) noexcept
-    : entity_(date, time)
-{}
-
-inline constexpr datetime_interval::datetime_interval(
-        datetime::date_interval::unit year,
-        datetime::date_interval::unit month,
-        datetime::date_interval::unit day,
-        std::int32_t hour,
-        std::int32_t minute,
-        std::int32_t second,
-        datetime::time_interval::time_unit subsecond) noexcept
-    : datetime_interval(
-        datetime::date_interval {
-                year,
-                month,
-                day,
-        },
-        datetime::time_interval {
-                hour,
-                minute,
-                second,
-                subsecond,
-        })
-{}
-
-inline constexpr datetime_interval::view_type datetime_interval::get() const noexcept {
-    return entity_;
-}
-
-inline constexpr datetime_interval::operator view_type() const noexcept {
-    return get();
-}
-
+/**
+ * @brief returns whether or not the two elements are equivalent.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a == b
+ * @return false otherwise
+ */
 inline constexpr bool operator==(datetime_interval const& a, datetime_interval const& b) noexcept {
     return a.get() == b.get();
 }
 
+/**
+ * @brief returns whether or not the two elements are different.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a != b
+ * @return false otherwise
+ */
 inline constexpr bool operator!=(datetime_interval const& a, datetime_interval const& b) noexcept {
     return !(a == b);
 }
+
+/**
+ * @brief appends string representation of the given value.
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+std::ostream& operator<<(std::ostream& out, datetime_interval const& value);
 
 /**
  * @brief type_of for time_interval.

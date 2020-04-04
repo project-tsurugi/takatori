@@ -30,20 +30,6 @@ decimal::operator view_type() const noexcept {
     return get();
 }
 
-bool operator==(decimal const& a, decimal const& b) noexcept {
-    auto&& d1 = a.entity_.entity();
-    auto&& d2 = b.entity_.entity();
-    return std::memcmp(&d1, &d2, sizeof(decltype(d1))) == 0;
-}
-
-bool operator!=(decimal const& a, decimal const& b) noexcept {
-    return !(a == b);
-}
-
-std::ostream& operator<<(std::ostream& out, decimal const& value) {
-    return out << value.get();
-}
-
 bool decimal::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<decimal>(other);
 }
@@ -59,6 +45,20 @@ std::size_t decimal::hash() const noexcept {
 
 std::ostream& decimal::print_to(std::ostream& out) const {
     return out << *this;
+}
+
+bool operator==(decimal const& a, decimal const& b) noexcept {
+    auto&& d1 = a.get().entity();
+    auto&& d2 = b.get().entity();
+    return std::memcmp(&d1, &d2, sizeof(decltype(d1))) == 0;
+}
+
+bool operator!=(decimal const& a, decimal const& b) noexcept {
+    return !(a == b);
+}
+
+std::ostream& operator<<(std::ostream& out, decimal const& value) {
+    return out << value.get();
 }
 
 } // namespace takatori::value

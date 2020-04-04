@@ -32,7 +32,10 @@ public:
      */
     explicit variable_declarator(
             descriptor::variable variable,
-            util::unique_object_ptr<expression> value) noexcept;
+            util::unique_object_ptr<expression> value) noexcept
+        : variable_(std::move(variable))
+        , value_(std::move(value))
+    {}
 
     /**
      * @brief creates a new instance.
@@ -41,7 +44,10 @@ public:
      */
     explicit variable_declarator(
             util::unique_object_ptr<expression> value,
-            descriptor::variable variable) noexcept;
+            descriptor::variable variable) noexcept
+        : variable_(std::move(variable))
+        , value_(std::move(value))
+    {}
 
     /**
      * @brief creates a new instance.
@@ -50,8 +56,12 @@ public:
      * @attention this may take a copy of the expression
      */
     explicit variable_declarator(
-            descriptor::variable variable,
-            expression&& value) noexcept;
+            descriptor::variable variable, // FIXME: NOLINT(performance-unnecessary-value-param)
+            expression&& value) noexcept
+        : variable_declarator(
+                std::move(variable),
+                util::clone_unique(std::move(value)))
+    {}
 
     /**
      * @brief creates a new instance.
@@ -61,7 +71,11 @@ public:
      */
     explicit variable_declarator(
             expression&& value,
-            descriptor::variable variable) noexcept;
+            descriptor::variable variable) noexcept // FIXME: NOLINT(performance-unnecessary-value-param)
+        : variable_declarator(
+                std::move(variable),
+                util::clone_unique(std::move(value)))
+    {}
 
     ~variable_declarator() = default;
 
@@ -87,208 +101,114 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    explicit variable_declarator(variable_declarator const& other, util::object_creator creator);
+    explicit variable_declarator(variable_declarator const& other, util::object_creator creator)
+        : variable_declarator(
+                other.variable_,
+                tree::forward(creator, other.value_))
+    {}
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    explicit variable_declarator(variable_declarator&& other, util::object_creator creator);
+    explicit variable_declarator(variable_declarator&& other, util::object_creator creator)
+        : variable_declarator(
+                std::move(other.variable_),
+                tree::forward(creator, std::move(other.value_)))
+    {}
 
     /**
      * @brief returns the owner of this fragment.
      * @return the owner
      * @return nullptr if it is absent
      */
-    parent_type* parent_element() noexcept;
+    parent_type* parent_element() noexcept {
+        return parent_;
+    }
 
     /// @copydoc parent_element()
-    parent_type const* parent_element() const noexcept;
+    parent_type const* parent_element() const noexcept {
+        return parent_;
+    }
 
     /**
      * @brief sets the owner of this fragment.
      * @param parent the owner
      */
-    void parent_element(parent_type* parent) noexcept;
+    void parent_element(parent_type* parent) noexcept {
+        parent_ = parent;
+        tree::bless_element(parent_, value_);
+    }
 
     /**
      * @brief returns the descriptor of target variable.
      * @return the target variable
      */
-    descriptor::variable const& variable() const noexcept;
+    descriptor::variable const& variable() const noexcept {
+        return variable_;
+    }
 
     /**
      * @brief sets a descriptor of the declared variable.
      * @param variable the declared variable
      * @return this
      */
-    variable_declarator& variable(descriptor::variable variable) noexcept;
+    variable_declarator& variable(descriptor::variable variable) noexcept { // FIXME: NOLINT(performance-unnecessary-value-param)
+        variable_ = std::move(variable);
+        return *this;
+    }
 
     /**
      * @brief returns the bound expression.
      * @return the bound expression
      */
-    expression& value() noexcept;
+    expression& value() noexcept {
+        return *value_;
+    }
 
     /// @copydoc value
-    expression const& value() const noexcept;
+    expression const& value() const noexcept {
+        return *value_;
+    }
 
     /**
      * @brief returns the bound expression.
      * @return the bound expression
      * @return empty if the bound expression is absent
      */
-    util::optional_ptr<expression> optional_value() noexcept;
+    util::optional_ptr<expression> optional_value() noexcept {
+        return util::optional_ptr { value_.get() };
+    }
 
     /// @copydoc optional_value()
-    util::optional_ptr<expression const> optional_value() const noexcept;
+    util::optional_ptr<expression const> optional_value() const noexcept {
+        return util::optional_ptr { value_.get() };
+    }
 
     /**
      * @brief releases the bound expression.
      * @return the released expression
      */
-    util::unique_object_ptr<expression> release_value() noexcept;
+    util::unique_object_ptr<expression> release_value() noexcept {
+        return tree::release_element(std::move(value_));
+    }
 
     /**
      * @brief sets the bound expression.
      * @param value the bound expression
      * @return this
      */
-    variable_declarator& value(util::unique_object_ptr<expression> value) noexcept;
+    variable_declarator& value(util::unique_object_ptr<expression> value) noexcept {
+        tree::assign_element_fragment(parent_, variable_, std::move(value));
+        return *this;
+    }
 
 private:
     descriptor::variable variable_;
     util::unique_object_ptr<expression> value_;
     parent_type* parent_ {};
 };
-
-template<class Parent>
-inline
-variable_declarator<Parent>::variable_declarator(
-        descriptor::variable variable,
-        util::unique_object_ptr<expression> value) noexcept
-    : variable_(std::move(variable))
-    , value_(std::move(value))
-{}
-
-template<class Parent>
-inline
-variable_declarator<Parent>::variable_declarator(
-        util::unique_object_ptr<expression> value,
-        descriptor::variable variable) noexcept
-    : variable_(std::move(variable))
-    , value_(std::move(value))
-{}
-
-template<class Parent>
-inline
-variable_declarator<Parent>::variable_declarator(
-        descriptor::variable variable, // FIXME: NOLINT(performance-unnecessary-value-param)
-        expression&& value) noexcept
-    : variable_declarator(
-        std::move(variable),
-        util::clone_unique(std::move(value)))
-{}
-
-template<class Parent>
-inline
-variable_declarator<Parent>::variable_declarator(
-        expression&& value,
-        descriptor::variable variable) noexcept // FIXME: NOLINT(performance-unnecessary-value-param)
-    : variable_declarator(
-        std::move(variable),
-        util::clone_unique(std::move(value)))
-{}
-
-template<class Parent>
-inline
-variable_declarator<Parent>::variable_declarator(
-        variable_declarator const& other,
-        util::object_creator creator)
-    : variable_declarator(
-        other.variable_,
-        tree::forward(creator, other.value_))
-{}
-
-template<class Parent>
-inline
-variable_declarator<Parent>::variable_declarator(
-        variable_declarator&& other,
-        util::object_creator creator)
-    : variable_declarator(
-        std::move(other.variable_),
-        tree::forward(creator, std::move(other.value_)))
-{}
-
-template<class Parent>
-inline typename variable_declarator<Parent>::parent_type*
-variable_declarator<Parent>::parent_element() noexcept {
-    return parent_;
-}
-
-template<class Parent>
-inline typename variable_declarator<Parent>::parent_type
-const* variable_declarator<Parent>::parent_element() const noexcept {
-    return parent_;
-}
-
-template<class Parent>
-inline void
-variable_declarator<Parent>::parent_element(parent_type* parent) noexcept {
-    parent_ = parent;
-    tree::bless_element(parent_, value_);
-}
-
-template<class Parent>
-inline descriptor::variable const&
-variable_declarator<Parent>::variable() const noexcept {
-    return variable_;
-}
-
-template<class Parent>
-inline variable_declarator<Parent>&
-variable_declarator<Parent>::variable(descriptor::variable variable) noexcept { // FIXME: NOLINT(performance-unnecessary-value-param)
-    variable_ = std::move(variable);
-    return *this;
-}
-
-template<class Parent>
-inline expression&
-variable_declarator<Parent>::value() noexcept {
-    return *value_;
-}
-
-template<class Parent>
-inline expression const&
-variable_declarator<Parent>::value() const noexcept {
-    return *value_;
-}
-
-template<class Parent>
-inline util::optional_ptr<expression>
-variable_declarator<Parent>::optional_value() noexcept {
-    return util::optional_ptr { value_.get() };
-}
-
-template<class Parent>
-inline util::optional_ptr<expression const>
-variable_declarator<Parent>::optional_value() const noexcept {
-    return util::optional_ptr { value_.get() };
-}
-
-template<class Parent>
-inline util::unique_object_ptr<expression>
-variable_declarator<Parent>::release_value() noexcept {
-    return tree::release_element(std::move(value_));
-}
-
-template<class Parent>
-inline variable_declarator<Parent>&
-variable_declarator<Parent>::value(util::unique_object_ptr<expression> value) noexcept {
-    tree::assign_element_fragment(parent_, variable_, std::move(value));
-    return *this;
-}
 
 /**
  * @brief returns whether or not the two elements are equivalent.

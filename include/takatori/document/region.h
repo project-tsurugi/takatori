@@ -16,6 +16,9 @@ namespace takatori::document {
  */
 class region {
 public:
+    /// @brief absolute offset in documents.
+    using size_type = std::size_t;
+
     /**
      * @brief creates a new instance, which represents "unknown region".
      */
@@ -29,8 +32,8 @@ public:
      */
     constexpr region(
             document const& source,
-            std::optional<std::size_t> const& first,
-            std::optional<std::size_t> const& last = {}) noexcept
+            std::optional<size_type> const& first,
+            std::optional<size_type> const& last = {}) noexcept
         : source_(std::addressof(source))
         , first_(first.value_or(npos))
         , last_(last.value_or(npos))
@@ -68,7 +71,7 @@ public:
      * @return the beginning offset (inclusive)
      * @return empty if it is not defined
      */
-    constexpr std::optional<std::size_t> first() const noexcept {
+    constexpr std::optional<size_type> first() const noexcept {
         if (first_ == npos) return {};
         return { first_ };
     }
@@ -78,7 +81,7 @@ public:
      * @return the ending offset (exclusive)
      * @return empty if it is not defined
      */
-    constexpr std::optional<std::size_t> last() const noexcept {
+    constexpr std::optional<size_type> last() const noexcept {
         if (last_ == npos) return {};
         return { last_ };
     }
@@ -88,7 +91,7 @@ public:
      * @return the offset gap
      * @return empty if either the offset is not defined
      */
-    constexpr std::optional<std::size_t> gap() const noexcept {
+    constexpr std::optional<size_type> gap() const noexcept {
         if (first_ == npos || last_ == npos || first_ > last_) {
             return {};
         }
@@ -120,10 +123,10 @@ public:
 
 private:
     document const* source_ {};
-    std::size_t first_ { npos };
-    std::size_t last_ { npos };
+    size_type first_ { npos };
+    size_type last_ { npos };
 
-    static inline constexpr std::size_t npos = document::npos;
+    static inline constexpr size_type npos = document::npos;
 };
 
 /**

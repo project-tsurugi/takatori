@@ -27,7 +27,10 @@ public:
      * @param scale the number of decimal digits in fractional part,
      *              which must be less than or equal to precision if it is defined
      */
-    explicit constexpr decimal(std::optional<size_type> precision = {}, size_type scale = 0) noexcept;
+    explicit constexpr decimal(std::optional<size_type> precision = {}, size_type scale = 0) noexcept
+        : precision_(std::move(precision))
+        , scale_(scale)
+    {}
 
     ~decimal() override = default;
     decimal(decimal const& other) = delete;
@@ -44,13 +47,17 @@ public:
      * @return the max number of digits
      * @return empty if it is not defined
      */
-    constexpr std::optional<size_type> precision() const noexcept;
+    constexpr std::optional<size_type> precision() const noexcept {
+        return precision_;
+    }
 
     /**
      * @brief returns the number of digits in the fractional part.
      * @return the number of digits in the fractional part
      */
-    constexpr size_type scale() const noexcept;
+    constexpr size_type scale() const noexcept {
+        return scale_;
+    }
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -87,21 +94,6 @@ private:
     std::optional<size_type> precision_;
     size_type scale_;
 };
-
-constexpr
-decimal::decimal(std::optional<size_type> precision, decimal::size_type scale) noexcept
-    : precision_(std::move(precision))
-    , scale_(scale)
-{}
-
-constexpr std::optional<decimal::size_type> decimal::precision() const noexcept {
-    return precision_;
-}
-
-constexpr decimal::size_type
-decimal::scale() const noexcept {
-    return scale_;
-}
 
 /**
  * @brief type_of for decimal.

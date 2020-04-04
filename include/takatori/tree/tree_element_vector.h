@@ -81,7 +81,10 @@ public:
      * @param parent the parent element
      * @param creator the object creator
      */
-    explicit tree_element_vector(parent_type& parent, util::object_creator creator = {}) noexcept;
+    explicit tree_element_vector(parent_type& parent, util::object_creator creator = {}) noexcept
+        : parent_(std::addressof(parent)), elements_(creator)
+    {}
+
 
     /**
      * @brief constructs a new object.
@@ -92,7 +95,11 @@ public:
      * @param elements the source elements
      */
     template<class U, class C = typename util::reference_vector<value_type>::copier_type>
-    explicit tree_element_vector(parent_type& parent, util::reference_vector<U, C> elements) noexcept;
+    explicit tree_element_vector(parent_type& parent, util::reference_vector<U, C> elements) noexcept
+        : parent_(std::addressof(parent)), elements_(std::move(elements))
+    {
+        bless();
+    }
 
     /**
      * @brief assigns elements in the list.
@@ -103,7 +110,10 @@ public:
      * @return this
      */
     template<class U, class C = typename util::reference_vector<U>::copier_type>
-    tree_element_vector& operator=(util::reference_vector<U, C> elements) noexcept;
+    tree_element_vector& operator=(util::reference_vector<U, C> elements) noexcept {
+        assign(std::move(elements));
+        return *this;
+    }
 
     /**
      * @brief returns an element at the position.
@@ -111,10 +121,14 @@ public:
      * @return the element on the position
      * @throws std::out_of_bound if the position is out of bound
      */
-    reference at(size_type position) { return elements_.at(position); }
+    reference at(size_type position) {
+        return elements_.at(position);
+    }
 
     /// @copydoc at()
-    const_reference at(size_type position) const { return elements_.at(position); }
+    const_reference at(size_type position) const {
+        return elements_.at(position);
+    }
 
     /**
      * @brief returns an element at the position.
@@ -122,65 +136,89 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    reference operator[](size_type position) { return elements_[position]; }
+    reference operator[](size_type position) {
+        return elements_[position];
+    }
 
     /// @copydoc operator[]()
-    const_reference operator[](size_type position) const { return elements_[position]; }
+    const_reference operator[](size_type position) const {
+        return elements_[position];
+    }
 
     /**
      * @brief returns reference of the first element
      * @return reference of the first element
      * @warning undefined behavior if this is empty
      */
-    reference front() { return elements_.front(); }
+    reference front() {
+        return elements_.front();
+    }
 
     /// @copydoc front()
-    const_reference front() const { return elements_.front(); }
+    const_reference front() const {
+        return elements_.front();
+    }
 
     /**
      * @brief returns reference of the last element
      * @return reference of the last element
      * @warning undefined behavior if this is empty
      */
-    reference back() { return elements_.back(); }
+    reference back() {
+        return elements_.back();
+    }
 
     /// @copydoc back()
-    const_reference back() const { return elements_.back(); }
+    const_reference back() const {
+        return elements_.back();
+    }
 
     /**
      * @brief returns whether or not this is empty.
      * @return true if this is empty
      * @return false otherwise
      */
-    bool empty() const noexcept { return elements_.empty(); }
+    bool empty() const noexcept {
+        return elements_.empty();
+    }
 
     /**
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    size_type size() const noexcept { return elements_.size(); }
+    size_type size() const noexcept {
+        return elements_.size();
+    }
 
     /**
      * @brief returns the capacity size of this.
      * @return the max number of elements to store without expanding this container
      */
-    size_type capacity() const noexcept { return elements_.capacity(); }
+    size_type capacity() const noexcept {
+        return elements_.capacity();
+    }
 
     /**
      * @brief reserves the capacity.
      * @param size the number of elements to store without expanding this container
      */
-    void reserve(size_type size) { elements_.reserve(size); }
+    void reserve(size_type size) {
+        elements_.reserve(size);
+    }
 
     /**
      * @brief may shrink capacity size to fit to the current storing elements.
      */
-    void shrink_to_fit() { elements_.shrink_to_fit(); }
+    void shrink_to_fit() {
+        elements_.shrink_to_fit();
+    }
 
     /**
      * @brief removes all elements in this.
      */
-    void clear() noexcept { elements_.clear(); }
+    void clear() noexcept {
+        elements_.clear();
+    }
 
     /**
      * @brief assigns elements in the list.
@@ -190,14 +228,19 @@ public:
      */
     template<class U, class C = typename util::reference_vector<U>::copier_type>
     std::enable_if_t<std::is_convertible_v<U&, reference>>
-    assign(util::reference_vector<U, C> elements);
+    assign(util::reference_vector<U, C> elements) {
+        elements_ = std::move(elements);
+        bless();
+    }
 
     /**
      * @brief removes the element on the given position.
      * @param position the target element position
      * @return the next position of the erased element
      */
-    iterator erase(const_iterator position) noexcept;
+    iterator erase(const_iterator position) noexcept {
+        return elements_.erase(position);
+    }
 
     /**
      * @brief removes the elements between the span.
@@ -205,13 +248,17 @@ public:
      * @param last the ending position (exclusive)
      * @return the next position of the "last"
      */
-    iterator erase(const_iterator first, const_iterator last) noexcept;
+    iterator erase(const_iterator first, const_iterator last) noexcept {
+        return elements_.erase(first, last);
+    }
 
     /**
      * @brief removes the last element.
      * @warning undefined behavior if this is empty
      */
-    void pop_back() noexcept;
+    void pop_back() noexcept {
+        elements_.pop_back();
+    }
 
     /**
      * @brief inserts the given element.
@@ -224,7 +271,11 @@ public:
      */
     template<class U, class D>
     std::enable_if_t<std::is_convertible_v<U&, reference>, iterator>
-    insert(const_iterator position, std::unique_ptr<U, D> element);
+    insert(const_iterator position, std::unique_ptr<U, D> element) {
+        auto result = elements_.insert(position, std::move(element));
+        bless(*result);
+        return result;
+    }
 
     /**
      * @brief appends the given element into the tail of this.
@@ -236,7 +287,11 @@ public:
      */
     template<class U, class D>
     std::enable_if_t<std::is_convertible_v<U&, reference>, reference>
-    push_back(std::unique_ptr<U, D> element);
+    push_back(std::unique_ptr<U, D> element) {
+        auto&& result = elements_.push_back(std::move(element));
+        bless(result);
+        return result;
+    }
 
     /**
      * @brief inserts a new element.
@@ -247,7 +302,11 @@ public:
      * @return the inserted position
      */
     template<class U = T, class... Args>
-    iterator emplace(const_iterator position, Args&&... args);
+    iterator emplace(const_iterator position, Args&&... args) {
+        auto result = elements_.template emplace<U>(position, std::forward<Args>(args)...);
+        bless(*result);
+        return result;
+    }
 
     /**
      * @brief appends a new element into the tail of this.
@@ -257,7 +316,11 @@ public:
      * @return the created element
      */
     template<class U = T, class... Args>
-    reference emplace_back(Args&&... args);
+    reference emplace_back(Args&&... args) {
+        auto&& result = elements_.template emplace_back<U>(std::forward<Args>(args)...);
+        bless(result);
+        return result;
+    }
 
     /**
      * @brief replaces an existing element with the given element.
@@ -270,7 +333,11 @@ public:
      */
     template<class U, class D>
     std::enable_if_t<std::is_convertible_v<U&, reference>, reference>
-    put(const_iterator position, std::unique_ptr<U, D> element);
+    put(const_iterator position, std::unique_ptr<U, D> element) {
+        auto&& result = elements_.put(position, std::move(element));
+        bless(result);
+        return result;
+    }
 
     /**
      * @brief replaces an existing element with a new element.
@@ -281,14 +348,24 @@ public:
      * @return the replacement
      */
     template<class U = T, class... Args>
-    reference replace(const_iterator position, Args&&... args);
+    reference replace(const_iterator position, Args&&... args) {
+        auto&& result = elements_.template replace<U>(position, std::forward<Args>(args)...);
+        bless(result);
+        return result;
+    }
 
     /**
      * @brief releases element on the given position.
      * @param position the target position
      * @return a pair of the removed element, and the next position of the released element
      */
-    std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position) noexcept;
+    std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position) noexcept {
+        auto result = elements_.release(position);
+        if (auto&& p = std::get<0>(result)) {
+            unbless(*p);
+        }
+        return result;
+    }
 
     /**
      * @brief releases element between the given range.
@@ -298,14 +375,26 @@ public:
      * @return a pair of the removed element, and the next position of the released element
      */
     template<class C = typename util::reference_vector<value_type>::copier_type>
-    std::pair<util::reference_vector<value_type, C>, iterator> release(const_iterator first, const_iterator last) noexcept;
+    std::pair<util::reference_vector<value_type, C>, iterator> release(const_iterator first, const_iterator last) noexcept {
+        auto result = elements_.template release<C>(first, last);
+        for (auto&& e : std::get<0>(result)) {
+            unbless_element(e);
+        }
+        return result;
+    }
 
     /**
      * @brief releases the last element.
      * @return the removed element
      * @warning undefined behavior if this is empty
      */
-    util::unique_object_ptr<value_type> release_back() noexcept;
+    util::unique_object_ptr<value_type> release_back() noexcept {
+        auto result = elements_.release_back();
+        if (result) {
+            unbless(*result);
+        }
+        return result;
+    }
 
     /**
      * @brief releases all elements.
@@ -313,67 +402,99 @@ public:
      * @return the released elements
      */
     template<class C = typename util::reference_vector<value_type>::copier_type>
-    util::reference_vector<value_type, C> release_elements() noexcept;
+    util::reference_vector<value_type, C> release_elements() noexcept {
+        unbless();
+        util::reference_vector<value_type, C> result { std::move(elements_) };
+        return result;
+    }
 
     /**
      * @brief returns a forward iterator which points the beginning of this container.
      * @return the iterator of beginning (inclusive)
      */
-    iterator begin() noexcept { return elements_.begin(); }
+    iterator begin() noexcept {
+        return elements_.begin();
+    }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept { return elements_.begin(); }
+    const_iterator begin() const noexcept {
+        return elements_.begin();
+    }
 
     /// @copydoc begin()
-    const_iterator cbegin() const noexcept { return elements_.cbegin(); }
+    const_iterator cbegin() const noexcept {
+        return elements_.cbegin();
+    }
 
     /**
      * @brief returns a forward iterator which points the ending of this container.
      * @return the iterator of ending (exclusive)
      */
-    iterator end() noexcept { return elements_.end(); }
+    iterator end() noexcept {
+        return elements_.end();
+    }
 
     /// @copydoc end()
-    const_iterator end() const noexcept { return elements_.end(); }
+    const_iterator end() const noexcept {
+        return elements_.end();
+    }
 
     /// @copydoc end()
-    const_iterator cend() const noexcept { return elements_.cend(); }
+    const_iterator cend() const noexcept {
+        return elements_.cend();
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed beginning of this container.
      * @return the reversed iterator of beginning (inclusive)
      */
-    reverse_iterator rbegin() noexcept { return elements_.rbegin(); }
+    reverse_iterator rbegin() noexcept {
+        return elements_.rbegin();
+    }
 
     /// @copydoc rbegin()
-    const_reverse_iterator rbegin() const noexcept { return elements_.rbegin(); }
+    const_reverse_iterator rbegin() const noexcept {
+        return elements_.rbegin();
+    }
 
     /// @copydoc rbegin()
-    const_reverse_iterator crbegin() const noexcept { return elements_.crbegin(); }
+    const_reverse_iterator crbegin() const noexcept {
+        return elements_.crbegin();
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed ending of this container.
      * @return the reversed iterator of ending (exclusive)
      */
-    reverse_iterator rend() noexcept { return elements_.rend(); }
+    reverse_iterator rend() noexcept {
+        return elements_.rend();
+    }
 
     /// @copydoc rend()
-    const_reverse_iterator rend() const noexcept { return elements_.rend(); }
+    const_reverse_iterator rend() const noexcept {
+        return elements_.rend();
+    }
 
     /// @copydoc rend()
-    const_reverse_iterator crend() const noexcept { return elements_.crend(); }
+    const_reverse_iterator crend() const noexcept {
+        return elements_.crend();
+    }
 
     /**
      * @brief exchanges contents between this and the given container.
      * @param other the opposite container
      */
-    void swap(tree_element_vector& other) noexcept { std::swap(elements_, other.elements_); }
+    void swap(tree_element_vector& other) noexcept {
+        std::swap(elements_, other.elements_);
+    }
 
     /**
      * @brief returns the object creator to create/delete objects in this container.
      * @return the object creator for this container
      */
-    util::object_creator get_object_creator() const noexcept { return elements_.get_object_creator(); }
+    util::object_creator get_object_creator() const noexcept {
+        return elements_.get_object_creator();
+    }
 
 private:
     parent_type* parent_;
@@ -425,161 +546,6 @@ private:
 /// @private
 template<class T, class C>
 tree_element_vector(util::reference_vector<T, C>) -> tree_element_vector<T>;
-
-/// @cond TEMPLATE_DEFS
-
-template<class T>
-inline tree_element_vector<T>::tree_element_vector(parent_type& parent, util::object_creator creator) noexcept
-    : parent_(std::addressof(parent)), elements_(creator) {}
-
-template<class T>
-template<class U, class C>
-inline tree_element_vector<T>::tree_element_vector(parent_type& parent, util::reference_vector<U, C> elements) noexcept
-    : parent_(std::addressof(parent)), elements_(std::move(elements))
-{
-    bless();
-}
-
-template<class T>
-template<class U, class C>
-inline tree_element_vector<T>&
-tree_element_vector<T>::operator=(util::reference_vector<U, C> elements) noexcept {
-    assign(std::move(elements));
-    return *this;
-}
-
-template<class T>
-template<class U, class C>
-inline std::enable_if_t<
-        std::is_convertible_v<U&, typename tree_element_vector<T>::reference>>
-tree_element_vector<T>::assign(util::reference_vector<U, C> elements) {
-    elements_ = std::move(elements);
-    bless();
-}
-
-template<class T>
-inline typename tree_element_vector<T>::iterator
-tree_element_vector<T>::erase(const_iterator position) noexcept {
-    return elements_.erase(position);
-}
-
-template<class T>
-inline typename tree_element_vector<T>::iterator
-tree_element_vector<T>::erase(const_iterator first, const_iterator last) noexcept {
-    return elements_.erase(first, last);
-}
-
-template<class T>
-inline void
-tree_element_vector<T>::pop_back() noexcept {
-    elements_.pop_back();
-}
-
-template<class T>
-template<class U, class D>
-std::enable_if_t<
-        std::is_convertible_v<U&, typename tree_element_vector<T>::reference>,
-        typename tree_element_vector<T>::iterator>
-tree_element_vector<T>::insert(const_iterator position, std::unique_ptr<U, D> element) {
-    auto result = elements_.insert(position, std::move(element));
-    bless(*result);
-    return result;
-}
-
-template<class T>
-template<class U, class D>
-inline std::enable_if_t<
-        std::is_convertible_v<U&, typename tree_element_vector<T>::reference>,
-        typename tree_element_vector<T>::reference>
-tree_element_vector<T>::push_back(std::unique_ptr<U, D> element) {
-    auto&& result = elements_.push_back(std::move(element));
-    bless(result);
-    return result;
-}
-
-template<class T>
-template<class U, class... Args>
-inline typename tree_element_vector<T>::iterator
-tree_element_vector<T>::emplace(const_iterator position, Args&& ... args) {
-    auto result = elements_.template emplace<U>(position, std::forward<Args>(args)...);
-    bless(*result);
-    return result;
-}
-
-template<class T>
-template<class U, class... Args>
-inline typename tree_element_vector<T>::reference
-tree_element_vector<T>::emplace_back(Args&& ... args) {
-    auto&& result = elements_.template emplace_back<U>(std::forward<Args>(args)...);
-    bless(result);
-    return result;
-}
-
-template<class T>
-template<class U, class D>
-inline std::enable_if_t<
-        std::is_convertible_v<U&, typename tree_element_vector<T>::reference>,
-        typename tree_element_vector<T>::reference>
-tree_element_vector<T>::put(const_iterator position, std::unique_ptr<U, D> element) {
-    auto&& result = elements_.put(position, std::move(element));
-    bless(result);
-    return result;
-}
-
-template<class T>
-template<class U, class... Args>
-inline typename tree_element_vector<T>::reference
-tree_element_vector<T>::replace(const_iterator position, Args&& ... args) {
-    auto&& result = elements_.template replace<U>(position, std::forward<Args>(args)...);
-    bless(result);
-    return result;
-}
-
-template<class T>
-inline std::pair<
-        util::unique_object_ptr<typename tree_element_vector<T>::value_type>,
-        typename tree_element_vector<T>::iterator>
-tree_element_vector<T>::release(const_iterator position) noexcept {
-    auto result = elements_.release(position);
-    if (auto&& p = std::get<0>(result)) {
-        unbless(*p);
-    }
-    return result;
-}
-
-template<class T>
-template<class C>
-std::pair<
-        util::reference_vector<typename tree_element_vector<T>::value_type, C>,
-        typename tree_element_vector<T>::iterator>
-tree_element_vector<T>::release(const_iterator first, const_iterator last) noexcept {
-    auto result = elements_.template release<C>(first, last);
-    for (auto&& e : std::get<0>(result)) {
-        unbless_element(e);
-    }
-    return result;
-}
-
-template<class T>
-inline util::unique_object_ptr<typename tree_element_vector<T>::value_type>
-tree_element_vector<T>::release_back() noexcept {
-    auto result = elements_.release_back();
-    if (result) {
-        unbless(*result);
-    }
-    return result;
-}
-
-template<class T>
-template<class C>
-inline util::reference_vector<typename tree_element_vector<T>::value_type, C>
-tree_element_vector<T>::release_elements() noexcept {
-    unbless();
-    util::reference_vector<value_type, C> result { std::move(elements_) };
-    return result;
-}
-
-/// @endcond
 
 /**
  * @brief returns whether or not the both vectors have equivalent elements.

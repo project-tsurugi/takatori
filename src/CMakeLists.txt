@@ -29,6 +29,7 @@ add_library(takatori
     datetime/datetime_interval.cpp
     datetime/time_zone.cpp
     datetime/time_zone_impl.cpp
+    datetime/printing.cpp
 
     # scalar
     scalar/expression.cpp

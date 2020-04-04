@@ -1,17 +1,14 @@
 #include <takatori/datetime/datetime_interval.h>
 
-namespace takatori::datetime {
+#include "printing.h"
 
-std::ostream& datetime_interval::print_to(std::ostream& out) {
-    date_.print_to(out);
-    out << " ";
-    time_.print_to(out);
-    return out;
-}
+namespace takatori::datetime {
 
 std::ostream& operator<<(std::ostream& out, datetime_interval value) {
     out << "datetime_interval(";
-    value.print_to(out);
+    print(out, value.date());
+    out << " ";
+    print(out, value.time());
     out << ")";
     return out;
 }

@@ -27,7 +27,9 @@ public:
      * @brief creates a new instance which represents fixed-length bit sequences (a.k.a. BIT).
      * @param length the number of bits in the sequence
      */
-    explicit constexpr bit(size_type length) noexcept;
+    explicit constexpr bit(size_type length) noexcept
+        : bit(~type::varying, length)
+    {}
 
     /**
      * @brief creates a new instance which represents flexible-length bit sequences (a.k.a. VARBIT).
@@ -35,7 +37,10 @@ public:
      * @param length the max number of bits in the sequence,
      *               or empty for flexible size bit sequences
      */
-    explicit constexpr bit(varying_t varying, std::optional<size_type> length = {}) noexcept;
+    explicit constexpr bit(varying_t varying, std::optional<size_type> length = {}) noexcept
+        : varying_(varying)
+        , length_(std::move(length))
+    {}
 
     ~bit() override = default;
     bit(bit const& other) = delete;
@@ -52,7 +57,9 @@ public:
      * @return true if this is flexible length bit sequence (a.k.a. VARBIT)
      * @return false if this is fixed length bit sequence (a.k.a. BIT)
      */
-    constexpr bool varying() const noexcept;
+    constexpr bool varying() const noexcept {
+        return varying_;
+    }
 
     /**
      * @brief returns the max number of bits in the sequence.
@@ -61,7 +68,9 @@ public:
      * @return empty if it is not defined
      * @see is_varying()
      */
-    constexpr std::optional<size_type> length() const noexcept;
+    constexpr std::optional<size_type> length() const noexcept {
+        return length_;
+    }
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -100,27 +109,6 @@ private:
 
     friend class util::object_creator;
 };
-
-constexpr
-bit::bit(bit::size_type length) noexcept
-    : bit(~type::varying, length)
-{}
-
-constexpr
-bit::bit(varying_t varying, std::optional<size_type> length) noexcept
-    : varying_(varying.enabled())
-    , length_(std::move(length))
-{}
-
-constexpr bool
-bit::varying() const noexcept {
-    return varying_;
-}
-
-constexpr std::optional<bit::size_type>
-bit::length() const noexcept {
-    return length_;
-}
 
 template<> struct type_of<bit::tag> : util::meta_type<bit> {};
 

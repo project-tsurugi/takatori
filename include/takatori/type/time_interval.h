@@ -7,6 +7,8 @@
 
 namespace takatori::type {
 
+// TODO: REVIEW - type name (datetime interval?)
+
 /**
  * @brief time_interval type.
  */

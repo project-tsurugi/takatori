@@ -55,18 +55,6 @@ bit::operator view_type() const noexcept {
     return get();
 }
 
-bool operator==(bit const& a, bit const& b) noexcept {
-    return a.get() == b.get();
-}
-
-bool operator!=(bit const& a, bit const& b) noexcept {
-    return !(a == b);
-}
-
-std::ostream& operator<<(std::ostream& out, bit const& value) {
-    return out << "bit(" << value.entity_ << ")";
-}
-
 bool bit::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<bit>(other);
 }
@@ -85,6 +73,18 @@ std::size_t bit::hash() const noexcept {
 
 std::ostream& bit::print_to(std::ostream& out) const {
     return out << *this;
+}
+
+bool operator==(bit const& a, bit const& b) noexcept {
+    return a.get() == b.get();
+}
+
+bool operator!=(bit const& a, bit const& b) noexcept {
+    return !(a == b);
+}
+
+std::ostream& operator<<(std::ostream& out, bit const& value) {
+    return out << "bit(" << value.get() << ")";
 }
 
 } // namespace takatori::value

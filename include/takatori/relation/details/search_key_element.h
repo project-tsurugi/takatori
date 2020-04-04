@@ -31,7 +31,11 @@ public:
      */
     explicit search_key_element(
             descriptor::variable variable,
-            util::unique_object_ptr<scalar::expression> value) noexcept;
+            util::unique_object_ptr<scalar::expression> value) noexcept
+        : variable_(std::move(variable))
+        , value_(std::move(value))
+    {}
+
 
     /**
      * @brief creates a new instance.
@@ -40,8 +44,13 @@ public:
      * @attention this may take a copy of arguments
      */
     explicit search_key_element(
-            descriptor::variable variable,
-            scalar::expression&& value) noexcept;
+            descriptor::variable variable, // FIXME: NOLINT(performance-unnecessary-value-param)
+            scalar::expression&& value) noexcept
+        : search_key_element(
+                std::move(variable),
+                util::clone_unique(std::move(value)))
+    {}
+
 
     ~search_key_element() = default;
 
@@ -67,190 +76,115 @@ public:
      * @param other the copy source
      * @param creator the object creator
      */
-    explicit search_key_element(search_key_element const& other, util::object_creator creator);
+    explicit search_key_element(search_key_element const& other, util::object_creator creator)
+        : search_key_element(
+                other.variable_,
+                tree::forward(creator, other.value_))
+    {}
 
     /**
      * @brief creates a new object.
      * @param other the move source
      * @param creator the object creator
      */
-    explicit search_key_element(search_key_element&& other, util::object_creator creator);
+    explicit search_key_element(search_key_element&& other, util::object_creator creator)
+        : search_key_element(
+                std::move(other.variable_),
+                tree::forward(creator, std::move(other.value_)))
+    {}
 
     /**
      * @brief returns the owner of this fragment.
      * @return the owner
      * @return nullptr if it is absent
      */
-    parent_type* parent_element() noexcept;
+    parent_type* parent_element() noexcept {
+        return parent_;
+    }
 
     /// @copydoc parent_element()
-    parent_type const* parent_element() const noexcept;
+    parent_type const* parent_element() const noexcept {
+        return parent_;
+    }
 
     /**
      * @brief sets the owner of this fragment.
      * @param parent the owner
      */
-    void parent_element(parent_type* parent) noexcept;
+    void parent_element(parent_type* parent) noexcept {
+        parent_ = parent;
+        tree::bless_element(util::optional_ptr { parent_ }, value_);
+    }
 
     /**
      * @brief returns the search key column on the target relation.
      * @return the variable descriptor
      */
-    descriptor::variable const& variable() const noexcept;
+    descriptor::variable const& variable() const noexcept {
+        return variable_;
+    }
 
     /**
      * @brief sets a search key column on the target relation.
      * @param variable the variable descriptor
      * @return this
      */
-    search_key_element& variable(descriptor::variable variable) noexcept;
+    search_key_element& variable(descriptor::variable variable) noexcept { // FIXME: NOLINT(performance-unnecessary-value-param)
+        variable_ = std::move(variable);
+        return *this;
+    }
 
     /**
      * @brief returns the search value for the target column.
      * @return the search value
      */
-    scalar::expression& value() noexcept;
+    scalar::expression& value() noexcept {
+        return *value_;
+    }
 
     /// @copydoc value
-    scalar::expression const& value() const noexcept;
+    scalar::expression const& value() const noexcept {
+        return *value_;
+    }
 
     /**
      * @brief returns the search value for the target column.
      * @return the search value
      * @return empty if the expression is absent
      */
-    util::optional_ptr<scalar::expression> optional_value() noexcept;
+    util::optional_ptr<scalar::expression> optional_value() noexcept {
+        return util::optional_ptr { value_.get() };
+    }
 
     /// @copydoc optional_value()
-    util::optional_ptr<scalar::expression const> optional_value() const noexcept;
+    util::optional_ptr<scalar::expression const> optional_value() const noexcept {
+        return util::optional_ptr { value_.get() };
+    }
 
     /**
      * @brief releases the search value for the target column.
      * @return the search value
      * @return empty if the expression is absent
      */
-    util::unique_object_ptr<scalar::expression> release_value() noexcept;
+    util::unique_object_ptr<scalar::expression> release_value() noexcept {
+        return tree::release_element(std::move(value_));
+    }
 
     /**
      * @brief sets the search value for the target column.
      * @param value the search value
      * @return this
      */
-    search_key_element& value(util::unique_object_ptr<scalar::expression> value) noexcept;
+    search_key_element& value(util::unique_object_ptr<scalar::expression> value) noexcept {
+        tree::assign_element_fragment(parent_, value_, std::move(value));
+        return *this;
+    }
 
 private:
     descriptor::variable variable_;
     util::unique_object_ptr<scalar::expression> value_;
     parent_type* parent_ {};
 };
-
-template<class Parent>
-inline
-search_key_element<Parent>::search_key_element(
-        descriptor::variable variable,
-        util::unique_object_ptr<scalar::expression> value) noexcept
-    : variable_(std::move(variable))
-    , value_(std::move(value))
-{}
-
-template<class Parent>
-inline
-search_key_element<Parent>::search_key_element(
-        descriptor::variable variable, // FIXME: NOLINT(performance-unnecessary-value-param)
-        scalar::expression&& value) noexcept
-    : search_key_element(
-        std::move(variable),
-        util::clone_unique(std::move(value)))
-{}
-
-template<class Parent>
-inline
-search_key_element<Parent>::search_key_element(
-        search_key_element const& other,
-        util::object_creator creator)
-    : search_key_element(
-        other.variable_,
-        tree::forward(creator, other.value_))
-{}
-
-template<class Parent>
-inline
-search_key_element<Parent>::search_key_element(
-        search_key_element&& other,
-        util::object_creator creator)
-    : search_key_element(
-        std::move(other.variable_),
-        tree::forward(creator, std::move(other.value_)))
-{}
-
-template<class Parent>
-inline typename search_key_element<Parent>::parent_type*
-search_key_element<Parent>::parent_element() noexcept {
-    return parent_;
-}
-
-template<class Parent>
-inline typename search_key_element<Parent>::parent_type const*
-search_key_element<Parent>::parent_element() const noexcept {
-    return parent_;
-}
-
-template<class Parent>
-inline void
-search_key_element<Parent>::parent_element(parent_type* parent) noexcept {
-    parent_ = parent;
-    tree::bless_element(util::optional_ptr { parent_ }, value_);
-}
-
-template<class Parent>
-inline descriptor::variable const&
-search_key_element<Parent>::variable() const noexcept {
-    return variable_;
-}
-
-template<class Parent>
-inline search_key_element<Parent>&
-search_key_element<Parent>::variable(descriptor::variable variable) noexcept { // FIXME: NOLINT(performance-unnecessary-value-param)
-    variable_ = std::move(variable);
-    return *this;
-}
-
-template<class Parent>
-inline scalar::expression&
-search_key_element<Parent>::value() noexcept {
-    return *value_;
-}
-
-template<class Parent>
-inline scalar::expression const&
-search_key_element<Parent>::value() const noexcept {
-    return *value_;
-}
-
-template<class Parent>
-inline util::optional_ptr<scalar::expression>
-search_key_element<Parent>::optional_value() noexcept {
-    return util::optional_ptr { value_.get() };
-}
-
-template<class Parent>
-inline util::optional_ptr<scalar::expression const>
-search_key_element<Parent>::optional_value() const noexcept {
-    return util::optional_ptr { value_.get() };
-}
-
-template<class Parent>
-inline util::unique_object_ptr<scalar::expression>
-search_key_element<Parent>::release_value() noexcept {
-    return tree::release_element(std::move(value_));
-}
-
-template<class Parent>
-inline search_key_element<Parent>&
-search_key_element<Parent>::value(util::unique_object_ptr<scalar::expression> value) noexcept {
-    tree::assign_element_fragment(parent_, value_, std::move(value));
-    return *this;
-}
 
 /**
  * @brief returns whether or not the two elements are equivalent.

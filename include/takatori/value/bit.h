@@ -68,32 +68,6 @@ public:
     /// @copydoc get()
     explicit operator view_type() const noexcept;
 
-    /**
-     * @brief returns whether or not the two elements are equivalent.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a == b
-     * @return false otherwise
-     */
-    friend bool operator==(bit const& a, bit const& b) noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are different.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a != b
-     * @return false otherwise
-     */
-    friend bool operator!=(bit const& a, bit const& b) noexcept;
-
-    /**
-     * @brief appends string representation of the given value.
-     * @param out the target output
-     * @param value the target value
-     * @return the output
-     */
-    friend std::ostream& operator<<(std::ostream& out, bit const& value);
-
 protected:
     bool equals(data const& other) const noexcept override;
     std::size_t hash() const noexcept override;
@@ -104,6 +78,32 @@ private:
 
     friend class util::object_creator;
 };
+
+/**
+ * @brief returns whether or not the two elements are equivalent.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a == b
+ * @return false otherwise
+ */
+bool operator==(bit const& a, bit const& b) noexcept;
+
+/**
+ * @brief returns whether or not the two elements are different.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a != b
+ * @return false otherwise
+ */
+bool operator!=(bit const& a, bit const& b) noexcept;
+
+/**
+ * @brief appends string representation of the given value.
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+std::ostream& operator<<(std::ostream& out, bit const& value);
 
 /**
  * @brief type_of for bit.

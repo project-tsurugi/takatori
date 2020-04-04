@@ -64,9 +64,15 @@ public:
      * @param creator the object creator
      * @warning don't invoke this outside of owner node
      */
-    explicit multiport(node_type& owner, id_type id = 0, util::object_creator creator = {}) noexcept;
+    explicit multiport(node_type& owner, id_type id = 0, util::object_creator creator = {}) noexcept
+        : id_(id)
+        , owner_(std::addressof(owner))
+        , opposites_(typename decltype(opposites_)::allocator_type(creator.allocator<opposite_type*>()))
+    {}
 
-    ~multiport();
+    ~multiport() {
+        disconnect_all();
+    }
 
     multiport(multiport const& other) = delete;
     multiport& operator=(multiport const& other) = delete;
@@ -76,7 +82,18 @@ public:
      * @param other the move source
      * @warning this is designed for STL like containers, developers should not use this directly
      */
-    multiport(multiport&& other) noexcept;
+    multiport(multiport&& other) noexcept
+        : id_(other.id_)
+        , owner_(other.owner_)
+        , opposites_(std::move(other.opposites_))
+    {
+        // NOTE: boost::container::small_vector may not become empty on move
+        other.opposites_.clear();
+        for (auto* p : opposites_) {
+            p->internal_reconnect(other, *this);
+        }
+    }
+
 
     /**
      * @brief assigns the given object.
@@ -84,32 +101,63 @@ public:
      * @return this
      * @warning this is designed for STL like containers, developers should not use this directly
      */
-    multiport& operator=(multiport&& other) noexcept;
+    multiport& operator=(multiport&& other) noexcept {
+        disconnect_all();
+        id_ = other.id_;
+        owner_ = other.owner_;
+        opposites_ = std::move(other.opposites_);
+        // NOTE: boost::container::small_vector may not become empty on move
+        other.opposites_.clear();
+        for (auto* p : opposites_) {
+            p->internal_reconnect(other, *this);
+        }
+        return *this;
+    }
 
     /**
      * @brief returns the port ID.
      * @return the port ID (in node).
      */
-    constexpr id_type id() const noexcept;
+    constexpr id_type id() const noexcept {
+        return id_;
+    }
 
     /**
      * @brief returns the node which owns this port.
      * @return the owner
      */
-    constexpr node_type& owner() noexcept;
+    constexpr node_type& owner() noexcept {
+        return *owner_;
+    }
 
     /// @copydoc owner()
-    constexpr node_type const& owner() const noexcept;
+    constexpr node_type const& owner() const noexcept {
+        return *owner_;
+    }
 
     /**
      * @brief returns the list of opposite ports.
      * @return the opposite ports
      * @attention the returned list was disabled after the opposite set was changed
      */
-    multiport_list_view<opposite_type> opposites() noexcept;
+    multiport_list_view<opposite_type> opposites() noexcept {
+        return multiport_list_view<opposite_type> { opposites_.data(), opposites_.size() };
+    }
 
     /// @copydoc opposites()
-    multiport_list_view<opposite_type const> opposites() const noexcept;
+    multiport_list_view<opposite_type const> opposites() const noexcept {
+        return multiport_list_view<opposite_type const> { opposites_.data(), opposites_.size() };
+    }
+
+    /**
+     * @brief returns whether or not the target port is connected to this.
+     * @param port the target port
+     * @return true if it is connected to this
+     * @return false otherwise
+     */
+    bool is_connected(opposite_type const& port) const {
+        return std::find(opposites_.begin(), opposites_.end(), std::addressof(port));
+    }
 
     /**
      * @brief connects to a opposite port.
@@ -117,7 +165,14 @@ public:
      * @return true if successfully connected
      * @return false otherwise
      */
-    bool connect_to(opposite_type& opposite);
+    bool connect_to(opposite_type& opposite) {
+        bool a = internal_connect(opposite);
+        bool b = opposite.internal_connect(*this);
+        if (a != b) {
+            throw std::domain_error("inconsistent connection");
+        }
+        return true;
+    }
 
     /**
      * @brief disconnects from the opposite port.
@@ -125,12 +180,27 @@ public:
      * @return true if successfully connected
      * @return false otherwise, may by not yet connected
      */
-    bool disconnect_from(opposite_type& opposite);
+    bool disconnect_from(opposite_type& opposite) {
+        bool a = internal_disconnect(opposite);
+        bool b = opposite.internal_disconnect(*this);
+        if (a != b) {
+            throw std::domain_error("inconsistent connection");
+        }
+        return a;
+    }
 
     /**
      * @brief disconnects from the all opposite ports.
      */
-    void disconnect_all();
+    void disconnect_all() {
+        for (auto*& opposite : opposites_) {
+            if (opposite != nullptr) {
+                opposite->internal_disconnect(*this);
+                opposite = nullptr;
+            }
+        }
+        opposites_.clear();
+    }
 
 private:
     id_type id_;
@@ -139,152 +209,63 @@ private:
     using opposite_buffer_allocator_type = util::object_allocator<opposite_type*>;
     boost::container::small_vector<opposite_type*, opposite_buffer_size, opposite_buffer_allocator_type> opposites_ {};
 
-    bool internal_connect(opposite_type& opposite);
-    bool internal_disconnect(opposite_type& opposite);
-    bool internal_reconnect(opposite_type& old_opposite, opposite_type& new_opposite) noexcept;
+    bool internal_connect(opposite_type& opposite) {
+        // NOTE: multi connections
+        opposites_.emplace_back(std::addressof(opposite));
+        return true;
+    }
+
+    bool internal_disconnect(opposite_type& opposite) {
+        // NOTE: removes only 1 connection
+        if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(opposite));
+                iter != opposites_.end()) {
+            opposites_.erase(iter);
+            return true;
+        }
+        return false;
+    }
+
+    bool internal_reconnect(opposite_type& old_opposite, opposite_type& new_opposite) noexcept {
+        // NOTE: replaces only 1 connection
+        if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(old_opposite));
+                iter != opposites_.end()) {
+            *iter = std::addressof(new_opposite);
+            return true;
+        }
+        return false;
+    }
 
     friend class multiport<node_type, ~direction>;
 };
 
-template<class T, port_direction Direction>
-inline
-multiport<T, Direction>::multiport(node_type& owner, multiport::id_type id, util::object_creator creator) noexcept
-    : id_(id)
-    , owner_(std::addressof(owner))
-    , opposites_(typename decltype(opposites_)::allocator_type(creator.allocator<opposite_type*>()))
-{}
-
-template<class T, port_direction Direction>
-inline
-multiport<T, Direction>::~multiport() {
-    disconnect_all();
+/**
+ * @brief returns whether or not the downstream port is connected from the upstream one.
+ * @tparam T the node type
+ * @param downstream the downstream port
+ * @param upstream the upstream port
+ * @return true if they are connected
+ * @return false otherwise
+ */
+template<class T>
+[[nodiscard]] inline constexpr bool operator<(
+        input_multiport<T> const& downstream,
+        output_multiport<T> const& upstream) noexcept {
+    return downstream.is_connected(upstream);
 }
 
-template<class T, port_direction Direction>
-inline
-multiport<T, Direction>::multiport(multiport&& other) noexcept
-    : id_(other.id_)
-    , owner_(other.owner_)
-    , opposites_(std::move(other.opposites_))
-{
-    // NOTE: boost::container::small_vector may not become empty on move
-    other.opposites_.clear();
-    for (auto* p : opposites_) {
-        p->internal_reconnect(other, *this);
-    }
-}
-
-template<class T, port_direction Direction>
-inline
-multiport<T, Direction>& multiport<T, Direction>::operator=(multiport&& other) noexcept {
-    disconnect_all();
-    id_ = other.id_;
-    owner_ = other.owner_;
-    opposites_ = std::move(other.opposites_);
-    // NOTE: boost::container::small_vector may not become empty on move
-    other.opposites_.clear();
-    for (auto* p : opposites_) {
-        p->internal_reconnect(other, *this);
-    }
-    return *this;
-}
-
-template<class T, port_direction Direction>
-inline constexpr typename multiport<T, Direction>::id_type
-multiport<T, Direction>::id() const noexcept {
-    return id_;
-}
-
-template<class T, port_direction Direction>
-inline constexpr typename multiport<T, Direction>::node_type&
-multiport<T, Direction>::owner() noexcept {
-    return *owner_;
-}
-
-template<class T, port_direction Direction>
-inline constexpr typename multiport<T, Direction>::node_type const&
-multiport<T, Direction>::owner() const noexcept {
-    return *owner_;
-}
-
-template<class T, port_direction Direction>
-inline multiport_list_view<typename multiport<T, Direction>::opposite_type>
-multiport<T, Direction>::opposites() noexcept {
-    return multiport_list_view<opposite_type> {opposites_.data(), opposites_.size() };
-}
-
-template<class T, port_direction Direction>
-inline multiport_list_view<typename multiport<T, Direction>::opposite_type const>
-multiport<T, Direction>::opposites() const noexcept {
-    return multiport_list_view<opposite_type> {opposites_.data(), opposites_.size() };
-}
-
-template<class T, port_direction Direction>
-inline bool
-multiport<T, Direction>::connect_to(opposite_type& opposite) {
-    bool a = internal_connect(opposite);
-    bool b = opposite.internal_connect(*this);
-    if (a != b) {
-        throw std::domain_error("inconsistent connection");
-    }
-    return true;
-}
-
-template<class T, port_direction Direction>
-inline bool
-multiport<T, Direction>::disconnect_from(opposite_type& opposite) {
-    bool a = internal_disconnect(opposite);
-    bool b = opposite.internal_disconnect(*this);
-    if (a != b) {
-        throw std::domain_error("inconsistent connection");
-    }
-    return a;
-}
-
-template<class T, port_direction Direction>
-inline void
-multiport<T, Direction>::disconnect_all() {
-    for (auto*& opposite : opposites_) {
-        if (opposite != nullptr) {
-            opposite->internal_disconnect(*this);
-            opposite = nullptr;
-        }
-    }
-    opposites_.clear();
-}
-
-template<class T, port_direction Direction>
-inline bool
-multiport<T, Direction>::internal_connect(opposite_type& opposite) {
-    // NOTE: multi connections
-    opposites_.emplace_back(std::addressof(opposite));
-    return true;
-}
-
-template<class T, port_direction Direction>
-inline bool
-multiport<T, Direction>::internal_disconnect(opposite_type& opposite) {
-    // NOTE: removes only 1 connection
-    if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(opposite));
-            iter != opposites_.end()) {
-        opposites_.erase(iter);
-        return true;
-    }
-    return false;
-}
-
-template<class T, port_direction Direction>
-inline bool
-multiport<T, Direction>::internal_reconnect(
-        opposite_type& old_opposite,
-        opposite_type& new_opposite) noexcept {
-    // NOTE: replaces only 1 connection
-    if (auto iter = std::find(opposites_.begin(), opposites_.end(), std::addressof(old_opposite));
-            iter != opposites_.end()) {
-        *iter = std::addressof(new_opposite);
-        return true;
-    }
-    return false;
+/**
+ * @brief returns whether or not the upstream port is connected to the downstream one.
+ * @tparam T the node type
+ * @param downstream the downstream port
+ * @param upstream the upstream port
+ * @return true if they are connected
+ * @return false otherwise
+ */
+template<class T>
+[[nodiscard]] inline constexpr bool operator>(
+        output_multiport<T> const& upstream,
+        input_multiport<T> const& downstream) noexcept {
+    return downstream < upstream;
 }
 
 /**

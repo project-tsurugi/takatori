@@ -3,6 +3,8 @@
 #include "expression.h"
 #include "expression_kind.h"
 
+#include <boost/container/small_vector.hpp>
+
 #include <takatori/scalar/expression.h>
 
 #include <takatori/util/meta_type.h>

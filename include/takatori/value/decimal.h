@@ -57,35 +57,6 @@ public:
     /// @copydoc get()
     explicit operator view_type() const noexcept;
 
-    /**
-     * @brief returns whether or not the two elements are identical.
-     * @note this tests identity of decimal values.
-     * For examples, NaN is identical to the same NaN even if they are not equivalent,
-     * and 0.1 is not identical to 0.10 but they are equivalent.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a is identical to b
-     * @return false otherwise
-     */
-    friend bool operator==(decimal const& a, decimal const& b) noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are different.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a is not identical to b
-     * @return false otherwise
-     */
-    friend bool operator!=(decimal const& a, decimal const& b) noexcept;
-
-    /**
-     * @brief appends string representation of the given value.
-     * @param out the target output
-     * @param value the target value
-     * @return the output
-     */
-    friend std::ostream& operator<<(std::ostream& out, decimal const& value);
-
 protected:
     bool equals(data const& other) const noexcept override;
     std::size_t hash() const noexcept override;
@@ -96,6 +67,35 @@ private:
 
     friend class util::object_creator;
 };
+
+/**
+ * @brief returns whether or not the two elements are identical.
+ * @note this tests identity of decimal values.
+ * For examples, NaN is identical to the same NaN even if they are not equivalent,
+ * and 0.1 is not identical to 0.10 but they are equivalent.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a is identical to b
+ * @return false otherwise
+ */
+bool operator==(decimal const& a, decimal const& b) noexcept;
+
+/**
+ * @brief returns whether or not the two elements are different.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a is not identical to b
+ * @return false otherwise
+ */
+bool operator!=(decimal const& a, decimal const& b) noexcept;
+
+/**
+ * @brief appends string representation of the given value.
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+std::ostream& operator<<(std::ostream& out, decimal const& value);
 
 /**
  * @brief type_of for decimal.

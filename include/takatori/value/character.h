@@ -42,7 +42,9 @@ public:
      * @param allocator the allocator
      */
     template<class T>
-    explicit inline character(T const& value, allocator_type const& allocator = {});
+    explicit character(T const& value, allocator_type const& allocator = {})
+        : entity_(value, allocator)
+    {}
 
     ~character() override = default;
     character(character const& other) = delete;
@@ -63,32 +65,6 @@ public:
     /// @copydoc get()
     explicit operator view_type() const noexcept;
 
-    /**
-     * @brief returns whether or not the two elements are equivalent.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a == b
-     * @return false otherwise
-     */
-    friend bool operator==(character const& a, character const& b) noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are different.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a != b
-     * @return false otherwise
-     */
-    friend bool operator!=(character const& a, character const& b) noexcept;
-
-    /**
-     * @brief appends string representation of the given value.
-     * @param out the target output
-     * @param value the target value
-     * @return the output
-     */
-    friend std::ostream& operator<<(std::ostream& out, character const& value);
-
 protected:
     bool equals(data const& other) const noexcept override;
     std::size_t hash() const noexcept override;
@@ -100,11 +76,31 @@ private:
     friend class util::object_creator;
 };
 
-template<class T>
-inline
-character::character(T const& value, allocator_type const& allocator)
-    : entity_(value, allocator)
-{}
+/**
+ * @brief returns whether or not the two elements are equivalent.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a == b
+ * @return false otherwise
+ */
+bool operator==(character const& a, character const& b) noexcept;
+
+/**
+ * @brief returns whether or not the two elements are different.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a != b
+ * @return false otherwise
+ */
+bool operator!=(character const& a, character const& b) noexcept;
+
+/**
+ * @brief appends string representation of the given value.
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+std::ostream& operator<<(std::ostream& out, character const& value);
 
 /**
  * @brief type_of for character.

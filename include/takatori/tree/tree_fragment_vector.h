@@ -91,14 +91,24 @@ public:
      * @param parent the parent element
      * @param creator the object creator
      */
-    tree_fragment_vector(util::optional_ptr<parent_type> parent = {}, util::object_creator creator = {}); // NOLINT
+    tree_fragment_vector(util::optional_ptr<parent_type> parent = {}, util::object_creator creator = {}) // NOLINT
+        : parent_(std::move(parent))
+        , elements_(creator.allocator(std::in_place_type<value_type>))
+    {
+        bless(elements_);
+    }
 
     /**
      * @brief constructs a new object.
      * @param parent the parent element
      * @param elements the entity vector
      */
-    tree_fragment_vector(util::optional_ptr<parent_type> parent, entity_type elements) noexcept;
+    tree_fragment_vector(util::optional_ptr<parent_type> parent, entity_type elements) noexcept
+        : parent_(std::move(parent))
+        , elements_(std::move(elements))
+    {
+        bless(elements_);
+    }
 
     /**
      * @brief constructs a new object.
@@ -110,7 +120,12 @@ public:
     tree_fragment_vector(
             util::optional_ptr<parent_type> parent,
             std::vector<value_type, Allocator> elements,
-            util::object_creator creator = {});
+            util::object_creator creator = {})
+        : parent_(std::move(parent))
+        , elements_(adapt_vector(std::move(elements), creator))
+    {
+        bless(elements_);
+    }
 
     /**
      * @brief constructs a new object.
@@ -121,7 +136,11 @@ public:
     tree_fragment_vector(
             util::optional_ptr<parent_type> parent,
             std::initializer_list<T> elements,
-            util::object_creator creator = {});
+            util::object_creator creator = {})
+        : tree_fragment_vector(parent, creator)
+    {
+        assign(elements);
+    }
 
     /**
      * @brief constructs a new object.
@@ -132,7 +151,11 @@ public:
     tree_fragment_vector(
             util::optional_ptr<parent_type> parent,
             util::rvalue_initializer_list<T> elements,
-            util::object_creator creator = {});
+            util::object_creator creator = {})
+        : tree_fragment_vector(parent, creator)
+    {
+        assign(std::move(elements));
+    }
 
     /**
      * @brief constructs a new object.
@@ -147,7 +170,11 @@ public:
             util::optional_ptr<parent_type> parent,
             Iter first,
             Iter last,
-            util::object_creator creator = {});
+            util::object_creator creator = {})
+        : tree_fragment_vector(parent, creator)
+    {
+        assign(first, last);
+    }
 
     // TODO: tune copy/move
 
@@ -155,7 +182,10 @@ public:
      * @brief change its parent element.
      * @param parent the parent element
      */
-    void parent_element(parent_type* parent);
+    void parent_element(parent_type* parent) {
+        parent_.reset(parent);
+        bless(elements_);
+    }
 
     /**
      * @brief returns an element at the position.
@@ -163,10 +193,14 @@ public:
      * @return the element on the position
      * @throws std::out_of_bound if the position is out of bound
      */
-    reference at(size_type position) { return elements_.at(position); }
+    reference at(size_type position) {
+        return elements_.at(position);
+    }
 
     /// @copydoc at()
-    const_reference at(size_type position) const { return elements_.at(position); }
+    const_reference at(size_type position) const {
+        return elements_.at(position);
+    }
 
     /**
      * @brief returns an element at the position.
@@ -174,77 +208,107 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    reference operator[](size_type position) { return elements_[position]; }
+    reference operator[](size_type position) {
+        return elements_[position];
+    }
 
     /// @copydoc operator[]()
-    const_reference operator[](size_type position) const { return elements_[position]; }
+    const_reference operator[](size_type position) const {
+        return elements_[position];
+    }
 
     /**
      * @brief returns reference of the first element
      * @return reference of the first element
      * @warning undefined behavior if this is empty
      */
-    reference front() { return elements_.front(); }
+    reference front() {
+        return elements_.front();
+    }
 
     /// @copydoc front()
-    const_reference front() const { return elements_.front(); }
+    const_reference front() const {
+        return elements_.front();
+    }
 
     /**
      * @brief returns reference of the last element
      * @return reference of the last element
      * @warning undefined behavior if this is empty
      */
-    reference back() { return elements_.back(); }
+    reference back() {
+        return elements_.back();
+    }
 
     /// @copydoc back()
-    const_reference back() const { return elements_.back(); }
+    const_reference back() const {
+        return elements_.back();
+    }
 
     /**
      * @brief returns whether or not this is empty.
      * @return true if this is empty
      * @return false otherwise
      */
-    bool empty() const noexcept { return elements_.empty(); }
+    bool empty() const noexcept {
+        return elements_.empty();
+    }
 
     /**
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    size_type size() const noexcept { return elements_.size(); }
+    size_type size() const noexcept {
+        return elements_.size();
+    }
 
     /**
      * @brief returns the capacity size of this.
      * @return the max number of elements to store without expanding this container
      */
-    size_type capacity() const noexcept { return elements_.capacity(); }
+    size_type capacity() const noexcept {
+        return elements_.capacity();
+    }
 
     /**
      * @brief reserves the capacity.
      * @param size the number of elements to store without expanding this container
      */
-    void reserve(size_type size) { elements_.reserve(size); }
+    void reserve(size_type size) {
+        elements_.reserve(size);
+    }
 
     /**
      * @brief may shrink capacity size to fit to the current storing elements.
      */
-    void shrink_to_fit() { elements_.shrink_to_fit(); }
+    void shrink_to_fit() {
+        elements_.shrink_to_fit();
+    }
 
     /**
      * @brief removes all elements in this.
      */
-    void clear() noexcept;
+    void clear() noexcept {
+        elements_.clear();
+    }
 
     /**
      * @brief assigns copy of elements in the list.
      * @param list the source elements
      */
-    void assign(std::initializer_list<T> list);
+    void assign(std::initializer_list<T> list) {
+        elements_.assign(list);
+        bless(elements_);
+    }
 
     /**
      * @brief assigns elements in the list.
      * @param list the source elements
      */
-    void assign(util::rvalue_initializer_list<T> list);
+    void assign(util::rvalue_initializer_list<T> list) {
+        elements_.assign(list.begin(), list.end());
+        bless(elements_);
+    }
 
     /**
      * @brief assigns copy of elements between the given span.
@@ -253,14 +317,19 @@ public:
      * @param last the ending position (exclusive)
      */
     template<class Iter>
-    void assign(Iter first, Iter last);
+    void assign(Iter first, Iter last) {
+        elements_.assign(first, last);
+        bless(elements_);
+    }
 
     /**
      * @brief removes the element on the given position.
      * @param position the target element position
      * @return the next position of the erased element
      */
-    iterator erase(const_iterator position) noexcept;
+    iterator erase(const_iterator position) noexcept {
+        return elements_.erase(position);
+    }
 
     /**
      * @brief removes the elements between the span.
@@ -268,13 +337,17 @@ public:
      * @param last the ending position (exclusive)
      * @return the next position of the "last"
      */
-    iterator erase(const_iterator first, const_iterator last) noexcept;
+    iterator erase(const_iterator first, const_iterator last) noexcept {
+        return elements_.erase(first, last);
+    }
 
     /**
      * @brief removes the last element.
      * @warning undefined behavior if this is empty
      */
-    void pop_back() noexcept;
+    void pop_back() noexcept {
+        elements_.pop_back();
+    }
 
     /**
      * @brief inserts a copy of the given element.
@@ -282,10 +355,18 @@ public:
      * @param element the target element
      * @return the position where the element inserted
      */
-    iterator insert(const_iterator position, const_reference element);
+    iterator insert(const_iterator position, const_reference element) {
+        auto result = elements_.insert(position, element);
+        bless(*result);
+        return result;
+    }
 
     /// @copydoc insert(const_iterator, const_reference)
-    iterator insert(const_iterator position, rvalue_reference element);
+    iterator insert(const_iterator position, rvalue_reference element) {
+        auto result = elements_.insert(position, std::move(element));
+        bless(*result);
+        return result;
+    }
 
     /**
      * @brief inserts copy of elements between the given list.
@@ -293,7 +374,14 @@ public:
      * @param list the source elements
      * @return the position where the first element inserted
      */
-    iterator insert(const_iterator position, std::initializer_list<T> list);
+    iterator insert(const_iterator position, std::initializer_list<T> list) {
+        auto before = elements_.size();
+        auto result = elements_.insert(position, list);
+        auto after = elements_.size();
+        assert(after >= before); // NOLINT
+        bless(result, result + (after - before));
+        return result;
+    }
 
     /**
      * @brief inserts elements between the given list.
@@ -301,7 +389,14 @@ public:
      * @param list the source elements
      * @return the position where the first element inserted
      */
-    iterator insert(const_iterator position, util::rvalue_initializer_list<T> list);
+    iterator insert(const_iterator position, util::rvalue_initializer_list<T> list) {
+        auto before = elements_.size();
+        auto result = elements_.insert(position, list.begin(), list.end());
+        auto after = elements_.size();
+        assert(after >= before); // NOLINT
+        bless(result, result + (after - before));
+        return result;
+    }
 
     /**
      * @brief inserts elements between the given span.
@@ -312,17 +407,34 @@ public:
      * @return the position where the first element inserted
      */
     template<class Iter>
-    iterator insert(const_iterator position, Iter first, Iter last);
+    iterator insert(const_iterator position, Iter first, Iter last) {
+        auto before = elements_.size();
+        auto result = elements_.insert(position, first, last);
+        auto after = elements_.size();
+        assert(after >= before); // NOLINT
+        bless(result, result + (after - before));
+        return result;
+    }
 
     /**
      * @brief appends a copy of element into the tail of this.
      * @param element the source element
      * @return the created copy of source
      */
-    reference push_back(const_reference element);
+    reference push_back(const_reference element) {
+        elements_.push_back(element);
+        auto&& result = elements_.back();
+        bless(result);
+        return result;
+    }
 
     /// @copydoc push_back(const_reference)
-    reference push_back(rvalue_reference element);
+    reference push_back(rvalue_reference element) {
+        elements_.push_back(std::move(element));
+        auto&& result = elements_.back();
+        bless(result);
+        return result;
+    }
 
     /**
      * @brief inserts a new element.
@@ -332,7 +444,11 @@ public:
      * @return the inserted position
      */
     template<class... Args>
-    iterator emplace(const_iterator position, Args&&... args);
+    iterator emplace(const_iterator position, Args&&... args) {
+        auto result = elements_.emplace(position, std::forward<Args>(args)...);
+        bless(*result);
+        return result;
+    }
 
     /**
      * @brief appends a new element into the tail of this.
@@ -341,68 +457,104 @@ public:
      * @return the created element
      */
     template<class... Args>
-    reference emplace_back(Args&&... args);
+    reference emplace_back(Args&&... args) {
+        auto&& result = elements_.emplace_back(std::forward<Args>(args)...);
+        bless(result);
+        return result;
+    }
 
     /**
      * @brief releases all elements.
      * @return the released elements
      */
-    entity_type release_elements() noexcept;
+    entity_type release_elements() noexcept {
+        auto creator = get_object_creator();
+        auto result = std::move(elements_);
+        unbless(result);
+        elements_ = entity_type(creator.allocator(std::in_place_type<value_type>));
+        return result;
+    }
 
     /**
      * @brief returns a forward iterator which points the beginning of this container.
      * @return the iterator of beginning (inclusive)
      */
-    iterator begin() noexcept { return elements_.begin(); }
+    iterator begin() noexcept {
+        return elements_.begin();
+    }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept { return elements_.begin(); }
+    const_iterator begin() const noexcept {
+        return elements_.begin();
+    }
 
     /// @copydoc begin()
-    const_iterator cbegin() const noexcept { return elements_.cbegin(); }
+    const_iterator cbegin() const noexcept {
+        return elements_.cbegin();
+    }
 
     /**
      * @brief returns a forward iterator which points the ending of this container.
      * @return the iterator of ending (exclusive)
      */
-    iterator end() noexcept { return elements_.end(); }
+    iterator end() noexcept {
+        return elements_.end();
+    }
 
     /// @copydoc end()
-    const_iterator end() const noexcept { return elements_.end(); }
+    const_iterator end() const noexcept {
+        return elements_.end();
+    }
 
     /// @copydoc end()
-    const_iterator cend() const noexcept { return elements_.cend(); }
+    const_iterator cend() const noexcept {
+        return elements_.cend();
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed beginning of this container.
      * @return the reversed iterator of beginning (inclusive)
      */
-    reverse_iterator rbegin() noexcept { return elements_.rbegin(); }
+    reverse_iterator rbegin() noexcept {
+        return elements_.rbegin();
+    }
 
     /// @copydoc rbegin()
-    const_reverse_iterator rbegin() const noexcept { return elements_.rbegin(); }
+    const_reverse_iterator rbegin() const noexcept {
+        return elements_.rbegin();
+    }
 
     /// @copydoc rbegin()
-    const_reverse_iterator crbegin() const noexcept { return elements_.crbegin(); }
+    const_reverse_iterator crbegin() const noexcept {
+        return elements_.crbegin();
+    }
 
     /**
      * @brief returns a backward iterator which points the reversed ending of this container.
      * @return the reversed iterator of ending (exclusive)
      */
-    reverse_iterator rend() noexcept { return elements_.rend(); }
+    reverse_iterator rend() noexcept {
+        return elements_.rend();
+    }
 
     /// @copydoc rend()
-    const_reverse_iterator rend() const noexcept { return elements_.rend(); }
+    const_reverse_iterator rend() const noexcept {
+        return elements_.rend();
+    }
 
     /// @copydoc rend()
-    const_reverse_iterator crend() const noexcept { return elements_.crend(); }
+    const_reverse_iterator crend() const noexcept {
+        return elements_.crend();
+    }
 
     /**
      * @brief exchanges contents between this and the given container.
      * @details This also exchanges their util::object_creator, but object copying strategy does not.
      * @param other the opposite container
      */
-    void swap(tree_fragment_vector& other) noexcept { std::swap(elements_, other.elements_); }
+    void swap(tree_fragment_vector& other) noexcept {
+        std::swap(elements_, other.elements_);
+    }
 
     /**
      * @brief returns the object creator to create/delete objects in this container.
@@ -510,220 +662,6 @@ tree_fragment_vector(P&&, util::rvalue_initializer_list<T>, util::object_creator
 template<class P, class Iter>
 tree_fragment_vector(P&&, Iter, Iter, util::object_creator = {})
 -> tree_fragment_vector<typename std::iterator_traits<Iter>::value_type>;
-
-
-template<class T>
-inline tree_fragment_vector<T>::tree_fragment_vector(
-        util::optional_ptr<parent_type> parent,
-        util::object_creator creator)
-    : parent_(std::move(parent))
-    , elements_(creator.allocator(std::in_place_type<value_type>))
-{
-    bless(elements_);
-}
-
-template<class T>
-inline tree_fragment_vector<T>::tree_fragment_vector(
-        util::optional_ptr<parent_type> parent,
-        entity_type elements) noexcept
-    : parent_(std::move(parent))
-    , elements_(std::move(elements))
-{
-    bless(elements_);
-}
-
-template<class T>
-template<class Allocator>
-inline tree_fragment_vector<T>::tree_fragment_vector(
-        util::optional_ptr<parent_type> parent,
-        std::vector<value_type, Allocator> elements,
-        util::object_creator creator)
-    : parent_(std::move(parent))
-    , elements_(adapt_vector(std::move(elements), creator))
-{
-    bless(elements_);
-}
-
-
-template<class T>
-inline tree_fragment_vector<T>::tree_fragment_vector(
-        util::optional_ptr<parent_type> parent,
-        std::initializer_list<T> elements,
-        util::object_creator creator)
-    : tree_fragment_vector(parent, creator)
-{
-    assign(elements);
-}
-
-template<class T>
-inline tree_fragment_vector<T>::tree_fragment_vector(
-        util::optional_ptr<parent_type> parent,
-        util::rvalue_initializer_list<T> elements,
-        util::object_creator creator)
-    : tree_fragment_vector(parent, creator)
-{
-    assign(std::move(elements));
-}
-
-template<class T>
-template<class Iter>
-inline tree_fragment_vector<T>::tree_fragment_vector(
-        util::optional_ptr<parent_type> parent,
-        Iter first,
-        Iter last,
-        util::object_creator creator)
-    : tree_fragment_vector(parent, creator)
-{
-    assign(first, last);
-}
-
-template<class T>
-inline void
-tree_fragment_vector<T>::parent_element(parent_type* parent) {
-    parent_.reset(parent);
-    bless(elements_);
-}
-
-template<class T>
-inline void
-tree_fragment_vector<T>::clear() noexcept {
-    elements_.clear();
-}
-
-template<class T>
-inline void
-tree_fragment_vector<T>::assign(std::initializer_list<T> list) {
-    elements_.assign(list);
-    bless(elements_);
-}
-
-template<class T>
-inline void
-tree_fragment_vector<T>::assign(util::rvalue_initializer_list<T> list) {
-    elements_.assign(list.begin(), list.end());
-    bless(elements_);
-}
-
-template<class T>
-template<class Iter>
-inline void
-tree_fragment_vector<T>::assign(Iter first, Iter last) {
-    elements_.assign(first, last);
-    bless(elements_);
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::iterator
-tree_fragment_vector<T>::erase(const_iterator position) noexcept {
-    return elements_.erase(position);
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::iterator 
-tree_fragment_vector<T>::erase(const_iterator first, const_iterator last) noexcept {
-    return elements_.erase(first, last);
-}
-
-template<class T>
-inline void tree_fragment_vector<T>::pop_back() noexcept {
-    elements_.pop_back();
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::iterator
-tree_fragment_vector<T>::insert(const_iterator position, const_reference element) {
-    auto result = elements_.insert(position, element);
-    bless(*result);
-    return result;
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::iterator
-tree_fragment_vector<T>::insert(const_iterator position, rvalue_reference element) {
-    auto result = elements_.insert(position, std::move(element));
-    bless(*result);
-    return result;
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::iterator
-tree_fragment_vector<T>::insert(const_iterator position, std::initializer_list<T> list) {
-    auto before = elements_.size();
-    auto result = elements_.insert(position, list);
-    auto after = elements_.size();
-    assert(after >= before); // NOLINT
-    bless(result, result + (after - before));
-    return result;
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::iterator
-tree_fragment_vector<T>::insert(const_iterator position, util::rvalue_initializer_list<T> list) {
-    auto before = elements_.size();
-    auto result = elements_.insert(position, list.begin(), list.end());
-    auto after = elements_.size();
-    assert(after >= before); // NOLINT
-    bless(result, result + (after - before));
-    return result;
-}
-
-template<class T>
-template<class Iter>
-inline typename tree_fragment_vector<T>::iterator
-tree_fragment_vector<T>::insert(const_iterator position, Iter first, Iter last) {
-    auto before = elements_.size();
-    auto result = elements_.insert(position, first, last);
-    auto after = elements_.size();
-    assert(after >= before); // NOLINT
-    bless(result, result + (after - before));
-    return result;
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::reference
-tree_fragment_vector<T>::push_back(const_reference element) {
-    elements_.push_back(element);
-    auto&& result = elements_.back();
-    bless(result);
-    return result;
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::reference
-tree_fragment_vector<T>::push_back(rvalue_reference element) {
-    elements_.push_back(std::move(element));
-    auto&& result = elements_.back();
-    bless(result);
-    return result;
-}
-
-template<class T>
-template<class... Args>
-inline typename tree_fragment_vector<T>::iterator
-tree_fragment_vector<T>::emplace(const_iterator position, Args&&... args) {
-    auto result = elements_.emplace(position, std::forward<Args>(args)...);
-    bless(*result);
-    return result;
-}
-
-template<class T>
-template<class... Args>
-inline typename tree_fragment_vector<T>::reference
-tree_fragment_vector<T>::emplace_back(Args&& ... args) {
-    auto&& result = elements_.emplace_back(std::forward<Args>(args)...);
-    bless(result);
-    return result;
-}
-
-template<class T>
-inline typename tree_fragment_vector<T>::entity_type
-tree_fragment_vector<T>::release_elements() noexcept {
-    auto creator = get_object_creator();
-    auto result = std::move(elements_);
-    unbless(result);
-    elements_ = entity_type(creator.allocator(std::in_place_type<value_type>));
-    return result;
-}
 
 /**
  * @brief returns whether or not the both vectors have equivalent elements.

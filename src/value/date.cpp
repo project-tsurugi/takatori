@@ -18,10 +18,6 @@ date* date::clone(util::object_creator creator) && {
     return creator.create_object<date>(entity_);
 }
 
-std::ostream& operator<<(std::ostream& out, date const& value) {
-    return out << value.get();
-}
-
 bool date::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<date>(other);
 }
@@ -32,6 +28,10 @@ std::size_t date::hash() const noexcept {
 
 std::ostream& date::print_to(std::ostream& out) const {
     return out << *this;
+}
+
+std::ostream& operator<<(std::ostream& out, date const& value) {
+    return out << value.get();
 }
 
 } // namespace takatori::value

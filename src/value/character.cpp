@@ -29,18 +29,6 @@ character::operator view_type() const noexcept {
     return get();
 }
 
-bool operator==(character const& a, character const& b) noexcept {
-    return a.get() == b.get();
-}
-
-bool operator!=(character const& a, character const& b) noexcept {
-    return !(a == b);
-}
-
-std::ostream& operator<<(std::ostream& out, character const& value) {
-    return out << "character(" << value.get() << ")";
-}
-
 bool character::equals(data const& other) const noexcept {
     return tag == other.kind() && *this == util::unsafe_downcast<character>(other);
 }
@@ -51,6 +39,18 @@ std::size_t character::hash() const noexcept {
 
 std::ostream& character::print_to(std::ostream& out) const {
     return out << *this;
+}
+
+bool operator==(character const& a, character const& b) noexcept {
+    return a.get() == b.get();
+}
+
+bool operator!=(character const& a, character const& b) noexcept {
+    return !(a == b);
+}
+
+std::ostream& operator<<(std::ostream& out, character const& value) {
+    return out << "character(" << value.get() << ")";
 }
 
 } // namespace takatori::value

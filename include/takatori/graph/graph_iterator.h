@@ -4,15 +4,6 @@
 
 namespace takatori::graph {
 
-template<class Iter>
-class graph_iterator;
-
-template<class I1, class I2>
-bool operator==(graph_iterator<I1> const& a, graph_iterator<I2> const& b) noexcept;
-
-template<class I1, class I2>
-bool operator!=(graph_iterator<I1> const& a, graph_iterator<I2> const& b) noexcept;
-
 /**
  * @brief iterates over graph.
  * @tparam Iter the entity iterator type
@@ -37,7 +28,9 @@ public:
      * @brief creates a new object.
      * @param iter the entity iterator
      */
-    explicit graph_iterator(Iter iter) noexcept;
+    explicit graph_iterator(Iter iter) noexcept
+        : iter_(iter)
+    {}
 
     /**
      * @brief creates a new object.
@@ -48,126 +41,82 @@ public:
             class U,
             class = std::enable_if_t<
                     std::is_constructible_v<Iter, U>>>
-    graph_iterator(graph_iterator<U> other) noexcept; // NOLINT
+    graph_iterator(graph_iterator<U> other) noexcept // NOLINT
+        : iter_(other.iter_)
+    {}
 
     /**
      * @brief returns the value reference where this iterator pointing.
      * @return reference of the current value
      */
-    reference operator*() const noexcept;
+    reference operator*() const noexcept {
+        return **iter_;
+    }
 
     /**
      * @brief returns pointer to the value where this iterator pointing.
      * @return pointer to the current value
      */
-    pointer operator->() const noexcept;
+    pointer operator->() const noexcept {
+        return *iter_;
+    }
 
     /**
      * @brief increments this iterator position.
      * @return this
      */
-    iterator_type& operator++() noexcept;
+    iterator_type& operator++() noexcept {
+        ++iter_;
+        return *this;
+    }
 
     /**
      * @brief increments this iterator position.
      * @return the last position
      */
-    iterator_type const operator++(int) noexcept; // NOLINT
+    iterator_type const operator++(int) noexcept { // NOLINT
+        iterator_type r = *this;
+        operator++();
+        return r;
+    }
 
     /**
      * @brief decrements this iterator position.
      * @return this
      */
-    iterator_type& operator--() noexcept;
+    iterator_type& operator--() noexcept {
+        --iter_;
+        return *this;
+    }
 
     /**
      * @brief decrements this iterator position.
      * @return the last position
      */
-    iterator_type const operator--(int) noexcept; // NOLINT
+    iterator_type const operator--(int) noexcept { // NOLINT
+        iterator_type r = *this;
+        operator--();
+        return r;
+    }
 
     /**
      * @brief returns the entity iterator.
      * @return the entity iterator
      */
-    Iter unwrap() noexcept;
+    Iter unwrap() const noexcept {
+        return iter_;
+    }
 
 private:
     Iter iter_;
 
     template<class U>
     friend class graph_iterator;
-
-    template<class I1, class I2>
-    friend bool operator==(graph_iterator<I1> const& a, graph_iterator<I2> const& b) noexcept; // NOLINT
-
-    template<class I1, class I2>
-    friend bool operator!=(graph_iterator<I1> const& a, graph_iterator<I2> const& b) noexcept; // NOLINT
 };
 
 /// @private
 template<class T>
 graph_iterator(T) -> graph_iterator<T>;
-
-template<class Iter>
-inline
-graph_iterator<Iter>::graph_iterator(Iter iter) noexcept
-    : iter_(iter)
-{}
-
-template<class Iter>
-template<class U, class>
-inline
-graph_iterator<Iter>::graph_iterator(graph_iterator<U> other) noexcept
-    : iter_(other.iter_)
-{}
-
-template<class Iter>
-inline typename graph_iterator<Iter>::reference
-graph_iterator<Iter>::operator*() const noexcept {
-    return **iter_;
-}
-
-template<class Iter>
-inline typename graph_iterator<Iter>::pointer
-graph_iterator<Iter>::operator->() const noexcept {
-    return *iter_;
-}
-
-template<class Iter>
-inline typename graph_iterator<Iter>::iterator_type&
-graph_iterator<Iter>::operator++() noexcept {
-    ++iter_;
-    return *this;
-}
-
-template<class Iter>
-inline typename graph_iterator<Iter>::iterator_type const // NOLINT
-graph_iterator<Iter>::operator++(int) noexcept {
-    iterator_type r = *this;
-    operator++();
-    return r;
-}
-
-template<class Iter>
-inline typename graph_iterator<Iter>::iterator_type&
-graph_iterator<Iter>::operator--() noexcept {
-    --iter_;
-    return *this;
-}
-
-template<class Iter>
-inline typename graph_iterator<Iter>::iterator_type const // NOLINT
-graph_iterator<Iter>::operator--(int) noexcept {
-    iterator_type r = *this;
-    operator--();
-    return r;
-}
-
-template<class Iter>
-Iter graph_iterator<Iter>::unwrap() noexcept {
-    return iter_;
-}
 
 /**
  * @brief returns whether or not the two iterator points the same element.
@@ -180,7 +129,7 @@ Iter graph_iterator<Iter>::unwrap() noexcept {
  */
 template<class I1, class I2>
 inline bool operator==(graph_iterator<I1> const& a, graph_iterator<I2> const& b) noexcept {
-    return a.iter_ == b.iter_;
+    return a.unwrap() == b.unwrap();
 }
 
 /**

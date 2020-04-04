@@ -33,7 +33,9 @@ public:
      * @brief creates a new instance.
      * @param value the time
      */
-    explicit constexpr time_point(entity_type value) noexcept;
+    explicit constexpr time_point(entity_type value) noexcept
+        : entity_(value)
+    {}
 
     /**
      * @brief creates a new instance.
@@ -68,7 +70,9 @@ public:
      * @param time time system time point
      */
     template<class Clock, class Duration>
-    explicit time_point(std::chrono::time_point<Clock, Duration> time);
+    explicit time_point(std::chrono::time_point<Clock, Duration> time)
+        : entity_(time)
+    {}
 
     ~time_point() override = default;
     time_point(time_point const& other) = delete;
@@ -84,36 +88,14 @@ public:
      * @brief returns the entity value.
      * @return the entity value
      */
-    constexpr view_type get() const noexcept;
+    constexpr view_type get() const noexcept {
+        return entity_;
+    }
 
     /// @copydoc get()
-    explicit constexpr operator view_type() const noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are equivalent.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a == b
-     * @return false otherwise
-     */
-    friend constexpr bool operator==(time_point const& a, time_point const& b) noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are different.
-     * @param a the first element
-     * @param b the second element
-     * @return true if a != b
-     * @return false otherwise
-     */
-    friend constexpr bool operator!=(time_point const& a, time_point const& b) noexcept;
-
-    /**
-     * @brief appends string representation of the given value.
-     * @param out the target output
-     * @param value the target value
-     * @return the output
-     */
-    friend std::ostream& operator<<(std::ostream& out, time_point const& value);
+    explicit constexpr operator view_type() const noexcept {
+        return get();
+    }
 
 protected:
     bool equals(data const& other) const noexcept override;
@@ -126,30 +108,35 @@ private:
     friend class util::object_creator;
 };
 
-inline constexpr time_point::time_point(time_point::entity_type value) noexcept
-    : entity_(value)
-{}
-
-template<class Clock, class Duration>
-inline time_point::time_point(std::chrono::time_point<Clock, Duration> time)
-    : entity_(time)
-{}
-
-inline constexpr time_point::view_type time_point::get() const noexcept {
-    return entity_;
-}
-
-inline constexpr time_point::operator view_type() const noexcept {
-    return get();
-}
-
+/**
+ * @brief returns whether or not the two elements are equivalent.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a == b
+ * @return false otherwise
+ */
 inline constexpr bool operator==(time_point const& a, time_point const& b) noexcept {
     return a.get() == b.get();
 }
 
+/**
+ * @brief returns whether or not the two elements are different.
+ * @param a the first element
+ * @param b the second element
+ * @return true if a != b
+ * @return false otherwise
+ */
 inline constexpr bool operator!=(time_point const& a, time_point const& b) noexcept {
     return !(a == b);
 }
+
+/**
+ * @brief appends string representation of the given value.
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+std::ostream& operator<<(std::ostream& out, time_point const& value);
 
 /**
  * @brief type_of for time_point.
