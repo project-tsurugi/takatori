@@ -7,10 +7,6 @@
 namespace takatori::tree {
 
 class tree_element_forward_test : public ::testing::Test {
-public:
-    template<class T>
-    static T const& make_const(T& object) { return object; }
-
 protected:
     util::pmr::monotonic_buffer_resource resource {};
     util::object_creator custom { &resource };

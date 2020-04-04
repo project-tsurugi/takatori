@@ -10,11 +10,7 @@
 
 namespace takatori::tree {
 
-class tree_element_test : public ::testing::Test {
-public:
-    template<class T>
-    static T const& make_const(T& object) { return object; }
-};
+class tree_element_test : public ::testing::Test {};
 
 static_assert(is_tree_element_v<tree_element>);
 static_assert(is_tree_element_v<node<int>>);
@@ -75,7 +71,7 @@ TEST_F(tree_element_test, parents_const) {
     fragment_traits::set_parent_element(*root.left(), root);
     fragment_traits::set_parent_element(*root.right(), root);
 
-    auto& croot = make_const(root);
+    auto& croot = std::as_const(root);
 
     EXPECT_EQ(node_traits::get_parent_element(*root.left()).get(), &croot);
     EXPECT_EQ(node_traits::get_parent_element(*root.right()).get(), &croot);

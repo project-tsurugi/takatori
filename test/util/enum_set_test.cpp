@@ -4,11 +4,7 @@
 
 namespace takatori::util {
 
-class enum_set_test : public ::testing::Test {
-public:
-    template<class T>
-    static T const& make_const(T const& t) { return t; }
-};
+class enum_set_test : public ::testing::Test {};
 
 enum class X {
     _ = -1,
@@ -67,7 +63,7 @@ TEST_F(enum_set_test, at) {
 
 TEST_F(enum_set_test, at_const) {
     eset ms;
-    auto& s = make_const(ms);
+    auto& s = std::as_const(ms);
 
     EXPECT_FALSE(s.at(X::A));
 

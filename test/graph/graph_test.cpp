@@ -16,9 +16,6 @@ namespace takatori::graph {
 class graph_test : public ::testing::Test {
 public:
     template<class T>
-    static std::remove_reference_t<T> const& make_const(T&& v) { return v; }
-
-    template<class T>
     static constexpr bool is_const_v = std::is_const_v<std::remove_reference_t<T>>;
 };
 
@@ -106,7 +103,7 @@ TEST_F(graph_test, contains) {
     auto&& v2 = mg.emplace(200);
     auto&& v3 = mg.emplace(300);
 
-    auto&& g = make_const(mg);
+    auto&& g = std::as_const(mg);
     EXPECT_TRUE(g.contains(v1));
     EXPECT_TRUE(g.contains(v2));
     EXPECT_TRUE(g.contains(v3));
@@ -117,7 +114,7 @@ TEST_F(graph_test, contains) {
 
 TEST_F(graph_test, empty) {
     simple_graph mg;
-    auto&& g = make_const(mg);
+    auto&& g = std::as_const(mg);
     EXPECT_TRUE(g.empty());
 
     mg.emplace(100);
@@ -130,7 +127,7 @@ TEST_F(graph_test, empty) {
 
 TEST_F(graph_test, size) {
     simple_graph mg;
-    auto&& g = make_const(mg);
+    auto&& g = std::as_const(mg);
     EXPECT_EQ(g.size(), 0);
 
     mg.emplace(100);
@@ -177,7 +174,7 @@ TEST_F(graph_test, find_const) {
     auto&& v2 = mg.emplace(200);
     mg.emplace(300);
 
-    auto&& g = make_const(mg);
+    auto&& g = std::as_const(mg);
 
     auto it0 = g.find(v2);
     ASSERT_NE(it0, g.end());

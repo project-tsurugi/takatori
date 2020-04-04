@@ -20,9 +20,6 @@ public:
     struct Other : Base {
         void f() override {}
     };
-
-    template<class T>
-    static T const& make_const(T& object) { return object; }
 };
 
 static_assert(is_pointer_v<optional_ptr<int>>);
@@ -65,7 +62,7 @@ TEST_F(optional_reference_test, copy_ctor) {
 TEST_F(optional_reference_test, copy_ctor_const) {
     int x = 100;
     optional_ptr ref {x };
-    optional_ptr<int const> copy {make_const(ref) };
+    optional_ptr<int const> copy {std::as_const(ref) };
     EXPECT_EQ(*copy, x);
 }
 
@@ -115,7 +112,7 @@ TEST_F(optional_reference_test, pointer) {
 TEST_F(optional_reference_test, pointer_const) {
     int x = 100;
     optional_ptr ref {&x };
-    auto&& cref = make_const(ref);
+    auto&& cref = std::as_const(ref);
 
     ASSERT_TRUE(cref);
     EXPECT_EQ(*cref, 100);
@@ -144,7 +141,7 @@ TEST_F(optional_reference_test, ref) {
 TEST_F(optional_reference_test, ref_const) {
     int x = 100;
     optional_ptr ref {x };
-    auto&& cref = make_const(ref);
+    auto&& cref = std::as_const(ref);
     ASSERT_TRUE(cref);
     EXPECT_EQ(*cref, 100);
 
@@ -217,7 +214,7 @@ TEST_F(optional_reference_test, iter) {
 TEST_F(optional_reference_test, iter_const) {
     int x = 100;
     optional_ptr ref {x };
-    auto&& cref = make_const(ref);
+    auto&& cref = std::as_const(ref);
 
     auto&& iter = cref.begin();
     ASSERT_NE(iter, cref.end());
@@ -277,7 +274,7 @@ TEST_F(optional_reference_test, dynamic_pointer_cast) {
 TEST_F(optional_reference_test, dynamic_pointer_cast_const) {
     Sub x;
     optional_ptr<Base> baseref {x };
-    auto&& cbaseref = make_const(baseref);
+    auto&& cbaseref = std::as_const(baseref);
     auto subref = dynamic_pointer_cast<Sub>(cbaseref);
     static_assert(std::is_const_v<decltype(subref)::element_type>);
 
@@ -312,7 +309,7 @@ TEST_F(optional_reference_test, dynamic_reference_cast) {
 TEST_F(optional_reference_test, dynamic_reference_cast_const) {
     Sub x;
     optional_ptr<Base> baseref {x };
-    auto&& cbaseref = make_const(baseref);
+    auto&& cbaseref = std::as_const(baseref);
     auto subref = dynamic_reference_cast<Sub>(cbaseref);
     static_assert(std::is_const_v<decltype(subref)::element_type>);
 

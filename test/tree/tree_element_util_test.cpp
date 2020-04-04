@@ -6,11 +6,7 @@
 
 namespace takatori::tree {
 
-class tree_element_util_test : public ::testing::Test {
-public:
-    template<class T>
-    static T const& make_const(T& object) { return object; }
-};
+class tree_element_util_test : public ::testing::Test {};
 
 TEST_F(tree_element_util_test, bless_element) {
     branch<int> b {

@@ -8,11 +8,6 @@ namespace takatori::scalar {
 
 class expression_walk_test : public ::testing::Test {};
 
-template<class T>
-inline T const& make_const(T& t) noexcept {
-    return t;
-}
-
 template<std::size_t N>
 inline void set(std::array<bool, N>& a, std::size_t i) {
     if (i >= N) {
@@ -82,7 +77,7 @@ TEST_F(expression_walk_test, immediate) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -108,7 +103,7 @@ TEST_F(expression_walk_test, variable_reference) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -139,7 +134,7 @@ TEST_F(expression_walk_test, unary) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -171,7 +166,7 @@ TEST_F(expression_walk_test, cast) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -203,7 +198,7 @@ TEST_F(expression_walk_test, binary) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -235,7 +230,7 @@ TEST_F(expression_walk_test, compare) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -268,7 +263,7 @@ TEST_F(expression_walk_test, match) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -303,7 +298,7 @@ TEST_F(expression_walk_test, conditional) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -337,7 +332,7 @@ TEST_F(expression_walk_test, coalesce) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -372,7 +367,7 @@ TEST_F(expression_walk_test, let) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 
@@ -407,7 +402,7 @@ TEST_F(expression_walk_test, function_call) {
 
     cb d;
     d.recursive = false;
-    walk(d, make_const(expr));
+    walk(d, std::as_const(expr));
     check_only_first(d.a);
 }
 

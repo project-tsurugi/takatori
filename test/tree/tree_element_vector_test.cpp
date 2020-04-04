@@ -8,9 +8,6 @@ namespace takatori::tree {
 
 class tree_element_vector_test : public ::testing::Test {
 public:
-    template<class T>
-    static T const& make_const(T& object) { return object; }
-
     template<class T, class... Elements>
     static tree_element_vector<node<T>>
     make_vector(node<T>& parent, util::object_creator creator, Elements&&... elements) {
@@ -95,7 +92,7 @@ TEST_F(tree_element_vector_test, at) {
 TEST_F(tree_element_vector_test, at_const) {
     branch<int> root;
     auto v = make_vector(root, {}, 10, 20, 30);
-    auto&& cv = make_const(v);
+    auto&& cv = std::as_const(v);
 
     EXPECT_EQ(get(cv.at(0)), 10);
     EXPECT_EQ(get(cv.at(1)), 20);
@@ -116,7 +113,7 @@ TEST_F(tree_element_vector_test, operator_at) {
 TEST_F(tree_element_vector_test, operator_at_const) {
     branch<int> root;
     auto v = make_vector(root, {}, 10, 20, 30);
-    auto&& cv = make_const(v);
+    auto&& cv = std::as_const(v);
 
     EXPECT_EQ(get(cv[0]), 10);
     EXPECT_EQ(get(cv[1]), 20);
@@ -134,7 +131,7 @@ TEST_F(tree_element_vector_test, front_back) {
 TEST_F(tree_element_vector_test, front_back_const) {
     branch<int> root;
     auto v = make_vector(root, {}, 10, 20, 30);
-    auto&& cv = make_const(v);
+    auto&& cv = std::as_const(v);
 
     EXPECT_EQ(get(cv.front()), 10);
     EXPECT_EQ(get(cv.back()), 30);
@@ -143,7 +140,7 @@ TEST_F(tree_element_vector_test, front_back_const) {
 TEST_F(tree_element_vector_test, empty) {
     branch<int> root;
     auto v = make_vector(root, {});
-    auto&& cv = make_const(v);
+    auto&& cv = std::as_const(v);
     EXPECT_TRUE(cv.empty());
 
     v.emplace_back<leaf<int>>(1);
@@ -156,7 +153,7 @@ TEST_F(tree_element_vector_test, empty) {
 TEST_F(tree_element_vector_test, size) {
     branch<int> root;
     auto v = make_vector(root, {});
-    auto&& cv = make_const(v);
+    auto&& cv = std::as_const(v);
     EXPECT_EQ(cv.size(), 0);
 
     v.emplace_back<leaf<int>>(1);

@@ -9,9 +9,6 @@ namespace takatori::tree {
 class tree_fragment_vector_test : public ::testing::Test {
 public:
     template<class T>
-    static T const& make_const(T& object) { return object; }
-
-    template<class T>
     static T& lv(T&& object) { return object; }
 
     template<class T>
@@ -281,7 +278,7 @@ TEST_F(tree_fragment_vector_test, at) {
 TEST_F(tree_fragment_vector_test, at_const) {
     int root = -1;
     tree_fragment_vector<C<int>> v0 { root, { 1, 2, 3 }};
-    auto&& v = make_const(v0);
+    auto&& v = std::as_const(v0);
 
     ASSERT_EQ(v.size(), 3);
     EXPECT_EQ(v.at(0), 1);
@@ -304,7 +301,7 @@ TEST_F(tree_fragment_vector_test, operator_at) {
 TEST_F(tree_fragment_vector_test, operator_at_const) {
     int root = -1;
     tree_fragment_vector<C<int>> v0 { root, { 1, 2, 3 }};
-    auto&& v = make_const(v0);
+    auto&& v = std::as_const(v0);
 
     ASSERT_EQ(v.size(), 3);
     EXPECT_EQ(v[0], 1);
@@ -324,7 +321,7 @@ TEST_F(tree_fragment_vector_test, front_back) {
 TEST_F(tree_fragment_vector_test, front_back_const) {
     int root = -1;
     tree_fragment_vector<C<int>> v0 { root, { 1, 2, 3 }};
-    auto&& v = make_const(v0);
+    auto&& v = std::as_const(v0);
 
     ASSERT_EQ(v.size(), 3);
     EXPECT_EQ(v.front(), 1);
