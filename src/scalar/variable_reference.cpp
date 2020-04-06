@@ -28,13 +28,12 @@ variable_reference* variable_reference::clone(util::object_creator creator) && {
     return creator.create_object<variable_reference>(std::move(*this), creator);
 }
 
-descriptor::variable const& variable_reference::variable() const noexcept {
+descriptor::variable& variable_reference::variable() noexcept {
     return variable_;
 }
 
-variable_reference& variable_reference::variable(descriptor::variable variable) noexcept {
-    variable_ = std::move(variable);
-    return *this;
+descriptor::variable const& variable_reference::variable() const noexcept {
+    return variable_;
 }
 
 bool operator==(variable_reference const& a, variable_reference const& b) noexcept {

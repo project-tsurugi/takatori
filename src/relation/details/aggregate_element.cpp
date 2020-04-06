@@ -53,13 +53,12 @@ aggregate_element::aggregate_element(aggregate_element&& other, util::object_cre
             std::move(other.destination_))
 {}
 
-aggregate_element::function_type const& aggregate_element::function() const noexcept {
+aggregate_element::function_type& aggregate_element::function() noexcept {
     return function_;
 }
 
-aggregate_element& aggregate_element::function(function_type function) noexcept {
-    function_ = std::move(function);
-    return *this;
+aggregate_element::function_type const& aggregate_element::function() const noexcept {
+    return function_;
 }
 
 aggregate_element::destination_type const& aggregate_element::destination() const noexcept {

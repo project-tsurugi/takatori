@@ -39,13 +39,12 @@ function_call* function_call::clone(util::object_creator creator) && {
     return creator.create_object<function_call>(std::move(*this), creator);
 }
 
-descriptor::function const& function_call::function() const noexcept {
+descriptor::function& function_call::function() noexcept {
     return function_;
 }
 
-function_call& function_call::function(descriptor::function function) noexcept {
-    function_ = std::move(function);
-    return *this;
+descriptor::function const& function_call::function() const noexcept {
+    return function_;
 }
 
 tree::tree_element_vector<expression>& function_call::arguments() noexcept {

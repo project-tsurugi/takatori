@@ -47,14 +47,10 @@ public:
      * @brief returns the emit target column on the input relation.
      * @return the variable descriptor of emit target
      */
-    descriptor::variable const& source() const noexcept;
+    descriptor::variable& source() noexcept;
 
-    /**
-     * @brief sets an emit target column on the input relation.
-     * @param source the variable descriptor of emit target
-     * @return this
-     */
-    emit_element& source(descriptor::variable source) noexcept;
+    /// @copydoc source()
+    descriptor::variable const& source() const noexcept;
 
     /**
      * @brief returns the column name.

@@ -73,14 +73,10 @@ public:
      * @brief returns the aggregate function.
      * @return the aggregate function
      */
-    function_type const& function() const noexcept;
+    function_type& function() noexcept;
 
-    /**
-     * @brief sets an aggregate function.
-     * @param function the aggregate function
-     * @return this
-     */
-    aggregate_element& function(function_type function) noexcept;
+    /// @copydoc function()
+    function_type const& function() const noexcept;
 
     /**
      * @brief returns the argument columns of the aggregate function.

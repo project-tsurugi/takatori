@@ -27,14 +27,10 @@ public:
      * @brief returns the sort key column on the relation.
      * @return the variable descriptor of sort key
      */
-    descriptor::variable const& variable() const noexcept;
+    descriptor::variable& variable() noexcept;
 
-    /**
-     * @brief sets a sort key column on the relation.
-     * @param variable the variable descriptor of sort key
-     * @return this
-     */
-    sort_key_element& variable(descriptor::variable variable) noexcept;
+    /// @copydoc variable()
+    descriptor::variable const& variable() const noexcept;
 
     /**
      * @brief returns the sort direction of this key element.

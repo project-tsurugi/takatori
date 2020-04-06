@@ -71,14 +71,10 @@ public:
      * @brief returns the descriptor of target function.
      * @return the destination type
      */
-    descriptor::function const& function() const noexcept;
+    descriptor::function& function() noexcept;
 
-    /**
-     * @brief sets a descriptor of target function.
-     * @param function the target function
-     * @return this
-     */
-    function_call& function(descriptor::function function) noexcept;
+    /// @copydoc function()
+    descriptor::function const& function() const noexcept;
 
     /**
      * @brief returns the function arguments.

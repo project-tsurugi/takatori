@@ -120,18 +120,13 @@ public:
      * @brief returns the search key column on the target relation.
      * @return the variable descriptor
      */
-    descriptor::variable const& variable() const noexcept {
+    descriptor::variable& variable() noexcept {
         return variable_;
     }
 
-    /**
-     * @brief sets a search key column on the target relation.
-     * @param variable the variable descriptor
-     * @return this
-     */
-    search_key_element& variable(descriptor::variable variable) noexcept { // FIXME: NOLINT(performance-unnecessary-value-param)
-        variable_ = std::move(variable);
-        return *this;
+    /// @copydoc variable()
+    descriptor::variable const& variable() const noexcept {
+        return variable_;
     }
 
     /**

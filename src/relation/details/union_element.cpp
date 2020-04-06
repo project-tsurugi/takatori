@@ -16,31 +16,28 @@ union_element::union_element(
     , destination_(std::move(destination))
 {}
 
+std::optional<union_element::source_type>& union_element::left() noexcept {
+    return left_;
+}
+
 std::optional<union_element::source_type> const& union_element::left() const noexcept {
     return left_;
 }
 
-union_element& union_element::left(std::optional<source_type> left) noexcept {
-    left_ = std::move(left);
-    return *this;
+std::optional<union_element::source_type>& union_element::right() noexcept {
+    return right_;
 }
 
 std::optional<union_element::source_type> const& union_element::right() const noexcept {
     return right_;
 }
 
-union_element& union_element::right(std::optional<source_type> right) noexcept {
-    right_ = std::move(right);
-    return *this;
+union_element::destination_type& union_element::destination() noexcept {
+    return destination_;
 }
 
 union_element::destination_type const& union_element::destination() const noexcept {
     return destination_;
-}
-
-union_element& union_element::destination(destination_type destination) noexcept {
-    destination_ = std::move(destination);
-    return *this;
 }
 
 bool operator==(union_element const& a, union_element const& b) noexcept {

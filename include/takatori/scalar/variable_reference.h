@@ -50,14 +50,10 @@ public:
      * @brief returns the descriptor of target variable.
      * @return the destination type
      */
-    descriptor::variable const& variable() const noexcept;
+    descriptor::variable& variable() noexcept;
 
-    /**
-     * @brief sets a descriptor of target variable.
-     * @param variable the target variable
-     * @return this
-     */
-    variable_reference& variable(descriptor::variable variable) noexcept;
+    /// @copydoc variable()
+    descriptor::variable const& variable() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

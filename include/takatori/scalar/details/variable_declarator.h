@@ -145,18 +145,13 @@ public:
      * @brief returns the descriptor of target variable.
      * @return the target variable
      */
-    descriptor::variable const& variable() const noexcept {
+    descriptor::variable& variable() noexcept {
         return variable_;
     }
 
-    /**
-     * @brief sets a descriptor of the declared variable.
-     * @param variable the declared variable
-     * @return this
-     */
-    variable_declarator& variable(descriptor::variable variable) noexcept { // FIXME: NOLINT(performance-unnecessary-value-param)
-        variable_ = std::move(variable);
-        return *this;
+    /// @copydoc variable()
+    descriptor::variable const& variable() const noexcept {
+        return variable_;
     }
 
     /**

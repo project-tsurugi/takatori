@@ -40,13 +40,12 @@ cogroup_element::cogroup_element(cogroup_element&& other, util::object_creator c
             other.mandatory_)
 {}
 
-descriptor::relation const& cogroup_element::source() const noexcept {
+descriptor::relation& cogroup_element::source() noexcept {
     return source_;
 }
 
-cogroup_element& cogroup_element::source(descriptor::relation source) noexcept {
-    source_ = std::move(source);
-    return *this;
+descriptor::relation const& cogroup_element::source() const noexcept {
+    return source_;
 }
 
 std::vector<cogroup_element::column, util::object_allocator<cogroup_element::column>>& cogroup_element::columns() noexcept {

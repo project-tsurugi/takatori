@@ -13,22 +13,20 @@ key_pair_element::key_pair_element(
     , right_(std::move(right))
 {}
 
+descriptor::variable& key_pair_element::left() noexcept {
+    return left_;
+}
+
 descriptor::variable const& key_pair_element::left() const noexcept {
     return left_;
 }
 
-key_pair_element& key_pair_element::left(descriptor::variable left) noexcept {
-    left_ = std::move(left);
-    return *this;
+descriptor::variable& key_pair_element::right() noexcept {
+    return right_;
 }
 
 descriptor::variable const& key_pair_element::right() const noexcept {
     return right_;
-}
-
-key_pair_element& key_pair_element::right(descriptor::variable right) noexcept {
-    right_ = std::move(right);
-    return *this;
 }
 
 bool operator==(key_pair_element const& a, key_pair_element const& b) noexcept {

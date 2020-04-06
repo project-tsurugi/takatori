@@ -29,27 +29,19 @@ public:
      * @brief returns the descriptor of source column.
      * @return the source column
      */
-    source_type const& source() const noexcept;
+    source_type& source() noexcept;
 
-    /**
-     * @brief sets a descriptor of source column.
-     * @param source the source column
-     * @return this
-     */
-    mapping_element& source(source_type source) noexcept;
+    /// @copydoc source()
+    source_type const& source() const noexcept;
 
     /**
      * @brief returns the descriptor of destination column.
      * @return the destination column
      */
-    destination_type const& destination() const noexcept;
+    destination_type& destination() noexcept;
 
-    /**
-     * @brief sets a descriptor of destination column.
-     * @param destination the destination column
-     * @return this
-     */
-    mapping_element& destination(destination_type destination) noexcept;
+    /// @copydoc destination()
+    destination_type const& destination() const noexcept;
 
 private:
     source_type source_;

@@ -16,13 +16,12 @@ emit_element::emit_element(descriptor::variable source, name_type name) noexcept
     , name_(std::move(name))
 {}
 
-descriptor::variable const& emit_element::source() const noexcept {
+descriptor::variable& emit_element::source() noexcept {
     return source_;
 }
 
-emit_element& emit_element::source(descriptor::variable source) noexcept {
-    source_ = std::move(source);
-    return *this;
+descriptor::variable const& emit_element::source() const noexcept {
+    return source_;
 }
 
 std::optional<std::string_view> emit_element::name() const noexcept {

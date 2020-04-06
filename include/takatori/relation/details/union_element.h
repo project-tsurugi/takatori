@@ -35,41 +35,29 @@ public:
      * @return the descriptor of column in the first input
      * @return empty if this column omits the first input
      */
-    std::optional<source_type> const& left() const noexcept;
+    std::optional<source_type>& left() noexcept;
 
-    /**
-     * @brief sets a source column of the first input relation.
-     * @param left the descriptor of column in the first input
-     * @return this
-     */
-    union_element& left(std::optional<source_type> left) noexcept;
+    /// @copydoc left()
+    std::optional<source_type> const& left() const noexcept;
 
     /**
      * @brief returns the source column of the second input relation.
      * @return the descriptor of column in the second input
      * @return empty if this column omits the second input
      */
-    std::optional<source_type> const& right() const noexcept;
+    std::optional<source_type>& right() noexcept;
 
-    /**
-     * @brief sets a source column of the second input relation.
-     * @param right the descriptor of column in the second input
-     * @return this
-     */
-    union_element& right(std::optional<source_type> right) noexcept;
+    /// @copydoc right()
+    std::optional<source_type> const& right() const noexcept;
 
     /**
      * @brief returns the descriptor of destination column.
      * @return the destination column
      */
-    destination_type const& destination() const noexcept;
+    destination_type& destination() noexcept;
 
-    /**
-     * @brief sets a descriptor of destination column.
-     * @param destination the destination column
-     * @return this
-     */
-    union_element& destination(destination_type destination) noexcept;
+    /// @copydoc destination()
+    destination_type const& destination() const noexcept;
 
 private:
     std::optional<source_type> left_;

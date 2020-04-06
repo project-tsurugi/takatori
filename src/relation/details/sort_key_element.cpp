@@ -11,13 +11,12 @@ sort_key_element::sort_key_element(descriptor::variable variable, sort_direction
     , direction_(direction)
 {}
 
-descriptor::variable const& sort_key_element::variable() const noexcept {
+descriptor::variable& sort_key_element::variable() noexcept {
     return variable_;
 }
 
-sort_key_element& sort_key_element::variable(descriptor::variable variable) noexcept {
-    variable_ = std::move(variable);
-    return *this;
+descriptor::variable const& sort_key_element::variable() const noexcept {
+    return variable_;
 }
 
 sort_direction const& sort_key_element::direction() const noexcept {

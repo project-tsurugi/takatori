@@ -11,22 +11,20 @@ mapping_element::mapping_element(source_type source, destination_type destinatio
     , destination_(std::move(destination))
 {}
 
+mapping_element::source_type& mapping_element::source() noexcept {
+    return source_;
+}
+
 mapping_element::source_type const& mapping_element::source() const noexcept {
     return source_;
 }
 
-mapping_element& mapping_element::source(source_type source) noexcept {
-    source_ = std::move(source);
-    return *this;
+mapping_element::destination_type& mapping_element::destination() noexcept {
+    return destination_;
 }
 
 mapping_element::destination_type const& mapping_element::destination() const noexcept {
     return destination_;
-}
-
-mapping_element& mapping_element::destination(destination_type destination) noexcept {
-    destination_ = std::move(destination);
-    return *this;
 }
 
 bool operator==(mapping_element const& a, mapping_element const& b) noexcept {

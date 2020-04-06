@@ -23,27 +23,19 @@ public:
      * @brief returns the key column of the first input relation.
      * @return the descriptor of column in the first input
      */
-    descriptor::variable const& left() const noexcept;
+    descriptor::variable& left() noexcept;
 
-    /**
-     * @brief sets a key column of the first input relation.
-     * @param left the descriptor of column in the first input
-     * @return this
-     */
-    key_pair_element& left(descriptor::variable left) noexcept;
+    /// @copydoc left()
+    descriptor::variable const& left() const noexcept;
 
     /**
      * @brief returns the key column of the second input relation.
      * @return the descriptor of column in the second input
      */
-    descriptor::variable const& right() const noexcept;
+    descriptor::variable& right() noexcept;
 
-    /**
-     * @brief sets a key column of the second input relation.
-     * @param right the descriptor of column in the second input
-     * @return this
-     */
-    key_pair_element& right(descriptor::variable right) noexcept;
+    /// @copydoc right()
+    descriptor::variable const& right() const noexcept;
 
 private:
     descriptor::variable left_;

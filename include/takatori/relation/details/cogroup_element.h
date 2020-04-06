@@ -66,14 +66,10 @@ public:
      * @brief returns the source relation, must be refer the source exchange.
      * @return the source relation
      */
-    descriptor::relation const& source() const noexcept;
+    descriptor::relation& source() noexcept;
 
-    /**
-     * @brief sets the source exchange.
-     * @param source the source exchange
-     * @return this
-     */
-    cogroup_element& source(descriptor::relation source) noexcept;
+    /// @copydoc source()
+    descriptor::relation const& source() const noexcept;
 
     /**
      * @brief returns the column mappings, from the upstream exchange to output relation.
