@@ -250,9 +250,8 @@ SQLの処理にはこのグループ表をもとにしたほうがやりやす�
       * `variable` - 外部リレーション上の列の識別子
       * `value` - 対象の列に対する値
   * その他の特性
-    * `keys.column` によって指定する列は、対象のキーと一致しなければならない
-  * 備考
-    * `keys` によって指定する列は、対象リレーションのキー全体と一致しなければならない
+    * `keys.variable` によって指定する列は、対象リレーションのキー全体と一致しなければならない
+    * `keys.value` の値に `columns.destination` で定義する列は出現できない
     * 対象のインデックスのキーに対してエントリが一意でない場合、2行以上を取り出す場合がある
 
 `scan`
@@ -276,8 +275,8 @@ SQLの処理にはこのグループ表をもとにしたほうがやりやす�
       * `lower` と同一の構造
     * `limit?` - 最大件数
   * その他の特性
-    * `keys` によって指定する列は、対象リレーションのキー全体と一致するか、またはその接頭辞でなければならない
-    * `{lower.upper}.keys.variable` によって指定する列は、対象のキーの接頭辞と一致しなければならない
+    * `{lower,upper}.keys.variable` によって指定する列は、対象リレーションのキー全体と一致するか、またはその接頭辞でなければならない
+    * `{lower,upper}.keys.value` の値に `columns.destination` で定義する列は出現できない
 
 ----
 notes:
@@ -325,7 +324,8 @@ notes:
     * `condition` - 結合条件 (等価結合条件を除く)
   * その他の特性
     * `join_kind=full_outer` は選択不可
-    * `keys.column` によって指定する列は、対象のキーと一致しなければならない
+    * `keys.variable` によって指定する列は、対象リレーションのキー全体と一致しなければならない
+    * `keys.value` の値に `columns.destination` で定義する列は出現できない
 
 `join_scan`
 ~ 入力リレーションに含まれる列の値を利用し、対象のリレーション上のエントリと結合する。
@@ -349,7 +349,8 @@ notes:
     * `condition` - 結合条件
   * その他の特性
     * `join_kind=full_outer` は選択不可
-    * `{lower,upper}.keys.column` によって指定する列は、対象のキーの接頭辞と一致しなければならない
+    * `{lower,upper}.keys.variable` によって指定する列は、対象リレーションのキー全体と一致するか、またはその接頭辞でなければならない
+    * `{lower,upper}.keys.value` の値に `columns.destination` で定義する列は出現できない
     * `join_kind={semi,anti}` の場合、 `columns.destination` の列は実際には定義されない
     * `scan` にあった `limit` はセマンティクスが複雑になるため不採用
 

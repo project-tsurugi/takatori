@@ -45,9 +45,14 @@ public:
      * @brief creates a new instance.
      * @param operator_kind the join kind
      * @param source the external source relation, which represents right build input of join operation
-     * @param columns the columns to be joined, on the source relation
-     * @param keys the join keys
-     * @param condition the extra join condition expression
+     * @param columns the columns to be joined, on the source relation.
+     *      Each `source` must be a column on the `source` relation,
+     *      and `destination` represents a new column of the resulting relation
+     * @param keys the join key pieces.
+     *      The whole keys must be equivalent to the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination` 
+     * @param condition the extra join condition expression,
+     *      can include variables declared in `columns.destination`
      * @param creator the object creator for internal elements
      */
     explicit join_find(
@@ -62,9 +67,14 @@ public:
      * @brief creates a new object.
      * @param operator_kind the join kind
      * @param source the external source relation, which represents right build input of join operation
-     * @param columns the columns to be joined, on the source relation
-     * @param keys the join keys
-     * @param condition the extra join condition expression
+     * @param columns the columns to be joined, on the source relation.
+     *      Each `source` must be a column on the `source` relation,
+     *      and `destination` represents a new column of the resulting relation
+     * @param keys the join key pieces.
+     *      The whole keys must be equivalent to the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     * @param condition the extra join condition expression,
+     *      can include variables declared in `columns.destination`
      */
     explicit join_find(
             operator_kind_type operator_kind,

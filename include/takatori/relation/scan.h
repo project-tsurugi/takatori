@@ -39,9 +39,15 @@ public:
     /**
      * @brief creates a new instance.
      * @param source the source relation
-     * @param columns the target columns to scan
-     * @param lower the lower end-point specification
-     * @param upper the upper end-point specification
+     * @param columns the target columns to scan.
+     *      Each `source` must be a column on the `source` relation,
+     *      and `destination` represents a new column of the resulting relation
+     * @param lower the lower end-point specification.
+     *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     * @param upper the upper end-point specification.
+     *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
      * @param limit the maximum number of output records
      * @param creator the object creator for internal elements
      */
@@ -56,9 +62,15 @@ public:
     /**
      * @brief creates a new instance.
      * @param source the source relation
-     * @param columns the target columns to scan
-     * @param lower the lower end-point specification
-     * @param upper the upper end-point specification
+     * @param columns the target columns to scan.
+     *      Each `source` must be a column on the `source` relation,
+     *      and `destination` represents a new column of the resulting relation
+     * @param lower the lower end-point specification.
+     *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     * @param upper the upper end-point specification.
+     *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
      * @param limit the maximum number of output records
      * @attention this may take copies of arguments
      */

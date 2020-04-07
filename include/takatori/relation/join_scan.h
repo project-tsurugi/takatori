@@ -46,10 +46,17 @@ public:
      * @brief creates a new instance.
      * @param operator_kind the join kind
      * @param source the external source relation, which represents right build input of join operation
-     * @param columns the columns to be joined, on the source relation
-     * @param lower the lower end-point specification
-     * @param upper the upper end-point specification
-     * @param condition the extra join condition expression
+     * @param columns the columns to be joined, on the source relation.
+     *      Each `source` must be a column on the `source` relation,
+     *      and `destination` represents a new column of the resulting relation
+     * @param lower the lower end-point specification.
+     *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     * @param upper the upper end-point specification.
+     *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     * @param condition the extra join condition expression,
+     *      can include variables declared in `columns.destination`
      * @param creator the object creator for internal elements
      */
     explicit join_scan(
@@ -65,10 +72,17 @@ public:
      * @brief creates a new object.
      * @param operator_kind the join kind
      * @param source the external source relation, which represents right build input of join operation
-     * @param columns the columns to be joined, on the source relation
-     * @param lower the lower end-point specification
-     * @param upper the upper end-point specification
-     * @param condition the extra join condition expression
+     * @param columns the columns to be joined, on the source relation.
+     *      Each `source` must be a column on the `source` relation,
+     *      and `destination` represents a new column of the resulting relation
+     * @param lower the lower end-point specification.
+     *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     * @param upper the upper end-point specification.
+     *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     * @param condition the extra join condition expression,
+     *      can include variables declared in `columns.destination`
      */
     explicit join_scan(
             operator_kind_type operator_kind,

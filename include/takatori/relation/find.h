@@ -37,8 +37,12 @@ public:
     /**
      * @brief creates a new instance.
      * @param source the source relation
-     * @param columns the target columns to scan
-     * @param keys the pieces of key to point to target row
+     * @param columns the target columns to scan.
+     *      Each `source` must be a column on the `source` relation,
+     *      and `destination` represents a new column of the resulting relation
+     * @param keys the pieces of key to point to target row.
+     *      The whole keys must be equivalent to the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
      * @param creator the object creator for internal elements
      */
     explicit find(
@@ -50,8 +54,12 @@ public:
     /**
      * @brief creates a new instance.
      * @param source the source relation
-     * @param columns the target columns to scan
-     * @param keys the pieces of key to point to target row
+     * @param columns the target columns to scan.
+     *      Each `source` must be a column on the `source` relation,
+     *      and `destination` represents a new column of the resulting relation
+     * @param keys the pieces of key to point to target row.
+     *      The whole keys must be equivalent to the key of the `source` relation,
+     *      and each `value` cannot include any variables declared in `columns.destination`s 
      * @attention this may take copies of arguments
      */
     explicit find(
