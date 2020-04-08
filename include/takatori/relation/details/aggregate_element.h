@@ -17,7 +17,7 @@ namespace takatori::relation::details {
 class aggregate_element {
 public:
     /// @brief the aggregate function type.
-    using function_type = descriptor::aggregate_function ;
+    using function_type = descriptor::aggregate_function;
 
     /// @brief the argument column type.
     using argument_type = descriptor::variable;
@@ -91,14 +91,10 @@ public:
      * @brief returns the destination column.
      * @return the destination column
      */
-    destination_type const& destination() const noexcept;
+    destination_type& destination() noexcept;
 
-    /**
-     * @brief sets a destination column.
-     * @param destination the destination column
-     * @return this
-     */
-    aggregate_element& destination(destination_type destination) noexcept;
+    /// @copydoc destination()
+    destination_type const& destination() const noexcept;
 
 private:
     function_type function_;

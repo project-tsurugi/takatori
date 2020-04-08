@@ -61,13 +61,12 @@ aggregate_element::function_type const& aggregate_element::function() const noex
     return function_;
 }
 
-aggregate_element::destination_type const& aggregate_element::destination() const noexcept {
+aggregate_element::destination_type& aggregate_element::destination() noexcept {
     return destination_;
 }
 
-aggregate_element& aggregate_element::destination(destination_type destination) noexcept {
-    destination_ = std::move(destination);
-    return *this;
+aggregate_element::destination_type const& aggregate_element::destination() const noexcept {
+    return destination_;
 }
 
 std::vector<aggregate_element::argument_type, util::object_allocator<aggregate_element::argument_type>>& aggregate_element::arguments() noexcept {
