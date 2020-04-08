@@ -50,6 +50,18 @@ struct downstream_enumerator {
 };
 
 /**
+ * @brief apply topological sort (from upstream to downstream) to the graph.
+ * @param g the target graph
+ * @param consumer the destination consumer
+ * @param creator the object creator for temporary working area
+ * @attention if the given graph is cyclic, the result may not be sorted correctly
+ */
+void sort_from_upstream(graph_type& g, consumer_type const& consumer, util::object_creator creator = {});
+
+/// @copydoc sort_from_upstream()
+void sort_from_upstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator = {});
+
+/**
  * @brief apply topological sort (from downstream to upstream) to the graph.
  * @param g the target graph
  * @param consumer the destination consumer

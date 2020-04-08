@@ -53,8 +53,16 @@ void downstream_enumerator::operator()(step const& s, const_consumer_type const&
     downstreams0(s, consumer);
 }
 
-void sort_from_downstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
+void sort_from_upstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
     ::takatori::graph::topological_sort<upstream_enumerator>(g, consumer, creator);
+}
+
+void sort_from_upstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
+    ::takatori::graph::topological_sort<upstream_enumerator>(g, consumer, creator);
+}
+
+void sort_from_downstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
+    ::takatori::graph::topological_sort<downstream_enumerator>(g, consumer, creator);
 }
 
 void sort_from_downstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
