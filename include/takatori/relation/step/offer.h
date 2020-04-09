@@ -48,7 +48,7 @@ public:
      */
     explicit offer(
             descriptor::relation destination,
-            std::initializer_list<column> columns);
+            std::initializer_list<column> columns = {});
 
     /**
      * @brief creates a new object.

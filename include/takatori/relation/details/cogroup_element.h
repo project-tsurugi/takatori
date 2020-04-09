@@ -43,9 +43,9 @@ public:
      *      group is empty. Or if it is not a mandatory group, co-group row will be always generated even if some
      *      groups are empty.
      */
-    cogroup_element(
+    cogroup_element( // NOLINT
             descriptor::relation source,
-            std::initializer_list<column> columns,
+            std::initializer_list<column> columns = {},
             bool mandatory = false);
 
     /**

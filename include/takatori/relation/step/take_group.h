@@ -44,7 +44,7 @@ public:
      */
     explicit take_group(
             descriptor::relation source,
-            std::initializer_list<column> columns);
+            std::initializer_list<column> columns = {});
 
     /**
      * @brief creates a new object.
