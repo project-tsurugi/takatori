@@ -277,6 +277,8 @@ SQLの処理にはこのグループ表をもとにしたほうがやりやす�
   * その他の特性
     * `{lower,upper}.keys.variable` によって指定する列は、対象リレーションのキー全体と一致するか、またはその接頭辞でなければならない
     * `{lower,upper}.keys.value` の値に `columns.destination` で定義する列は出現できない
+    * `{lower,upper}.keys.value` はいずれも対象の列が昇順に整列していることを想定している
+      * 降順になっている場合、適宜 `lower` と `upper` を読み替える必要がある
 
 ----
 notes:
@@ -351,6 +353,8 @@ notes:
     * `join_kind=full_outer` は選択不可
     * `{lower,upper}.keys.variable` によって指定する列は、対象リレーションのキー全体と一致するか、またはその接頭辞でなければならない
     * `{lower,upper}.keys.value` の値に `columns.destination` で定義する列は出現できない
+    * `{lower,upper}.keys.value` はいずれも対象の列が昇順に整列していることを想定している
+      * 降順になっている場合、適宜 `lower` と `upper` を読み替える必要がある
     * `join_kind={semi,anti}` の場合、 `columns.destination` の列は実際には定義されない
     * `scan` にあった `limit` はセマンティクスが複雑になるため不採用
 

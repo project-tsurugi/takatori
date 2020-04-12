@@ -106,11 +106,13 @@ TEST_F(scan_test, full) {
     }
     {
         auto&& b = expr.lower();
+        EXPECT_FALSE(b);
         ASSERT_EQ(b.keys().size(), 0);
         EXPECT_EQ(b.kind(), endpoint_kind::unbound);
     }
     {
         auto&& b = expr.upper();
+        EXPECT_FALSE(b);
         ASSERT_EQ(b.keys().size(), 0);
         EXPECT_EQ(b.kind(), endpoint_kind::unbound);
     }
@@ -202,6 +204,7 @@ TEST_F(scan_test, multiple) {
     }
     {
         auto&& b = expr.lower();
+        EXPECT_TRUE(b);
         ASSERT_EQ(b.keys().size(), 3);
         {
             auto&& k = b.keys()[0];
@@ -225,6 +228,7 @@ TEST_F(scan_test, multiple) {
     }
     {
         auto&& b = expr.upper();
+        EXPECT_TRUE(b);
         ASSERT_EQ(b.keys().size(), 2);
         {
             auto&& k = b.keys()[0];

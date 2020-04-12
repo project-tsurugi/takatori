@@ -5,12 +5,16 @@
 
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
+#include <takatori/util/vector_print_support.h>
 
 namespace takatori::relation::intermediate {
 
 
 join::join(
         operator_kind_type operator_kind,
+        std::vector<key_pair, util::object_allocator<key_pair>> key_pairs,
+        endpoint lower,
+        endpoint upper,
         util::unique_object_ptr<scalar::expression> condition,
         util::object_creator creator) noexcept
     : inputs_({
@@ -19,7 +23,23 @@ join::join(
     })
     , output_(*this, 0, creator)
     , operator_kind_(operator_kind)
+    , key_pairs_(std::move(key_pairs))
+    , lower_(tree::bless_element(*this, std::move(lower)))
+    , upper_(tree::bless_element(*this, std::move(upper)))
     , condition_(tree::bless_element(*this, std::move(condition)))
+{}
+
+join::join(
+        operator_kind_type operator_kind,
+        util::unique_object_ptr<scalar::expression> condition,
+        util::object_creator creator) noexcept
+    : join(
+        operator_kind,
+        decltype(key_pairs_) { creator.allocator<key_pair>() },
+        decltype(lower_) { creator },
+        decltype(upper_) { creator },
+        std::move(condition),
+        creator)
 {}
 
 join::join(
@@ -33,6 +53,9 @@ join::join(
 join::join(join const& other, util::object_creator creator)
     : join(
             other.operator_kind_,
+            { other.key_pairs_, creator.allocator<key_pair>() },
+            endpoint { other.lower_, creator },
+            endpoint { other.upper_, creator },
             tree::forward(creator, other.condition_),
             creator)
 {}
@@ -40,6 +63,9 @@ join::join(join const& other, util::object_creator creator)
 join::join(join&& other, util::object_creator creator)
     : join(
             other.operator_kind_,
+            { std::move(other.key_pairs_), creator.allocator<key_pair>() },
+            endpoint { std::move(other.lower_), creator },
+            endpoint { std::move(other.upper_), creator },
             tree::forward(creator, std::move(other.condition_)),
             creator)
 {}
@@ -105,6 +131,30 @@ join& join::operator_kind(join::operator_kind_type operator_kind) noexcept {
     return *this;
 }
 
+std::vector<join::key_pair, util::object_allocator<join::key_pair>>& join::key_pairs() noexcept {
+    return key_pairs_;
+}
+
+std::vector<join::key_pair, util::object_allocator<join::key_pair>> const& join::key_pairs() const noexcept {
+    return key_pairs_;
+}
+
+join::endpoint& join::lower() noexcept {
+    return lower_;
+}
+
+join::endpoint const& join::lower() const noexcept {
+    return lower_;
+}
+
+join::endpoint& join::upper() noexcept {
+    return upper_;
+}
+
+join::endpoint const& join::upper() const noexcept {
+    return upper_;
+}
+
 util::optional_ptr<scalar::expression> join::condition() noexcept {
     return util::optional_ptr { condition_.get() };
 }
@@ -123,6 +173,9 @@ join& join::condition(util::unique_object_ptr<scalar::expression> condition) noe
 
 bool operator==(join const& a, join const& b) noexcept {
     return a.operator_kind() == b.operator_kind()
+        && a.key_pairs() == b.key_pairs()
+        && a.lower() == b.lower()
+        && a.upper() == b.upper()
         && a.condition() == b.condition();
 }
 
@@ -133,6 +186,9 @@ bool operator!=(join const& a, join const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, join const& value) {
     return out << value.kind() << "("
                << "operator_kind=" << value.operator_kind() << ", "
+               << "key_pairs=" << util::print_support { value.key_pairs() } << ", "
+               << "lower=" << value.lower() << ", "
+               << "upper=" << value.upper() << ", "
                << "condition=" << value.condition() << ")";
 }
 

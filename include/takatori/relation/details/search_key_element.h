@@ -36,6 +36,17 @@ public:
         , value_(std::move(value))
     {}
 
+    /**
+     * @brief creates a new instance.
+     * @param value the search value for the target column
+     * @param variable the search key column on the target relation
+     */
+    explicit search_key_element(
+            util::unique_object_ptr<scalar::expression> value,
+            descriptor::variable variable) noexcept
+        : variable_(std::move(variable))
+        , value_(std::move(value))
+    {}
 
     /**
      * @brief creates a new instance.
@@ -51,6 +62,19 @@ public:
                 util::clone_unique(std::move(value)))
     {}
 
+    /**
+     * @brief creates a new instance.
+     * @param value the search value for the target column
+     * @param variable the search key column on the target relation
+     * @attention this may take a copy of arguments
+     */
+    explicit search_key_element(
+            scalar::expression&& value,
+            descriptor::variable variable) noexcept // FIXME: NOLINT(performance-unnecessary-value-param)
+        : search_key_element(
+                std::move(variable),
+                util::clone_unique(std::move(value)))
+    {}
 
     ~search_key_element() = default;
 

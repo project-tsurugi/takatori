@@ -39,6 +39,14 @@ public:
     range_endpoint() = default;
 
     /**
+     * @brief creates a new instance which represents unbound end-point.
+     * @param creator the object creator
+     */
+    explicit range_endpoint(util::object_creator creator) noexcept
+        : keys_(nullptr, creator)
+    {}
+
+    /**
      * @brief creates a new instance.
      * @param keys pieces of key to point to target row
      * @param kind the end-point kind
@@ -153,6 +161,15 @@ public:
     range_endpoint& kind(kind_type kind) noexcept {
         kind_ = kind;
         return *this;
+    }
+
+    /**
+     * @brief returns where or not this represents a valid endpoint.
+     * @return true if this is a valid endpoint
+     * @return false if this is an unbound endpoint
+     */
+    explicit operator bool() const noexcept {
+        return kind_ != kind_type::unbound;
     }
 
 private:
