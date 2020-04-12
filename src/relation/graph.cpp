@@ -69,7 +69,7 @@ graph_type release(graph_type& source, util::sequence_view<expression const*> el
 
 template<class T>
 static void upstreams0(T& expr, std::function<void(T&)> const& consumer) {
-    for (auto&& port : expr.output_ports()) {
+    for (auto&& port : expr.input_ports()) {
         if (auto opposite = port.opposite()) {
             consumer(opposite->owner());
         }
@@ -78,7 +78,7 @@ static void upstreams0(T& expr, std::function<void(T&)> const& consumer) {
 
 template<class T>
 static void downstreams0(T& expr, std::function<void(T&)> const& consumer) {
-    for (auto&& port : expr.input_ports()) {
+    for (auto&& port : expr.output_ports()) {
         if (auto opposite = port.opposite()) {
             consumer(opposite->owner());
         }
