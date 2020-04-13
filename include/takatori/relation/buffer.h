@@ -44,12 +44,12 @@ public:
      */
     explicit buffer(buffer&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
     util::sequence_view<input_port_type> input_ports() noexcept override;
-    util::sequence_view<input_port_type const> input_ports() const noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     util::sequence_view<output_port_type> output_ports() noexcept override;
-    util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    buffer* clone(util::object_creator creator) const& override;
+    [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
+    [[nodiscard]] buffer* clone(util::object_creator creator) const& override;
     buffer* clone(util::object_creator creator) && override;
 
     /**
@@ -59,13 +59,13 @@ public:
     input_port_type& input() noexcept;
 
     /// @copydoc input()
-    input_port_type const& input() const noexcept;
+    [[nodiscard]] input_port_type const& input() const noexcept;
 
     /**
      * @brief returns the number of output targets in this buffer.
      * @return the number of output targets
      */
-    size_type size() const noexcept;
+    [[nodiscard]] size_type size() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -96,7 +96,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, buffer const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

@@ -106,12 +106,12 @@ public:
      */
     explicit group(group&& other, util::object_creator creator);
 
-    step_kind kind() const noexcept override;
-    group* clone(util::object_creator creator) const& override;
+    [[nodiscard]] step_kind kind() const noexcept override;
+    [[nodiscard]] group* clone(util::object_creator creator) const& override;
     group* clone(util::object_creator creator) && override;
 
-    util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
-    util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
 
     /**
      * @brief returns the columns to exchange.
@@ -120,7 +120,7 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
 
     /// @copydoc columns()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
 
     /**
      * @brief returns the group key columns.
@@ -130,7 +130,7 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
     /// @copydoc group_keys()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
 
     /**
      * @brief returns the sort key elements.
@@ -141,13 +141,13 @@ public:
     std::vector<sort_key, util::object_allocator<sort_key>>& sort_keys() noexcept;
 
     /// @copydoc sort_keys()
-    std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;
+    [[nodiscard]] std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;
 
     /**
      * @brief returns group mode of this exchange operation.
      * @return the group mode
      */
-    mode_type mode() const noexcept;
+    [[nodiscard]] mode_type mode() const noexcept;
 
     /**
      * @brief sets the group mode.
@@ -164,7 +164,7 @@ public:
      * @return the number of exchange rows in each group
      * @return empty if it is unlimited
      */
-    std::optional<size_type> const& limit() const noexcept;
+    [[nodiscard]] std::optional<size_type> const& limit() const noexcept;
 
     /**
      * @brief sets the max number of exchange rows in each group.
@@ -205,7 +205,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, group const& value);
 
 protected:
-    bool equals(step const& other) const noexcept override;
+    [[nodiscard]] bool equals(step const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

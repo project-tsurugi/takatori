@@ -92,13 +92,12 @@ scan::output_port_type const& scan::output() const noexcept {
     return output_;
 }
 
-descriptor::relation const& scan::source() const noexcept {
+descriptor::relation& scan::source() noexcept {
     return source_;
 }
 
-scan& scan::source(descriptor::relation source) noexcept {
-    source_ = std::move(source);
-    return *this;
+descriptor::relation const& scan::source() const noexcept {
+    return source_;
 }
 
 std::vector<scan::column, util::object_allocator<scan::column>>& scan::columns() noexcept {

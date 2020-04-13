@@ -21,7 +21,7 @@ public:
 
     void parent_element(node<T>* parent_element) noexcept { parent_ = parent_element; }
     node<T>* parent_element() noexcept override { return parent_; }
-    node<T> const* parent_element() const noexcept { return parent_; }
+    node<T> const* parent_element() const noexcept override { return parent_; }
 
     template<template<class> class Child>
     Child<T>& cast() { return dynamic_cast<Child<T>&>(*this); }

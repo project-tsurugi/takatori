@@ -80,6 +80,10 @@ unary& unary::operand(util::unique_object_ptr<expression> operand) noexcept {
     return tree::assign_element(*this, operand_, std::move(operand));
 }
 
+util::object_ownership_reference<expression> unary::ownership_operand() {
+    return tree::ownership_element(*this, operand_);
+}
+
 bool operator==(unary const& a, unary const& b) noexcept {
     return a.operator_kind() == b.operator_kind()
         && a.optional_operand() == b.optional_operand();

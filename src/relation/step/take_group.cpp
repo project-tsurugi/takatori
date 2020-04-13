@@ -75,6 +75,10 @@ take_group::output_port_type const& take_group::output() const noexcept {
     return output_;
 }
 
+descriptor::relation& take_group::source() noexcept {
+    return source_;
+}
+
 descriptor::relation const& take_group::source() const noexcept {
     return source_;
 }

@@ -30,13 +30,13 @@ public:
     descriptor::variable& variable() noexcept;
 
     /// @copydoc variable()
-    descriptor::variable const& variable() const noexcept;
+    [[nodiscard]] descriptor::variable const& variable() const noexcept;
 
     /**
      * @brief returns the sort direction of this key element.
      * @return the sort direction
      */
-    sort_direction const& direction() const noexcept;
+    [[nodiscard]] sort_direction const& direction() const noexcept;
 
     /**
      * @brief sets a sort direction of this key element.

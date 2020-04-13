@@ -55,8 +55,8 @@ public:
      */
     explicit coalesce(coalesce&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
-    coalesce* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] coalesce* clone(util::object_creator creator) const& override;
     coalesce* clone(util::object_creator creator) && override;
 
     /**
@@ -66,7 +66,7 @@ public:
     tree::tree_element_vector<expression>& alternatives() noexcept;
 
     /// @copydoc alternatives()
-    tree::tree_element_vector<expression> const& alternatives() const noexcept;
+    [[nodiscard]] tree::tree_element_vector<expression> const& alternatives() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -95,7 +95,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, coalesce const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

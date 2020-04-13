@@ -31,15 +31,15 @@ public:
     declared(declared&& other) noexcept = delete;
     declared& operator=(declared&& other) noexcept = delete;
 
-    type_kind kind() const noexcept override;
-    declared* clone(util::object_creator creator) const& override;
+    [[nodiscard]] type_kind kind() const noexcept override;
+    [[nodiscard]] declared* clone(util::object_creator creator) const& override;
     declared* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the type information of this declared type.
      * @return the type information
      */
-    descriptor::declared_type const& binding() const noexcept;
+    [[nodiscard]] descriptor::declared_type const& binding() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -68,8 +68,8 @@ public:
     friend std::ostream& operator<<(std::ostream& out, declared const& value);
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
+    [[nodiscard]] bool equals(data const& other) const noexcept override;
+    [[nodiscard]] std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

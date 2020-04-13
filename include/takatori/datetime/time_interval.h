@@ -56,7 +56,7 @@ public:
      * @brief returns the time offset.
      * @return the time offset
      */
-    constexpr time_unit offset() const noexcept {
+    [[nodiscard]] constexpr time_unit offset() const noexcept {
         return offset_;
     }
 
@@ -64,7 +64,7 @@ public:
      * @brief returns the interval of days.
      * @return interval of days
      */
-    constexpr std::int32_t day() const noexcept {
+    [[nodiscard]] constexpr std::int32_t day() const noexcept {
         using unit = std::chrono::duration<std::int64_t, std::ratio<86'400>>;
         return static_cast<std::int32_t>(std::chrono::duration_cast<unit>(offset_).count());
     }
@@ -73,7 +73,7 @@ public:
      * @brief returns the interval of hours in day - (-24, +24).
      * @return interval of hours in day
      */
-    constexpr std::int32_t hour() const noexcept {
+    [[nodiscard]] constexpr std::int32_t hour() const noexcept {
         using unit = std::chrono::duration<std::int64_t, std::chrono::hours::period>;
         return static_cast<std::int32_t>(std::chrono::duration_cast<unit>(offset_).count() % 24);
     }
@@ -82,7 +82,7 @@ public:
      * @brief returns the interval of minutes in hour - (-60, +60).
      * @return interval of minutes in hour
      */
-    constexpr std::int32_t minute() const noexcept {
+    [[nodiscard]] constexpr std::int32_t minute() const noexcept {
         using unit = std::chrono::duration<std::int64_t, std::chrono::minutes::period>;
         return static_cast<std::int32_t>(std::chrono::duration_cast<unit>(offset_).count() % 60);
     }
@@ -91,7 +91,7 @@ public:
      * @brief returns the interval of seconds in minute - (-60, +60).
      * @return interval of seconds in minute
      */
-    constexpr std::int32_t second() const noexcept {
+    [[nodiscard]] constexpr std::int32_t second() const noexcept {
         using unit = std::chrono::duration<std::int64_t, std::chrono::seconds::period>;
         return static_cast<std::int32_t>(std::chrono::duration_cast<unit>(offset_).count() % 60);
     }
@@ -100,7 +100,7 @@ public:
      * @brief returns the interval of sub-second in second (-1, +1).
      * @return interval of sub-second value
      */
-    constexpr subsecond_unit subsecond() const noexcept {
+    [[nodiscard]] constexpr subsecond_unit subsecond() const noexcept {
         using unit = time_interval::subsecond_unit;
         return unit { offset_.count() % static_cast<unit::rep>(std::nano::den) };
     }

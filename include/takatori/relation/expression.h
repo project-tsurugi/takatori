@@ -42,7 +42,7 @@ public:
      * @return true if this vertex does not have the owner graph
      * @return false otherwise
      */
-    bool is_orphan() const noexcept;
+    [[nodiscard]] bool is_orphan() const noexcept;
 
     /**
      * @brief returns the graph which owns this vertex.
@@ -54,7 +54,7 @@ public:
     graph_type& owner();
 
     /// @copydoc owner
-    graph_type const& owner() const;
+    [[nodiscard]] graph_type const& owner() const;
 
     /**
      * @brief returns the graph which owns this expression.
@@ -64,13 +64,13 @@ public:
     util::optional_ptr<graph_type> optional_owner() noexcept;
 
     /// @copydoc optional_owner()
-    util::optional_ptr<graph_type const> optional_owner() const noexcept;
+    [[nodiscard]] util::optional_ptr<graph_type const> optional_owner() const noexcept;
 
     /**
      * @brief returns the kind of this expression.
      * @return the expression kind
      */
-    virtual expression_kind kind() const noexcept = 0;
+    [[nodiscard]] virtual expression_kind kind() const noexcept = 0;
 
     /**
      * @brief returns list of input ports.
@@ -79,7 +79,7 @@ public:
     virtual util::sequence_view<input_port_type> input_ports() noexcept = 0;
 
     /// @copydoc input_ports()
-    virtual util::sequence_view<input_port_type const> input_ports() const noexcept = 0;
+    [[nodiscard]] virtual util::sequence_view<input_port_type const> input_ports() const noexcept = 0;
 
     /**
      * @brief returns list of output ports.
@@ -88,7 +88,7 @@ public:
     virtual util::sequence_view<output_port_type> output_ports() noexcept = 0;
 
     /// @copydoc output_ports()
-    virtual util::sequence_view<output_port_type const> output_ports() const noexcept = 0;
+    [[nodiscard]] virtual util::sequence_view<output_port_type const> output_ports() const noexcept = 0;
 
     /**
      * @brief returns a clone of this object.
@@ -98,7 +98,7 @@ public:
      * @param creator the object creator
      * @return the created clone
      */
-    virtual expression* clone(util::object_creator creator) const& = 0;
+    [[nodiscard]] virtual expression* clone(util::object_creator creator) const& = 0;
 
     /// @copydoc clone()
     virtual expression* clone(util::object_creator creator) && = 0;
@@ -110,7 +110,7 @@ public:
     document::region& region() noexcept;
 
     /// @copydoc region()
-    document::region const& region() const noexcept;
+    [[nodiscard]] document::region const& region() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -164,7 +164,7 @@ protected:
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    virtual bool equals(expression const& other) const noexcept = 0;
+    [[nodiscard]] virtual bool equals(expression const& other) const noexcept = 0;
 
     /**
      * @brief appends string representation of this object into the given output.

@@ -69,12 +69,12 @@ public:
      */
     explicit limit(limit&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
     util::sequence_view<input_port_type> input_ports() noexcept override;
-    util::sequence_view<input_port_type const> input_ports() const noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     util::sequence_view<output_port_type> output_ports() noexcept override;
-    util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    limit* clone(util::object_creator creator) const& override;
+    [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
+    [[nodiscard]] limit* clone(util::object_creator creator) const& override;
     limit* clone(util::object_creator creator) && override;
 
     /**
@@ -84,7 +84,7 @@ public:
     input_port_type& input() noexcept;
 
     /// @copydoc input()
-    input_port_type const& input() const noexcept;
+    [[nodiscard]] input_port_type const& input() const noexcept;
 
     /**
      * @brief returns the output port.
@@ -93,14 +93,14 @@ public:
     output_port_type& output() noexcept;
 
     /// @copydoc output()
-    output_port_type const& output() const noexcept;
+    [[nodiscard]] output_port_type const& output() const noexcept;
 
     /**
      * @brief returns the maximum number of rows for each group.
      * @return the limit size
      * @return empty if it is unlimited
      */
-    std::optional<size_type> const& count() const noexcept;
+    [[nodiscard]] std::optional<size_type> const& count() const noexcept;
 
     /**
      * @brief sets the maximum number of rows for each group.
@@ -116,7 +116,7 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
     /// @copydoc group_keys()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
 
     /**
      * @brief returns the sort key.
@@ -125,7 +125,7 @@ public:
     std::vector<sort_key, util::object_allocator<sort_key>>& sort_keys() noexcept;
 
     /// @brief sort_keys()
-    std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;
+    [[nodiscard]] std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -156,7 +156,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, limit const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

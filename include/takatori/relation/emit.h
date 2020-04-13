@@ -53,12 +53,12 @@ public:
      */
     explicit emit(emit&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
     util::sequence_view<input_port_type> input_ports() noexcept override;
-    util::sequence_view<input_port_type const> input_ports() const noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     util::sequence_view<output_port_type> output_ports() noexcept override;
-    util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    emit* clone(util::object_creator creator) const& override;
+    [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
+    [[nodiscard]] emit* clone(util::object_creator creator) const& override;
     emit* clone(util::object_creator creator) && override;
 
     /**
@@ -68,7 +68,7 @@ public:
     input_port_type& input() noexcept;
 
     /// @copydoc input()
-    input_port_type const& input() const noexcept;
+    [[nodiscard]] input_port_type const& input() const noexcept;
 
     /**
      * @brief returns emit target columns in the input relation.
@@ -77,7 +77,7 @@ public:
     std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
-    std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -108,7 +108,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, emit const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

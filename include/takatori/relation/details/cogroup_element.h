@@ -69,7 +69,7 @@ public:
     descriptor::relation& source() noexcept;
 
     /// @copydoc source()
-    descriptor::relation const& source() const noexcept;
+    [[nodiscard]] descriptor::relation const& source() const noexcept;
 
     /**
      * @brief returns the column mappings, from the upstream exchange to output relation.
@@ -78,7 +78,7 @@ public:
     std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
-    std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not this group is mandatory.
@@ -86,7 +86,7 @@ public:
      * @return true this group is mandatory - if there are no rows for some keys in this source, the co-group operation does not emit rows for such the keys
      * @return false this group is optional - the co-group operation emits rows even if there are no rows for some keys in this source
      */
-    bool mandatory() const noexcept;
+    [[nodiscard]] bool mandatory() const noexcept;
 
     /**
      * @brief sets whether or not this group is mandatory.

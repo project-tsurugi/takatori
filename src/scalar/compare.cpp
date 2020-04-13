@@ -86,6 +86,10 @@ compare& compare::left(util::unique_object_ptr<expression> left) noexcept {
     return tree::assign_element(*this, left_, std::move(left));
 }
 
+util::object_ownership_reference<expression> compare::ownership_left() {
+    return tree::ownership_element(*this, left_);
+}
+
 expression& compare::right() noexcept {
     return *right_;
 }
@@ -108,6 +112,10 @@ util::unique_object_ptr<expression> compare::release_right() noexcept {
 
 compare& compare::right(util::unique_object_ptr<expression> right) noexcept {
     return tree::assign_element(*this, right_, std::move(right));
+}
+
+util::object_ownership_reference<expression> compare::ownership_right() {
+    return tree::ownership_element(*this, right_);
 }
 
 bool operator==(compare const& a, compare const& b) noexcept {

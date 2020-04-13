@@ -32,7 +32,7 @@ public:
     source_type& source() noexcept;
 
     /// @copydoc source()
-    source_type const& source() const noexcept;
+    [[nodiscard]] source_type const& source() const noexcept;
 
     /**
      * @brief returns the descriptor of destination column.
@@ -41,7 +41,7 @@ public:
     destination_type& destination() noexcept;
 
     /// @copydoc destination()
-    destination_type const& destination() const noexcept;
+    [[nodiscard]] destination_type const& destination() const noexcept;
 
 private:
     source_type source_;

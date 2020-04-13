@@ -7,6 +7,7 @@
 
 #include <takatori/util/meta_type.h>
 #include <takatori/util/object_creator.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::relation {
 
@@ -48,12 +49,12 @@ public:
      */
     explicit filter(filter&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
     util::sequence_view<input_port_type> input_ports() noexcept override;
-    util::sequence_view<input_port_type const> input_ports() const noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     util::sequence_view<output_port_type> output_ports() noexcept override;
-    util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    filter* clone(util::object_creator creator) const& override;
+    [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
+    [[nodiscard]] filter* clone(util::object_creator creator) const& override;
     filter* clone(util::object_creator creator) && override;
 
     /**
@@ -63,7 +64,7 @@ public:
     input_port_type& input() noexcept;
 
     /// @copydoc input()
-    input_port_type const& input() const noexcept;
+    [[nodiscard]] input_port_type const& input() const noexcept;
 
     /**
      * @brief returns the output port.
@@ -72,7 +73,7 @@ public:
     output_port_type& output() noexcept;
 
     /// @copydoc output()
-    output_port_type const& output() const noexcept;
+    [[nodiscard]] output_port_type const& output() const noexcept;
 
     /**
      * @brief returns the condition expression.
@@ -86,7 +87,7 @@ public:
      * @return the condition expression
      * @warning undefined behavior if the expression is absent
      */
-    scalar::expression const& condition() const noexcept;
+    [[nodiscard]] scalar::expression const& condition() const noexcept;
 
     /**
      * @brief returns the condition expression.
@@ -96,7 +97,7 @@ public:
     util::optional_ptr<scalar::expression> optional_condition() noexcept;
 
     /// @copydoc optional_condition()
-    util::optional_ptr<scalar::expression const> optional_condition() const noexcept;
+    [[nodiscard]] util::optional_ptr<scalar::expression const> optional_condition() const noexcept;
 
     /**
      * @brief releases the condition expression.
@@ -111,6 +112,12 @@ public:
      * @return this
      */
     filter& condition(util::unique_object_ptr<scalar::expression> condition) noexcept;
+
+    /**
+     * @brief returns the ownership of the condition expression.
+     * @return the condition expression
+     */
+    util::object_ownership_reference<scalar::expression> ownership_condition();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -141,7 +148,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, filter const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

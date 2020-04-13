@@ -878,6 +878,20 @@ TEST_F(reference_vector_test, release_back) {
     EXPECT_EQ(e->get(), "C");
 }
 
+TEST_F(reference_vector_test, ownership) {
+    reference_vector<Base> v {
+            Sub { "A" },
+            Sub { "B" },
+            Sub { "C" },
+    };
+    auto o = v.ownership(v.begin() + 1);
+
+    EXPECT_EQ(o->get(), "B");
+
+    o = v.get_object_creator().create_unique<Sub>("X");
+    EXPECT_EQ(v[1].get(), "X");
+}
+
 TEST_F(reference_vector_test, begin_end) {
     reference_vector v { 1, 2, 3 };
     auto iter = v.begin();

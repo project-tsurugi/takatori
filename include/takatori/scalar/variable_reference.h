@@ -42,8 +42,8 @@ public:
      */
     explicit variable_reference(variable_reference&& other, util::object_creator creator) noexcept;
 
-    expression_kind kind() const noexcept override;
-    variable_reference* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] variable_reference* clone(util::object_creator creator) const& override;
     variable_reference* clone(util::object_creator creator) && override;
 
     /**
@@ -53,7 +53,7 @@ public:
     descriptor::variable& variable() noexcept;
 
     /// @copydoc variable()
-    descriptor::variable const& variable() const noexcept;
+    [[nodiscard]] descriptor::variable const& variable() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -82,7 +82,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, variable_reference const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

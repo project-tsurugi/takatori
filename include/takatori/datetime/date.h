@@ -46,7 +46,7 @@ public:
      * @brief returns the elapsed days since 1900-01-01.
      * @return the the elapsed days
      */
-    constexpr size_type days_since_epoch() const noexcept {
+    [[nodiscard]] constexpr size_type days_since_epoch() const noexcept {
         return elapsed_;
     }
 
@@ -54,19 +54,19 @@ public:
      * @brief returns the year (1900-).
      * @return the year
      */
-    size_type year() const noexcept;
+    [[nodiscard]] size_type year() const noexcept;
 
     /**
      * @brief returns the month number (1-12) of the year.
      * @return the month number
      */
-    size_type month() const noexcept;
+    [[nodiscard]] size_type month() const noexcept;
 
     /**
      * @brief returns the day of the month.
      * @return the day of month
      */
-    size_type day() const noexcept;
+    [[nodiscard]] size_type day() const noexcept;
 
     /**
      * @brief adds offset into this date.

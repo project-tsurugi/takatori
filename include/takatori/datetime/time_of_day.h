@@ -59,7 +59,7 @@ public:
      * @brief returns the elapsed time since 00:00:00 of day.
      * @return the the elapsed time since 00:00:00
      */
-    constexpr time_unit time_since_epoch() const noexcept {
+    [[nodiscard]] constexpr time_unit time_since_epoch() const noexcept {
         return elapsed_;
     }
 
@@ -67,7 +67,7 @@ public:
      * @brief returns the hour of day (0-23)
      * @return the hour of day
      */
-    constexpr std::uint32_t hour() const noexcept {
+    [[nodiscard]] constexpr std::uint32_t hour() const noexcept {
         using unit = std::chrono::duration<std::uint64_t, std::chrono::hours::period>;
         return static_cast<std::uint32_t>(std::chrono::duration_cast<unit>(elapsed_).count());
     }
@@ -76,7 +76,7 @@ public:
      * @brief returns the minute of hour (0-59)
      * @return the minute of hour
      */
-    constexpr std::uint32_t minute() const noexcept {
+    [[nodiscard]] constexpr std::uint32_t minute() const noexcept {
         using unit = std::chrono::duration<std::uint64_t, std::chrono::minutes::period>;
         return static_cast<std::uint32_t>(std::chrono::duration_cast<unit>(elapsed_).count() % 60);
     }
@@ -85,7 +85,7 @@ public:
      * @brief returns the second of minute (0-59)
      * @return the second of hour
      */
-    constexpr std::uint32_t second() const noexcept {
+    [[nodiscard]] constexpr std::uint32_t second() const noexcept {
         using unit = std::chrono::duration<std::uint64_t, std::chrono::seconds::period>;
         return static_cast<std::uint32_t>(std::chrono::duration_cast<unit>(elapsed_).count() % 60);
     }
@@ -94,7 +94,7 @@ public:
      * @brief returns the sub-second value.
      * @return the sub-second value
      */
-    constexpr subsecond_unit subsecond() const noexcept {
+    [[nodiscard]] constexpr subsecond_unit subsecond() const noexcept {
         using unit = subsecond_unit;
         return unit { elapsed_.count() % static_cast<unit::rep>(std::nano::den) };
     }

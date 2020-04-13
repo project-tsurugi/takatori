@@ -9,6 +9,7 @@
 
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
 
@@ -87,7 +88,7 @@ public:
     parent_type* parent_element() noexcept;
 
     /// @copydoc parent_element()
-    parent_type const* parent_element() const noexcept;
+    [[nodiscard]] parent_type const* parent_element() const noexcept;
 
     /**
      * @brief sets the owner of this fragment.
@@ -102,7 +103,7 @@ public:
     expression& condition() noexcept;
     
     /// @copydoc condition
-    expression const& condition() const noexcept;
+    [[nodiscard]] expression const& condition() const noexcept;
 
     /**
      * @brief returns the condition expression.
@@ -112,7 +113,7 @@ public:
     util::optional_ptr<expression> optional_condition() noexcept;
     
     /// @copydoc optional_condition()
-    util::optional_ptr<expression const> optional_condition() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_condition() const noexcept;
     
     /**
      * @brief sets the condition expression.
@@ -128,13 +129,19 @@ public:
     util::unique_object_ptr<expression> release_condition() noexcept;
 
     /**
+     * @brief returns ownership reference of the condition expression.
+     * @return the condition expression
+     */
+    util::object_ownership_reference<expression> ownership_condition();
+
+    /**
      * @brief returns the body expression.
      * @return the body expression
      */
     expression& body() noexcept;
 
     /// @copydoc body
-    expression const& body() const noexcept;
+    [[nodiscard]] expression const& body() const noexcept;
 
     /**
      * @brief returns the body expression.
@@ -144,7 +151,7 @@ public:
     util::optional_ptr<expression> optional_body() noexcept;
 
     /// @copydoc optional_body()
-    util::optional_ptr<expression const> optional_body() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_body() const noexcept;
 
     /**
      * @brief sets the body expression.

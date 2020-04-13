@@ -11,6 +11,7 @@
 #include "clonable.h"
 #include "copier.h"
 #include "object_creator.h"
+#include "ownership_reference.h"
 #include "reference_iterator.h"
 
 namespace takatori::util {
@@ -83,7 +84,7 @@ struct reference_vector_storage<T, C, true> : reference_vector_storage_base<T> {
     using reference_vector_storage_base<T>::creator_;
     using reference_vector_storage_base<T>::elements_;
 
-    reference_vector_entity<T> copy_elements() const {
+    [[nodiscard]] reference_vector_entity<T> copy_elements() const {
         reference_vector_entity<T> result { creator_.template allocator<T*>() };
         result.reserve(elements_.size());
         try {
@@ -257,12 +258,12 @@ public:
      * @return the element on the position
      * @throws std::out_of_bound if the position is out of bound
      */
-    reference at(size_type position) {
+    [[nodiscard]] reference at(size_type position) {
         return *storage_.elements_.at(position);
     }
 
     /// @copydoc at()
-    const_reference at(size_type position) const {
+    [[nodiscard]] const_reference at(size_type position) const {
         return *storage_.elements_.at(position);
     }
 
@@ -272,12 +273,12 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    reference operator[](size_type position) {
+    [[nodiscard]] reference operator[](size_type position) {
         return *storage_.elements_[position];
     }
 
     /// @copydoc operator[]()
-    const_reference operator[](size_type position) const {
+    [[nodiscard]] const_reference operator[](size_type position) const {
         return *storage_.elements_[position];
     }
 
@@ -286,12 +287,12 @@ public:
      * @return reference of the first element
      * @warning undefined behavior if this is empty
      */
-    reference front() {
+    [[nodiscard]] reference front() {
         return *storage_.elements_.front();
     }
 
     /// @copydoc front()
-    const_reference front() const {
+    [[nodiscard]] const_reference front() const {
         return *storage_.elements_.front();
     }
 
@@ -300,12 +301,12 @@ public:
      * @return reference of the last element
      * @warning undefined behavior if this is empty
      */
-    reference back() {
+    [[nodiscard]] reference back() {
         return *storage_.elements_.back();
     }
 
     /// @copydoc back()
-    const_reference back() const {
+    [[nodiscard]] const_reference back() const {
         return *storage_.elements_.back();
     }
 
@@ -314,7 +315,7 @@ public:
      * @return true if this is empty
      * @return false otherwise
      */
-    bool empty() const noexcept {
+    [[nodiscard]] bool empty() const noexcept {
         return storage_.elements_.empty();
     }
 
@@ -322,7 +323,7 @@ public:
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    size_type size() const noexcept {
+    [[nodiscard]] size_type size() const noexcept {
         return storage_.elements_.size();
     }
 
@@ -330,7 +331,7 @@ public:
      * @brief returns the capacity size of this.
      * @return the max number of elements to store without expanding this container
      */
-    size_type capacity() const noexcept {
+    [[nodiscard]] size_type capacity() const noexcept {
         return storage_.elements_.capacity();
     }
 
@@ -677,20 +678,40 @@ public:
     }
 
     /**
+     * @brief returns ownership reference of the element on the given position.
+     * @details If the entry was modified via the returned ownership, it behaves like as if
+     *      put(const_iterator, std::unique_ptr<U, D>) was called.
+     * @attention the ownership reference will be invalidated after some elements are added or removed.
+     * @param position the target position
+     * @return the element on the given position
+     */
+    [[nodiscard]] object_ownership_reference<value_type> ownership(const_iterator position) {
+        using ownership_ref = object_ownership_reference<value_type>;
+        return ownership_ref {
+                [position, this]() -> typename ownership_ref::pointer {
+                    return std::addressof(at(static_cast<size_type>(position - cbegin())));
+                },
+                [position, this](typename ownership_ref::unique_pointer replacement) -> void {
+                    put(position, std::move(replacement));
+                }
+        };
+    }
+
+    /**
      * @brief returns a forward iterator which points the beginning of this container.
      * @return the iterator of beginning (inclusive)
      */
-    iterator begin() noexcept {
+    [[nodiscard]] iterator begin() noexcept {
         return iterator(storage_.elements_.data());
     }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept {
+    [[nodiscard]] const_iterator begin() const noexcept {
         return cbegin();
     }
 
     /// @copydoc begin()
-    const_iterator cbegin() const noexcept {
+    [[nodiscard]] const_iterator cbegin() const noexcept {
         return const_iterator(storage_.elements_.data());
     }
 
@@ -698,17 +719,17 @@ public:
      * @brief returns a forward iterator which points the ending of this container.
      * @return the iterator of ending (exclusive)
      */
-    iterator end() noexcept {
+    [[nodiscard]] iterator end() noexcept {
         return begin() + storage_.elements_.size();
     }
 
     /// @copydoc end()
-    const_iterator end() const noexcept {
+    [[nodiscard]] const_iterator end() const noexcept {
         return cend();
     }
 
     /// @copydoc end()
-    const_iterator cend() const noexcept {
+    [[nodiscard]] const_iterator cend() const noexcept {
         return cbegin() + storage_.elements_.size();
     }
 
@@ -716,17 +737,17 @@ public:
      * @brief returns a backward iterator which points the reversed beginning of this container.
      * @return the reversed iterator of beginning (inclusive)
      */
-    reverse_iterator rbegin() noexcept {
+    [[nodiscard]] reverse_iterator rbegin() noexcept {
         return reverse_iterator(end());
     }
 
     /// @copydoc rbegin()
-    const_reverse_iterator rbegin() const noexcept {
+    [[nodiscard]] const_reverse_iterator rbegin() const noexcept {
         return crbegin();
     }
 
     /// @copydoc rbegin()
-    const_reverse_iterator crbegin() const noexcept {
+    [[nodiscard]] const_reverse_iterator crbegin() const noexcept {
         return const_reverse_iterator(cend());
     }
 
@@ -734,17 +755,17 @@ public:
      * @brief returns a backward iterator which points the reversed ending of this container.
      * @return the reversed iterator of ending (exclusive)
      */
-    reverse_iterator rend() noexcept {
+    [[nodiscard]] reverse_iterator rend() noexcept {
         return reverse_iterator(begin());
     }
 
     /// @copydoc rend()
-    const_reverse_iterator rend() const noexcept {
+    [[nodiscard]] const_reverse_iterator rend() const noexcept {
         return crend();
     }
 
     /// @copydoc rend()
-    const_reverse_iterator crend() const noexcept {
+    [[nodiscard]] const_reverse_iterator crend() const noexcept {
         return const_reverse_iterator(cbegin());
     }
 
@@ -875,7 +896,7 @@ public:
      * @brief returns the object creator to create/delete objects in this container.
      * @return the object creator for this container
      */
-    object_creator get_object_creator() const noexcept {
+    [[nodiscard]] object_creator get_object_creator() const noexcept {
         return storage_.creator_;
     }
 
@@ -894,23 +915,23 @@ private:
         return begin() + offset;
     }
 
-    const_iterator from_internal(typename decltype(storage_.elements_)::const_iterator iter) const noexcept {
+    [[nodiscard]] const_iterator from_internal(typename decltype(storage_.elements_)::const_iterator iter) const noexcept {
         auto offset = iter - storage_.elements_.cbegin();
         return begin() + offset;
     }
 
-    pointer copy_element(const_reference element) {
+    [[nodiscard]] pointer copy_element(const_reference element) {
         static_assert(copier_type::is_available, "copying objects is not supported");
         return copier_type::copy(storage_.creator_, element);
     }
 
-    pointer copy_element(rvalue_reference element) {
+    [[nodiscard]] pointer copy_element(rvalue_reference element) {
         static_assert(copier_type::is_available, "copying objects is not supported");
         return copier_type::copy(storage_.creator_, std::move(element));
     }
 
     template<class U, class D>
-    pointer forward_element(std::unique_ptr<U, D>&& element) {
+    [[nodiscard]] pointer forward_element(std::unique_ptr<U, D>&& element) {
         if (!element) {
             throw std::invalid_argument("element must not be null");
         }
@@ -924,7 +945,7 @@ private:
     }
 
     template<class U, class... Args>
-    pointer create_element(Args&&... args) {
+    [[nodiscard]] pointer create_element(Args&&... args) {
         return storage_.creator_.template create_object<U>(std::forward<Args>(args)...);
     }
 

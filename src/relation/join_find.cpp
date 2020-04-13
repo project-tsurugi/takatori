@@ -112,13 +112,12 @@ join_find& join_find::operator_kind(join_find::operator_kind_type operator_kind)
     return *this;
 }
 
-descriptor::relation const& join_find::source() const noexcept {
+descriptor::relation& join_find::source() noexcept {
     return source_;
 }
 
-join_find& join_find::source(descriptor::relation source) noexcept {
-    source_ = std::move(source);
-    return *this;
+descriptor::relation const& join_find::source() const noexcept {
+    return source_;
 }
 
 std::vector<join_find::column, util::object_allocator<join_find::column>>& join_find::columns() noexcept {
@@ -151,6 +150,10 @@ util::unique_object_ptr<scalar::expression> join_find::release_condition() noexc
 
 join_find& join_find::condition(util::unique_object_ptr<scalar::expression> condition) noexcept {
     return tree::assign_element(*this, condition_, std::move(condition));
+}
+
+util::object_ownership_reference<scalar::expression> join_find::ownership_condition() noexcept {
+    return tree::ownership_element(*this, condition_);
 }
 
 bool operator==(join_find const& a, join_find const& b) noexcept {

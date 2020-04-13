@@ -65,12 +65,12 @@ public:
      */
     explicit broadcast(broadcast&& other, util::object_creator creator);
 
-    step_kind kind() const noexcept override;
-    broadcast* clone(util::object_creator creator) const& override;
+    [[nodiscard]] step_kind kind() const noexcept override;
+    [[nodiscard]] broadcast* clone(util::object_creator creator) const& override;
     broadcast* clone(util::object_creator creator) && override;
 
-    util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
-    util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
 
     /**
      * @brief returns the columns to exchange.
@@ -79,7 +79,7 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
 
     /// @copydoc columns()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -112,7 +112,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, broadcast const& value);
 
 protected:
-    bool equals(step const& other) const noexcept override;
+    [[nodiscard]] bool equals(step const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

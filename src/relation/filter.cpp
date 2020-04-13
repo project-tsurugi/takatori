@@ -100,6 +100,10 @@ filter& filter::condition(util::unique_object_ptr<scalar::expression> condition)
     return tree::assign_element(*this, condition_, std::move(condition));
 }
 
+util::object_ownership_reference<scalar::expression> filter::ownership_condition() {
+    return tree::ownership_element(*this, condition_);
+}
+
 bool operator==(filter const& a, filter const& b) noexcept {
     return a.optional_condition() == b.optional_condition();
 }

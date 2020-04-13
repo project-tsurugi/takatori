@@ -22,7 +22,7 @@ class process;
  */
 class exchange : public step {
 public:
-    step_kind kind() const noexcept override = 0;
+    [[nodiscard]] step_kind kind() const noexcept override = 0;
 
     ~exchange() override;
     exchange(exchange const& other) = delete;
@@ -30,7 +30,7 @@ public:
     exchange(exchange&& other) noexcept = delete;
     exchange& operator=(exchange&& other) noexcept = delete;
 
-    exchange* clone(util::object_creator creator) const& override = 0;
+    [[nodiscard]] exchange* clone(util::object_creator creator) const& override = 0;
     exchange* clone(util::object_creator creator) && override = 0;
 
     /**
@@ -38,14 +38,14 @@ public:
      * @return the input columns
      * @note these columns also may appear in output_columns()
      */
-    virtual util::sequence_view<descriptor::variable const> input_columns() const noexcept = 0;
+    [[nodiscard]] virtual util::sequence_view<descriptor::variable const> input_columns() const noexcept = 0;
 
     /**
      * @brief returns the columns which this exchange provides to the downstream processes.
      * @return the output columns
      * @note these columns also may appear in input_columns()
      */
-    virtual util::sequence_view<descriptor::variable const> output_columns() const noexcept = 0;
+    [[nodiscard]] virtual util::sequence_view<descriptor::variable const> output_columns() const noexcept = 0;
 
     /**
      * @brief returns the view of upstream processes.
@@ -56,7 +56,7 @@ public:
     step_list_view<process> upstreams() noexcept;
     
     /// @copydoc upstreams()
-    step_list_view<process const> upstreams() const noexcept;
+    [[nodiscard]] step_list_view<process const> upstreams() const noexcept;
 
     /**
      * @brief returns the view of downstream processes.
@@ -67,7 +67,7 @@ public:
     step_list_view<process> downstreams() noexcept;
 
     /// @copydoc downstreams()
-    step_list_view<process const> downstreams() const noexcept;
+    [[nodiscard]] step_list_view<process const> downstreams() const noexcept;
 
     /**
      * @brief returns whether or not this obtains input data from the given process.
@@ -75,7 +75,7 @@ public:
      * @return true if the given process is an upstream of this
      * @return false otherwise
      */
-    bool has_upstream(process const& upstream) const noexcept;
+    [[nodiscard]] bool has_upstream(process const& upstream) const noexcept;
 
     /**
      * @brief adds a exchange input.
@@ -101,7 +101,7 @@ public:
      * @return true if the given process is a downstream of this
      * @return false otherwise
      */
-    bool has_downstream(process const& downstream) const noexcept;
+    [[nodiscard]] bool has_downstream(process const& downstream) const noexcept;
 
     /**
      * @brief adds a exchange output.
@@ -170,7 +170,7 @@ protected:
      */
     explicit exchange(util::object_creator creator = {}) noexcept;
 
-    bool equals(step const& other) const noexcept override = 0;
+    [[nodiscard]] bool equals(step const& other) const noexcept override = 0;
     std::ostream& print_to(std::ostream& out) const override = 0;
 
 private:

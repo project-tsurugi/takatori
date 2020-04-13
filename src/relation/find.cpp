@@ -84,13 +84,12 @@ find::output_port_type const& find::output() const noexcept {
     return output_;
 }
 
-descriptor::relation const& find::source() const noexcept {
+descriptor::relation& find::source() noexcept {
     return source_;
 }
 
-find& find::source(descriptor::relation source) noexcept {
-    source_ = std::move(source);
-    return *this;
+descriptor::relation const& find::source() const noexcept {
+    return source_;
 }
 
 std::vector<find::column, util::object_allocator<find::column>>& find::columns() noexcept {

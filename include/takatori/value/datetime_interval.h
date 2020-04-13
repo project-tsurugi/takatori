@@ -81,15 +81,15 @@ public:
     datetime_interval(datetime_interval&& other) noexcept = delete;
     datetime_interval& operator=(datetime_interval&& other) noexcept = delete;
 
-    value_kind kind() const noexcept override;
-    datetime_interval* clone(util::object_creator creator) const& override;
+    [[nodiscard]] value_kind kind() const noexcept override;
+    [[nodiscard]] datetime_interval* clone(util::object_creator creator) const& override;
     datetime_interval* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the entity value.
      * @return the entity value
      */
-    constexpr view_type get() const noexcept {
+    [[nodiscard]] constexpr view_type get() const noexcept {
         return entity_;
     }
 
@@ -99,8 +99,8 @@ public:
     }
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
+    [[nodiscard]] bool equals(data const& other) const noexcept override;
+    [[nodiscard]] std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

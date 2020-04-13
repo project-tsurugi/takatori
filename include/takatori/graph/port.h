@@ -120,7 +120,7 @@ public:
      * @brief returns the index where this port on the parent container.
      * @return the port index (0-origin).
      */
-    constexpr index_type index() const noexcept {
+    [[nodiscard]] constexpr index_type index() const noexcept {
         return index_;
     }
 
@@ -133,7 +133,7 @@ public:
     }
 
     /// @copydoc owner()
-    constexpr node_type const& owner() const noexcept {
+    [[nodiscard]] constexpr node_type const& owner() const noexcept {
         return *owner_;
     }
 
@@ -147,7 +147,7 @@ public:
     }
 
     /// @copydoc opposite()
-    constexpr util::optional_ptr<opposite_type const> opposite() const noexcept {
+    [[nodiscard]] constexpr util::optional_ptr<opposite_type const> opposite() const noexcept {
         return util::optional_ptr { opposite_ };
     }
 
@@ -157,7 +157,7 @@ public:
      * @return true if it is connected to this
      * @return false otherwise
      */
-    constexpr bool is_connected(opposite_type const& port) const noexcept {
+    [[nodiscard]] constexpr bool is_connected(opposite_type const& port) const noexcept {
         return opposite_ == std::addressof(port);
     }
 

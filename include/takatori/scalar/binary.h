@@ -10,6 +10,7 @@
 
 #include <takatori/util/meta_type.h>
 #include <takatori/util/object_creator.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
 
@@ -61,15 +62,15 @@ public:
      */
     explicit binary(binary&& other, util::object_creator creator) noexcept;
 
-    expression_kind kind() const noexcept override;
-    binary* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] binary* clone(util::object_creator creator) const& override;
     binary* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the operator kind.
      * @return operator kind
      */
-    operator_kind_type operator_kind() const noexcept;
+    [[nodiscard]] operator_kind_type operator_kind() const noexcept;
 
     /**
      * @brief sets operator kind.
@@ -90,7 +91,7 @@ public:
      * @return the left operand
      * @warning undefined behavior if the operand is absent
      */
-    expression const& left() const noexcept;
+    [[nodiscard]] expression const& left() const noexcept;
 
     /**
      * @brief returns the left operand.
@@ -100,7 +101,7 @@ public:
     util::optional_ptr<expression> optional_left() noexcept;
 
     /// @copydoc optional_left()
-    util::optional_ptr<expression const> optional_left() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_left() const noexcept;
 
     /**
      * @brief releases the left operand.
@@ -117,6 +118,12 @@ public:
     binary& left(util::unique_object_ptr<expression> left) noexcept;
 
     /**
+     * @brief returns ownership reference of the left operand.
+     * @return the left operand
+     */
+    util::object_ownership_reference<expression> ownership_left();
+
+    /**
      * @brief returns the right operand.
      * @return the right operand
      * @warning undefined behavior if the operand is absent
@@ -128,7 +135,7 @@ public:
      * @return the right operand
      * @warning undefined behavior if the operand is absent
      */
-    expression const& right() const noexcept;
+    [[nodiscard]] expression const& right() const noexcept;
 
     /**
      * @brief returns the right operand.
@@ -138,7 +145,7 @@ public:
     util::optional_ptr<expression> optional_right() noexcept;
 
     /// @copydoc optional_right()
-    util::optional_ptr<expression const> optional_right() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_right() const noexcept;
 
     /**
      * @brief releases the right operand.
@@ -153,6 +160,12 @@ public:
      * @return this
      */
     binary& right(util::unique_object_ptr<expression> right) noexcept;
+
+    /**
+     * @brief returns ownership reference of the right operand.
+     * @return the right operand
+     */
+    util::object_ownership_reference<expression> ownership_right();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -181,7 +194,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, binary const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

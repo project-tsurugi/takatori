@@ -38,8 +38,8 @@ public:
     decimal(decimal&& other) noexcept = delete;
     decimal& operator=(decimal&& other) noexcept = delete;
 
-    type_kind kind() const noexcept override;
-    decimal* clone(util::object_creator creator) const& override;
+    [[nodiscard]] type_kind kind() const noexcept override;
+    [[nodiscard]] decimal* clone(util::object_creator creator) const& override;
     decimal* clone(util::object_creator creator) && override;
 
     /**
@@ -47,7 +47,7 @@ public:
      * @return the max number of digits
      * @return empty if it is not defined
      */
-    constexpr std::optional<size_type> precision() const noexcept {
+    [[nodiscard]] constexpr std::optional<size_type> precision() const noexcept {
         return precision_;
     }
 
@@ -55,7 +55,7 @@ public:
      * @brief returns the number of digits in the fractional part.
      * @return the number of digits in the fractional part
      */
-    constexpr size_type scale() const noexcept {
+    [[nodiscard]] constexpr size_type scale() const noexcept {
         return scale_;
     }
 
@@ -86,8 +86,8 @@ public:
     friend std::ostream& operator<<(std::ostream& out, decimal const& value);
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
+    [[nodiscard]] bool equals(data const& other) const noexcept override;
+    [[nodiscard]] std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

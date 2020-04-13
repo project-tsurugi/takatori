@@ -33,7 +33,7 @@ public:
      * @return the line number
      * @return unknown if it is not clear
      */
-    constexpr std::size_t line_number() const noexcept {
+    [[nodiscard]] constexpr std::size_t line_number() const noexcept {
         return line_number_;
     }
 
@@ -42,7 +42,7 @@ public:
      * @return the column number
      * @return unknown if it is not clear
      */
-    constexpr std::size_t column_number() const noexcept {
+    [[nodiscard]] constexpr std::size_t column_number() const noexcept {
         return column_number_;
     }
 

@@ -87,6 +87,10 @@ let& let::body(util::unique_object_ptr<expression> body) noexcept {
     return tree::assign_element(*this, body_, std::move(body));
 }
 
+util::object_ownership_reference<expression> let::ownership_body() noexcept {
+    return tree::ownership_element(*this, body_);
+}
+
 bool operator==(let const& a, let const& b) noexcept {
     return a.variables() == b.variables()
         && a.body() == b.body();

@@ -55,7 +55,7 @@ public:
     simple_value(simple_value&& other) noexcept = delete;
     simple_value& operator=(simple_value&& other) noexcept = delete;
 
-    value_kind kind() const noexcept override {
+    [[nodiscard]] value_kind kind() const noexcept override {
         return Kind;
     }
 
@@ -81,11 +81,11 @@ public:
     }
 
 protected:
-    bool equals(data const& other) const noexcept override {
+    [[nodiscard]] bool equals(data const& other) const noexcept override {
         return tag == other.kind() && *this == util::unsafe_downcast<simple_value<Kind>>(other);
     }
 
-    std::size_t hash() const noexcept override {
+    [[nodiscard]] std::size_t hash() const noexcept override {
         return util::hash(entity_);
     }
 

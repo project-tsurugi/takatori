@@ -120,13 +120,12 @@ join_scan& join_scan::operator_kind(join_scan::operator_kind_type operator_kind)
     return *this;
 }
 
-descriptor::relation const& join_scan::source() const noexcept {
+descriptor::relation& join_scan::source() noexcept {
     return source_;
 }
 
-join_scan& join_scan::source(descriptor::relation source) noexcept {
-    source_ = std::move(source);
-    return *this;
+descriptor::relation const& join_scan::source() const noexcept {
+    return source_;
 }
 
 std::vector<join_scan::column, util::object_allocator<join_scan::column>>& join_scan::columns() noexcept {
@@ -167,6 +166,10 @@ util::unique_object_ptr<scalar::expression> join_scan::release_condition() noexc
 
 join_scan& join_scan::condition(util::unique_object_ptr<scalar::expression> condition) noexcept {
     return tree::assign_element(*this, condition_, std::move(condition));
+}
+
+util::object_ownership_reference<scalar::expression> join_scan::ownership_condition() noexcept {
+    return tree::ownership_element(*this, condition_);
 }
 
 bool operator==(join_scan const& a, join_scan const& b) noexcept {

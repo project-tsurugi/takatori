@@ -141,7 +141,7 @@ public:
      * @return false otherwise
      */
     template<class E, class D>
-    bool is_instance(std::unique_ptr<E, D> const& ptr) const noexcept {
+    [[nodiscard]] bool is_instance(std::unique_ptr<E, D> const& ptr) const noexcept {
         if constexpr (std::is_same_v<D, std::default_delete<E>> && !std::is_array_v<E>) { // NOLINT
             return resource_->is_equal(*get_standard_memory_resource());
         }
@@ -235,7 +235,7 @@ public:
      * @return the standard allocator
      */
     template<class T>
-    allocator_type<T> allocator(std::in_place_type_t<T> = std::in_place_type<T>) const noexcept {
+    [[nodiscard]] allocator_type<T> allocator(std::in_place_type_t<T> = std::in_place_type<T>) const noexcept {
         return allocator_type<T>(resource_);
     }
 
@@ -291,7 +291,7 @@ public:
      * @brief returns the corresponded creator.
      * @return the corresponded creator
      */
-    constexpr object_creator creator() const noexcept {
+    [[nodiscard]] constexpr object_creator creator() const noexcept {
         return creator_;
     }
 

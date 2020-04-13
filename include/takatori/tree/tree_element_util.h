@@ -1,5 +1,7 @@
 #pragma once
 
+#include <takatori/util/ownership_reference.h>
+
 #include "tree_fragment_traits.h"
 
 namespace takatori::tree {
@@ -121,6 +123,54 @@ void assign_element_fragment(Parent* parent, std::unique_ptr<E, D>& destination,
     } else {
         destination = release_element(std::move(source));
     }
+}
+
+/**
+ * @brief returns the ownership reference of the given property.
+ * @tparam Parent the parent element type
+ * @tparam E the element type
+ * @tparam D the deleter type
+ * @param parent the parent element
+ * @param property the property container reference
+ * @return the corresponded ownership reference
+ */
+template<class Parent, class E, class D>
+util::ownership_reference<E, D> ownership_element(Parent& parent, std::unique_ptr<E, D>& property) {
+    static_assert(is_tree_fragment_v<E>);
+    using traits = tree_fragment_traits<E>;
+    static_assert(std::is_convertible_v<Parent*, typename traits::parent_type*>);
+    return util::ownership_reference<E, D> {
+            [&]() {
+                return property.get();
+            },
+            [&](std::unique_ptr<E, D> replacement) {
+                assign_element(parent, property, std::move(replacement));
+            }
+    };
+}
+
+/**
+ * @brief returns the ownership reference of the given property.
+ * @tparam Parent the parent element type
+ * @tparam E the element type
+ * @tparam D the deleter type
+ * @param parent the parent element
+ * @param property the property container reference
+ * @return the corresponded ownership reference
+ */
+template<class Parent, class E, class D>
+util::ownership_reference<E, D> ownership_element_fragment(Parent*& parent, std::unique_ptr<E, D>& property) {
+    static_assert(is_tree_fragment_v<E>);
+    using traits = tree_fragment_traits<E>;
+    static_assert(std::is_convertible_v<Parent*, typename traits::parent_type*>);
+    return util::ownership_reference<E, D> {
+            [&]() {
+                return property.get();
+            },
+            [&](std::unique_ptr<E, D> replacement) {
+                assign_element_fragment(parent, property, std::move(replacement));
+            }
+    };
 }
 
 } // namespace takatori::tree

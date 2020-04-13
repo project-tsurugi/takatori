@@ -50,14 +50,14 @@ public:
     descriptor::variable& source() noexcept;
 
     /// @copydoc source()
-    descriptor::variable const& source() const noexcept;
+    [[nodiscard]] descriptor::variable const& source() const noexcept;
 
     /**
      * @brief returns the column name.
      * @return the column name
      * @return optional if the column name is absent
      */
-    std::optional<std::string_view> name() const noexcept;
+    [[nodiscard]] std::optional<std::string_view> name() const noexcept;
 
     /**
      * @brief sets a column name.

@@ -11,6 +11,7 @@
 
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::relation::details {
 
@@ -127,7 +128,7 @@ public:
     }
 
     /// @copydoc parent_element()
-    parent_type const* parent_element() const noexcept {
+    [[nodiscard]] [[nodiscard]] parent_type const* parent_element() const noexcept {
         return parent_;
     }
 
@@ -149,7 +150,7 @@ public:
     }
 
     /// @copydoc variable()
-    descriptor::variable const& variable() const noexcept {
+    [[nodiscard]] descriptor::variable const& variable() const noexcept {
         return variable_;
     }
 
@@ -162,7 +163,7 @@ public:
     }
 
     /// @copydoc value
-    scalar::expression const& value() const noexcept {
+    [[nodiscard]] scalar::expression const& value() const noexcept {
         return *value_;
     }
 
@@ -176,7 +177,7 @@ public:
     }
 
     /// @copydoc optional_value()
-    util::optional_ptr<scalar::expression const> optional_value() const noexcept {
+    [[nodiscard]] util::optional_ptr<scalar::expression const> optional_value() const noexcept {
         return util::optional_ptr { value_.get() };
     }
 
@@ -197,6 +198,14 @@ public:
     search_key_element& value(util::unique_object_ptr<scalar::expression> value) noexcept {
         tree::assign_element_fragment(parent_, value_, std::move(value));
         return *this;
+    }
+
+    /**
+     * @brief returns ownership of the search value for the target column.
+     * @return the search value
+     */
+    [[nodiscard]] util::object_ownership_reference<scalar::expression> ownership_value() {
+        return tree::ownership_element_fragment(parent_, value_);
     }
 
 private:

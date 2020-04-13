@@ -56,8 +56,8 @@ public:
      */
     explicit immediate(immediate&& other, util::object_creator creator) noexcept;
 
-    expression_kind kind() const noexcept override;
-    immediate* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] immediate* clone(util::object_creator creator) const& override;
     immediate* clone(util::object_creator creator) && override;
 
     /**
@@ -65,21 +65,21 @@ public:
      * @return the immediate value
      * @warning undefined behavior if the value is absent
      */
-    value::data const& value() const noexcept;
+    [[nodiscard]] value::data const& value() const noexcept;
 
     /**
      * @brief returns the immediate value.
      * @return the immediate value
      * @return empty if the value is absent
      */
-    util::optional_ptr<value::data const> optional_value() const noexcept;
+    [[nodiscard]] util::optional_ptr<value::data const> optional_value() const noexcept;
 
     /**
      * @brief returns the immediate value for share its value.
      * @return the immediate value for sharing
      * @return empty if the value is absent
      */
-    std::shared_ptr<value::data const> shared_value() const noexcept;
+    [[nodiscard]] std::shared_ptr<value::data const> shared_value() const noexcept;
 
     /**
      * @brief sets a immediate value.
@@ -93,21 +93,21 @@ public:
      * @return the value type
      * @warning undefined behavior if the type is absent
      */
-    type::data const& type() const noexcept;
+    [[nodiscard]] type::data const& type() const noexcept;
 
     /**
      * @brief returns the value type.
      * @return the value type
      * @return empty if the type is absent
      */
-    util::optional_ptr<type::data const> optional_type() const noexcept;
+    [[nodiscard]] util::optional_ptr<type::data const> optional_type() const noexcept;
 
     /**
      * @brief returns the value type for share its type.
      * @return the value type for sharing
      * @return empty if the type is absent
      */
-    std::shared_ptr<type::data const> shared_type() const noexcept;
+    [[nodiscard]] std::shared_ptr<type::data const> shared_type() const noexcept;
 
     /**
      * @brief sets a value type.
@@ -143,7 +143,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, immediate const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

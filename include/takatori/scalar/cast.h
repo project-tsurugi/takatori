@@ -15,6 +15,7 @@
 #include <takatori/util/meta_type.h>
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
 
@@ -66,8 +67,8 @@ public:
      */
     explicit cast(cast&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
-    cast* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] cast* clone(util::object_creator creator) const& override;
     cast* clone(util::object_creator creator) && override;
 
     /**
@@ -75,21 +76,21 @@ public:
      * @return the destination type
      * @warning undefined behavior if the type is absent
      */
-    type::data const& type() const noexcept;
+    [[nodiscard]] type::data const& type() const noexcept;
 
     /**
      * @brief returns the destination type.
      * @return the destination type
      * @return empty if the type is absent
      */
-    util::optional_ptr<type::data const> optional_type() const noexcept;
+    [[nodiscard]] util::optional_ptr<type::data const> optional_type() const noexcept;
 
     /**
      * @brief returns the destination type for share its type.
      * @return the destination type for sharing
      * @return empty if the type is absent
      */
-    std::shared_ptr<type::data const> shared_type() const noexcept;
+    [[nodiscard]] std::shared_ptr<type::data const> shared_type() const noexcept;
 
     /**
      * @brief sets a destination type.
@@ -102,7 +103,7 @@ public:
      * @brief returns the action kind for decrease accuracy.
      * @return policy of lossy operation
      */
-    loss_policy_type loss_policy() const noexcept;
+    [[nodiscard]] loss_policy_type loss_policy() const noexcept;
 
     /**
      * @brief sets a policy of lossy operation.
@@ -123,7 +124,7 @@ public:
      * @return the expression operand
      * @warning undefined behavior if the operand is absent
      */
-    expression const& operand() const noexcept;
+    [[nodiscard]] expression const& operand() const noexcept;
 
     /**
      * @brief returns the expression operand.
@@ -133,7 +134,7 @@ public:
     util::optional_ptr<expression> optional_operand() noexcept;
 
     /// @copydoc optional_operand()
-    util::optional_ptr<expression const> optional_operand() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_operand() const noexcept;
 
     /**
      * @brief releases the expression operand.
@@ -148,6 +149,12 @@ public:
      * @return this
      */
     cast& operand(util::unique_object_ptr<expression> operand) noexcept;
+
+    /**
+     * @brief returns ownership reference of the expression operand.
+     * @return the expression operand
+     */
+    util::object_ownership_reference<expression> ownership_operand();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -176,7 +183,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, cast const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

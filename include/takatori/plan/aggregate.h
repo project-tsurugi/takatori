@@ -100,12 +100,12 @@ public:
      */
     explicit aggregate(aggregate&& other, util::object_creator creator);
 
-    step_kind kind() const noexcept override;
-    aggregate* clone(util::object_creator creator) const& override;
+    [[nodiscard]] step_kind kind() const noexcept override;
+    [[nodiscard]] aggregate* clone(util::object_creator creator) const& override;
     aggregate* clone(util::object_creator creator) && override;
 
-    util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
-    util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
 
     /**
      * @brief returns the source columns.
@@ -115,7 +115,7 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& source_columns() noexcept;
 
     /// @copydoc source_columns()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& source_columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& source_columns() const noexcept;
 
     /**
      * @brief returns the destination columns .
@@ -125,7 +125,7 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& destination_columns() noexcept;
 
     /// @copydoc destination_columns()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& destination_columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& destination_columns() const noexcept;
 
     /**
      * @brief returns the aggregate key columns.
@@ -135,7 +135,7 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
     /// @copydoc group_keys()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
 
     /**
      * @brief returns the aggregation elements that contain aggregation function, its arguments, and destination column.
@@ -145,13 +145,13 @@ public:
     std::vector<aggregation, util::object_allocator<aggregation>>& aggregations() noexcept;
 
     /// @copydoc aggregations()
-    std::vector<aggregation, util::object_allocator<aggregation>> const& aggregations() const noexcept;
+    [[nodiscard]] std::vector<aggregation, util::object_allocator<aggregation>> const& aggregations() const noexcept;
 
     /**
      * @brief returns group mode of this exchange operation.
      * @return the group mode
      */
-    mode_type mode() const noexcept;
+    [[nodiscard]] mode_type mode() const noexcept;
 
     /**
      * @brief sets the group mode.
@@ -191,7 +191,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, aggregate const& value);
 
 protected:
-    bool equals(step const& other) const noexcept override;
+    [[nodiscard]] bool equals(step const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

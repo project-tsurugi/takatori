@@ -65,7 +65,7 @@ public:
      * @brief returns the elapsed time since 1900-01-01 00:00:00 GMT, ignoring leap seconds.
      * @return the the elapsed time since the epoch
      */
-    constexpr time_unit time_since_epoch() const noexcept {
+    [[nodiscard]] constexpr time_unit time_since_epoch() const noexcept {
         return elapsed_;
     }
 
@@ -73,7 +73,7 @@ public:
      * @brief returns the date of the time point (in GMT).
      * @return the date
      */
-    constexpr datetime::date date() const noexcept {
+    [[nodiscard]] constexpr datetime::date date() const noexcept {
         using date_unit = std::chrono::duration<std::uint32_t, std::ratio<86'400>>;
         return datetime::date(std::chrono::floor<date_unit>(elapsed_).count());
     }
@@ -82,7 +82,7 @@ public:
      * @brief returns the time in day of the time point (in GMT).
      * @return the time in day
      */
-    constexpr datetime::time_of_day time() const noexcept {
+    [[nodiscard]] constexpr datetime::time_of_day time() const noexcept {
         return datetime::time_of_day(std::chrono::floor<datetime::time_of_day::time_unit>(elapsed_));
     }
 
@@ -91,7 +91,7 @@ public:
      * @return the date and time
      * @see calendar
      */
-    constexpr std::pair<datetime::date, datetime::time_of_day> date_time() const noexcept {
+    [[nodiscard]] constexpr std::pair<datetime::date, datetime::time_of_day> date_time() const noexcept {
         return std::make_pair(date(), time());
     }
 

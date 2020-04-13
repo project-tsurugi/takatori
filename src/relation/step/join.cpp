@@ -110,6 +110,10 @@ join& join::condition(util::unique_object_ptr<scalar::expression> condition) noe
     return tree::assign_element(*this, condition_, std::move(condition));
 }
 
+util::object_ownership_reference<scalar::expression> join::ownership_condition() noexcept {
+    return tree::ownership_element(*this, condition_);
+}
+
 bool operator==(join const& a, join const& b) noexcept {
     return a.operator_kind() == b.operator_kind()
         && a.condition() == b.condition();

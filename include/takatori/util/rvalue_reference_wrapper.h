@@ -53,7 +53,7 @@ public:
      * @brief returns the holding value.
      * @return the holding value
      */
-    constexpr reference get() const noexcept { return std::move(*entry_); }
+    [[nodiscard]] constexpr reference get() const noexcept { return std::move(*entry_); }
 
     /// @copydoc get()
     constexpr operator T&&() const noexcept { return get(); } // NOLINT

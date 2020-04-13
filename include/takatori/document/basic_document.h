@@ -21,11 +21,11 @@ public:
      */
     basic_document(std::string location, std::string contents);
 
-    std::string_view location() const noexcept override;
-    std::size_t size() const noexcept override;
-    std::string_view contents(std::size_t offset, std::size_t length) const noexcept override;
-    position_type position(std::size_t offset) const noexcept override;
-    std::size_t offset(position_type position) const noexcept override;
+    [[nodiscard]] std::string_view location() const noexcept override;
+    [[nodiscard]] std::size_t size() const noexcept override;
+    [[nodiscard]] std::string_view contents(std::size_t offset, std::size_t length) const noexcept override;
+    [[nodiscard]] position_type position(std::size_t offset) const noexcept override;
+    [[nodiscard]] std::size_t offset(position_type position) const noexcept override;
 
 private:
     std::string location_;

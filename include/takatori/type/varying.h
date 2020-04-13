@@ -19,7 +19,7 @@ public:
      * @return true if this attribute is enabled
      * @return false otherwise
      */
-    constexpr bool enabled() const noexcept {
+    [[nodiscard]] constexpr bool enabled() const noexcept {
         return enabled_;
     }
 

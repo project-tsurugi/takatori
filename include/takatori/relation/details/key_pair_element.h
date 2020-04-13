@@ -26,7 +26,7 @@ public:
     descriptor::variable& left() noexcept;
 
     /// @copydoc left()
-    descriptor::variable const& left() const noexcept;
+    [[nodiscard]] descriptor::variable const& left() const noexcept;
 
     /**
      * @brief returns the key column of the second input relation.
@@ -35,7 +35,7 @@ public:
     descriptor::variable& right() noexcept;
 
     /// @copydoc right()
-    descriptor::variable const& right() const noexcept;
+    [[nodiscard]] descriptor::variable const& right() const noexcept;
 
 private:
     descriptor::variable left_;

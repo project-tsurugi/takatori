@@ -75,13 +75,12 @@ take_flat::output_port_type const& take_flat::output() const noexcept {
     return output_;
 }
 
-descriptor::relation const& take_flat::source() const noexcept {
+descriptor::relation& take_flat::source() noexcept {
     return source_;
 }
 
-take_flat& take_flat::source(descriptor::relation source) noexcept {
-    source_ = std::move(source);
-    return *this;
+descriptor::relation const& take_flat::source() const noexcept {
+    return source_;
 }
 
 std::vector<take_flat::column, util::object_allocator<take_flat::column>>& take_flat::columns() noexcept {

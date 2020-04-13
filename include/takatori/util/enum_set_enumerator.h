@@ -97,7 +97,7 @@ private:
     std::bitset<number_of_universe> const& entries_;
     std::size_t index_;
 
-    std::size_t internal_adjust_forward(std::size_t index) const {
+    [[nodiscard]] std::size_t internal_adjust_forward(std::size_t index) const {
         if (index >= number_of_universe) {
             return number_of_universe;
         }

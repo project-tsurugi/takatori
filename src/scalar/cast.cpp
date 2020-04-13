@@ -101,6 +101,10 @@ cast& cast::operand(util::unique_object_ptr<expression> operand) noexcept {
     return tree::assign_element(*this, operand_, std::move(operand));
 }
 
+util::object_ownership_reference<expression> cast::ownership_operand() {
+    return tree::ownership_element(*this, operand_);
+}
+
 bool operator==(cast const& a, cast const& b) noexcept {
     return a.optional_type() == b.optional_type()
         && a.loss_policy() == b.loss_policy()

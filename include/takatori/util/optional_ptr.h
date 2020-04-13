@@ -191,14 +191,14 @@ public:
      * @return true if this reference is empty
      * @return false otherwise
      */
-    constexpr bool empty() const noexcept { return entry_ == nullptr; }
+    [[nodiscard]] constexpr bool empty() const noexcept { return entry_ == nullptr; }
 
     /**
      * @brief returns whether or not this has any entries.
      * @return true if this has entry
      * @return false otherwise
      */
-    constexpr bool has_value() const noexcept { return !empty(); }
+    [[nodiscard]] constexpr bool has_value() const noexcept { return !empty(); }
 
     /**
      * @brief returns a pointer to the holding value.
@@ -208,7 +208,7 @@ public:
     constexpr pointer get() { return entry_; }
 
     /// @copydoc get()
-    constexpr const_pointer get() const { return entry_; }
+    [[nodiscard]] constexpr const_pointer get() const { return entry_; }
 
     /**
      * @brief returns the holding value.
@@ -218,7 +218,7 @@ public:
     constexpr reference value() { check_(); return *entry_; }
 
     /// @copydoc value()
-    constexpr const_reference value() const { check_(); return *entry_; }
+    [[nodiscard]] constexpr const_reference value() const { check_(); return *entry_; }
 
     /**
      * @brief rebinds the holding value.
@@ -275,10 +275,10 @@ public:
     iterator begin() noexcept { return entry_ == nullptr ? nullptr : entry_; }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept { return cbegin(); }
+    [[nodiscard]] const_iterator begin() const noexcept { return cbegin(); }
 
     /// @copydoc begin()
-    const_iterator cbegin() const noexcept { return entry_ == nullptr ? nullptr : entry_; }
+    [[nodiscard]] const_iterator cbegin() const noexcept { return entry_ == nullptr ? nullptr : entry_; }
 
     /**
      * @brief returns a sentinel of the iterator.

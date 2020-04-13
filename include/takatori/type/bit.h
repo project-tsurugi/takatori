@@ -48,8 +48,8 @@ public:
     bit(bit&& other) noexcept = delete;
     bit& operator=(bit&& other) noexcept = delete;
 
-    type_kind kind() const noexcept override;
-    bit* clone(util::object_creator creator) const& override;
+    [[nodiscard]] type_kind kind() const noexcept override;
+    [[nodiscard]] bit* clone(util::object_creator creator) const& override;
     bit* clone(util::object_creator creator) && override;
 
     /**
@@ -57,7 +57,7 @@ public:
      * @return true if this is flexible length bit sequence (a.k.a. VARBIT)
      * @return false if this is fixed length bit sequence (a.k.a. BIT)
      */
-    constexpr bool varying() const noexcept {
+    [[nodiscard]] constexpr bool varying() const noexcept {
         return varying_;
     }
 
@@ -68,7 +68,7 @@ public:
      * @return empty if it is not defined
      * @see is_varying()
      */
-    constexpr std::optional<size_type> length() const noexcept {
+    [[nodiscard]] constexpr std::optional<size_type> length() const noexcept {
         return length_;
     }
 
@@ -99,8 +99,8 @@ public:
     friend std::ostream& operator<<(std::ostream& out, bit const& value);
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
+    [[nodiscard]] bool equals(data const& other) const noexcept override;
+    [[nodiscard]] std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

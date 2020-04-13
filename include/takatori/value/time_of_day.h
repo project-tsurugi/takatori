@@ -53,15 +53,15 @@ public:
     time_of_day(time_of_day&& other) noexcept = delete;
     time_of_day& operator=(time_of_day&& other) noexcept = delete;
 
-    value_kind kind() const noexcept override;
-    time_of_day* clone(util::object_creator creator) const& override;
+    [[nodiscard]] value_kind kind() const noexcept override;
+    [[nodiscard]] time_of_day* clone(util::object_creator creator) const& override;
     time_of_day* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the entity value.
      * @return the entity value
      */
-    constexpr view_type get() const noexcept {
+    [[nodiscard]] constexpr view_type get() const noexcept {
         return entity_;
     }
 
@@ -71,8 +71,8 @@ public:
     }
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
+    [[nodiscard]] bool equals(data const& other) const noexcept override;
+    [[nodiscard]] std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

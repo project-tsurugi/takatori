@@ -38,7 +38,7 @@ public:
     std::optional<source_type>& left() noexcept;
 
     /// @copydoc left()
-    std::optional<source_type> const& left() const noexcept;
+    [[nodiscard]] std::optional<source_type> const& left() const noexcept;
 
     /**
      * @brief returns the source column of the second input relation.
@@ -48,7 +48,7 @@ public:
     std::optional<source_type>& right() noexcept;
 
     /// @copydoc right()
-    std::optional<source_type> const& right() const noexcept;
+    [[nodiscard]] std::optional<source_type> const& right() const noexcept;
 
     /**
      * @brief returns the descriptor of destination column.
@@ -57,7 +57,7 @@ public:
     destination_type& destination() noexcept;
 
     /// @copydoc destination()
-    destination_type const& destination() const noexcept;
+    [[nodiscard]] destination_type const& destination() const noexcept;
 
 private:
     std::optional<source_type> left_;

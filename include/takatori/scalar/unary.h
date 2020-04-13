@@ -10,6 +10,7 @@
 
 #include <takatori/util/meta_type.h>
 #include <takatori/util/object_creator.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
 
@@ -57,15 +58,15 @@ public:
      */
     explicit unary(unary&& other, util::object_creator creator) noexcept;
 
-    expression_kind kind() const noexcept override;
-    unary* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] unary* clone(util::object_creator creator) const& override;
     unary* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the operator kind.
      * @return operator kind
      */
-    operator_kind_type operator_kind() const noexcept;
+    [[nodiscard]] operator_kind_type operator_kind() const noexcept;
 
     /**
      * @brief sets operator kind.
@@ -86,7 +87,7 @@ public:
      * @return the expression operand
      * @warning undefined behavior if the operand is absent
      */
-    expression const& operand() const noexcept;
+    [[nodiscard]] expression const& operand() const noexcept;
 
     /**
      * @brief returns the expression operand.
@@ -96,7 +97,7 @@ public:
     util::optional_ptr<expression> optional_operand() noexcept;
 
     /// @copydoc optional_operand()
-    util::optional_ptr<expression const> optional_operand() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_operand() const noexcept;
 
     /**
      * @brief releases the expression operand.
@@ -111,6 +112,12 @@ public:
      * @return this
      */
     unary& operand(util::unique_object_ptr<expression> operand) noexcept;
+
+    /**
+     * @brief returns ownership reference of the expression operand.
+     * @return the expression operand
+     */
+    util::object_ownership_reference<expression> ownership_operand();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -139,7 +146,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, unary const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

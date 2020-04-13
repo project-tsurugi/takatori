@@ -46,12 +46,12 @@ public:
      */
     explicit discard(discard&& other, util::object_creator creator);
 
-    step_kind kind() const noexcept override;
-    discard* clone(util::object_creator creator) const& override;
+    [[nodiscard]] step_kind kind() const noexcept override;
+    [[nodiscard]] discard* clone(util::object_creator creator) const& override;
     discard* clone(util::object_creator creator) && override;
 
-    util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
-    util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -84,7 +84,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, discard const& value);
 
 protected:
-    bool equals(step const& other) const noexcept override;
+    [[nodiscard]] bool equals(step const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 };
 

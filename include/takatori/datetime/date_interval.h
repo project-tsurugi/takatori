@@ -47,7 +47,7 @@ public:
      * @brief returns offset of years.
      * @return offset of years
      */
-    constexpr unit year() const noexcept {
+    [[nodiscard]] constexpr unit year() const noexcept {
         return years_;
     }
 
@@ -55,7 +55,7 @@ public:
      * @brief returns offset of months.
      * @return offset of months
      */
-    constexpr unit month() const noexcept {
+    [[nodiscard]] constexpr unit month() const noexcept {
         return months_;
     }
 
@@ -63,7 +63,7 @@ public:
      * @brief returns offset of days.
      * @return offset of days
      */
-    constexpr unit day() const noexcept {
+    [[nodiscard]] constexpr unit day() const noexcept {
         return days_;
     }
 

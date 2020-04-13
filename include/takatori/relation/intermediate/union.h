@@ -69,12 +69,12 @@ public:
      */
     explicit union_(union_&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
     util::sequence_view<input_port_type> input_ports() noexcept override;
-    util::sequence_view<input_port_type const> input_ports() const noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     util::sequence_view<output_port_type> output_ports() noexcept override;
-    util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    union_* clone(util::object_creator creator) const& override;
+    [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
+    [[nodiscard]] union_* clone(util::object_creator creator) const& override;
     union_* clone(util::object_creator creator) && override;
 
     /**
@@ -84,7 +84,7 @@ public:
     input_port_type& left() noexcept;
 
     /// @copydoc left()
-    input_port_type const& left() const noexcept;
+    [[nodiscard]] input_port_type const& left() const noexcept;
 
     /**
      * @brief returns the second input port.
@@ -93,7 +93,7 @@ public:
     input_port_type& right() noexcept;
 
     /// @copydoc right()
-    input_port_type const& right() const noexcept;
+    [[nodiscard]] input_port_type const& right() const noexcept;
 
     /**
      * @brief returns the output port.
@@ -102,13 +102,13 @@ public:
     output_port_type& output() noexcept;
 
     /// @copydoc output()
-    output_port_type const& output() const noexcept;
+    [[nodiscard]] output_port_type const& output() const noexcept;
 
     /**
      * @brief returns the set quantifier kind of this operation.
      * @return the set quantifier kind
      */
-    quantifier_kind quantifier() const noexcept;
+    [[nodiscard]] quantifier_kind quantifier() const noexcept;
 
     /**
      * @brief sets the set quantifier kind of this operation.
@@ -125,7 +125,7 @@ public:
     std::vector<mapping, util::object_allocator<mapping>>& mappings() noexcept;
 
     /// @copydoc mappings()
-    std::vector<mapping, util::object_allocator<mapping>> const& mappings() const noexcept;
+    [[nodiscard]] std::vector<mapping, util::object_allocator<mapping>> const& mappings() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -156,7 +156,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, union_ const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

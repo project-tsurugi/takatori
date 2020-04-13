@@ -75,7 +75,7 @@ public:
      * @return the element on the position
      * @throws std::out_of_bound if the position is out of bound
      */
-    constexpr reference at(size_type position) const {
+    [[nodiscard]] constexpr reference at(size_type position) const {
         if (position >= size_) {
             throw std::out_of_range("invalid position");
         }
@@ -97,7 +97,7 @@ public:
      * @return reference of the first element
      * @warning undefined behavior if this is empty
      */
-    constexpr reference front() const {
+    [[nodiscard]] constexpr reference front() const {
         return *data_; // NOLINT
     }
 
@@ -106,7 +106,7 @@ public:
      * @return reference of the last element
      * @warning undefined behavior if this is empty
      */
-    constexpr reference back() const {
+    [[nodiscard]] constexpr reference back() const {
         return *(data_ + (size_ - 1)); // NOLINT
     }
 
@@ -114,7 +114,7 @@ public:
      * @brief returns pointer to the head of this sequence.
      * @return pointer to this sequence.
      */
-    constexpr pointer data() const noexcept {
+    [[nodiscard]] constexpr pointer data() const noexcept {
         return data_;
     }
 
@@ -123,7 +123,7 @@ public:
      * @return true if this is empty
      * @return false otherwise
      */
-    constexpr bool empty() const noexcept {
+    [[nodiscard]] constexpr bool empty() const noexcept {
         return size_ == 0;
     }
 
@@ -131,7 +131,7 @@ public:
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    constexpr size_type size() const noexcept {
+    [[nodiscard]] constexpr size_type size() const noexcept {
         return size_;
     }
 
@@ -140,7 +140,7 @@ public:
      * @brief returns a forward iterator which points the beginning of this sequence.
      * @return the iterator of beginning (inclusive)
      */
-    constexpr iterator begin() const noexcept {
+    [[nodiscard]] constexpr iterator begin() const noexcept {
         return iterator(data_);
     }
 
@@ -148,7 +148,7 @@ public:
      * @brief returns a forward iterator which points the ending of this sequence.
      * @return the iterator of ending (exclusive)
      */
-    constexpr iterator end() const noexcept {
+    [[nodiscard]] constexpr iterator end() const noexcept {
         return iterator(data_) + size_;
     }
 
@@ -156,7 +156,7 @@ public:
      * @brief returns a backward iterator which points the reversed beginning of this sequence.
      * @return the reversed iterator of beginning (inclusive)
      */
-    constexpr std::reverse_iterator<iterator> rbegin() const noexcept {
+    [[nodiscard]] constexpr std::reverse_iterator<iterator> rbegin() const noexcept {
         return std::make_reverse_iterator(end());
     }
 
@@ -164,7 +164,7 @@ public:
      * @brief returns a backward iterator which points the reversed ending of this sequence.
      * @return the reversed iterator of ending (exclusive)
      */
-    constexpr std::reverse_iterator<iterator> rend() const noexcept {
+    [[nodiscard]] constexpr std::reverse_iterator<iterator> rend() const noexcept {
         return std::make_reverse_iterator(begin());
     }
 

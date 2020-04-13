@@ -53,7 +53,7 @@ public:
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    constexpr size_type size() const noexcept { return elements_.size(); }
+    [[nodiscard]] constexpr size_type size() const noexcept { return elements_.size(); }
 
     /**
      * @brief returns a forward iterator which points the beginning of this container.
@@ -62,7 +62,7 @@ public:
     iterator begin() noexcept { return std::make_move_iterator(raw_iterator(elements_.data())); }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept { return std::make_move_iterator(raw_const_iterator(elements_.data())); }
+    [[nodiscard]] const_iterator begin() const noexcept { return std::make_move_iterator(raw_const_iterator(elements_.data())); }
 
     /**
      * @brief returns a forward iterator which points the ending of this container.
@@ -80,7 +80,7 @@ public:
     std::reverse_iterator<iterator> rbegin() noexcept { return std::make_reverse_iterator(end()); }
 
     /// @copydoc rbegin()
-    std::reverse_iterator<const_iterator> rbegin() const noexcept { return std::make_reverse_iterator(end()); }
+    [[nodiscard]] std::reverse_iterator<const_iterator> rbegin() const noexcept { return std::make_reverse_iterator(end()); }
 
     /**
      * @brief returns a backward iterator which points the reversed ending of this container.
@@ -89,7 +89,7 @@ public:
     std::reverse_iterator<iterator> rend() noexcept { return std::make_reverse_iterator(begin()); }
 
     /// @copydoc rend()
-    std::reverse_iterator<const_iterator> rend() const noexcept { return std::make_reverse_iterator(begin()); }
+    [[nodiscard]] std::reverse_iterator<const_iterator> rend() const noexcept { return std::make_reverse_iterator(begin()); }
 
 private:
     std::vector<pointer> elements_;

@@ -40,14 +40,14 @@ public:
      * @brief returns the kind of this expression.
      * @return the expression kind
      */
-    virtual expression_kind kind() const noexcept = 0;
+    [[nodiscard]] virtual expression_kind kind() const noexcept = 0;
 
     /**
      * @brief returns a clone of this object.
      * @param creator the object creator
      * @return the created clone
      */
-    virtual expression* clone(util::object_creator creator) const& = 0;
+    [[nodiscard]] virtual expression* clone(util::object_creator creator) const& = 0;
 
     /// @copydoc clone()
     virtual expression* clone(util::object_creator creator) && = 0;
@@ -64,7 +64,7 @@ public:
      * @return the parent element
      * @return nullptr if this is the root or orphaned element
      */
-    parent_type const* parent_element() const noexcept;
+    [[nodiscard]] parent_type const* parent_element() const noexcept;
 
     /**
      * @brief sets the parent element.
@@ -80,7 +80,7 @@ public:
     util::optional_ptr<expression> parent_expression() noexcept;
 
     /// @copydoc parent_expression()
-    util::optional_ptr<expression const> parent_expression() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> parent_expression() const noexcept;
 
     /**
      * @brief returns the document region of this element.
@@ -89,7 +89,7 @@ public:
     document::region& region() noexcept;
 
     /// @copydoc region()
-    document::region const& region() const noexcept;
+    [[nodiscard]] document::region const& region() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -124,7 +124,7 @@ protected:
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    virtual bool equals(expression const& other) const noexcept = 0;
+    [[nodiscard]] virtual bool equals(expression const& other) const noexcept = 0;
 
     /**
      * @brief appends string representation of this object into the given output.

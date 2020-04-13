@@ -59,14 +59,14 @@ public:
      * @brief returns the document location.
      * @return the document location
      */
-    virtual std::string_view location() const noexcept = 0;
+    [[nodiscard]] virtual std::string_view location() const noexcept = 0;
 
     /**
      * @brief returns the contents size.
      * @details each contents offset must be less than the contents size.
      * @return the contents size
      */
-    virtual std::size_t size() const noexcept = 0;
+    [[nodiscard]] virtual std::size_t size() const noexcept = 0;
 
     /**
      * @brief returns contents in the document.
@@ -74,14 +74,14 @@ public:
      * @param length the contents length
      * @return the contents
      */
-    virtual std::string_view contents(std::size_t offset, std::size_t length) const noexcept = 0;
+    [[nodiscard]] virtual std::string_view contents(std::size_t offset, std::size_t length) const noexcept = 0;
 
     /**
      * @brief returns the document position of the contents offset.
      * @param offset the contents offset
      * @return the document position
      */
-    virtual position_type position(std::size_t offset) const noexcept = 0;
+    [[nodiscard]] virtual position_type position(std::size_t offset) const noexcept = 0;
 
     /**
      * @brief returns the document offset of the content position.
@@ -89,7 +89,7 @@ public:
      * @return the corresponded document offset
      * @return npos if the position is not valid for this document
      */
-    virtual std::size_t offset(position_type position) const noexcept = 0;
+    [[nodiscard]] virtual std::size_t offset(position_type position) const noexcept = 0;
 
     /**
      * @brief prints information of the given document into the output stream.

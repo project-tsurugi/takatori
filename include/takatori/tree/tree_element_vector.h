@@ -3,6 +3,7 @@
 #include "tree_fragment_traits.h"
 #include "tree_element_util.h"
 
+#include <takatori/util/ownership_reference.h>
 #include <takatori/util/reference_vector.h>
 
 namespace takatori::tree {
@@ -121,12 +122,12 @@ public:
      * @return the element on the position
      * @throws std::out_of_bound if the position is out of bound
      */
-    reference at(size_type position) {
+    [[nodiscard]] reference at(size_type position) {
         return elements_.at(position);
     }
 
     /// @copydoc at()
-    const_reference at(size_type position) const {
+    [[nodiscard]] const_reference at(size_type position) const {
         return elements_.at(position);
     }
 
@@ -136,12 +137,12 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    reference operator[](size_type position) {
+    [[nodiscard]] reference operator[](size_type position) {
         return elements_[position];
     }
 
     /// @copydoc operator[]()
-    const_reference operator[](size_type position) const {
+    [[nodiscard]] const_reference operator[](size_type position) const {
         return elements_[position];
     }
 
@@ -150,12 +151,12 @@ public:
      * @return reference of the first element
      * @warning undefined behavior if this is empty
      */
-    reference front() {
+    [[nodiscard]] reference front() {
         return elements_.front();
     }
 
     /// @copydoc front()
-    const_reference front() const {
+    [[nodiscard]] const_reference front() const {
         return elements_.front();
     }
 
@@ -164,12 +165,12 @@ public:
      * @return reference of the last element
      * @warning undefined behavior if this is empty
      */
-    reference back() {
+    [[nodiscard]] reference back() {
         return elements_.back();
     }
 
     /// @copydoc back()
-    const_reference back() const {
+    [[nodiscard]] const_reference back() const {
         return elements_.back();
     }
 
@@ -178,7 +179,7 @@ public:
      * @return true if this is empty
      * @return false otherwise
      */
-    bool empty() const noexcept {
+    [[nodiscard]] bool empty() const noexcept {
         return elements_.empty();
     }
 
@@ -186,7 +187,7 @@ public:
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    size_type size() const noexcept {
+    [[nodiscard]] size_type size() const noexcept {
         return elements_.size();
     }
 
@@ -194,7 +195,7 @@ public:
      * @brief returns the capacity size of this.
      * @return the max number of elements to store without expanding this container
      */
-    size_type capacity() const noexcept {
+    [[nodiscard]] size_type capacity() const noexcept {
         return elements_.capacity();
     }
 
@@ -409,20 +410,40 @@ public:
     }
 
     /**
+     * @brief returns ownership reference of the element on the given position.
+     * @details If the entry was modified via the returned ownership, it behaves like as if
+     *      put(const_iterator, std::unique_ptr<U, D>) was called.
+     * @attention the ownership reference will be invalidated after some elements are added or removed.
+     * @param position the target position
+     * @return the element on the given position
+     */
+    [[nodiscard]] util::object_ownership_reference<value_type> ownership(const_iterator position) {
+        using ownership_ref = util::object_ownership_reference<value_type>;
+        return ownership_ref {
+                [position, this]() -> typename ownership_ref::pointer {
+                    return std::addressof(at(static_cast<size_type>(position - cbegin())));
+                },
+                [position, this](typename ownership_ref::unique_pointer replacement) -> void {
+                    put(position, std::move(replacement));
+                }
+        };
+    }
+
+    /**
      * @brief returns a forward iterator which points the beginning of this container.
      * @return the iterator of beginning (inclusive)
      */
-    iterator begin() noexcept {
+    [[nodiscard]] iterator begin() noexcept {
         return elements_.begin();
     }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept {
+    [[nodiscard]] const_iterator begin() const noexcept {
         return elements_.begin();
     }
 
     /// @copydoc begin()
-    const_iterator cbegin() const noexcept {
+    [[nodiscard]] const_iterator cbegin() const noexcept {
         return elements_.cbegin();
     }
 
@@ -430,17 +451,17 @@ public:
      * @brief returns a forward iterator which points the ending of this container.
      * @return the iterator of ending (exclusive)
      */
-    iterator end() noexcept {
+    [[nodiscard]] iterator end() noexcept {
         return elements_.end();
     }
 
     /// @copydoc end()
-    const_iterator end() const noexcept {
+    [[nodiscard]] const_iterator end() const noexcept {
         return elements_.end();
     }
 
     /// @copydoc end()
-    const_iterator cend() const noexcept {
+    [[nodiscard]] const_iterator cend() const noexcept {
         return elements_.cend();
     }
 
@@ -448,17 +469,17 @@ public:
      * @brief returns a backward iterator which points the reversed beginning of this container.
      * @return the reversed iterator of beginning (inclusive)
      */
-    reverse_iterator rbegin() noexcept {
+    [[nodiscard]] reverse_iterator rbegin() noexcept {
         return elements_.rbegin();
     }
 
     /// @copydoc rbegin()
-    const_reverse_iterator rbegin() const noexcept {
+    [[nodiscard]] const_reverse_iterator rbegin() const noexcept {
         return elements_.rbegin();
     }
 
     /// @copydoc rbegin()
-    const_reverse_iterator crbegin() const noexcept {
+    [[nodiscard]] const_reverse_iterator crbegin() const noexcept {
         return elements_.crbegin();
     }
 
@@ -466,17 +487,17 @@ public:
      * @brief returns a backward iterator which points the reversed ending of this container.
      * @return the reversed iterator of ending (exclusive)
      */
-    reverse_iterator rend() noexcept {
+    [[nodiscard]] reverse_iterator rend() noexcept {
         return elements_.rend();
     }
 
     /// @copydoc rend()
-    const_reverse_iterator rend() const noexcept {
+    [[nodiscard]] const_reverse_iterator rend() const noexcept {
         return elements_.rend();
     }
 
     /// @copydoc rend()
-    const_reverse_iterator crend() const noexcept {
+    [[nodiscard]] const_reverse_iterator crend() const noexcept {
         return elements_.crend();
     }
 
@@ -492,7 +513,7 @@ public:
      * @brief returns the object creator to create/delete objects in this container.
      * @return the object creator for this container
      */
-    util::object_creator get_object_creator() const noexcept {
+    [[nodiscard]] util::object_creator get_object_creator() const noexcept {
         return elements_.get_object_creator();
     }
 

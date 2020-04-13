@@ -95,7 +95,7 @@ public:
      * @return true if this is empty
      * @return false otherwise
      */
-    bool empty() const noexcept {
+    [[nodiscard]] bool empty() const noexcept {
         return entries_.none();
     }
 
@@ -103,7 +103,7 @@ public:
      * @brief returns the number of elements in this container.
      * @return the number of elements
      */
-    std::size_t size() const noexcept {
+    [[nodiscard]] std::size_t size() const noexcept {
         return entries_.count();
     }
 

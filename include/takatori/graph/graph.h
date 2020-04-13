@@ -123,7 +123,7 @@ public:
      * @return true if this is empty
      * @return false otherwise
      */
-    bool empty() const noexcept {
+    [[nodiscard]] bool empty() const noexcept {
         return vertices_.empty();
     }
 
@@ -131,7 +131,7 @@ public:
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    size_type size() const noexcept {
+    [[nodiscard]] size_type size() const noexcept {
         return vertices_.size();
     }
 
@@ -391,7 +391,7 @@ public:
      * @brief returns the object creator to create/delete objects in this container.
      * @return the object creator for this container
      */
-    util::object_creator get_object_creator() const noexcept {
+    [[nodiscard]] util::object_creator get_object_creator() const noexcept {
         return util::object_creator { vertices_.get_allocator() };
     }
 

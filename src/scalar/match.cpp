@@ -92,6 +92,10 @@ match& match::input(util::unique_object_ptr<expression> input) noexcept {
     return tree::assign_element(*this, input_, std::move(input));
 }
 
+util::object_ownership_reference<expression> match::ownership_input() {
+    return tree::ownership_element(*this, input_);
+}
+
 expression& match::pattern() noexcept {
     return *pattern_;
 }
@@ -116,6 +120,10 @@ match& match::pattern(util::unique_object_ptr<expression> pattern) noexcept {
     return tree::assign_element(*this, pattern_, std::move(pattern));
 }
 
+util::object_ownership_reference<expression> match::ownership_pattern() {
+    return tree::ownership_element(*this, pattern_);
+}
+
 expression& match::escape() noexcept {
     return *escape_;
 }
@@ -138,6 +146,10 @@ util::unique_object_ptr<expression> match::release_escape() noexcept {
 
 match& match::escape(util::unique_object_ptr<expression> escape) noexcept {
     return tree::assign_element(*this, escape_, std::move(escape));
+}
+
+util::object_ownership_reference<expression> match::ownership_escape() {
+    return tree::ownership_element(*this, escape_);
 }
 
 bool operator==(match const& a, match const& b) noexcept {

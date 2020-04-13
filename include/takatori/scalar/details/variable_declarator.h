@@ -12,6 +12,7 @@
 #include <takatori/util/clonable.h>
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar::details {
 
@@ -128,7 +129,7 @@ public:
     }
 
     /// @copydoc parent_element()
-    parent_type const* parent_element() const noexcept {
+    [[nodiscard]] parent_type const* parent_element() const noexcept {
         return parent_;
     }
 
@@ -150,7 +151,7 @@ public:
     }
 
     /// @copydoc variable()
-    descriptor::variable const& variable() const noexcept {
+    [[nodiscard]] descriptor::variable const& variable() const noexcept {
         return variable_;
     }
 
@@ -163,7 +164,7 @@ public:
     }
 
     /// @copydoc value
-    expression const& value() const noexcept {
+    [[nodiscard]] expression const& value() const noexcept {
         return *value_;
     }
 
@@ -177,7 +178,7 @@ public:
     }
 
     /// @copydoc optional_value()
-    util::optional_ptr<expression const> optional_value() const noexcept {
+    [[nodiscard]] util::optional_ptr<expression const> optional_value() const noexcept {
         return util::optional_ptr { value_.get() };
     }
 
@@ -197,6 +198,14 @@ public:
     variable_declarator& value(util::unique_object_ptr<expression> value) noexcept {
         tree::assign_element_fragment(parent_, variable_, std::move(value));
         return *this;
+    }
+
+    /**
+     * @brief returns ownership of the bound expression.
+     * @return the bound expression
+     */
+    util::object_ownership_reference<expression> ownership_value() {
+        return tree::ownership_element_fragment(parent_, variable_);
     }
 
 private:

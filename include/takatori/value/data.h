@@ -23,14 +23,14 @@ public:
      * @brief returns the kind of this value.
      * @return the value kind
      */
-    virtual value_kind kind() const noexcept = 0;
+    [[nodiscard]] virtual value_kind kind() const noexcept = 0;
 
     /**
      * @brief returns a clone of this object.
      * @param creator the object creator
      * @return the created clone
      */
-    virtual data* clone(util::object_creator creator) const& = 0;
+    [[nodiscard]] virtual data* clone(util::object_creator creator) const& = 0;
 
     /// @copydoc clone()
     virtual data* clone(util::object_creator creator) && = 0;
@@ -99,14 +99,14 @@ protected:
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    virtual bool equals(data const& other) const noexcept = 0;
+    [[nodiscard]] virtual bool equals(data const& other) const noexcept = 0;
 
     /**
      * @brief returns hash code of this object.
      * @details The returned digest value should compute from only type specific information.
      * @return the computed hash code
      */
-    virtual std::size_t hash() const noexcept = 0;
+    [[nodiscard]] virtual std::size_t hash() const noexcept = 0;
 
     /**
      * @brief appends string representation of this object into the given output.

@@ -86,6 +86,10 @@ binary& binary::left(util::unique_object_ptr<expression> left) noexcept {
     return tree::assign_element(*this, left_, std::move(left));
 }
 
+util::object_ownership_reference<expression> binary::ownership_left() {
+    return tree::ownership_element(*this, left_);
+}
+
 expression& binary::right() noexcept {
     return *right_;
 }
@@ -108,6 +112,10 @@ util::unique_object_ptr<expression> binary::release_right() noexcept {
 
 binary& binary::right(util::unique_object_ptr<expression> right) noexcept {
     return tree::assign_element(*this, right_, std::move(right));
+}
+
+util::object_ownership_reference<expression> binary::ownership_right() {
+    return tree::ownership_element(*this, right_);
 }
 
 bool operator==(binary const& a, binary const& b) noexcept {

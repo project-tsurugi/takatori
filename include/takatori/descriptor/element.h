@@ -38,7 +38,7 @@ public:
      * @return the descriptor entity
      * @warning undefined behavior if the entity is absent
      */
-    util::object& entity() const noexcept {
+    [[nodiscard]] util::object& entity() const noexcept {
         return *entity_;
     }
 
@@ -47,7 +47,7 @@ public:
      * @return the descriptor entity
      * @return empty if the entity is absent
      */
-    util::optional_ptr<util::object> optional_entity() const noexcept {
+    [[nodiscard]] util::optional_ptr<util::object> optional_entity() const noexcept {
         return util::optional_ptr { entity_.get() };
     }
 
@@ -55,7 +55,7 @@ public:
      * @brief returns the descriptor entity.
      * @return the descriptor entity
      */
-    std::shared_ptr<util::object> const& shared_entity() const noexcept {
+    [[nodiscard]] std::shared_ptr<util::object> const& shared_entity() const noexcept {
         return entity_;
     }
 
@@ -68,7 +68,7 @@ public:
     }
 
     /// @copydoc region()
-    document::region const& region() const noexcept {
+    [[nodiscard]] document::region const& region() const noexcept {
         return region_;
     }
 

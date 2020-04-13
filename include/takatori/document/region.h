@@ -55,7 +55,7 @@ public:
      * @return the source document
      * @return empty if the region is undefined
      */
-    constexpr util::optional_ptr<document const> source() const noexcept {
+    [[nodiscard]] constexpr util::optional_ptr<document const> source() const noexcept {
         return util::optional_ptr<document const> { source_ };
     }
 
@@ -64,14 +64,14 @@ public:
      * @return the source contents
      * @return empty if the region is undefined
      */
-    std::optional<std::string_view> contents() const noexcept;
+    [[nodiscard]] std::optional<std::string_view> contents() const noexcept;
 
     /**
      * @brief returns the region beginning offset on the source document.
      * @return the beginning offset (inclusive)
      * @return empty if it is not defined
      */
-    constexpr std::optional<size_type> first() const noexcept {
+    [[nodiscard]] constexpr std::optional<size_type> first() const noexcept {
         if (first_ == npos) return {};
         return { first_ };
     }
@@ -81,7 +81,7 @@ public:
      * @return the ending offset (exclusive)
      * @return empty if it is not defined
      */
-    constexpr std::optional<size_type> last() const noexcept {
+    [[nodiscard]] constexpr std::optional<size_type> last() const noexcept {
         if (last_ == npos) return {};
         return { last_ };
     }
@@ -91,7 +91,7 @@ public:
      * @return the offset gap
      * @return empty if either the offset is not defined
      */
-    constexpr std::optional<size_type> gap() const noexcept {
+    [[nodiscard]] constexpr std::optional<size_type> gap() const noexcept {
         if (first_ == npos || last_ == npos || first_ > last_) {
             return {};
         }
@@ -103,14 +103,14 @@ public:
      * @return the beginning position (inclusive)
      * @return invalid position if it is not defined
      */
-    document::position_type first_position() const noexcept;
+    [[nodiscard]] document::position_type first_position() const noexcept;
 
     /**
      * @brief returns the region ending position on the source document.
      * @return the ending position (exclusive)
      * @return invalid position if it is not defined
      */
-    std::optional<document::position_type> last_position() const noexcept;
+    [[nodiscard]] std::optional<document::position_type> last_position() const noexcept;
 
     /**
      * @brief returns whether or not the line number is known.

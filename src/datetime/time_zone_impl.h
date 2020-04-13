@@ -36,25 +36,25 @@ public:
      * @brief returns the time zone ID.
      * @return the time zone ID
      */
-    std::string const& id() const noexcept;
+    [[nodiscard]] std::string const& id() const noexcept;
 
     /**
      * @brief returns the time zone name.
      * @return the time zone name
      */
-    std::string const& name() const noexcept;
+    [[nodiscard]] std::string const& name() const noexcept;
 
     /**
      * @brief returns the time zone offset from GMT.
      * @return time GMT offset
      */
-    std::chrono::minutes offset() const noexcept;
+    [[nodiscard]] std::chrono::minutes offset() const noexcept;
 
     /**
      * @brief returns the time zone entity.
      * @return the time zone entity
      */
-    entity_type const& entity() const noexcept;
+    [[nodiscard]] entity_type const& entity() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

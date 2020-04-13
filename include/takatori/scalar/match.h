@@ -10,6 +10,7 @@
 
 #include <takatori/util/meta_type.h>
 #include <takatori/util/object_creator.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
 
@@ -64,15 +65,15 @@ public:
      */
     explicit match(match&& other, util::object_creator creator) noexcept;
 
-    expression_kind kind() const noexcept override;
-    match* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] match* clone(util::object_creator creator) const& override;
     match* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the operator kind.
      * @return operator kind
      */
-    operator_kind_type operator_kind() const noexcept;
+    [[nodiscard]] operator_kind_type operator_kind() const noexcept;
 
     /**
      * @brief sets operator kind.
@@ -93,7 +94,7 @@ public:
      * @return the input sequence
      * @warning undefined behavior if the input is absent
      */
-    expression const& input() const noexcept;
+    [[nodiscard]] expression const& input() const noexcept;
 
     /**
      * @brief returns the input sequence.
@@ -103,7 +104,7 @@ public:
     util::optional_ptr<expression> optional_input() noexcept;
 
     /// @copydoc optional_input()
-    util::optional_ptr<expression const> optional_input() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_input() const noexcept;
 
     /**
      * @brief releases the input sequence.
@@ -120,6 +121,12 @@ public:
     match& input(util::unique_object_ptr<expression> input) noexcept;
 
     /**
+     * @brief returns ownership reference of the input sequence.
+     * @return the input sequence
+     */
+    util::object_ownership_reference<expression> ownership_input();
+
+    /**
      * @brief returns the pattern sequence.
      * @return the pattern sequence
      * @warning undefined behavior if the pattern is absent
@@ -131,7 +138,7 @@ public:
      * @return the pattern sequence
      * @warning undefined behavior if the pattern is absent
      */
-    expression const& pattern() const noexcept;
+    [[nodiscard]] expression const& pattern() const noexcept;
 
     /**
      * @brief returns the pattern sequence.
@@ -141,7 +148,7 @@ public:
     util::optional_ptr<expression> optional_pattern() noexcept;
 
     /// @copydoc optional_pattern()
-    util::optional_ptr<expression const> optional_pattern() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_pattern() const noexcept;
 
     /**
      * @brief releases the pattern sequence.
@@ -158,6 +165,12 @@ public:
     match& pattern(util::unique_object_ptr<expression> pattern) noexcept;
 
     /**
+     * @brief returns ownership reference of the pattern sequence.
+     * @return the pattern sequence
+     */
+    util::object_ownership_reference<expression> ownership_pattern();
+
+    /**
      * @brief returns the escape character.
      * @return the escape character
      * @warning undefined behavior if the expression is absent
@@ -169,7 +182,7 @@ public:
      * @return the escape character
      * @warning undefined behavior if the expression is absent
      */
-    expression const& escape() const noexcept;
+    [[nodiscard]] expression const& escape() const noexcept;
 
     /**
      * @brief returns the escape character.
@@ -179,7 +192,7 @@ public:
     util::optional_ptr<expression> optional_escape() noexcept;
 
     /// @copydoc optional_escape()
-    util::optional_ptr<expression const> optional_escape() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_escape() const noexcept;
 
     /**
      * @brief releases the escape character.
@@ -194,6 +207,12 @@ public:
      * @return this
      */
     match& escape(util::unique_object_ptr<expression> escape) noexcept;
+
+    /**
+     * @brief returns ownership reference of the escape character.
+     * @return the escape character
+     */
+    util::object_ownership_reference<expression> ownership_escape();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -222,7 +241,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, match const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

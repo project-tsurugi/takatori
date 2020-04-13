@@ -85,13 +85,13 @@ protected:
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    virtual bool equals(object const& other) const noexcept = 0;
+    [[nodiscard]] virtual bool equals(object const& other) const noexcept = 0;
 
     /**
      * @brief returns a hash code of this object.
      * @return the computed hash code
      */
-    virtual std::size_t hash() const noexcept = 0;
+    [[nodiscard]] virtual std::size_t hash() const noexcept = 0;
 
     /**
      * @brief appends string representation of this object into the given output.

@@ -81,12 +81,12 @@ public:
      */
     explicit find(find&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
     util::sequence_view<input_port_type> input_ports() noexcept override;
-    util::sequence_view<input_port_type const> input_ports() const noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     util::sequence_view<output_port_type> output_ports() noexcept override;
-    util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    find* clone(util::object_creator creator) const& override;
+    [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
+    [[nodiscard]] find* clone(util::object_creator creator) const& override;
     find* clone(util::object_creator creator) && override;
 
     /**
@@ -96,20 +96,16 @@ public:
     output_port_type& output() noexcept;
 
     /// @copydoc output()
-    output_port_type const& output() const noexcept;
+    [[nodiscard]] output_port_type const& output() const noexcept;
 
     /**
      * @brief returns the source relation.
      * @return the source relation
      */
-    descriptor::relation const& source() const noexcept;
+    descriptor::relation& source() noexcept;
 
-    /**
-     * @brief sets the source relation.
-     * @param source the source relation
-     * @return this
-     */
-    find& source(descriptor::relation source) noexcept;
+    /// @copydoc source()
+    [[nodiscard]] descriptor::relation const& source() const noexcept;
 
     /**
      * @brief returns the target columns to scan.
@@ -118,7 +114,7 @@ public:
     std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
-    std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
 
     /**
      * @brief returns pieces of key to point to the target row.
@@ -127,7 +123,7 @@ public:
     tree::tree_fragment_vector<key>& keys() noexcept;
 
     /// @brief keys()
-    tree::tree_fragment_vector<key> const& keys() const noexcept;
+    [[nodiscard]] tree::tree_fragment_vector<key> const& keys() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -158,7 +154,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, find const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

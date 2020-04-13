@@ -50,7 +50,7 @@ public:
      * @brief returns the date interval.
      * @return the date interval
      */
-    constexpr date_interval date() const noexcept {
+    [[nodiscard]] constexpr date_interval date() const noexcept {
         return date_;
     }
 
@@ -58,7 +58,7 @@ public:
      * @brief returns the time interval.
      * @return the time interval
      */
-    constexpr time_interval time() const noexcept {
+    [[nodiscard]] constexpr time_interval time() const noexcept {
         return time_;
     }
 

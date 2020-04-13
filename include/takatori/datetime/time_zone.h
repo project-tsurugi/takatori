@@ -53,19 +53,19 @@ public:
      * @brief returns the time zone ID.
      * @return the time zone ID
      */
-    std::string_view id() const noexcept;
+    [[nodiscard]] std::string_view id() const noexcept;
 
     /**
      * @brief returns the name of this time zone.
      * @return the time zone name
      */
-    std::string_view name() const noexcept;
+    [[nodiscard]] std::string_view name() const noexcept;
 
     /**
      * @brief returns the time zone offset from GMT.
      * @return time GMT offset
      */
-    std::chrono::minutes offset() const noexcept;
+    [[nodiscard]] std::chrono::minutes offset() const noexcept;
 
     // FIXME: DST info
 

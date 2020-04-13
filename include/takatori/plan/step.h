@@ -37,7 +37,7 @@ public:
      * @return true if this vertex does not have the owner graph
      * @return false otherwise
      */
-    bool is_orphan() const noexcept;
+    [[nodiscard]] bool is_orphan() const noexcept;
 
     /**
      * @brief returns the graph which owns this vertex.
@@ -49,7 +49,7 @@ public:
     graph_type& owner();
 
     /// @copydoc owner
-    graph_type const& owner() const;
+    [[nodiscard]] graph_type const& owner() const;
 
     /**
      * @brief returns the graph which owns this step.
@@ -59,20 +59,20 @@ public:
     util::optional_ptr<graph_type> optional_owner() noexcept;
 
     /// @copydoc optional_owner()
-    util::optional_ptr<graph_type const> optional_owner() const noexcept;
+    [[nodiscard]] util::optional_ptr<graph_type const> optional_owner() const noexcept;
 
     /**
      * @brief returns the kind of this step.
      * @return the step kind
      */
-    virtual step_kind kind() const noexcept = 0;
+    [[nodiscard]] virtual step_kind kind() const noexcept = 0;
 
     /**
      * @brief returns a clone of this object.
      * @param creator the object creator
      * @return the created clone
      */
-    virtual step* clone(util::object_creator creator) const& = 0;
+    [[nodiscard]] virtual step* clone(util::object_creator creator) const& = 0;
 
     /// @copydoc clone()
     virtual step* clone(util::object_creator creator) && = 0;
@@ -129,7 +129,7 @@ protected:
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    virtual bool equals(step const& other) const noexcept = 0;
+    [[nodiscard]] virtual bool equals(step const& other) const noexcept = 0;
 
     /**
      * @brief appends string representation of this object into the given output.

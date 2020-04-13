@@ -83,12 +83,12 @@ public:
      */
     explicit forward(forward&& other, util::object_creator creator);
 
-    step_kind kind() const noexcept override;
-    forward* clone(util::object_creator creator) const& override;
+    [[nodiscard]] step_kind kind() const noexcept override;
+    [[nodiscard]] forward* clone(util::object_creator creator) const& override;
     forward* clone(util::object_creator creator) && override;
 
-    util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
-    util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
+    [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
 
     /**
      * @brief returns the columns to exchange.
@@ -97,14 +97,14 @@ public:
     std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
 
     /// @copydoc columns()
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
 
     /**
      * @brief returns the max number of exchange rows.
      * @return the number of exchange rows limit
      * @return empty if it is unlimited
      */
-    std::optional<size_type> const& limit() const noexcept;
+    [[nodiscard]] std::optional<size_type> const& limit() const noexcept;
 
     /**
      * @brief sets the max number of exchange rows.
@@ -144,7 +144,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, forward const& value);
 
 protected:
-    bool equals(step const& other) const noexcept override;
+    [[nodiscard]] bool equals(step const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

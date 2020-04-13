@@ -98,7 +98,7 @@ TEST_F(tree_element_vector_test, at_const) {
     EXPECT_EQ(get(cv.at(1)), 20);
     EXPECT_EQ(get(cv.at(2)), 30);
 
-    EXPECT_THROW(cv.at(3), std::out_of_range);
+    EXPECT_THROW((void) cv.at(3), std::out_of_range);
 }
 
 TEST_F(tree_element_vector_test, operator_at) {
@@ -364,6 +364,18 @@ TEST_F(tree_element_vector_test, release_elements) {
     EXPECT_EQ(r[0].parent_element(), nullptr);
     EXPECT_EQ(r[1].parent_element(), nullptr);
     EXPECT_EQ(r[2].parent_element(), nullptr);
+}
+
+TEST_F(tree_element_vector_test, ownership) {
+    branch<int> root;
+    auto v = make_vector(root, {}, 10, 20, 30);
+    auto o = v.ownership(v.begin() + 1);
+
+    EXPECT_EQ(get(*o), 20);
+
+    o = v.get_object_creator().create_unique<leaf<int>>(-1);
+    EXPECT_EQ(get(*o), -1);
+    EXPECT_EQ(o->parent_element(), &root);
 }
 
 TEST_F(tree_element_vector_test, compare) {

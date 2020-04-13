@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <iostream>
+#include <memory>
 #include <type_traits>
 #include <utility>
 
@@ -14,12 +15,16 @@ namespace takatori::util {
  * @brief reference of properties.
  * @details THis is designed for modifying polymorphic class objects in the same way.
  * @tparam T the property type
+ * @tparam D the deleter type
  */
-template<class T>
+template<class T, class D = std::default_delete<T>>
 class ownership_reference {
 public:
     /// @brief the property value type.
     using element_type = T;
+
+    /// @brief the deleter type.
+    using deleter_type = D;
 
     /// @brief the property reference type.
     using reference = std::add_lvalue_reference_t<element_type>;
@@ -28,7 +33,7 @@ public:
     using pointer = std::add_pointer_t<element_type>;
 
     /// @brief the property std::unique_ptr type.
-    using unique_pointer = unique_object_ptr<element_type>;
+    using unique_pointer = std::unique_ptr<element_type, deleter_type>;
 
     /**
      * @brief creates a new instance.
@@ -37,7 +42,7 @@ public:
      */
     ownership_reference(
             std::function<pointer()> getter,
-            std::function<void(unique_pointer value)> setter) noexcept
+            std::function<void(unique_pointer replacement)> setter) noexcept
         : getter_(std::move(getter))
         , setter_(std::move(setter))
     {}
@@ -60,7 +65,7 @@ public:
      * @return true if the property is absent
      * @return false otherwise
      */
-    bool empty() const {
+    [[nodiscard]] bool empty() const {
         return find().empty();
     }
 
@@ -69,7 +74,7 @@ public:
      * @return true if the property is present
      * @return false otherwise
      */
-    bool has_value() const {
+    [[nodiscard]] bool has_value() const {
         return find().has_value();
     }
 
@@ -83,8 +88,13 @@ public:
      * @return the property value
      * @return empty if it is absent
      */
-    optional_ptr<element_type> find() const {
+    [[nodiscard]] optional_ptr<element_type> find() const {
         return optional_ptr<element_type> { getter_() };
+    }
+
+    /// @copydoc find()
+    [[nodiscard]] optional_ptr<element_type> operator->() const {
+        return find();
     }
 
     /**
@@ -92,12 +102,12 @@ public:
      * @return the property value
      * @throws std::bad_optional_access if this reference is empty
      */
-    reference get() const {
+    [[nodiscard]] reference get() const {
         return find().value();
     }
 
     /// @copydoc get()
-    reference value() const {
+    [[nodiscard]] reference value() const {
         return get();
     }
 
@@ -138,5 +148,11 @@ private:
     std::function<void(unique_pointer value)> setter_;
 };
 
+/**
+ * @brief ownership_reference which uses object_creator.
+ * @tparam T the property value type
+ */
+template<class T>
+using object_ownership_reference = ownership_reference<T, object_deleter>;
 
 } // namespace takatori::util

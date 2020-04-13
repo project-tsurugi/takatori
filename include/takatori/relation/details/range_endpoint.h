@@ -119,7 +119,7 @@ public:
     }
 
     /// @copydoc parent_element()
-    parent_type const* parent_element() const noexcept {
+    [[nodiscard]] [[nodiscard]] parent_type const* parent_element() const noexcept {
         return parent_;
     }
 
@@ -141,7 +141,7 @@ public:
     }
 
     /// @brief keys()
-    tree::tree_fragment_vector<key> const& keys() const noexcept {
+    [[nodiscard]] tree::tree_fragment_vector<key> const& keys() const noexcept {
         return keys_;
     }
 
@@ -149,7 +149,7 @@ public:
      * @brief returns the end-point kind of this.
      * @return the end-point kind
      */
-    kind_type kind() const noexcept {
+    [[nodiscard]] kind_type kind() const noexcept {
         return kind_;
     }
 

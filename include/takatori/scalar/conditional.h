@@ -16,6 +16,7 @@
 #include <takatori/util/rvalue_ptr.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 #include <takatori/util/meta_type.h>
+#include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
 
@@ -63,8 +64,8 @@ public:
      */
     explicit conditional(conditional&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
-    conditional* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] conditional* clone(util::object_creator creator) const& override;
     conditional* clone(util::object_creator creator) && override;
 
     /**
@@ -74,29 +75,35 @@ public:
     tree::tree_fragment_vector<alternative>& alternatives() noexcept;
     
     /// @copydoc alternatives()
-    tree::tree_fragment_vector<alternative> const& alternatives() const noexcept;
+    [[nodiscard]] tree::tree_fragment_vector<alternative> const& alternatives() const noexcept;
 
     /**
-     * @brief returns the default expression expression.
+     * @brief returns the default expression.
      * @return the default_expression expression
-     * @return empty if the default expression expression is absent
+     * @return empty if the default expression is absent
      */
     util::optional_ptr<expression> default_expression() noexcept;
 
     /// @copydoc default_expression()
-    util::optional_ptr<expression const> default_expression() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> default_expression() const noexcept;
 
     /**
-     * @brief sets the default expression expression.
-     * @param default_expression the default expression expression
+     * @brief sets the default expression.
+     * @param default_expression the default expression
      * @return this
      */
     conditional& default_expression(util::unique_object_ptr<expression> default_expression) noexcept;
 
     /**
+     * @brief returns ownership reference of the default expression.
+     * @return the default expression
+     */
+    util::object_ownership_reference<expression> ownership_default_expression();
+
+    /**
      * @brief releases the default_expression expression.
      * @return the released expression
-     * @return empty if the default expression expression is absent
+     * @return empty if the default expression is absent
      */
     util::unique_object_ptr<expression> release_default_expression() noexcept;
 
@@ -127,7 +134,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, conditional const& value);
     
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

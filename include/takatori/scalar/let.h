@@ -10,10 +10,11 @@
 
 #include <takatori/tree/tree_fragment_vector.h>
 
+#include <takatori/util/meta_type.h>
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
+#include <takatori/util/ownership_reference.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
-#include <takatori/util/meta_type.h>
 
 namespace takatori::scalar {
 
@@ -69,8 +70,8 @@ public:
      */
     explicit let(let&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
-    let* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] let* clone(util::object_creator creator) const& override;
     let* clone(util::object_creator creator) && override;
 
     /**
@@ -80,7 +81,7 @@ public:
     tree::tree_fragment_vector<declarator>& variables() noexcept;
     
     /// @copydoc variables()
-    tree::tree_fragment_vector<declarator> const& variables() const noexcept;
+    [[nodiscard]] tree::tree_fragment_vector<declarator> const& variables() const noexcept;
 
     /**
      * @brief returns the body expression.
@@ -94,7 +95,7 @@ public:
      * @return the body expression
      * @warning undefined behavior if the body is absent
      */
-    expression const& body() const noexcept;
+    [[nodiscard]] expression const& body() const noexcept;
 
     /**
      * @brief returns the body expression.
@@ -104,7 +105,7 @@ public:
     util::optional_ptr<expression> optional_body() noexcept;
 
     /// @copydoc optional_body()
-    util::optional_ptr<expression const> optional_body() const noexcept;
+    [[nodiscard]] util::optional_ptr<expression const> optional_body() const noexcept;
 
     /**
      * @brief releases the body expression.
@@ -119,6 +120,12 @@ public:
      * @return this
      */
     let& body(util::unique_object_ptr<expression> body) noexcept;
+
+    /**
+     * @brief returns ownership of the body expression.
+     * @return the body expression
+     */
+    util::object_ownership_reference<expression> ownership_body() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -147,7 +154,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, let const& value);
     
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

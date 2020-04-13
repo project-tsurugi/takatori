@@ -17,6 +17,7 @@
 
 #include <takatori/util/meta_type.h>
 #include <takatori/util/object_creator.h>
+#include <takatori/util/ownership_reference.h>
 #include <takatori/util/rvalue_ptr.h>
 
 namespace takatori::relation::intermediate {
@@ -103,12 +104,12 @@ public:
      */
     explicit join(join&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
     util::sequence_view<input_port_type> input_ports() noexcept override;
-    util::sequence_view<input_port_type const> input_ports() const noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     util::sequence_view<output_port_type> output_ports() noexcept override;
-    util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    join* clone(util::object_creator creator) const& override;
+    [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
+    [[nodiscard]] join* clone(util::object_creator creator) const& override;
     join* clone(util::object_creator creator) && override;
 
     /**
@@ -118,7 +119,7 @@ public:
     input_port_type& left() noexcept;
 
     /// @copydoc left()
-    input_port_type const& left() const noexcept;
+    [[nodiscard]] input_port_type const& left() const noexcept;
 
     /**
      * @brief returns the right input port.
@@ -127,7 +128,7 @@ public:
     input_port_type& right() noexcept;
 
     /// @copydoc right()
-    input_port_type const& right() const noexcept;
+    [[nodiscard]] input_port_type const& right() const noexcept;
 
     /**
      * @brief returns the output port.
@@ -136,13 +137,13 @@ public:
     output_port_type& output() noexcept;
 
     /// @copydoc output()
-    output_port_type const& output() const noexcept;
+    [[nodiscard]] output_port_type const& output() const noexcept;
 
     /**
      * @brief returns the join kind.
      * @return the join kind
      */
-    operator_kind_type operator_kind() const noexcept;
+    [[nodiscard]] operator_kind_type operator_kind() const noexcept;
 
     /**
      * @brief sets the join kind.
@@ -158,7 +159,7 @@ public:
     std::vector<key_pair, util::object_allocator<key_pair>>& key_pairs() noexcept;
 
     /// @copydoc key_pairs()
-    std::vector<key_pair, util::object_allocator<key_pair>> const& key_pairs() const noexcept;
+    [[nodiscard]] std::vector<key_pair, util::object_allocator<key_pair>> const& key_pairs() const noexcept;
 
     /**
      * @brief returns the lower end-point specification.
@@ -167,7 +168,7 @@ public:
     endpoint& lower() noexcept;
 
     /// @copydoc lower()
-    endpoint const& lower() const noexcept;
+    [[nodiscard]] endpoint const& lower() const noexcept;
 
     /**
      * @brief returns the upper end-point specification.
@@ -176,7 +177,7 @@ public:
     endpoint& upper() noexcept;
 
     /// @copydoc upper()
-    endpoint const& upper() const noexcept;
+    [[nodiscard]] endpoint const& upper() const noexcept;
 
     /**
      * @brief returns the condition expression.
@@ -190,7 +191,7 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    util::optional_ptr<scalar::expression const> condition() const noexcept;
+    [[nodiscard]] util::optional_ptr<scalar::expression const> condition() const noexcept;
 
     /**
      * @brief releases the condition expression.
@@ -205,6 +206,12 @@ public:
      * @return this
      */
     join& condition(util::unique_object_ptr<scalar::expression> condition) noexcept;
+
+    /**
+     * @brief returns ownership of the condition expression.
+     * @return the condition expression
+     */
+    util::object_ownership_reference<scalar::expression> ownership_condition() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -235,7 +242,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, join const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

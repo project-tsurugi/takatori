@@ -31,8 +31,8 @@ public:
     time_point(time_point&& other) noexcept = delete;
     time_point& operator=(time_point&& other) noexcept = delete;
 
-    type_kind kind() const noexcept override;
-    time_point* clone(util::object_creator creator) const& override;
+    [[nodiscard]] type_kind kind() const noexcept override;
+    [[nodiscard]] time_point* clone(util::object_creator creator) const& override;
     time_point* clone(util::object_creator creator) && override;
 
     /**
@@ -40,7 +40,7 @@ public:
      * @return time zone information if this object represents the zoned time
      * @return empty if this object does not have time zone information
      */
-    std::optional<datetime::time_zone> const& time_zone() const noexcept;
+    [[nodiscard]] std::optional<datetime::time_zone> const& time_zone() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -69,8 +69,8 @@ public:
     friend std::ostream& operator<<(std::ostream& out, time_point const& value);
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
+    [[nodiscard]] bool equals(data const& other) const noexcept override;
+    [[nodiscard]] std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

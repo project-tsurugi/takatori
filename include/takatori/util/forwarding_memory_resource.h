@@ -70,7 +70,7 @@ protected:
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    bool do_is_equal(const memory_resource& other) const noexcept override {
+    [[nodiscard]] bool do_is_equal(const memory_resource& other) const noexcept override {
         if (auto* ptr = dynamic_cast<forwarding_memory_resource const*>(&other); ptr != nullptr) {
             return delegate_->is_equal(*ptr->delegate_);
         }

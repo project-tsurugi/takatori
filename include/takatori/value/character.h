@@ -52,22 +52,22 @@ public:
     character(character&& other) noexcept = delete;
     character& operator=(character&& other) noexcept = delete;
 
-    value_kind kind() const noexcept override;
-    character* clone(util::object_creator creator) const& override;
+    [[nodiscard]] value_kind kind() const noexcept override;
+    [[nodiscard]] character* clone(util::object_creator creator) const& override;
     character* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the entity value.
      * @return the entity value
      */
-    view_type get() const noexcept;
+    [[nodiscard]] view_type get() const noexcept;
 
     /// @copydoc get()
     explicit operator view_type() const noexcept;
 
 protected:
-    bool equals(data const& other) const noexcept override;
-    std::size_t hash() const noexcept override;
+    [[nodiscard]] bool equals(data const& other) const noexcept override;
+    [[nodiscard]] std::size_t hash() const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

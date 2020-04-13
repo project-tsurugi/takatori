@@ -103,7 +103,7 @@ public:
      * @brief returns the entity iterator.
      * @return the entity iterator
      */
-    Iter unwrap() const noexcept {
+    [[nodiscard]] Iter unwrap() const noexcept {
         return iter_;
     }
 

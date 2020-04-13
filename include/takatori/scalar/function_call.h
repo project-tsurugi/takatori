@@ -63,8 +63,8 @@ public:
      */
     explicit function_call(function_call&& other, util::object_creator creator);
 
-    expression_kind kind() const noexcept override;
-    function_call* clone(util::object_creator creator) const& override;
+    [[nodiscard]] expression_kind kind() const noexcept override;
+    [[nodiscard]] function_call* clone(util::object_creator creator) const& override;
     function_call* clone(util::object_creator creator) && override;
 
     /**
@@ -74,7 +74,7 @@ public:
     descriptor::function& function() noexcept;
 
     /// @copydoc function()
-    descriptor::function const& function() const noexcept;
+    [[nodiscard]] descriptor::function const& function() const noexcept;
 
     /**
      * @brief returns the function arguments.
@@ -83,7 +83,7 @@ public:
     tree::tree_element_vector<expression>& arguments() noexcept;
 
     /// @copydoc arguments()
-    tree::tree_element_vector<expression> const& arguments() const noexcept;
+    [[nodiscard]] tree::tree_element_vector<expression> const& arguments() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -112,7 +112,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, function_call const& value);
 
 protected:
-    bool equals(expression const& other) const noexcept override;
+    [[nodiscard]] bool equals(expression const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

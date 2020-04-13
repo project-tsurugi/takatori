@@ -61,21 +61,21 @@ public:
      * @return true if this reference is empty
      * @return false otherwise
      */
-    constexpr bool empty() const noexcept { return entry_ == nullptr; }
+    [[nodiscard]] constexpr bool empty() const noexcept { return entry_ == nullptr; }
 
     /**
      * @brief returns whether or not this has any entries.
      * @return true if this has entry
      * @return false otherwise
      */
-    constexpr bool has_value() const noexcept { return !empty(); }
+    [[nodiscard]] constexpr bool has_value() const noexcept { return !empty(); }
 
     /**
      * @brief returns a pointer to the holding value.
      * @return pointer to the holding value
      * @return nullptr if this reference is empty
      */
-    constexpr pointer get() const noexcept { return entry_; }
+    [[nodiscard]] constexpr pointer get() const noexcept { return entry_; }
 
     /**
      * @brief returns the holding value.

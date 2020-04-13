@@ -30,15 +30,15 @@ public:
     extension(extension&& other) noexcept = delete;
     extension& operator=(extension&& other) noexcept = delete;
 
-    type_kind kind() const noexcept final;
-    extension* clone(util::object_creator creator) const& override = 0;
+    [[nodiscard]] type_kind kind() const noexcept final;
+    [[nodiscard]] extension* clone(util::object_creator creator) const& override = 0;
     extension* clone(util::object_creator creator) && override = 0;
 
     /**
      * @brief returns the extension ID of this type.
      * @return the extension ID
      */
-    virtual extension_id_type extension_id() const noexcept = 0;
+    [[nodiscard]] virtual extension_id_type extension_id() const noexcept = 0;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -73,9 +73,9 @@ protected:
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    virtual bool equals(extension const& other) const noexcept = 0;
-    bool equals(data const& other) const noexcept final;
-    std::size_t hash() const noexcept override = 0;
+    [[nodiscard]] virtual bool equals(extension const& other) const noexcept = 0;
+    [[nodiscard]] bool equals(data const& other) const noexcept final;
+    [[nodiscard]] std::size_t hash() const noexcept override = 0;
     std::ostream& print_to(std::ostream& out) const override = 0;
 };
 

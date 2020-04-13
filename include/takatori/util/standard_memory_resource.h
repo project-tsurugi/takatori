@@ -36,7 +36,7 @@ protected:
      * @return true if the both are equivalent
      * @return false otherwise
      */
-    bool do_is_equal(memory_resource const& other) const noexcept override {
+    [[nodiscard]] bool do_is_equal(memory_resource const& other) const noexcept override {
         return dynamic_cast<standard_memory_resource const*>(&other) != nullptr;
     }
 };

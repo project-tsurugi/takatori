@@ -198,7 +198,7 @@ public:
     }
 
     /// @copydoc at()
-    const_reference at(size_type position) const {
+    [[nodiscard]] const_reference at(size_type position) const {
         return elements_.at(position);
     }
 
@@ -227,7 +227,7 @@ public:
     }
 
     /// @copydoc front()
-    const_reference front() const {
+    [[nodiscard]] const_reference front() const {
         return elements_.front();
     }
 
@@ -241,7 +241,7 @@ public:
     }
 
     /// @copydoc back()
-    const_reference back() const {
+    [[nodiscard]] const_reference back() const {
         return elements_.back();
     }
 
@@ -250,7 +250,7 @@ public:
      * @return true if this is empty
      * @return false otherwise
      */
-    bool empty() const noexcept {
+    [[nodiscard]] bool empty() const noexcept {
         return elements_.empty();
     }
 
@@ -258,7 +258,7 @@ public:
      * @brief returns the number of elements in this.
      * @return the number of elements
      */
-    size_type size() const noexcept {
+    [[nodiscard]] size_type size() const noexcept {
         return elements_.size();
     }
 
@@ -266,7 +266,7 @@ public:
      * @brief returns the capacity size of this.
      * @return the max number of elements to store without expanding this container
      */
-    size_type capacity() const noexcept {
+    [[nodiscard]] size_type capacity() const noexcept {
         return elements_.capacity();
     }
 
@@ -484,12 +484,12 @@ public:
     }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept {
+    [[nodiscard]] const_iterator begin() const noexcept {
         return elements_.begin();
     }
 
     /// @copydoc begin()
-    const_iterator cbegin() const noexcept {
+    [[nodiscard]] const_iterator cbegin() const noexcept {
         return elements_.cbegin();
     }
 
@@ -502,12 +502,12 @@ public:
     }
 
     /// @copydoc end()
-    const_iterator end() const noexcept {
+    [[nodiscard]] const_iterator end() const noexcept {
         return elements_.end();
     }
 
     /// @copydoc end()
-    const_iterator cend() const noexcept {
+    [[nodiscard]] const_iterator cend() const noexcept {
         return elements_.cend();
     }
 
@@ -520,12 +520,12 @@ public:
     }
 
     /// @copydoc rbegin()
-    const_reverse_iterator rbegin() const noexcept {
+    [[nodiscard]] const_reverse_iterator rbegin() const noexcept {
         return elements_.rbegin();
     }
 
     /// @copydoc rbegin()
-    const_reverse_iterator crbegin() const noexcept {
+    [[nodiscard]] const_reverse_iterator crbegin() const noexcept {
         return elements_.crbegin();
     }
 
@@ -538,12 +538,12 @@ public:
     }
 
     /// @copydoc rend()
-    const_reverse_iterator rend() const noexcept {
+    [[nodiscard]] const_reverse_iterator rend() const noexcept {
         return elements_.rend();
     }
 
     /// @copydoc rend()
-    const_reverse_iterator crend() const noexcept {
+    [[nodiscard]] const_reverse_iterator crend() const noexcept {
         return elements_.crend();
     }
 
@@ -560,7 +560,7 @@ public:
      * @brief returns the object creator to create/delete objects in this container.
      * @return the object creator for this container
      */
-    util::object_creator get_object_creator() const noexcept {
+    [[nodiscard]] util::object_creator get_object_creator() const noexcept {
         return elements_.get_allocator();
     }
 
