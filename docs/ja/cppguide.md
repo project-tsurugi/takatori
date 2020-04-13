@@ -86,8 +86,16 @@ CMake を利用する際、かならず out-of-source ビルドを行う。
 * 公開シンボルは C++ 標準ライブラリと命名規約をそろえる
   * ファイル、クラス、関数、変数のいずれも `snake_case`
   * テンプレート引数のみ `CamelCase`
+  * マクロは `UPPER_CASE`
+* グローバル名前空間にプロジェクト名またはその一部と同名の名前空間を作成し、そこにプロジェクトのシンボルを宣言する
+  * 原則的にグローバル名前空間は汚さないこと
+  * プロジェクト名を C++ identifier として使えるものにしておくと便利
+  * さらに深い名前空間を作成してもよいが、基本的にはそこから 1~2 段程度にしておくと取り回しがよい
+    * ただし、他プロジェクトから直接参照されないものはこの限りでない (`details` や `impl` など)
 * プライベートフィールドには末尾に `_` を付与する
   * プライベート関数は自由に命名してよい
+  * 原則的には公開シンボルの末尾に `_` を付与しない
+    * ごくまれな例外として、 C++ キーワードと衝突するシンボル名を付与せざるを得ない場合に、末尾に `_` を付与
 * 本質的に同じものを表す場合、同じ名前を付ける
   * static duck typing の上で重要
   * 逆に、本質的に異なるなら別の名前を付けると取違いが減る
@@ -213,7 +221,7 @@ CMake を利用する際、かならず out-of-source ビルドを行う。
   * 一部の例外を除き常に movable にする
     * 何らかの理由で他のオブジェクトが自身のポインタを保持する場合、 movable だと壊れる
   * movable でない場合、STLコンテナの多くが利用不可能になる
-* conversion constructor
+* conversion constructible
   * ある値を別の値に暗黙に変換する場合、 conversion constructor を用意する
   * conversion operator と conversion constructor を相互に作成すると、 ambiguous になりがち
     * 自分が定義するクラスに変換する場合、 conversion constructor を定義
@@ -228,7 +236,7 @@ CMake を利用する際、かならず out-of-source ビルドを行う。
 ### 定数関連
 
 * クラスの先頭では `public:` ブロックに型や定数を定義する
-  * 型 (`using ... = ...;`)
+  * 型エイリアス (`using ... = ...;`)
     * テンプレートパラメータ
     * `std::size_t` など、具体性に欠けるもの
     * イテレータなどの実装クラス名に意味がないもの
@@ -301,6 +309,7 @@ CMake を利用する際、かならず out-of-source ビルドを行う。
 * friend 定義を利用してもよいケース
   * クラステンプレートのテンプレート引数違い
     * 特に conversion constructor の実装に必要になる場合がある
+  * pimpl パターン
   * `operator<<(std::ostream&, ...)`
     * 本質的にデバッグ用途であり、内部状態を表示したい場合が多々ある
   * `operator+` や `operator==` 等は friend で実装してもよいが、多くの場合は不要
@@ -334,10 +343,10 @@ CMake を利用する際、かならず out-of-source ビルドを行う。
   * 列挙から名前を取得する方法が存在しないため、ボイラープレートとして常に用意する
   * ついでに `operator<<(std::ostream&, ...)` のオーバーロードも定義する
 
-### polymorphic
+### abstract class
 
-* polymorphic 以外の道があればそうしたほうがいい
-  * 非 polymorphic class と作り方も使い方も違いすぎる
+* virtual 関数以外の道があればそうしたほうがいい
+  * 非 abstract class と作り方も使い方も違いすぎる
   * template, virtual を同時に指定できないなどの制限も多い
 * 基底クラスを作る場合、 abstract にしたうえで virtual destructor を定義する
   * concrete polymorphic base class はおそらく設計ミス
@@ -348,8 +357,9 @@ CMake を利用する際、かならず out-of-source ビルドを行う。
   * `virtual tag_type kind()` で動的に取得可能
 * 潜在的にコピー可能である場合、 polymorphic clone を提供する
   * `T* T::clone()`
-    * raw pointer が暴露するが、co-variant return type のために致し方なし
+    * 所有権付きの raw pointer が暴露するが、co-variant return type のために致し方なし
     * [`takatori::util::clonable`](https://github.com/project-tsurugi/takatori/blob/master/include/takatori/util/clonable.h) のようなヘルパ経由でコピーする
+  * メモリリークを避けるため、 `[[nodiscard]]` を付与しておくとよい
 
 ### グローバル変数
 
