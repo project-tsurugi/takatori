@@ -53,6 +53,7 @@
 * 標準的な実装では、 interface クラスに `std::unique_ptr` で実装クラスへのポインタを持たせる
 * 以下の例では、 `object.h` を公開ヘッダとして提供すれば、残りは公開しなくてよい
   * `object_impl.h` を非公開ヘッダとして別途作成することで、このヘッダを利用できれば非公開APIを直接利用できるようになっている
+    * 逆に、 `object::impl` を直接利用しない場合、 `object.cpp` 内で宣言して `object_impl.h` を作らなくてもよい
   * 非公開部分を多用する場合、 implementation クラスはメンバクラスではなく、トップレベルにおいてもよい (`object::impl` -> `object_impl` など)
 
 ```cpp
@@ -224,7 +225,7 @@ int object::something() {
 * interface クラスに `std::shared_ptr` で実装クラスへのポインタを持たせると便利なケースがある
   * `std::shared_ptr` がデリーター部分を型消去してくれるため、デストラクタ等を自動生成できる
   * 変更不可能な「値」クラスに適している
-* `takatori::datetime::time_zone` はこのパターン
+    * `takatori::datetime::time_zone` はこのパターン
 
 ```cpp
 // object.h
