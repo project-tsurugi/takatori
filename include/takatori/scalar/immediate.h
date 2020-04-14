@@ -58,7 +58,7 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] immediate* clone(util::object_creator creator) const& override;
-    immediate* clone(util::object_creator creator) && override;
+    [[nodiscard]] immediate* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the immediate value.

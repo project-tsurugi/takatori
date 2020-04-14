@@ -50,14 +50,14 @@ public:
     [[nodiscard]] virtual expression* clone(util::object_creator creator) const& = 0;
 
     /// @copydoc clone()
-    virtual expression* clone(util::object_creator creator) && = 0;
+    [[nodiscard]] virtual expression* clone(util::object_creator creator) && = 0;
 
     /**
      * @brief returns the parent element.
      * @return the parent element
      * @return nullptr if this is the root or orphaned element
      */
-    parent_type* parent_element() noexcept;
+    [[nodiscard]] parent_type* parent_element() noexcept;
 
     /**
      * @brief returns the parent element.
@@ -77,7 +77,7 @@ public:
      * @return the parent expression
      * @return empty if it is not set, or the parent element is not an expression
      */
-    util::optional_ptr<expression> parent_expression() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> parent_expression() noexcept;
 
     /// @copydoc parent_expression()
     [[nodiscard]] util::optional_ptr<expression const> parent_expression() const noexcept;
@@ -86,7 +86,7 @@ public:
      * @brief returns the document region of this element.
      * @return the document region
      */
-    document::region& region() noexcept;
+    [[nodiscard]] document::region& region() noexcept;
 
     /// @copydoc region()
     [[nodiscard]] document::region const& region() const noexcept;
