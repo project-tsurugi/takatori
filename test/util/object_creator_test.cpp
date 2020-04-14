@@ -45,8 +45,18 @@ TEST_F(object_creator_test, wrap_shared_nullptr) {
 }
 
 TEST_F(object_creator_test, allocator) {
+    object_creator creator;
+
     using string = std::basic_string<char, std::char_traits<char>, object_allocator<char>>;
-    string str { "Hello, custom allocator!" };
+    string str { "Hello, custom allocator!", creator.allocator<char>() };
+    EXPECT_EQ(str, "Hello, custom allocator!");
+}
+
+TEST_F(object_creator_test, allocator_void) {
+    object_creator creator;
+
+    using string = std::basic_string<char, std::char_traits<char>, object_allocator<char>>;
+    string str { "Hello, custom allocator!", creator.allocator() };
     EXPECT_EQ(str, "Hello, custom allocator!");
 }
 

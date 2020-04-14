@@ -89,7 +89,7 @@ public:
      * @return the wrapped object
      */
     template<class T>
-    unique_object_ptr<T> wrap_unique(T* object);
+    [[nodiscard]] unique_object_ptr<T> wrap_unique(T* object);
 
     /**
      * @brief creates a new object and wrap it into std::unique_ptr.
@@ -99,7 +99,7 @@ public:
      * @return the created object
      */
     template<class T, class... Args>
-    unique_object_ptr<T> create_unique(Args&&... args) {
+    [[nodiscard]] unique_object_ptr<T> create_unique(Args&&... args) {
         return wrap_unique(create_object<T>(std::forward<Args>(args)...));
     }
 
@@ -110,7 +110,7 @@ public:
      * @return the wrapped object
      */
     template<class T>
-    std::shared_ptr<T> wrap_shared(T* object);
+    [[nodiscard]] std::shared_ptr<T> wrap_shared(T* object);
 
     /**
      * @brief creates a new object and wrap it into std::shared_ptr.
@@ -120,7 +120,9 @@ public:
      * @return the created object
      */
     template<class T, class... Args>
-    std::shared_ptr<T> create_shared(Args&&... args);
+    [[nodiscard]] std::shared_ptr<T> create_shared(Args&&... args) {
+        return std::allocate_shared<T, object_allocator<T>>(allocator<T>(), std::forward<Args>(args)...);
+    }
 
     /**
      * @brief returns whether or not the given allocator is compatible with this or an equivalent creator.
@@ -130,7 +132,7 @@ public:
      * @return false otherwise
      */
     template<class Allocator>
-    bool is_compatible(Allocator const& allocator) const noexcept;
+    [[nodiscard]] bool is_compatible(Allocator const& allocator) const noexcept;
 
     /**
      * @brief returns whether or not the given std::unique_ptr is created by this or an equivalent creator.
@@ -159,7 +161,7 @@ public:
      * @return the created object
      */
     template<class T, class... Args>
-    T* create_object(Args&&... args) {
+    [[nodiscard]] T* create_object(Args&&... args) {
         void* pointer = allocate<T>();
         try {
             auto* result = construct<T>(pointer, std::forward<Args>(args)...);
@@ -214,7 +216,7 @@ public:
      * @throws std::bad_alloc if failed to reserve memory space
      */
     template<class T>
-    void* allocate(std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t)) {
+    [[nodiscard]] void* allocate(std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t)) {
         return resource_->allocate(bytes, alignment);
     }
 
@@ -234,7 +236,7 @@ public:
      * @tparam T the value type
      * @return the standard allocator
      */
-    template<class T>
+    template<class T = void>
     [[nodiscard]] allocator_type<T> allocator(std::in_place_type_t<T> = std::in_place_type<T>) const noexcept {
         return allocator_type<T>(resource_);
     }
@@ -331,11 +333,6 @@ inline unique_object_ptr<T> object_creator::wrap_unique(T* object) {
 template<class T>
 inline std::shared_ptr<T> object_creator::wrap_shared(T* object) {
     return std::shared_ptr<T>(object, object_deleter { *this }, allocator<T>());
-}
-
-template<class T, class... Args>
-inline std::shared_ptr<T> object_creator::create_shared(Args&& ... args) {
-    return wrap_shared(create_object<T>(std::forward<Args>(args)...));
 }
 
 /// @cond IMPL_DEFS
