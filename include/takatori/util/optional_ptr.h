@@ -12,13 +12,42 @@
 
 namespace takatori::util {
 
+/// @cond IMPL_DEFS
+namespace impl {
+
+template<class T, class = void>
+class optional_ptr_base {
+public:
+    constexpr optional_ptr_base() = default;
+    ~optional_ptr_base() = default;
+    optional_ptr_base(optional_ptr_base const&) = delete;
+    optional_ptr_base& operator=(optional_ptr_base const&) = delete;
+    constexpr optional_ptr_base(optional_ptr_base&&) noexcept = default;
+    constexpr optional_ptr_base& operator=(optional_ptr_base&&) noexcept = default;
+};
+
+template<class T>
+class optional_ptr_base<T, std::enable_if_t<std::is_const_v<T>>> {
+public:
+    constexpr optional_ptr_base() = default;
+    ~optional_ptr_base() = default;
+    constexpr optional_ptr_base(optional_ptr_base const&) = default;
+    constexpr optional_ptr_base& operator=(optional_ptr_base const&) = default;
+    constexpr optional_ptr_base(optional_ptr_base&&) noexcept = default;
+    constexpr optional_ptr_base& operator=(optional_ptr_base&&) noexcept = default;
+
+};
+
+} // namespace impl
+/// @endcond
+
 /**
  * @brief a pointer like object that can handle empty pointer strictly.
  * @details This reference does not have any ownership of values.
  * @tparam T the value type, must not be a reference type
  */
 template<class T>
-class optional_ptr {
+class optional_ptr : impl::optional_ptr_base<T> {
 
     static_assert(!std::is_reference_v<T>, "value must not be a reference type");
 
@@ -56,60 +85,71 @@ public:
      * @brief creates a new object.
      * @param other the copy source
      */
-    optional_ptr(optional_ptr& other) noexcept : entry_(other.entry_) {}
+    constexpr optional_ptr(optional_ptr const& other) = default;
 
     /**
      * @brief assigns the given object.
      * @param other the copy source
      * @return this
      */
-    optional_ptr& operator=(optional_ptr& other) noexcept { // NOLINT
+    constexpr optional_ptr& operator=(optional_ptr const& other) = default;
+
+    /**
+     * @brief creates a new object.
+     * @param other the move source
+     */
+    constexpr optional_ptr(optional_ptr&& other) noexcept = default;
+
+    /**
+     * @brief assigns the given object.
+     * @param other the move source
+     * @return this
+     */
+    constexpr optional_ptr& operator=(optional_ptr&& other) noexcept = default;
+
+    /**
+     * @brief creates a new object.
+     * @param other the copy source
+     */
+    constexpr optional_ptr(optional_ptr& other) noexcept // NOLINT
+        : impl::optional_ptr_base<T>()
+        , entry_(other.entry_)
+    {}
+
+    /**
+     * @brief assigns the given object.
+     * @param other the copy source
+     * @return this
+     */
+    constexpr optional_ptr& operator=(optional_ptr& other) noexcept { // NOLINT
         entry_ = other.entry_;
         return *this;
     }
 
     /**
-     * @brief creates a new object.
-     * @param other the copy source
-     */
-    optional_ptr(optional_ptr const& other) = delete;
-
-    /**
-     * @brief assigns the given object.
-     * @param other the copy source
-     * @return this
-     */
-    optional_ptr& operator=(optional_ptr const& other) = delete;
-
-    /**
-     * @brief creates a new object.
-     * @param other the move source
-     */
-    optional_ptr(optional_ptr&& other) noexcept = default;
-
-    /**
-     * @brief assigns the given object.
-     * @param other the move source
-     * @return this
-     */
-    optional_ptr& operator=(optional_ptr&& other) noexcept = default;
-
-    /**
      * @brief creates a new empty instance.
      */
-    constexpr optional_ptr(std::nullptr_t) noexcept {} // NOLINT
+    constexpr optional_ptr(std::nullptr_t) noexcept // NOLINT
+        : impl::optional_ptr_base<T>()
+    {}
 
     /**
      * @brief creates a new instance.
      * @param entry the entry
      */
-    constexpr optional_ptr(reference entry) noexcept : entry_(std::addressof(entry)) {} // NOLINT
+    constexpr optional_ptr(reference entry) noexcept // NOLINT
+        : impl::optional_ptr_base<T>()
+        , entry_(std::addressof(entry))
+    {}
 
     /**
      * @brief creates a new instance.
      * @param entry the entry
      */
-    explicit constexpr optional_ptr(pointer entry) noexcept : entry_(entry) {}
+    explicit constexpr optional_ptr(pointer entry) noexcept
+        : impl::optional_ptr_base<T>()
+        , entry_(entry)
+    {}
 
     /**
      * @brief creates a new instance.
@@ -120,7 +160,10 @@ public:
             class U,
             class = std::enable_if_t<std::is_constructible_v<pointer, typename optional_ptr<U>::pointer>>
     >
-    constexpr optional_ptr(optional_ptr<U>& other) noexcept : entry_(other.get()) {} // NOLINT
+    constexpr optional_ptr(optional_ptr<U>& other) noexcept // NOLINT
+        : impl::optional_ptr_base<T>()
+        , entry_(other.get())
+    {}
 
     /**
      * @brief assigns the given object.
@@ -145,7 +188,10 @@ public:
             class U,
             class = std::enable_if_t<std::is_constructible_v<pointer, typename optional_ptr<U>::const_pointer>>
     >
-    constexpr optional_ptr(optional_ptr<U> const& other) noexcept : entry_(other.get()) {} // NOLINT
+    constexpr optional_ptr(optional_ptr<U> const& other) noexcept // NOLINT
+        : impl::optional_ptr_base<T>()
+        , entry_(other.get())
+    {}
 
     /**
      * @brief assigns the given object.
@@ -170,7 +216,10 @@ public:
             class U,
             class = std::enable_if_t<std::is_constructible_v<pointer, typename optional_ptr<U>::pointer>>
     >
-    constexpr optional_ptr(optional_ptr<U>&& other) noexcept : entry_(other.get()) {} // NOLINT
+    constexpr optional_ptr(optional_ptr<U>&& other) noexcept // NOLINT
+        : impl::optional_ptr_base<T>()
+        , entry_(other.get())
+    {}
 
     /**
      * @brief assigns the given object.
@@ -205,7 +254,7 @@ public:
      * @return pointer to the holding value
      * @return nullptr if this reference is empty
      */
-    constexpr pointer get() { return entry_; }
+    [[nodiscard]] constexpr pointer get() { return entry_; }
 
     /// @copydoc get()
     [[nodiscard]] constexpr const_pointer get() const { return entry_; }
@@ -239,7 +288,7 @@ public:
     void swap(optional_ptr& other) noexcept { std::swap(entry_, other.entry_); }
 
     /// @copydoc has_value()
-    explicit constexpr operator bool() const noexcept { return has_value(); }
+    [[nodiscard]] explicit constexpr operator bool() const noexcept { return has_value(); }
 
     /// @copydoc value()
     constexpr reference operator*() { return value(); }
@@ -272,7 +321,7 @@ public:
      * @return an iterator that points to the holding value
      * @return end of iteration if this reference is empty
      */
-    iterator begin() noexcept { return entry_ == nullptr ? nullptr : entry_; }
+    [[nodiscard]] iterator begin() noexcept { return entry_ == nullptr ? nullptr : entry_; }
 
     /// @copydoc begin()
     [[nodiscard]] const_iterator begin() const noexcept { return cbegin(); }
@@ -285,13 +334,13 @@ public:
      * @return a sentinel of the iterator
      * @see begin()
      */
-    iterator end() noexcept { return entry_ == nullptr ? nullptr : entry_ + 1; }  // NOLINT
+    [[nodiscard]] iterator end() noexcept { return entry_ == nullptr ? nullptr : entry_ + 1; }  // NOLINT
 
     /// @copydoc end()
-    const_iterator end() const noexcept { return cend(); }  // NOLINT
+    [[nodiscard]] const_iterator end() const noexcept { return cend(); }  // NOLINT
 
     /// @copydoc end()
-    const_iterator cend() const noexcept { return entry_ == nullptr ? nullptr : entry_ + 1; }  // NOLINT
+    [[nodiscard]] const_iterator cend() const noexcept { return entry_ == nullptr ? nullptr : entry_ + 1; }  // NOLINT
 
 private:
     pointer entry_ {};
