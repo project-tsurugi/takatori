@@ -7,13 +7,8 @@ function (add_test_executable source_file)
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
     )
     target_link_libraries(${test_name}
-        PRIVATE takatori
         PRIVATE takatori-impl
         PRIVATE takatori-test-main
-        PRIVATE ICU::uc
-        PRIVATE ICU::data
-        PRIVATE ICU::i18n
-        PRIVATE ICU::io
     )
     add_test(
         NAME ${test_name}

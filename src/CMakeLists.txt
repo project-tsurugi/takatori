@@ -230,3 +230,11 @@ add_library(takatori-impl INTERFACE)
 target_include_directories(takatori-impl
     INTERFACE .
 )
+
+target_link_libraries(takatori-impl
+    INTERFACE takatori
+    INTERFACE ICU::uc
+    INTERFACE ICU::data
+    INTERFACE ICU::i18n
+    INTERFACE ICU::io
+)
