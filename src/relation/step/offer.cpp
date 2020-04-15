@@ -27,14 +27,14 @@ offer::offer(
 offer::offer(offer const& other, util::object_creator creator)
     : offer(
             other.destination_,
-            { other.columns_, creator.allocator<column>() },
+            { other.columns_, creator.allocator() },
             creator)
 {}
 
 offer::offer(offer&& other, util::object_creator creator)
     : offer(
             std::move(other.destination_),
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.columns_), creator.allocator() },
             creator)
 {}
 

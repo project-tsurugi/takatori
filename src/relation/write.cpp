@@ -36,8 +36,8 @@ write::write(write const& other, util::object_creator creator)
     : write(
             other.operator_kind_,
             other.destination_,
-            { other.keys_, creator.allocator<key>() },
-            { other.columns_, creator.allocator<column>() },
+            { other.keys_, creator.allocator() },
+            { other.columns_, creator.allocator() },
             creator)
 {}
 
@@ -45,8 +45,8 @@ write::write(write&& other, util::object_creator creator)
     : write(
             other.operator_kind_,
             std::move(other.destination_),
-            { std::move(other.keys_), creator.allocator<key>() },
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.keys_), creator.allocator() },
+            { std::move(other.columns_), creator.allocator() },
             creator)
 {}
 

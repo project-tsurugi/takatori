@@ -29,14 +29,14 @@ cogroup_element::cogroup_element(
 cogroup_element::cogroup_element(cogroup_element const& other, util::object_creator creator)
     : cogroup_element(
             other.source_,
-            { other.columns_, creator.allocator<column>() },
+            { other.columns_, creator.allocator() },
             other.mandatory_)
 {}
 
 cogroup_element::cogroup_element(cogroup_element&& other, util::object_creator creator)
     : cogroup_element(
             other.source_,
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.columns_), creator.allocator() },
             other.mandatory_)
 {}
 

@@ -43,7 +43,7 @@ join_find::join_find(join_find const& other, util::object_creator creator)
     : join_find(
             other.operator_kind_,
             other.source_,
-            { other.columns_, creator.allocator<column>() },
+            { other.columns_, creator.allocator() },
             tree::forward(creator, other.keys_),
             tree::forward(creator, other.condition_),
             creator)
@@ -53,7 +53,7 @@ join_find::join_find(join_find&& other, util::object_creator creator)
     : join_find(
             other.operator_kind_,
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.columns_), creator.allocator() },
             tree::forward(creator, std::move(other.keys_)),
             tree::forward(creator, std::move(other.condition_)),
             creator)

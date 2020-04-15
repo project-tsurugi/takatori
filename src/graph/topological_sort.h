@@ -23,14 +23,14 @@ void topological_sort(
         pointer const element_ptr {};
         bool visited { false };
     };
-    std::vector<dfs_entry, util::object_allocator<dfs_entry>> dfs_stack { creator.allocator<dfs_entry>() };
+    std::vector<dfs_entry, util::object_allocator<dfs_entry>> dfs_stack { creator.allocator() };
     dfs_stack.reserve(g.size());
 
     std::unordered_set<
             pointer,
             std::hash<pointer>,
             std::equal_to<>,
-            util::object_allocator<pointer>> saw { creator.allocator<pointer>() };
+            util::object_allocator<pointer>> saw { creator.allocator() };
     saw.reserve(g.size());
 
     for (auto&& e : g) {

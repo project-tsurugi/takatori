@@ -9,9 +9,9 @@ namespace takatori::plan {
 
 group::group(util::object_creator creator) noexcept
     : exchange(creator)
-    , columns_(creator.allocator<descriptor::variable>())
-    , group_keys_(creator.allocator<descriptor::variable>())
-    , sort_keys_(creator.allocator<sort_key>())
+    , columns_(creator.allocator())
+    , group_keys_(creator.allocator())
+    , sort_keys_(creator.allocator())
 {}
 
 group::group(
@@ -45,9 +45,9 @@ group::group(
 
 group::group(group const& other, util::object_creator creator)
     : group(
-            { other.columns_, creator.allocator<descriptor::variable>() },
-            { other.group_keys_, creator.allocator<descriptor::variable>() },
-            { other.sort_keys_, creator.allocator<sort_key>() },
+            { other.columns_, creator.allocator() },
+            { other.group_keys_, creator.allocator() },
+            { other.sort_keys_, creator.allocator() },
             other.limit_,
             other.mode_,
             creator)
@@ -55,9 +55,9 @@ group::group(group const& other, util::object_creator creator)
 
 group::group(group&& other, util::object_creator creator)
     : group(
-            { std::move(other.columns_), creator.allocator<descriptor::variable>() },
-            { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
-            { std::move(other.sort_keys_), creator.allocator<sort_key>() },
+            { std::move(other.columns_), creator.allocator() },
+            { std::move(other.group_keys_), creator.allocator() },
+            { std::move(other.sort_keys_), creator.allocator() },
             std::move(other.limit_),
             other.mode_,
             creator)

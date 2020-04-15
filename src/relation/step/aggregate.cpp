@@ -22,13 +22,13 @@ aggregate::aggregate(
 
 aggregate::aggregate(aggregate const& other, util::object_creator creator)
     : aggregate(
-            decltype(columns_) { other.columns_, creator.allocator<column>() },
+            decltype(columns_) { other.columns_, creator.allocator() },
             creator)
 {}
 
 aggregate::aggregate(aggregate&& other, util::object_creator creator)
     : aggregate(
-            decltype(columns_) { std::move(other.columns_), creator.allocator<column>() },
+            decltype(columns_) { std::move(other.columns_), creator.allocator() },
             creator)
 {}
 

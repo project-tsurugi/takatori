@@ -20,13 +20,13 @@ escape::escape(std::initializer_list<mapping> mappings)
 
 escape::escape(escape const& other, util::object_creator creator)
     : escape(
-            decltype(mappings_) { other.mappings_, creator.allocator<mapping>() },
+            decltype(mappings_) { other.mappings_, creator.allocator() },
             creator)
 {}
 
 escape::escape(escape&& other, util::object_creator creator)
     : escape(
-            decltype(mappings_) { std::move(other.mappings_), creator.allocator<mapping>() },
+            decltype(mappings_) { std::move(other.mappings_), creator.allocator() },
             creator)
 {}
 

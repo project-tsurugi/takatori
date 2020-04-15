@@ -19,13 +19,13 @@ distinct::distinct(std::initializer_list<descriptor::variable> group_keys)
 
 distinct::distinct(distinct const& other, util::object_creator creator)
     : distinct(
-            decltype(group_keys_) { other.group_keys_, creator.allocator<descriptor::variable>() },
+            decltype(group_keys_) { other.group_keys_, creator.allocator() },
             creator)
 {}
 
 distinct::distinct(distinct&& other, util::object_creator creator)
     : distinct(
-            decltype(group_keys_) { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
+            decltype(group_keys_) { std::move(other.group_keys_), creator.allocator() },
             creator)
 {}
 

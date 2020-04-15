@@ -27,14 +27,14 @@ take_flat::take_flat(
 take_flat::take_flat(take_flat const& other, util::object_creator creator)
     : take_flat(
             other.source_,
-            { other.columns_, creator.allocator<column>() },
+            { other.columns_, creator.allocator() },
             creator)
 {}
 
 take_flat::take_flat(take_flat&& other, util::object_creator creator)
     : take_flat(
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.columns_), creator.allocator() },
             creator)
 {}
 

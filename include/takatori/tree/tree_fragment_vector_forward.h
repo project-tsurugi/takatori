@@ -20,7 +20,7 @@ forward(util::object_creator creator, tree_fragment_vector<E> const& elements) {
     static_assert(
             std::is_copy_constructible_v<E> || util::is_copy_constructible_with_object_creator_v<E>,
             "fragment must be either copy constructible with or without object_creator");
-    std::vector<E, util::object_allocator<E>> copy { creator.allocator<E>() };
+    std::vector<E, util::object_allocator<E>> copy { creator.allocator() };
     copy.reserve(elements.size());
     for (auto&& e : elements) {
         if constexpr (util::is_copy_constructible_with_object_creator_v<E>) { // NOLINT
@@ -52,7 +52,7 @@ forward(util::object_creator creator, tree_fragment_vector<E>&& elements) {
         return elements.release_elements();
     }
     if constexpr (util::is_move_constructible_with_object_creator_v<E>) { // NOLINT
-        std::vector<E, util::object_allocator<E>> copy { creator.allocator<E>() };
+        std::vector<E, util::object_allocator<E>> copy { creator.allocator() };
         copy.reserve(elements.size());
         for (auto&& e : elements.release_elements()) {
             copy.emplace_back(std::move(e), creator);
@@ -60,7 +60,7 @@ forward(util::object_creator creator, tree_fragment_vector<E>&& elements) {
         return copy;
     }
     if constexpr (std::is_move_constructible_v<E>) { // NOLINT
-        return { elements.release_elements(), creator.allocator<E>() };
+        return { elements.release_elements(), creator.allocator() };
     }
     std::abort();
 }

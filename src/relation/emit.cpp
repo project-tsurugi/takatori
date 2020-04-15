@@ -20,13 +20,13 @@ emit::emit(std::initializer_list<column> columns)
 
 emit::emit(emit const& other, util::object_creator creator)
     : emit(
-            decltype(columns_) { other.columns_, creator.allocator<column>() },
+            decltype(columns_) { other.columns_, creator.allocator() },
             creator)
 {}
 
 emit::emit(emit&& other, util::object_creator creator)
     : emit(
-            decltype(columns_) { std::move(other.columns_), creator.allocator<column>() },
+            decltype(columns_) { std::move(other.columns_), creator.allocator() },
             creator)
 {}
 

@@ -11,14 +11,14 @@ value_kind character::kind() const noexcept {
 }
 
 character* character::clone(util::object_creator creator) const& {
-    return creator.create_object<character>(entity_, creator.allocator<char>());
+    return creator.create_object<character>(entity_, creator.allocator());
 }
 
 character* character::clone(util::object_creator creator) && {
     if (creator.is_compatible(entity_.get_allocator())) {
         return creator.create_object<character>(std::move(entity_));
     }
-    return creator.create_object<character>(entity_, creator.allocator<char>());
+    return creator.create_object<character>(entity_, creator.allocator());
 }
 
 character::view_type character::get() const noexcept {

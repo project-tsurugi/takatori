@@ -12,10 +12,10 @@ namespace takatori::plan {
 
 aggregate::aggregate(util::object_creator creator) noexcept
     : exchange(creator)
-    , source_columns_(creator.allocator<descriptor::variable>())
-    , destination_columns_(creator.allocator<descriptor::variable>())
-    , group_keys_(creator.allocator<descriptor::variable>())
-    , aggregations_(creator.allocator<aggregation>())
+    , source_columns_(creator.allocator())
+    , destination_columns_(creator.allocator())
+    , group_keys_(creator.allocator())
+    , aggregations_(creator.allocator())
 {}
 
 aggregate::aggregate(
@@ -76,20 +76,20 @@ aggregate::aggregate(
 
 aggregate::aggregate(aggregate const& other, util::object_creator creator)
     : aggregate(
-            { other.source_columns_, creator.allocator<descriptor::variable>() },
-            { other.destination_columns_, creator.allocator<descriptor::variable>() },
-            { other.group_keys_, creator.allocator<descriptor::variable>() },
-            { other.aggregations_, creator.allocator<aggregation>() },
+            { other.source_columns_, creator.allocator() },
+            { other.destination_columns_, creator.allocator() },
+            { other.group_keys_, creator.allocator() },
+            { other.aggregations_, creator.allocator() },
             other.mode_,
             creator)
 {}
 
 aggregate::aggregate(aggregate&& other, util::object_creator creator)
     : aggregate(
-            { std::move(other.source_columns_), creator.allocator<descriptor::variable>() },
-            { std::move(other.destination_columns_), creator.allocator<descriptor::variable>() },
-            { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
-            { std::move(other.aggregations_), creator.allocator<aggregation>() },
+            { std::move(other.source_columns_), creator.allocator() },
+            { std::move(other.destination_columns_), creator.allocator() },
+            { std::move(other.group_keys_), creator.allocator() },
+            { std::move(other.aggregations_), creator.allocator() },
             other.mode_,
             creator)
 {}

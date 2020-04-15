@@ -92,8 +92,8 @@ std::ostream& operator<<(std::ostream& out, exchange const& value) {
 }
 
 exchange::exchange(util::object_creator creator) noexcept
-        : upstreams_(creator.allocator<process*>())
-        , downstreams_(creator.allocator<process*>())
+        : upstreams_(creator.allocator())
+        , downstreams_(creator.allocator())
 {}
 
 void exchange::internal_add_upstream(process& upstream) {

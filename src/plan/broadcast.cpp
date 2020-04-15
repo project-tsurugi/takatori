@@ -9,7 +9,7 @@ namespace takatori::plan {
 broadcast::broadcast(
         util::object_creator creator) noexcept
     : exchange(creator)
-    , columns_(creator.allocator<descriptor::variable>())
+    , columns_(creator.allocator())
 {}
 
 broadcast::broadcast(
@@ -26,13 +26,13 @@ broadcast::broadcast(std::initializer_list<descriptor::variable> columns)
 
 broadcast::broadcast(broadcast const& other, util::object_creator creator)
     : broadcast(
-            decltype(columns_) { other.columns_, creator.allocator<descriptor::variable>() },
+            decltype(columns_) { other.columns_, creator.allocator() },
             creator)
 {}
 
 broadcast::broadcast(broadcast&& other, util::object_creator creator)
     : broadcast(
-            decltype(columns_) { std::move(other.columns_), creator.allocator<descriptor::variable>() },
+            decltype(columns_) { std::move(other.columns_), creator.allocator() },
             creator)
 {}
 

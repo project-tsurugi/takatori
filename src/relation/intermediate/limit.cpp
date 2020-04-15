@@ -31,16 +31,16 @@ limit::limit(
 limit::limit(limit const& other, util::object_creator creator)
     : limit(
             other.count_,
-            { other.group_keys_, creator.allocator<descriptor::variable>() },
-            { other.sort_keys_, creator.allocator<sort_key>() },
+            { other.group_keys_, creator.allocator() },
+            { other.sort_keys_, creator.allocator() },
             creator)
 {}
 
 limit::limit(limit&& other, util::object_creator creator)
     : limit(
             std::move(other.count_),
-            { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
-            { std::move(other.sort_keys_), creator.allocator<sort_key>() },
+            { std::move(other.group_keys_), creator.allocator() },
+            { std::move(other.sort_keys_), creator.allocator() },
             creator)
 {}
 

@@ -29,14 +29,14 @@ difference::difference(
 difference::difference(difference const& other, util::object_creator creator)
     : difference(
             other.quantifier_,
-            decltype(group_key_pairs_) { other.group_key_pairs_, creator.allocator<group_key_pair>() },
+            decltype(group_key_pairs_) { other.group_key_pairs_, creator.allocator() },
             creator)
 {}
 
 difference::difference(difference&& other, util::object_creator creator)
     : difference(
             other.quantifier_,
-            decltype(group_key_pairs_) { std::move(other.group_key_pairs_), creator.allocator<group_key_pair>() },
+            decltype(group_key_pairs_) { std::move(other.group_key_pairs_), creator.allocator() },
             creator)
 {}
 

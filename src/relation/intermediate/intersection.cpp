@@ -29,14 +29,14 @@ intersection::intersection(
 intersection::intersection(intersection const& other, util::object_creator creator)
     : intersection(
             other.quantifier_,
-            decltype(group_key_pairs_) { other.group_key_pairs_, creator.allocator<group_key_pair>() },
+            decltype(group_key_pairs_) { other.group_key_pairs_, creator.allocator() },
             creator)
 {}
 
 intersection::intersection(intersection&& other, util::object_creator creator)
     : intersection(
             other.quantifier_,
-            decltype(group_key_pairs_) { std::move(other.group_key_pairs_), creator.allocator<group_key_pair>() },
+            decltype(group_key_pairs_) { std::move(other.group_key_pairs_), creator.allocator() },
             creator)
 {}
 

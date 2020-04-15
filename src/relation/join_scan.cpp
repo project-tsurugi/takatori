@@ -49,7 +49,7 @@ join_scan::join_scan(join_scan const& other, util::object_creator creator)
     : join_scan(
             other.operator_kind_,
             other.source_,
-            { other.columns_, creator.allocator<column>() },
+            { other.columns_, creator.allocator() },
             endpoint { other.lower_, creator },
             endpoint { other.upper_, creator },
             tree::forward(creator, other.condition_),
@@ -60,7 +60,7 @@ join_scan::join_scan(join_scan&& other, util::object_creator creator)
     : join_scan(
             other.operator_kind_,
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.columns_), creator.allocator() },
             endpoint { std::move(other.lower_), creator },
             endpoint { std::move(other.upper_), creator },
             tree::forward(creator, std::move(other.condition_)),

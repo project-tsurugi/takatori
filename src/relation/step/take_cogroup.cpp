@@ -20,13 +20,13 @@ take_cogroup::take_cogroup(std::initializer_list<group> groups)
 
 take_cogroup::take_cogroup(take_cogroup const& other, util::object_creator creator)
     : take_cogroup(
-            decltype(groups_) { other.groups_, creator.allocator<group>() },
+            decltype(groups_) { other.groups_, creator.allocator() },
             creator)
 {}
 
 take_cogroup::take_cogroup(take_cogroup&& other, util::object_creator creator)
     : take_cogroup(
-            decltype(groups_) { std::move(other.groups_), creator.allocator<group>() },
+            decltype(groups_) { std::move(other.groups_), creator.allocator() },
             creator)
 {}
 

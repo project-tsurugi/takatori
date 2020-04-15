@@ -39,7 +39,7 @@ scan::scan(
 scan::scan(scan const& other, util::object_creator creator)
     : scan(
             other.source_,
-            { other.columns_, creator.allocator<column>() },
+            { other.columns_, creator.allocator() },
             endpoint { other.lower_, creator },
             endpoint { other.upper_, creator },
             other.limit_,
@@ -49,7 +49,7 @@ scan::scan(scan const& other, util::object_creator creator)
 scan::scan(scan&& other, util::object_creator creator)
     : scan(
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.columns_), creator.allocator() },
             endpoint { std::move(other.lower_), creator },
             endpoint { std::move(other.upper_), creator },
             std::move(other.limit_),

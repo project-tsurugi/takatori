@@ -21,14 +21,14 @@ process::~process() {
 
 process::process(util::object_creator creator) noexcept
     : operators_(creator)
-    , upstreams_(creator.allocator<exchange*>())
-    , downstreams_(creator.allocator<exchange*>())
+    , upstreams_(creator.allocator())
+    , downstreams_(creator.allocator())
 {}
 
 process::process(graph::graph<relation::expression> operators, util::object_creator creator) noexcept
     : operators_(std::move(operators))
-    , upstreams_(creator.allocator<exchange*>())
-    , downstreams_(creator.allocator<exchange*>())
+    , upstreams_(creator.allocator())
+    , downstreams_(creator.allocator())
 {}
 
 process::process(process const& other, util::object_creator creator)

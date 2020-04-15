@@ -32,7 +32,7 @@ bit* bit::clone(util::object_creator creator) const& {
     if (creator.is_compatible(entity_.get_allocator())) {
         return creator.create_object<bit>(entity_);
     }
-    entity_type copy { creator.allocator<block_type>() };
+    entity_type copy { creator.allocator() };
     copy.reserve(entity_.size());
     for (entity_type::size_type i = 0, n = entity_.size(); i < n; ++i) {
         copy.push_back(entity_[i]);

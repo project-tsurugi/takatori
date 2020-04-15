@@ -30,14 +30,14 @@ union_::union_(
 union_::union_(union_ const& other, util::object_creator creator)
     : union_(
             other.quantifier_,
-            decltype(mappings_) { other.mappings_, creator.allocator<mapping>() },
+            decltype(mappings_) { other.mappings_, creator.allocator() },
             creator)
 {}
 
 union_::union_(union_&& other, util::object_creator creator)
     : union_(
             other.quantifier_,
-            decltype(mappings_) { other.mappings_, creator.allocator<mapping>() },
+            decltype(mappings_) { other.mappings_, creator.allocator() },
             creator)
 {}
 

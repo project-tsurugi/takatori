@@ -578,12 +578,12 @@ private:
             if (creator.is_compatible(elements.get_allocator())) {
                 return std::move(elements);
             }
-            return { std::move(elements), creator.allocator<T>() };
+            return { std::move(elements), creator.allocator() };
         }
         return {
                 std::make_move_iterator(elements.begin()),
                 std::make_move_iterator(elements.end()),
-                creator.allocator<T>()
+                creator.allocator()
         };
     }
 

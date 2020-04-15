@@ -35,7 +35,7 @@ join::join(
         util::object_creator creator) noexcept
     : join(
         operator_kind,
-        decltype(key_pairs_) { creator.allocator<key_pair>() },
+        decltype(key_pairs_) { creator.allocator() },
         decltype(lower_) { creator },
         decltype(upper_) { creator },
         std::move(condition),
@@ -53,7 +53,7 @@ join::join(
 join::join(join const& other, util::object_creator creator)
     : join(
             other.operator_kind_,
-            { other.key_pairs_, creator.allocator<key_pair>() },
+            { other.key_pairs_, creator.allocator() },
             endpoint { other.lower_, creator },
             endpoint { other.upper_, creator },
             tree::forward(creator, other.condition_),
@@ -63,7 +63,7 @@ join::join(join const& other, util::object_creator creator)
 join::join(join&& other, util::object_creator creator)
     : join(
             other.operator_kind_,
-            { std::move(other.key_pairs_), creator.allocator<key_pair>() },
+            { std::move(other.key_pairs_), creator.allocator() },
             endpoint { std::move(other.lower_), creator },
             endpoint { std::move(other.upper_), creator },
             tree::forward(creator, std::move(other.condition_)),

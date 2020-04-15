@@ -9,7 +9,7 @@ namespace takatori::plan {
 
 forward::forward(util::object_creator creator) noexcept
     : exchange(creator)
-    , columns_(creator.allocator<descriptor::variable>())
+    , columns_(creator.allocator())
     , limit_(std::nullopt)
 {}
 
@@ -24,7 +24,7 @@ forward::forward(
 
 forward::forward(std::optional<size_type> limit, util::object_creator creator) noexcept
     : forward(
-            decltype(columns_) { creator.allocator<descriptor::variable>() },
+            decltype(columns_) { creator.allocator() },
             std::move(limit),
             creator)
 {}
@@ -39,14 +39,14 @@ forward::forward(
 
 forward::forward(forward const& other, util::object_creator creator)
     : forward(
-            { other.columns_, creator.allocator<descriptor::variable>() },
+            { other.columns_, creator.allocator() },
             other.limit_,
             creator)
 {}
 
 forward::forward(forward&& other, util::object_creator creator)
     : forward(
-            { std::move(other.columns_), creator.allocator<descriptor::variable>() },
+            { std::move(other.columns_), creator.allocator() },
             std::move(other.limit_),
             creator)
 {}

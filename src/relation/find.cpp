@@ -34,7 +34,7 @@ find::find(
 find::find(find const& other, util::object_creator creator)
     : find(
             other.source_,
-            { other.columns_, creator.allocator<column>() },
+            { other.columns_, creator.allocator() },
             tree::forward(creator, other.keys_),
             creator)
 {}
@@ -42,7 +42,7 @@ find::find(find const& other, util::object_creator creator)
 find::find(find&& other, util::object_creator creator)
     : find(
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.columns_), creator.allocator() },
             tree::forward(creator, std::move(other.keys_)),
             creator)
 {}

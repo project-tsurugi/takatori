@@ -25,14 +25,14 @@ aggregate::aggregate(
 
 aggregate::aggregate(aggregate const& other, util::object_creator creator)
     : aggregate(
-            { other.group_keys_, creator.allocator<descriptor::variable>() },
-            { other.columns_, creator.allocator<column>() })
+            { other.group_keys_, creator.allocator() },
+            { other.columns_, creator.allocator() })
 {}
 
 aggregate::aggregate(aggregate&& other, util::object_creator creator)
     : aggregate(
-            { std::move(other.group_keys_), creator.allocator<descriptor::variable>() },
-            { std::move(other.columns_), creator.allocator<column>() })
+            { std::move(other.group_keys_), creator.allocator() },
+            { std::move(other.columns_), creator.allocator() })
 {}
 
 expression_kind aggregate::kind() const noexcept {

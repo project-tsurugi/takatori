@@ -42,14 +42,14 @@ aggregate_element::aggregate_element(
 aggregate_element::aggregate_element(aggregate_element const& other, util::object_creator creator)
     : aggregate_element(
             other.function_,
-            { other.arguments_, creator.allocator<argument_type>() },
+            { other.arguments_, creator.allocator() },
             other.destination_)
 {}
 
 aggregate_element::aggregate_element(aggregate_element&& other, util::object_creator creator)
     : aggregate_element(
             std::move(other.function_),
-            { std::move(other.arguments_), creator.allocator<argument_type>() },
+            { std::move(other.arguments_), creator.allocator() },
             std::move(other.destination_))
 {}
 

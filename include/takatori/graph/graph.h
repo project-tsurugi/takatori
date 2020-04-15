@@ -104,7 +104,7 @@ public:
      * @param creator the object creator
      */
     explicit graph(util::object_creator creator) noexcept
-        : vertices_(creator.allocator<entry_type>())
+        : vertices_(creator.allocator())
     {}
 
     /**

@@ -27,14 +27,14 @@ take_group::take_group(
 take_group::take_group(take_group const& other, util::object_creator creator)
     : take_group(
             other.source_,
-            { other.columns_, creator.allocator<column>() },
+            { other.columns_, creator.allocator() },
             creator)
 {}
 
 take_group::take_group(take_group&& other, util::object_creator creator)
     : take_group(
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator<column>() },
+            { std::move(other.columns_), creator.allocator() },
             creator)
 {}
 
