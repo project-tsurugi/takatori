@@ -54,7 +54,7 @@ public:
 
     [[nodiscard]] value_kind kind() const noexcept override;
     [[nodiscard]] character* clone(util::object_creator creator) const& override;
-    character* clone(util::object_creator creator) && override;
+    [[nodiscard]] character* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the entity value.
@@ -63,7 +63,7 @@ public:
     [[nodiscard]] view_type get() const noexcept;
 
     /// @copydoc get()
-    explicit operator view_type() const noexcept;
+    [[nodiscard]] explicit operator view_type() const noexcept;
 
 protected:
     [[nodiscard]] bool equals(data const& other) const noexcept override;

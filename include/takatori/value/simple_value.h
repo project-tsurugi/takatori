@@ -59,11 +59,11 @@ public:
         return Kind;
     }
 
-    simple_value* clone(util::object_creator creator) const& override {
+    [[nodiscard]] simple_value* clone(util::object_creator creator) const& override {
         return creator.create_object<simple_value<Kind>>(entity_);
     }
 
-    simple_value* clone(util::object_creator creator) && override {
+    [[nodiscard]] simple_value* clone(util::object_creator creator) && override {
         return creator.create_object<simple_value<Kind>>(std::move(entity_));
     }
 
@@ -71,12 +71,12 @@ public:
      * @brief returns the entity value.
      * @return the entity value
      */
-    constexpr view_type get() const noexcept {
+    [[nodiscard]] constexpr view_type get() const noexcept {
         return entity_;
     }
 
     /// @copydoc get()
-    explicit constexpr operator view_type() const noexcept {
+    [[nodiscard]] explicit constexpr operator view_type() const noexcept {
         return get();
     }
 

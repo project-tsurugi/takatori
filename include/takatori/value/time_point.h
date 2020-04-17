@@ -82,7 +82,7 @@ public:
 
     [[nodiscard]] value_kind kind() const noexcept override;
     [[nodiscard]] time_point* clone(util::object_creator creator) const& override;
-    time_point* clone(util::object_creator creator) && override;
+    [[nodiscard]] time_point* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the entity value.
@@ -93,7 +93,7 @@ public:
     }
 
     /// @copydoc get()
-    explicit constexpr operator view_type() const noexcept {
+    [[nodiscard]] explicit constexpr operator view_type() const noexcept {
         return get();
     }
 
