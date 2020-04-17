@@ -24,6 +24,14 @@ struct simple_value_traits<value_kind::boolean> {
 using boolean = simple_value<value_kind::boolean>;
 
 /**
+ * @brief appends string representation of the given value.
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+std::ostream& operator<<(std::ostream& out, boolean const& value);
+
+/**
  * @brief type_of for boolean.
  */
 template<> struct type_of<boolean::tag> : util::meta_type<boolean> {};

@@ -1,6 +1,7 @@
 #include <takatori/value/simple_value.h>
 #include <takatori/value/int.h>
 #include <takatori/value/float.h>
+#include <takatori/value/boolean.h>
 #include <takatori/value/unknown.h>
 
 #include <gtest/gtest.h>
@@ -62,6 +63,12 @@ TEST_F(simple_value_test, clone_move) {
 
 TEST_F(simple_value_test, output) {
     unknown v;
+    std::cout << v << std::endl;
+    std::cout << static_cast<data&>(v) << std::endl;
+}
+
+TEST_F(simple_value_test, output_boolean) {
+    boolean v { true };
     std::cout << v << std::endl;
     std::cout << static_cast<data&>(v) << std::endl;
 }
