@@ -28,6 +28,8 @@ enum class unary_operator {
     is_true,
     /// @brief false test
     is_false,
+    /// @brief unknown test (for boolean expressions).
+    is_unknown,
 };
 
 /**
@@ -46,6 +48,7 @@ inline constexpr std::string_view to_string_view(unary_operator value) noexcept 
         case kind::is_null: return "is_null"sv;
         case kind::is_true: return "is_true"sv;
         case kind::is_false: return "is_false"sv;
+        case kind::is_unknown: return "is_unknown"sv;
     }
     std::abort();
 }
@@ -98,6 +101,7 @@ inline auto dispatch(Callback&& callback, unary_operator operator_kind, Args&&..
         case kind::is_null: return util::enum_tag_callback<kind::is_null>(std::forward<Callback>(callback), std::forward<Args>(args)...);
         case kind::is_true: return util::enum_tag_callback<kind::is_true>(std::forward<Callback>(callback), std::forward<Args>(args)...);
         case kind::is_false: return util::enum_tag_callback<kind::is_false>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_unknown: return util::enum_tag_callback<kind::is_unknown>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }
