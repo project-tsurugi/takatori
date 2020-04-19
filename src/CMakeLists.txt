@@ -130,6 +130,16 @@ add_library(takatori
     document/basic_document.cpp
     document/region.cpp
 
+    # serializer
+    serializer/json_printer.cpp
+    serializer/object_scanner.cpp
+    serializer/details/simple_value_scanner.cpp
+    serializer/details/value_property_scanner.cpp
+    serializer/details/type_property_scanner.cpp
+    serializer/details/scalar_expression_property_scanner.cpp
+    serializer/details/relation_expression_property_scanner.cpp
+    serializer/details/step_property_scanner.cpp
+
     # util
     util/object_creator.cpp
     util/string_builder.cpp

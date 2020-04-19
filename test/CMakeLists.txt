@@ -126,6 +126,10 @@ add_test_executable(graph/topological_sort_test.cpp)
 add_test_executable(document/basic_document_test.cpp)
 add_test_executable(document/region_test.cpp)
 
+# serializer
+add_test_executable(serializer/json_printer_test.cpp)
+add_test_executable(serializer/object_scanner_test.cpp)
+
 # utilities
 add_test_executable(util/clonable_test.cpp)
 add_test_executable(util/clonable_ptr_test.cpp)

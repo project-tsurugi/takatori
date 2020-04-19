@@ -24,8 +24,11 @@ namespace takatori::scalar {
 class let : public expression {
 public:
     /// @brief the variable declarator type.
-    using declarator = details::variable_declarator<let>;
-    
+    using variable = details::variable_declarator<let>;
+
+    /// @copydoc variable
+    using declarator = variable;
+
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::let;
 
