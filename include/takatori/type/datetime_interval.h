@@ -7,16 +7,14 @@
 
 namespace takatori::type {
 
-// TODO: REVIEW - type name (datetime interval?)
-
 /**
  * @brief time_interval type.
  */
-using time_interval = simple_type<type_kind::time_interval>;
+using datetime_interval = simple_type<type_kind::datetime_interval>;
 
 /**
  * @brief type_of for time_interval.
  */
-template<> struct type_of<time_interval::tag> : util::meta_type<time_interval> {};
+template<> struct type_of<datetime_interval::tag> : util::meta_type<datetime_interval> {};
 
 } // namespace takatori::type

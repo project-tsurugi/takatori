@@ -144,4 +144,4 @@ template<> struct type_of<float4::tag> : util::meta_type<float4> {};
  */
 template<> struct type_of<float8::tag> : util::meta_type<float8> {};
 
-} // namespace takatori::type
+} // namespace takatori::value

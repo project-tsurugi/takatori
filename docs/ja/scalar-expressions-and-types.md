@@ -225,7 +225,7 @@
   * 特性
     * なし
 
-`time_interval`
+`datetime_interval`
 ~ 時間間隔
 
   * パラメーター
@@ -380,7 +380,7 @@ notes:
 時間間隔型分類 (*time interval type category*)
 ~ 時間間隔を表すデータ型の分類
 
-  * `time_interval`
+  * `datetime_interval`
   * `unknown`
 
 コレクション型分類 (*collection type category*)
@@ -572,8 +572,8 @@ notes:
 
 | 変換元 | 変換先 |
 |:-:|:-:|
-| `time_interval` | `time_interval` |
-| `unknown` | `time_interval` |
+| `time_interval` | `datetime_interval` |
+| `unknown` | `datetime_interval` |
 
 ### 二項時間間隔昇格
 
@@ -581,10 +581,10 @@ notes:
 
 それぞれの項のデータ型に対する、型変換後のデータ型は以下のとおりである。
 
-|   | `time_interval` | `unknown` |
+|   | `datetime_interval` | `unknown` |
 |--:|--:|--:|
-| `time_interval` | `time_interval` | `time_interval` |
-| `unknown` | `time_interval` | `time_interval` |
+| `datetime_interval` | `datetime_interval` | `datetime_interval` |
+| `unknown` | `datetime_interval` | `datetime_interval` |
 
 ### 単一化変換
 
@@ -625,7 +625,7 @@ notes:
 
 代入変換が可能な型の組み合わせは以下のとおりである。
 
-| from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `date` | `time_of_day` | `time_point` | `time_interval` | `array` | `record` |
+| from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `date` | `time_of_day` | `time_point` | `datetime_interval` | `array` | `record` |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |           `boolean` | v | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 |              `int1` | - | v | v | v | v | D | v | v | - | - | - | - | - | - | - | - | - | - |
@@ -642,7 +642,7 @@ notes:
 |              `date` | - | - | - | - | - | - | - | - | - | - | - | - | v | - | v | - | - | - |
 |       `time_of_day` | - | - | - | - | - | - | - | - | - | - | - | - | - | v | v | - | - | - |
 |        `time_point` | - | - | - | - | - | - | - | - | - | - | - | - | D | D | v | - | - | - |
-|     `time_interval` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | v | - | - |
+| `datetime_interval` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | v | - | - |
 |             `array` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | 1 | - |
 |            `record` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | 2 |
 |           `unknown` | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v |
@@ -694,7 +694,7 @@ notes:
 | 数値型分類 | 文字列の内容を「数値定数」として解釈
 | ビット列型分類 | 文字列の内容を「ビット列定数」として解釈
 | 時間型分類 | `time_point`
-| 時間間隔型分類 | `time_interval`
+| 時間間隔型分類 | `datetime_interval`
 | コレクション型分類 | `array`
 
 ただし、 `E` が多重定義されており、かつ要求される型分類が複数存在する場合、定数変換は行わない。
@@ -744,7 +744,7 @@ notes:
 
 キャスト変換が可能な型の組み合わせは以下のとおりである。
 
-| from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `date` | `time_of_day` | `time_point` | `time_interval` | `array` | `record` |
+| from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `date` | `time_of_day` | `time_point` | `datetime_interval` | `array` | `record` |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |           `boolean` | v | - | - | - | - | - | - | - | v | v | - | - | - | - | - | - | - | - |
 |              `int1` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - |
@@ -761,7 +761,7 @@ notes:
 |              `date` | - | - | - | - | - | - | - | - | v | v | - | - | v | - | v | - | - | - |
 |       `time_of_day` | - | - | - | - | - | - | - | - | v | v | - | - | - | v | v | - | - | - |
 |        `time_point` | - | - | - | - | - | - | - | - | v | v | - | - | v | v | v | - | - | - |
-|     `time_interval` | - | - | - | - | - | - | - | - | v | v | - | - | - | - | - | v | - | - |
+| `datetime_interval` | - | - | - | - | - | - | - | - | v | v | - | - | - | - | - | v | - | - |
 |             `array` | - | - | - | - | - | - | - | - | v | v | - | - | - | - | - | - | 1 | - |
 |            `record` | - | - | - | - | - | - | - | - | v | v | - | - | - | - | - | - | - | 2 |
 |           `unknown` | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v | v |
@@ -1378,7 +1378,7 @@ notes:
 
     * 事前条件 - `left` が時間型分類であり、 `right` が時間間隔型分類である
     * 型変換 - `left` を単項時間昇格, `right` を単項時間間隔昇格
-    * 結果型 - `time_interval`
+    * 結果型 - `datetime_interval`
     * 評価概要
       * いずれも正常値: `left` から `right` を引いた結果
       * いずれかが特殊値: 特殊値
@@ -1412,7 +1412,7 @@ notes:
 
     * 事前条件 - `left` が数値型分類であり、 `right` が時間間隔型分類であること、またはその逆
     * 型変換 - 数値型分類を単項時間昇格, 時間間隔型分類を単項時間間隔昇格
-    * 結果型 - `time_interval`
+    * 結果型 - `datetime_interval`
     * 評価概要
       * いずれも正常値: スカラー値と時間間隔の積
       * いずれかが特殊値: 特殊値
@@ -1435,7 +1435,7 @@ notes:
 
     * 事前条件 - `left` が時間間隔型分類であり、 `right` が数値型分類であること
     * 型変換 - `left` を単項時間間隔昇格, `right` を単項時間昇格
-    * 結果型 - `time_interval`
+    * 結果型 - `datetime_interval`
     * 評価概要
       * いずれも正常値: 時間間隔の商
       * いずれかが特殊値: 特殊値

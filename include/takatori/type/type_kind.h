@@ -43,8 +43,8 @@ enum class type_kind {
     time_of_day,
     /// @brief time point type.
     time_point,
-    /// @brief time interval type.
-    time_interval,
+    /// @brief date-time interval type.
+    datetime_interval,
 
     // complex types
 
@@ -112,7 +112,7 @@ constexpr inline std::string_view to_string_view(type_kind value) noexcept {
         case kind::date: return "date"sv;
         case kind::time_of_day: return "time_of_day"sv;
         case kind::time_point: return "time_point"sv;
-        case kind::time_interval: return "time_interval"sv;
+        case kind::datetime_interval: return "datetime_interval"sv;
         case kind::array: return "array"sv;
         case kind::record: return "record"sv;
         case kind::unknown: return "unknown"sv;
