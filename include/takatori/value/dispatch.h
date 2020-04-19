@@ -7,9 +7,7 @@
 #include "data.h"
 #include "value_kind.h"
 
-#include "boolean.h"
-#include "int.h"
-#include "float.h"
+#include "primitive.h"
 #include "decimal.h"
 #include "character.h"
 #include "bit.h"
@@ -19,7 +17,6 @@
 #include "datetime_interval.h"
 // #include "array.h"
 // #include "record.h"
-#include "unknown.h"
 // #include "error.h"
 // #include "extension.h"
 

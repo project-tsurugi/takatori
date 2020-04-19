@@ -11,7 +11,7 @@ add_library(takatori
     type/extension.cpp
 
     # value
-    value/boolean.cpp
+    value/primitive.cpp
     value/data.cpp
     value/decimal.cpp
     value/character.cpp

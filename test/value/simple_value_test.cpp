@@ -1,8 +1,5 @@
 #include <takatori/value/simple_value.h>
-#include <takatori/value/int.h>
-#include <takatori/value/float.h>
-#include <takatori/value/boolean.h>
-#include <takatori/value/unknown.h>
+#include <takatori/value/primitive.h>
 
 #include <gtest/gtest.h>
 

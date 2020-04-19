@@ -33,7 +33,7 @@ public:
     [[nodiscard]] virtual data* clone(util::object_creator creator) const& = 0;
 
     /// @copydoc clone()
-    virtual data* clone(util::object_creator creator) && = 0;
+    [[nodiscard]] virtual data* clone(util::object_creator creator) && = 0;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

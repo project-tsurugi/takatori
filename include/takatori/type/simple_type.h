@@ -31,24 +31,24 @@ public:
     simple_type(simple_type&& other) noexcept = delete;
     simple_type& operator=(simple_type&& other) noexcept = delete;
 
-    type_kind kind() const noexcept override {
+    [[nodiscard]] type_kind kind() const noexcept override {
         return Kind;
     }
 
-    simple_type* clone(util::object_creator creator) const& override {
+    [[nodiscard]] simple_type* clone(util::object_creator creator) const& override {
         return creator.create_object<simple_type<Kind>>();
     }
 
-    simple_type* clone(util::object_creator creator) && override {
+    [[nodiscard]] simple_type* clone(util::object_creator creator) && override {
         return creator.create_object<simple_type<Kind>>();
     }
 
 protected:
-    bool equals(data const& other) const noexcept override {
+    [[nodiscard]] bool equals(data const& other) const noexcept override {
         return tag == other.kind() && *this == util::unsafe_downcast<simple_type<Kind>>(other);
     }
 
-    std::size_t hash() const noexcept override {
+    [[nodiscard]] std::size_t hash() const noexcept override {
         return 0;
     }
 

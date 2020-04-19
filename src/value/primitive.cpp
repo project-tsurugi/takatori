@@ -1,4 +1,4 @@
-#include <takatori/value/boolean.h>
+#include <takatori/value/primitive.h>
 
 #include <takatori/util/print_support.h>
 

@@ -50,7 +50,7 @@ public:
 
     [[nodiscard]] type_kind kind() const noexcept override;
     [[nodiscard]] bit* clone(util::object_creator creator) const& override;
-    bit* clone(util::object_creator creator) && override;
+    [[nodiscard]] bit* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns whether or not this bit sequence can vary its length.

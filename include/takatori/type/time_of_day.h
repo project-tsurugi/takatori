@@ -33,7 +33,7 @@ public:
 
     [[nodiscard]] type_kind kind() const noexcept override;
     [[nodiscard]] time_of_day* clone(util::object_creator creator) const& override;
-    time_of_day* clone(util::object_creator creator) && override;
+    [[nodiscard]] time_of_day* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns time zone information.

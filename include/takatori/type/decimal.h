@@ -40,7 +40,7 @@ public:
 
     [[nodiscard]] type_kind kind() const noexcept override;
     [[nodiscard]] decimal* clone(util::object_creator creator) const& override;
-    decimal* clone(util::object_creator creator) && override;
+    [[nodiscard]] decimal* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the max number of decimal digits in integral and fractional part.

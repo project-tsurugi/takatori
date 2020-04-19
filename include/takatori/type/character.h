@@ -52,7 +52,7 @@ public:
 
     [[nodiscard]] type_kind kind() const noexcept override;
     [[nodiscard]] character* clone(util::object_creator creator) const& override;
-    character* clone(util::object_creator creator) && override;
+    [[nodiscard]] character* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns whether or not this character sequence can vary its length.

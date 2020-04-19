@@ -5,11 +5,8 @@
 
 #include "testing/descriptors.h"
 
-#include <takatori/type/data.h>
-#include <takatori/type/int.h>
-
-#include <takatori/value/data.h>
-#include <takatori/value/int.h>
+#include <takatori/type/primitive.h>
+#include <takatori/value/primitive.h>
 
 #include <takatori/scalar/immediate.h>
 #include <takatori/scalar/variable_reference.h>

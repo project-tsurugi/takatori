@@ -7,9 +7,7 @@
 #include "data.h"
 #include "type_kind.h"
 
-#include "boolean.h"
-#include "int.h"
-#include "float.h"
+#include "primitive.h"
 #include "decimal.h"
 #include "character.h"
 #include "bit.h"
@@ -20,7 +18,6 @@
 // #include "array.h"
 // #include "record.h"
 // #include "user.h"
-#include "unknown.h"
 // #include "row_reference.h"
 // #include "row_id.h"
 #include "declared.h"

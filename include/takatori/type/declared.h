@@ -33,7 +33,7 @@ public:
 
     [[nodiscard]] type_kind kind() const noexcept override;
     [[nodiscard]] declared* clone(util::object_creator creator) const& override;
-    declared* clone(util::object_creator creator) && override;
+    [[nodiscard]] declared* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the type information of this declared type.

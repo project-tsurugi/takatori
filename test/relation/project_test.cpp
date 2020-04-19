@@ -6,7 +6,7 @@
 
 #include "test_utils.h"
 
-#include <takatori/type/int.h>
+#include <takatori/type/primitive.h>
 
 #include <takatori/util/clonable.h>
 

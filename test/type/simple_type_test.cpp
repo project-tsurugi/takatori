@@ -1,7 +1,5 @@
 #include <takatori/type/simple_type.h>
-#include <takatori/type/int.h>
-#include <takatori/type/float.h>
-#include <takatori/type/unknown.h>
+#include <takatori/type/primitive.h>
 
 #include <gtest/gtest.h>
 
