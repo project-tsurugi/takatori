@@ -1,17 +1,10 @@
 #include <takatori/serializer/object_scanner.h>
 
-#include <sstream>
 #include <string>
 
 #include <gtest/gtest.h>
 
 #include <takatori/serializer/json_printer.h>
-
-#include <takatori/descriptor/variable.h>
-#include <takatori/descriptor/relation.h>
-#include <takatori/descriptor/function.h>
-#include <takatori/descriptor/aggregate_function.h>
-#include <takatori/descriptor/declared_type.h>
 
 #include <takatori/value/primitive.h>
 #include <takatori/value/decimal.h>
@@ -90,27 +83,19 @@ using namespace ::takatori::testing;
 
 class object_scanner_test : public ::testing::Test {
 public:
-    void TearDown() override {
-        std::cout << ::testing::UnitTest::GetInstance()->current_test_info()->name()
-                  << ": " << buf_.str() << std::endl;
-    }
-
-    json_printer printer() {
-        return json_printer { buf_ };
-    }
-
     template<class T>
     void print(T const& element) {
-        json_printer printer { buf_ };
+        std::cout << ::testing::UnitTest::GetInstance()->current_test_info()->name() << ": ";
+
+        json_printer printer { std::cout };
         object_scanner scanner { true };
         scanner(element, printer);
+
+        std::cout << std::endl;
         if (printer.depth() != 0) {
             throw std::domain_error("invalid JSON depth");
         }
     }
-
-private:
-    std::ostringstream buf_;
 };
 
 scalar::immediate const_int4() {
