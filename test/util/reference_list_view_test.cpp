@@ -118,7 +118,7 @@ TEST_F(reference_list_view_test, at) {
     EXPECT_EQ(v.at(0), 1);
     EXPECT_EQ(v.at(1), 2);
     EXPECT_EQ(v.at(2), 3);
-    EXPECT_THROW(v.at(3), std::out_of_range);
+    EXPECT_THROW((void) v.at(3), std::out_of_range);
 }
 
 TEST_F(reference_list_view_test, front_back) {
@@ -197,4 +197,12 @@ TEST_F(reference_list_view_test, universal_begin_end) {
     ++iter;
     ASSERT_EQ(iter, v.end());
 }
+
+TEST_F(reference_list_view_test, output) {
+    std::array<int, 3> a { 1, 2, 3 };
+    reference_list_view v { a };
+
+    std::cout << v << std::endl;
+}
+
 } // namespace takatori::util

@@ -88,7 +88,7 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    constexpr reference operator[](size_type position) const {
+    [[nodiscard]] constexpr reference operator[](size_type position) const {
         return *(data_ + position); // NOLINT
     }
 
@@ -188,5 +188,25 @@ sequence_view(T*, T*) -> sequence_view<T>;
 /// @private
 template<class T>
 sequence_view(T&) -> sequence_view<std::remove_pointer_t<decltype(std::declval<T>().data())>>;
+
+/**
+ * @brief appends string representation of the given value.
+ * @tparam T the element type
+ * @param out the output stream
+ * @param value the target value
+ * @return the output stream
+ */
+template<class T>
+inline std::ostream& operator<<(std::ostream& out, sequence_view<T> const& value) {
+    out << "{";
+    bool cont = false;
+    for (auto&& e: value) {
+        if (cont) out << ", ";
+        cont = true;
+        out << e;
+    }
+    out << "}";
+    return out;
+}
 
 } // namespace takatori::util

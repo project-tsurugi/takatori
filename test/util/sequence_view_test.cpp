@@ -65,7 +65,7 @@ TEST_F(sequence_view_test, at) {
     EXPECT_EQ(v.at(0), 1);
     EXPECT_EQ(v.at(1), 2);
     EXPECT_EQ(v.at(2), 3);
-    EXPECT_THROW(v.at(3), std::out_of_range);
+    EXPECT_THROW((void) v.at(3), std::out_of_range);
 }
 
 TEST_F(sequence_view_test, front_back) {
@@ -121,6 +121,13 @@ TEST_F(sequence_view_test, rbegin_rend) {
 
     ++iter;
     ASSERT_EQ(iter, v.rend());
+}
+
+TEST_F(sequence_view_test, output) {
+    std::array<int, 3> a { 1, 2, 3 };
+    sequence_view v { a };
+
+    std::cout << v << std::endl;
 }
 
 } // namespace takatori::util

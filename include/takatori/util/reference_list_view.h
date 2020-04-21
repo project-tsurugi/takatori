@@ -113,7 +113,7 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    constexpr reference operator[](size_type position) const {
+    [[nodiscard]] constexpr reference operator[](size_type position) const {
         auto iter = extractor_.advance(first_, static_cast<difference_type>(position));
         return extractor_.get(iter);
     }
@@ -259,5 +259,25 @@ reference_list_view(Container& container) -> reference_list_view<
                         std::size_t>
                 && !std::is_pointer_v<typename impl::fit_extractor<typename Container::value_type>::value_type>,
                 impl::fit_extractor<typename Container::value_type>>>;
+
+/**
+ * @brief appends string representation of the given value.
+ * @tparam E the extractor type
+ * @param out the output stream
+ * @param value the target value
+ * @return the output stream
+ */
+template<class E>
+inline std::ostream& operator<<(std::ostream& out, reference_list_view<E> const& value) {
+    out << "{";
+    bool cont = false;
+    for (auto&& e: value) {
+        if (cont) out << ", ";
+        cont = true;
+        out << e;
+    }
+    out << "}";
+    return out;
+}
 
 } // namespace takatori::util
