@@ -29,6 +29,40 @@ enum class comparison_operator {
 };
 
 /**
+ * @brief returns the negation of the given operator.
+ * @param value the target operator
+ * @return the negation
+ */
+inline constexpr comparison_operator operator~(comparison_operator value) noexcept {
+    using kind = comparison_operator;
+    switch (value) {
+        case kind::equal: return kind::not_equal;
+        case kind::not_equal: return kind::equal;
+        case kind::less: return kind::greater_equal;
+        case kind::less_equal: return kind::greater;
+        case kind::greater: return kind::less_equal;
+        case kind::greater_equal: return kind::less;
+    }
+}
+
+/**
+ * @brief returns the transposition of the given operator.
+ * @param value the target operator
+ * @return the transposition
+ */
+inline constexpr comparison_operator transpose(comparison_operator value) noexcept {
+    using kind = comparison_operator;
+    switch (value) {
+        case kind::equal: return kind::equal;
+        case kind::not_equal: return kind::not_equal;
+        case kind::less: return kind::greater;
+        case kind::less_equal: return kind::greater_equal;
+        case kind::greater: return kind::less;
+        case kind::greater_equal: return kind::less_equal;
+    }
+}
+
+/**
  * @brief returns string representation of the value.
  * @param value the target value
  * @return the corresponded string representation
