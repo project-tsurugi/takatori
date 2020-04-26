@@ -7,7 +7,9 @@
 
 #include <cstdint>
 
-namespace takatori::util {
+#include <takatori/util/static_bitset.h>
+
+namespace takatori::util::details {
 
 /**
  * @brief enumerates entries in takatori::util::enum_set.
@@ -35,7 +37,7 @@ public:
      * @param entries the bit set to iterate
      * @param index the target index in the bit set
      */
-    explicit enum_set_enumerator(std::bitset<number_of_universe> const& entries, std::size_t index) noexcept
+    explicit constexpr enum_set_enumerator(static_bitset<number_of_universe> const& entries, std::size_t index) noexcept
         : entries_(entries)
         , index_(internal_adjust_forward(index))
     {}
@@ -44,8 +46,8 @@ public:
      * @brief returns value of the iterator position.
      * @return the value
      */
-    value_type operator*() const {
-        if (index_ > number_of_universe) {
+    [[nodiscard]] constexpr value_type operator*() const {
+        if (index_ >= number_of_universe) {
             throw std::out_of_range("invalid offset");
         }
         return to_element(index_);
@@ -55,7 +57,7 @@ public:
      * @brief advances this iterator.
      * @return this
      */
-    enum_set_enumerator& operator++() noexcept {
+    constexpr enum_set_enumerator& operator++() noexcept {
         index_ = internal_adjust_forward(index_ + 1);
         return *this;
     }
@@ -64,7 +66,7 @@ public:
      * @brief advances this iterator and returns the previous location.
      * @return the previous location
      */
-    enum_set_enumerator const operator++(int) noexcept { // NOLINT
+    constexpr enum_set_enumerator const operator++(int) noexcept { // NOLINT
         auto copy = *this;
         operator++();
         return copy;
@@ -94,24 +96,20 @@ public:
     }
 
 private:
-    std::bitset<number_of_universe> const& entries_;
+    static_bitset<number_of_universe> const& entries_;
     std::size_t index_;
 
-    [[nodiscard]] std::size_t internal_adjust_forward(std::size_t index) const {
-        if (index >= number_of_universe) {
-            return number_of_universe;
+    [[nodiscard]] constexpr std::size_t internal_adjust_forward(std::size_t index) const noexcept {
+        constexpr auto npos = static_bitset<number_of_universe>::npos;
+        if (auto found = entries_.find(index); found != npos) {
+            return found;
         }
-        for (std::size_t i = index; i < number_of_universe; ++i) {
-            if (entries_.test(i)) {
-                return i;
-            }
-        }
-        return number_of_universe;
+        return npos;
     }
 
-    static constexpr value_type to_element(std::size_t index) noexcept {
+    [[nodiscard]] static constexpr value_type to_element(std::size_t index) noexcept {
         return static_cast<value_type>(static_cast<std::underlying_type_t<Enum>>(First) + index);
     }
 };
 
-} // namespace takatori::util
+} // namespace takatori::util::details

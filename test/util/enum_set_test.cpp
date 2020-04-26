@@ -59,6 +59,9 @@ TEST_F(enum_set_test, at) {
 
     s.at(X::A) = true;
     EXPECT_TRUE(s.at(X::A));
+
+    EXPECT_THROW((void) s.at(X::_), std::out_of_range);
+    EXPECT_THROW((void) s.at(X::Z), std::out_of_range);
 }
 
 TEST_F(enum_set_test, at_const) {
@@ -69,6 +72,21 @@ TEST_F(enum_set_test, at_const) {
 
     ms.at(X::A) = true;
     EXPECT_TRUE(s.at(X::A));
+
+    EXPECT_THROW((void) s.at(X::_), std::out_of_range);
+    EXPECT_THROW((void) s.at(X::Z), std::out_of_range);
+}
+
+TEST_F(enum_set_test, contains) {
+    eset s;
+
+    EXPECT_FALSE(s.contains(X::A));
+
+    s.at(X::A) = true;
+    EXPECT_TRUE(s.contains(X::A));
+
+    EXPECT_FALSE(s.contains(X::_));
+    EXPECT_FALSE(s.contains(X::Z));
 }
 
 TEST_F(enum_set_test, clear) {
