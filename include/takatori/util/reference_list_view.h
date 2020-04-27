@@ -152,7 +152,7 @@ public:
      * @return the number of elements
      */
     [[nodiscard]] constexpr size_type size() const noexcept {
-        auto distance = std::distance(first_, last_);
+        auto distance = extractor_.distance(first_, last_);
         if (distance < 0) return 0;
         return static_cast<size_type>(distance);
     }

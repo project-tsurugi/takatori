@@ -58,6 +58,29 @@ public:
         return advancer_(cursor, offset);
     }
 
+    /**
+     * @brief returns the distance of two cursors.
+     * @param from the base cursor
+     * @param to the target cursor
+     * @return the distance from the base cursor to the target cursor
+     */
+    difference_type distance(cursor_type from, cursor_type to) const noexcept {
+        // FIXME: better implementation
+        if (from == to) {
+            return 0;
+        }
+        if (from < to) {
+            auto* p = from;
+            difference_type r {};
+            do {
+                p = advancer_(p, 1);
+                ++r;
+            } while (p < to);
+            return r;
+        }
+        return -distance(to, from);
+    }
+
 private:
     getter_type getter_;
     advancer_type advancer_;

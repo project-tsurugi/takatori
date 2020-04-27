@@ -203,7 +203,7 @@ public:
      * @return the distance from the first iterator to the second one
      */
     friend difference_type operator-(iterator_type a, iterator_type b) noexcept {
-        return a.cursor_ - b.cursor_; // NOLINT
+        return a.extractor_.distance(b.cursor_, a.cursor_);
     }
 
 private:
