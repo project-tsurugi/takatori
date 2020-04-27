@@ -198,6 +198,22 @@ TEST_F(reference_list_view_test, universal_begin_end) {
     ASSERT_EQ(iter, v.end());
 }
 
+TEST_F(reference_list_view_test, universal_size) {
+    std::array<int, 3> a { 1, 2, 3 };
+    universal_extractor<int> ext {
+            [](void* cursor) -> int& {
+                return *static_cast<int*>(cursor);
+            },
+            [](void* cursor, std::ptrdiff_t offset) {
+                return static_cast<void*>(static_cast<int*>(cursor) + offset);
+            },
+    };
+
+    reference_list_view<universal_extractor<int>> v { a, ext };
+
+    EXPECT_EQ(v.size(), 3);
+}
+
 TEST_F(reference_list_view_test, output) {
     std::array<int, 3> a { 1, 2, 3 };
     reference_list_view v { a };

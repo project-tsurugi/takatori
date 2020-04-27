@@ -44,6 +44,16 @@ struct smart_pointer_extractor {
     constexpr cursor_type advance(cursor_type cursor, difference_type offset) const noexcept {
         return cursor + offset; // NOLINT
     }
+
+    /**
+     * @brief returns the distance of two cursors.
+     * @param from the base cursor
+     * @param to the target cursor
+     * @return the distance from the base cursor to the target cursor
+     */
+    constexpr difference_type distance(cursor_type from, cursor_type to) const noexcept {
+        return to - from; // NOLINT
+    }
 };
 
 } // namespace takatori::util
