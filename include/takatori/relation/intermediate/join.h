@@ -9,7 +9,6 @@
 #include "../expression_kind.h"
 #include "../join_kind.h"
 
-#include "../details/key_pair_element.h"
 #include "../details/search_key_element.h"
 #include "../details/range_endpoint.h"
 
@@ -30,9 +29,6 @@ public:
     /// @brief the join direction
     using operator_kind_type = relation::join_kind;
 
-    /// @brief the equivalence key pair type.
-    using key_pair = details::key_pair_element;
-
     /// @brief the range key piece type.
     using key = details::search_key_element<join>;
 
@@ -48,7 +44,6 @@ public:
      *      and designed for the compiler internals.
      *      To make building objects easier, please use other constructors.
      * @param operator_kind the join kind
-     * @param key_pairs the equivalent column pairs between left and right input, for equi-joins
      * @param lower the lower end-point specification.
      *      The each key must be a column of the left input relation,
      *      and each `value` cannot include any variables came from the left input
@@ -57,14 +52,12 @@ public:
      *      and each `value` cannot include any variables came from the left input
      * @param condition the extra join condition expression,
      * @param creator the object creator for internal elements
-     * @note `key_pairs`, `lower`, and `upper` are designed for optimizers.
-     *      If `key_pairs` is not empty, optimizers will generate a effective execution plan for equi joins.
-     *      Or if `lower` or `upper` are present, it will optimize for range joins.
+     * @note `lower` and `upper` are designed for optimizers.
+     *      If `lower` or `upper` are present, optimizers will generate a more effective execution plan for its bounds.
      *      Otherwise, the operator will be replaced with a simple nested loop join.
      */
     explicit join(
             operator_kind_type operator_kind,
-            std::vector<key_pair, util::object_allocator<key_pair>> key_pairs,
             endpoint lower,
             endpoint upper,
             util::unique_object_ptr<scalar::expression> condition,
@@ -151,15 +144,6 @@ public:
      * @return this
      */
     join& operator_kind(operator_kind_type operator_kind) noexcept;
-
-    /**
-     * @brief returns the equivalent column pairs between left and right input.
-     * @return the equivalent column pairs
-     */
-    std::vector<key_pair, util::object_allocator<key_pair>>& key_pairs() noexcept;
-
-    /// @copydoc key_pairs()
-    [[nodiscard]] std::vector<key_pair, util::object_allocator<key_pair>> const& key_pairs() const noexcept;
 
     /**
      * @brief returns the lower end-point specification.
@@ -249,7 +233,6 @@ private:
     std::array<input_port_type, 2> inputs_;
     output_port_type output_;
     operator_kind_type operator_kind_;
-    std::vector<key_pair, util::object_allocator<key_pair>> key_pairs_;
     endpoint lower_;
     endpoint upper_;
     util::unique_object_ptr<scalar::expression> condition_;

@@ -142,10 +142,6 @@ void relation_expression_property_scanner::operator()(relation::intermediate::jo
     accept(element.operator_kind());
     acceptor_.property_end();
 
-    acceptor_.property_begin("key_pairs"sv);
-    accept_foreach(element.key_pairs());
-    acceptor_.property_end();
-
     acceptor_.property_begin("lower"sv);
     accept(element.lower());
     acceptor_.property_end();

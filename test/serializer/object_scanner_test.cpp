@@ -532,10 +532,6 @@ TEST_F(object_scanner_test, relation_join_relation) {
             relation::join_kind::inner,
             const_boolean(),
     };
-    expr.key_pairs() = {
-            { vardesc(0), vardesc(10) },
-            { vardesc(1), vardesc(11) },
-    };
     expr.lower() = {
             {
                     join::key { vardesc(12), const_int4() },
