@@ -61,6 +61,22 @@ TEST_F(port_test, connect_multi) {
     EXPECT_ANY_THROW(v3.output() >> v2.input());
 }
 
+TEST_F(port_test, reconnect) {
+    simple_graph g;
+    auto&& v1 = g.emplace(100);
+    auto&& v2 = g.emplace(200);
+    auto&& v3 = g.emplace(200);
+
+    v1.output() >> v2.input();
+    v2.output() >> v3.input();
+
+    auto existing = v1.output().reconnect_to(v3.input());
+    EXPECT_GT(v1.output(), v3.input());
+    EXPECT_EQ(existing.get(), std::addressof(v2.input()));
+    EXPECT_FALSE(v2.input().opposite());
+    EXPECT_FALSE(v2.output().opposite());
+}
+
 TEST_F(port_test, disconnect) {
     simple_graph g;
     auto&& v1 = g.emplace(100);

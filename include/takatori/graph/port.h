@@ -182,6 +182,27 @@ public:
     }
 
     /**
+     * @brief connects to the opposite port.
+     * @details if this or the given port are connected to other, this operation will disconnect them.
+     * @param opposite
+     * @return the existing opposite of this port
+     * @return empty if this has not been connected to any opposite, or already connected to the given opposite
+     */
+    constexpr util::optional_ptr<opposite_type> reconnect_to(opposite_type& opposite) {
+        if (opposite_ == std::addressof(opposite)) {
+            return {};
+        }
+        util::optional_ptr<opposite_type> existing { this->opposite_ };
+        if (existing) {
+            disconnect_from(*existing);
+        }
+        opposite.disconnect_all();
+        connect_to(opposite);
+        return existing;
+
+    }
+
+    /**
      * @brief disconnects from the opposite port.
      * @param opposite the opposite port
      * @return true if successfully connected
