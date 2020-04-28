@@ -23,6 +23,15 @@ public:
     /// @brief the value type.
     using value_type = Enum;
 
+    /// @private
+    using reference = void;
+
+    /// @private
+    using pointer = void;
+
+    /// @private
+    using difference_type = void;
+
     /// @brief the iterator category tag.
     using iterator_category = std::forward_iterator_tag;
 

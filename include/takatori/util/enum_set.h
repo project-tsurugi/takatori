@@ -147,7 +147,7 @@ public:
      */
     iterator erase(value_type value) {
         auto index = to_index(value);
-        entries_.set(index, true);
+        entries_.set(index, false);
         return iterator { entries_, index + 1 };
     }
 

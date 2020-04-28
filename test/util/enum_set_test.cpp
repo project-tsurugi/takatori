@@ -89,6 +89,45 @@ TEST_F(enum_set_test, contains) {
     EXPECT_FALSE(s.contains(X::Z));
 }
 
+TEST_F(enum_set_test, insert) {
+    eset s;
+    EXPECT_FALSE(s.contains(X::A));
+    EXPECT_FALSE(s.contains(X::B));
+    EXPECT_FALSE(s.contains(X::C));
+
+    s.insert(X::B);
+    EXPECT_FALSE(s.contains(X::A));
+    EXPECT_TRUE(s.contains(X::B));
+    EXPECT_FALSE(s.contains(X::C));
+}
+
+TEST_F(enum_set_test, erase) {
+    eset s { X::A, X::B, X::C };
+    EXPECT_TRUE(s.contains(X::A));
+    EXPECT_TRUE(s.contains(X::B));
+    EXPECT_TRUE(s.contains(X::C));
+
+    s.erase(X::B);
+    EXPECT_TRUE(s.contains(X::A));
+    EXPECT_FALSE(s.contains(X::B));
+    EXPECT_TRUE(s.contains(X::C));
+}
+
+TEST_F(enum_set_test, erase_iter) {
+    eset s { X::A, X::B, X::C };
+    EXPECT_TRUE(s.contains(X::A));
+    EXPECT_TRUE(s.contains(X::B));
+    EXPECT_TRUE(s.contains(X::C));
+
+    auto it = std::find(s.begin(), s.end(), X::B);
+    ASSERT_NE(it, s.end());
+
+    s.erase(it);
+    EXPECT_TRUE(s.contains(X::A));
+    EXPECT_FALSE(s.contains(X::B));
+    EXPECT_TRUE(s.contains(X::C));
+}
+
 TEST_F(enum_set_test, clear) {
     eset s { X::B, X::D };
     EXPECT_FALSE(s.empty());
