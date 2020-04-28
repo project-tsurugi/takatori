@@ -579,7 +579,7 @@ private:
     }
 
     [[nodiscard]] constexpr size_type bit_mask(size_type position) const {
-        return 1UL << bit_offset(position);
+        return size_type{1} << bit_offset(position);
     }
 };
 
