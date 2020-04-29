@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+#include <takatori/relation/graph.h>
+
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
 
@@ -34,7 +36,7 @@ process::process(graph::graph<relation::expression> operators, util::object_crea
 process::process(process const& other, util::object_creator creator)
     : process(creator)
 {
-    (void) other; // FIXME: impl
+    relation::merge_into(other.operators_, operators_, creator);
 }
 
 process::process(process&& other, util::object_creator creator)

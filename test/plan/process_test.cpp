@@ -4,13 +4,27 @@
 
 #include <takatori/plan/discard.h>
 
+#include <takatori/relation/scan.h>
+#include <takatori/relation/emit.h>
 #include <takatori/relation/buffer.h>
+
+#include "test_utils.h"
 
 namespace takatori::plan {
 
 class process_test : public ::testing::Test {};
 
 static_assert(process::tag == step_kind::process);
+
+template<class T>
+T& find(process& p) {
+    for (auto&& e : p.operators()) {
+        if (e.kind() == T::tag) {
+            return util::unsafe_downcast<T>(e);
+        }
+    }
+    std::abort();
+}
 
 TEST_F(process_test, simple) {
     graph::graph<step> g;
@@ -57,6 +71,56 @@ TEST_F(process_test, upstream) {
     EXPECT_FALSE(e.has_downstream(p));
 }
 
+TEST_F(process_test, copy) {
+    process p0;
+    auto&& r0 = p0.operators().insert(relation::scan {
+            tabledesc("T"),
+            {
+                    { columndesc("C0"), vardesc(0) },
+            }
+    });
+    auto&& r1 = p0.operators().insert(relation::emit {
+            vardesc(0),
+    });
+    r0.output() >> r1.input();
+
+    graph::graph<step> g;
+    auto&& p1 = g.emplace<process>(p0, util::object_creator {});
+
+    ASSERT_EQ(p0.operators().size(), 2);
+    EXPECT_GT(r0.output(), r1.input());
+
+    auto&& r0c = find<relation::scan>(p1);
+    auto&& r1c = find<relation::emit>(p1);
+    ASSERT_EQ(p1.operators().size(), 2);
+    EXPECT_GT(r0c.output(), r1c.input());
+}
+
+TEST_F(process_test, move) {
+    process p0;
+    auto&& r0 = p0.operators().insert(relation::scan {
+            tabledesc("T"),
+            {
+                    { columndesc("C0"), vardesc(0) },
+            }
+    });
+    auto&& r1 = p0.operators().insert(relation::emit {
+            vardesc(0),
+    });
+    r0.output() >> r1.input();
+
+    graph::graph<step> g;
+    auto&& p1 = g.emplace<process>(std::move(p0), util::object_creator {});
+
+    ASSERT_EQ(p1.operators().size(), 2);
+    auto&& r0c = find<relation::scan>(p1);
+    auto&& r1c = find<relation::emit>(p1);
+    EXPECT_GT(r0c.output(), r1c.input());
+
+    EXPECT_EQ(std::addressof(r0c), std::addressof(r0));
+    EXPECT_EQ(std::addressof(r1c), std::addressof(r1));
+}
+
 TEST_F(process_test, downstream) {
     graph::graph<step> g;
     auto&& p = g.emplace<process>();
@@ -96,11 +160,19 @@ TEST_F(process_test, downstream) {
 
 TEST_F(process_test, output) {
     graph::graph<step> g;
-    auto&& p = g.emplace<process>();
-    auto&& ops = p.operators();
-    ops.emplace<relation::buffer>(2);
+    auto&& p0 = g.emplace<process>();
+    auto&& r0 = p0.operators().insert(relation::scan {
+            tabledesc("T"),
+            {
+                    { columndesc("C0"), vardesc(0) },
+            }
+    });
+    auto&& r1 = p0.operators().insert(relation::emit {
+            vardesc(0),
+    });
+    r0.output() >> r1.input();
 
-    std::cout << p << std::endl;
+    std::cout << p0 << std::endl;
 }
 
 } // namespace takatori::plan
