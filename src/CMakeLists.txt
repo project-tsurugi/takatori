@@ -145,15 +145,7 @@ add_library(takatori
     util/string_builder.cpp
 )
 
-add_executable(takatori-exec
-    main.cpp
-)
-
 target_include_directories(takatori
-    PRIVATE .
-)
-
-target_include_directories(takatori-exec
     PRIVATE .
 )
 
@@ -171,10 +163,6 @@ if (USE_BOOST_MEMORY_RESOURCE)
     target_link_libraries(takatori PUBLIC Boost::container)
     target_compile_definitions(takatori PUBLIC USE_BOOST_MEMORY_RESOURCE)
 endif (USE_BOOST_MEMORY_RESOURCE)
-
-target_link_libraries(takatori-exec
-    PUBLIC takatori
-)
 
 set_target_properties(takatori
     PROPERTIES
@@ -213,15 +201,9 @@ if (FORCE_INSTALL_RPATH)
     )
 endif (FORCE_INSTALL_RPATH)
 
-set_target_properties(takatori-exec
-    PROPERTIES
-        SOVERSION ${PROJECT_VERSION}
-)
-
 install(
     TARGETS
         takatori
-        takatori-exec
     EXPORT
         ${export_name}
     LIBRARY
