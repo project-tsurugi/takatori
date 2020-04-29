@@ -42,7 +42,7 @@ pipeline {
                     # clean up cache variables from previous build
                     rm -f CMakeCache.txt
                     cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=OFF -DBUILD_DOCUMENTS=OFF -DCMAKE_INSTALL_PREFIX=${WORKSPACE}/.local ..
-                    make all install -j${BUILD_PARALLEL_NUM}
+                    cmake --build . --target install --clean-first -- -j${BUILD_PARALLEL_NUM}
                 '''
             }
         }
@@ -52,7 +52,7 @@ pipeline {
                     mkdir build
                     cd build
                     cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=${WORKSPACE}/.local -DCMAKE_PREFIX_PATH=${WORKSPACE}/.local ..
-                    make all -j${BUILD_PARALLEL_NUM}
+                    cmake --build . --target all --clean-first -- -j${BUILD_PARALLEL_NUM}
                 '''
             }
         }
@@ -64,7 +64,7 @@ pipeline {
             steps {
                 sh '''
                     cd build
-                    make test ARGS="--verbose"
+                    ctest --verbose
                 '''
             }
         }
@@ -72,7 +72,7 @@ pipeline {
             steps {
                 sh '''
                     cd build
-                    make doxygen > doxygen.log 2>&1
+                    cmake --build . --target doxygen > doxygen.log 2>&1
                     zip -q -r takatori-doxygen doxygen/html
                 '''
             }
