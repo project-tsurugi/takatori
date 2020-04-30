@@ -76,6 +76,10 @@ util::unique_object_ptr<expression> conditional_alternative::release_condition()
     return tree::release_element(std::move(condition_));
 }
 
+util::object_ownership_reference<expression> conditional_alternative::ownership_condition() {
+    return tree::ownership_element_fragment(parent_, condition_);
+}
+
 expression& conditional_alternative::body() noexcept {
     return *body_;
 }
@@ -99,6 +103,10 @@ conditional_alternative& conditional_alternative::body(util::unique_object_ptr<e
 
 util::unique_object_ptr<expression> conditional_alternative::release_body() noexcept {
     return tree::release_element(std::move(body_));
+}
+
+util::object_ownership_reference<expression> conditional_alternative::ownership_body() {
+    return tree::ownership_element_fragment(parent_, body_);
 }
 
 bool operator==(conditional_alternative const& a, conditional_alternative const& b) noexcept {

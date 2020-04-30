@@ -63,7 +63,7 @@ public:
      * @brief returns the document region of this element.
      * @return the document region
      */
-    document::region& region() noexcept {
+    [[nodiscard]] document::region& region() noexcept {
         return region_;
     }
 

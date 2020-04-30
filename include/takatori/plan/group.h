@@ -108,7 +108,7 @@ public:
 
     [[nodiscard]] step_kind kind() const noexcept override;
     [[nodiscard]] group* clone(util::object_creator creator) const& override;
-    group* clone(util::object_creator creator) && override;
+    [[nodiscard]] group* clone(util::object_creator creator) && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
@@ -117,7 +117,7 @@ public:
      * @brief returns the columns to exchange.
      * @return the columns to exchange
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
@@ -127,7 +127,7 @@ public:
      * @details each group key column must also appear in the columns(), but not appear in sort_keys().
      * @return the group key columns.
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
     /// @copydoc group_keys()
     [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
@@ -138,7 +138,7 @@ public:
      *      Each sort key column must also appear in the columns(), but not appear in group_keys().
      * @return the sort key elements
      */
-    std::vector<sort_key, util::object_allocator<sort_key>>& sort_keys() noexcept;
+    [[nodiscard]] std::vector<sort_key, util::object_allocator<sort_key>>& sort_keys() noexcept;
 
     /// @copydoc sort_keys()
     [[nodiscard]] std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;

@@ -66,7 +66,7 @@ public:
      * @brief returns the source relation, must be refer the source exchange.
      * @return the source relation
      */
-    descriptor::relation& source() noexcept;
+    [[nodiscard]] descriptor::relation& source() noexcept;
 
     /// @copydoc source()
     [[nodiscard]] descriptor::relation const& source() const noexcept;
@@ -75,7 +75,7 @@ public:
      * @brief returns the column mappings, from the upstream exchange to output relation.
      * @return the column mappings
      */
-    std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;

@@ -76,18 +76,18 @@ public:
     explicit write(write&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] write* clone(util::object_creator creator) const& override;
-    write* clone(util::object_creator creator) && override;
+    [[nodiscard]] write* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the input port.
      * @return the input port
      */
-    input_port_type& input() noexcept;
+    [[nodiscard]] input_port_type& input() noexcept;
 
     /// @copydoc input()
     [[nodiscard]] input_port_type const& input() const noexcept;
@@ -103,7 +103,7 @@ public:
      * @param operator_kind operator kind
      * @return this
      */
-    write& operator_kind(operator_kind_type operator_kind) noexcept;
+    [[nodiscard]] write& operator_kind(operator_kind_type operator_kind) noexcept;
 
     /**
      * @brief returns the destination relation.
@@ -122,7 +122,7 @@ public:
      * @brief returns write target keys in the input relation.
      * @return the write target keys
      */
-    std::vector<key, util::object_allocator<key>>& keys() noexcept;
+    [[nodiscard]] std::vector<key, util::object_allocator<key>>& keys() noexcept;
 
     /// @copydoc keys()
     [[nodiscard]] std::vector<key, util::object_allocator<key>> const& keys() const noexcept;
@@ -131,7 +131,7 @@ public:
      * @brief returns column values to write in the input relation.
      * @return the column values
      */
-    std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;

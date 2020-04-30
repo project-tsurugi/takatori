@@ -46,7 +46,7 @@ public:
      * @see is_orphaned()
      * @see optional_owner()
      */
-    graph_type& owner();
+    [[nodiscard]] graph_type& owner();
 
     /// @copydoc owner
     [[nodiscard]] graph_type const& owner() const;
@@ -75,7 +75,7 @@ public:
     [[nodiscard]] virtual step* clone(util::object_creator creator) const& = 0;
 
     /// @copydoc clone()
-    virtual step* clone(util::object_creator creator) && = 0;
+    [[nodiscard]] virtual step* clone(util::object_creator creator) && = 0;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

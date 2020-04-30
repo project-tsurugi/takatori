@@ -54,18 +54,18 @@ public:
     explicit take_cogroup(take_cogroup&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] take_cogroup* clone(util::object_creator creator) const& override;
-    take_cogroup* clone(util::object_creator creator) && override;
+    [[nodiscard]] take_cogroup* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -75,7 +75,7 @@ public:
      * @details Each group member must describes about the corresponded upstream exchange.
      * @return the source groups
      */
-    std::vector<group, util::object_allocator<group>>& groups() noexcept;
+    [[nodiscard]] std::vector<group, util::object_allocator<group>>& groups() noexcept;
 
     /// @copydoc groups()
     [[nodiscard]] std::vector<group, util::object_allocator<group>> const& groups() const noexcept;

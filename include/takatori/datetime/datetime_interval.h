@@ -67,7 +67,7 @@ public:
      * @return true if this is non-zero
      * @return false otherwise
      */
-    explicit constexpr operator bool() const noexcept {
+    [[nodiscard]] explicit constexpr operator bool() const noexcept {
         return date_ && time_;
     }
 

@@ -75,13 +75,13 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] let* clone(util::object_creator creator) const& override;
-    let* clone(util::object_creator creator) && override;
+    [[nodiscard]] let* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the variables.
      * @return the variables
      */
-    tree::tree_fragment_vector<declarator>& variables() noexcept;
+    [[nodiscard]] tree::tree_fragment_vector<declarator>& variables() noexcept;
     
     /// @copydoc variables()
     [[nodiscard]] tree::tree_fragment_vector<declarator> const& variables() const noexcept;
@@ -91,7 +91,7 @@ public:
      * @return the body expression
      * @warning undefined behavior if the body is absent
      */
-    expression& body() noexcept;
+    [[nodiscard]] expression& body() noexcept;
 
     /**
      * @brief returns the body expression.
@@ -105,7 +105,7 @@ public:
      * @return the body expression
      * @return empty if the body is absent
      */
-    util::optional_ptr<expression> optional_body() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_body() noexcept;
 
     /// @copydoc optional_body()
     [[nodiscard]] util::optional_ptr<expression const> optional_body() const noexcept;
@@ -115,7 +115,7 @@ public:
      * @return the body expression
      * @return empty if the body is absent
      */
-    util::unique_object_ptr<expression> release_body() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_body() noexcept;
 
     /**
      * @brief sets the body expression.

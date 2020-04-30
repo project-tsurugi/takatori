@@ -85,7 +85,7 @@ public:
      * @return the owner
      * @return nullptr if it is absent
      */
-    parent_type* parent_element() noexcept;
+    [[nodiscard]] parent_type* parent_element() noexcept;
 
     /// @copydoc parent_element()
     [[nodiscard]] parent_type const* parent_element() const noexcept;
@@ -100,7 +100,7 @@ public:
      * @brief returns the condition expression.
      * @return the condition expression
      */
-    expression& condition() noexcept;
+    [[nodiscard]] expression& condition() noexcept;
     
     /// @copydoc condition
     [[nodiscard]] expression const& condition() const noexcept;
@@ -110,7 +110,7 @@ public:
      * @return the condition expression
      * @return empty if the condition expression is absent
      */
-    util::optional_ptr<expression> optional_condition() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_condition() noexcept;
     
     /// @copydoc optional_condition()
     [[nodiscard]] util::optional_ptr<expression const> optional_condition() const noexcept;
@@ -126,19 +126,19 @@ public:
      * @brief releases the condition expression.
      * @return the released expression
      */
-    util::unique_object_ptr<expression> release_condition() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_condition() noexcept;
 
     /**
      * @brief returns ownership reference of the condition expression.
      * @return the condition expression
      */
-    util::object_ownership_reference<expression> ownership_condition();
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_condition();
 
     /**
      * @brief returns the body expression.
      * @return the body expression
      */
-    expression& body() noexcept;
+    [[nodiscard]] expression& body() noexcept;
 
     /// @copydoc body
     [[nodiscard]] expression const& body() const noexcept;
@@ -148,7 +148,7 @@ public:
      * @return the body expression
      * @return empty if the body expression is absent
      */
-    util::optional_ptr<expression> optional_body() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_body() noexcept;
 
     /// @copydoc optional_body()
     [[nodiscard]] util::optional_ptr<expression const> optional_body() const noexcept;
@@ -164,7 +164,13 @@ public:
      * @brief releases the body expression.
      * @return the released expression
      */
-    util::unique_object_ptr<expression> release_body() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_body() noexcept;
+
+    /**
+     * @brief returns ownership reference of the body expression.
+     * @return the body expression
+     */
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_body();
 
     /**
      * @brief returns whether or not the two elements are equivalent.

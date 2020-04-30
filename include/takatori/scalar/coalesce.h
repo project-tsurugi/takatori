@@ -57,13 +57,13 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] coalesce* clone(util::object_creator creator) const& override;
-    coalesce* clone(util::object_creator creator) && override;
+    [[nodiscard]] coalesce* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the alternative expressions.
      * @return the alternative expressions
      */
-    tree::tree_element_vector<expression>& alternatives() noexcept;
+    [[nodiscard]] tree::tree_element_vector<expression>& alternatives() noexcept;
 
     /// @copydoc alternatives()
     [[nodiscard]] tree::tree_element_vector<expression> const& alternatives() const noexcept;

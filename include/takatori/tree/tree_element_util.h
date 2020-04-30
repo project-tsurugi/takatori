@@ -139,13 +139,16 @@ util::ownership_reference<E, D> ownership_element(Parent& parent, std::unique_pt
     static_assert(is_tree_fragment_v<E>);
     using traits = tree_fragment_traits<E>;
     static_assert(std::is_convertible_v<Parent*, typename traits::parent_type*>);
-    return util::ownership_reference<E, D> {
-            [&]() {
+    using ownership = util::ownership_reference<E, D>;
+    return ownership {
+            [&]() -> typename ownership::pointer {
                 return property.get();
             },
-            [&](std::unique_ptr<E, D> replacement) {
+            [&](typename ownership::unique_pointer replacement) -> typename ownership::unique_pointer {
+                auto result = release_element(std::move(property));
                 assign_element(parent, property, std::move(replacement));
-            }
+                return result;
+            },
     };
 }
 
@@ -163,13 +166,16 @@ util::ownership_reference<E, D> ownership_element_fragment(Parent*& parent, std:
     static_assert(is_tree_fragment_v<E>);
     using traits = tree_fragment_traits<E>;
     static_assert(std::is_convertible_v<Parent*, typename traits::parent_type*>);
+    using ownership = util::ownership_reference<E, D>;
     return util::ownership_reference<E, D> {
-            [&]() {
+            [&]() -> typename ownership::pointer {
                 return property.get();
             },
-            [&](std::unique_ptr<E, D> replacement) {
+            [&](typename ownership::unique_pointer replacement) -> typename ownership::unique_pointer {
+                auto result = release_element(std::move(property));
                 assign_element_fragment(parent, property, std::move(replacement));
-            }
+                return result;
+            },
     };
 }
 

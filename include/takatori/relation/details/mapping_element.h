@@ -29,7 +29,7 @@ public:
      * @brief returns the descriptor of source column.
      * @return the source column
      */
-    source_type& source() noexcept;
+    [[nodiscard]] source_type& source() noexcept;
 
     /// @copydoc source()
     [[nodiscard]] source_type const& source() const noexcept;
@@ -38,7 +38,7 @@ public:
      * @brief returns the descriptor of destination column.
      * @return the destination column
      */
-    destination_type& destination() noexcept;
+    [[nodiscard]] destination_type& destination() noexcept;
 
     /// @copydoc destination()
     [[nodiscard]] destination_type const& destination() const noexcept;

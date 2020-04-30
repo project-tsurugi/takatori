@@ -58,18 +58,18 @@ public:
     explicit project(project&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] project* clone(util::object_creator creator) const& override;
-    project* clone(util::object_creator creator) && override;
+    [[nodiscard]] project* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the input port.
      * @return the input port
      */
-    input_port_type& input() noexcept;
+    [[nodiscard]] input_port_type& input() noexcept;
 
     /// @copydoc input()
     [[nodiscard]] input_port_type const& input() const noexcept;
@@ -78,7 +78,7 @@ public:
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -87,7 +87,7 @@ public:
      * @brief returns the columns definition.
      * @return the columns definition
      */
-    tree::tree_fragment_vector<column>& columns() noexcept;
+    [[nodiscard]] tree::tree_fragment_vector<column>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] tree::tree_fragment_vector<column> const& columns() const noexcept;

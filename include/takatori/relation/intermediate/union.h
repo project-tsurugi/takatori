@@ -70,18 +70,18 @@ public:
     explicit union_(union_&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] union_* clone(util::object_creator creator) const& override;
-    union_* clone(util::object_creator creator) && override;
+    [[nodiscard]] union_* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the first input port.
      * @return the first input port
      */
-    input_port_type& left() noexcept;
+    [[nodiscard]] input_port_type& left() noexcept;
 
     /// @copydoc left()
     [[nodiscard]] input_port_type const& left() const noexcept;
@@ -90,7 +90,7 @@ public:
      * @brief returns the second input port.
      * @return the second input port
      */
-    input_port_type& right() noexcept;
+    [[nodiscard]] input_port_type& right() noexcept;
 
     /// @copydoc right()
     [[nodiscard]] input_port_type const& right() const noexcept;
@@ -99,7 +99,7 @@ public:
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -122,7 +122,7 @@ public:
      *      the succeeding operators only can refer the destination columns declared in here
      * @return the column mappings
      */
-    std::vector<mapping, util::object_allocator<mapping>>& mappings() noexcept;
+    [[nodiscard]] std::vector<mapping, util::object_allocator<mapping>>& mappings() noexcept;
 
     /// @copydoc mappings()
     [[nodiscard]] std::vector<mapping, util::object_allocator<mapping>> const& mappings() const noexcept;

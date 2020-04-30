@@ -68,18 +68,18 @@ public:
     explicit difference(difference&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] difference* clone(util::object_creator creator) const& override;
-    difference* clone(util::object_creator creator) && override;
+    [[nodiscard]] difference* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the left input port.
      * @return the left input port
      */
-    input_port_type& left() noexcept;
+    [[nodiscard]] input_port_type& left() noexcept;
 
     /// @copydoc left()
     [[nodiscard]] input_port_type const& left() const noexcept;
@@ -88,7 +88,7 @@ public:
      * @brief returns the right input port.
      * @return the right input port
      */
-    input_port_type& right() noexcept;
+    [[nodiscard]] input_port_type& right() noexcept;
 
     /// @copydoc right()
     [[nodiscard]] input_port_type const& right() const noexcept;
@@ -97,7 +97,7 @@ public:
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -119,7 +119,7 @@ public:
      * @brief returns the key columns on the input relations.
      * @return the key columns
      */
-    std::vector<group_key_pair, util::object_allocator<group_key_pair>>& group_key_pairs() noexcept;
+    [[nodiscard]] std::vector<group_key_pair, util::object_allocator<group_key_pair>>& group_key_pairs() noexcept;
 
     /// @copydoc group_key_pairs()
     [[nodiscard]] std::vector<group_key_pair, util::object_allocator<group_key_pair>> const& group_key_pairs() const noexcept;

@@ -64,7 +64,7 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] binary* clone(util::object_creator creator) const& override;
-    binary* clone(util::object_creator creator) && override;
+    [[nodiscard]] binary* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the operator kind.
@@ -84,7 +84,7 @@ public:
      * @return the left operand
      * @warning undefined behavior if the operand is absent
      */
-    expression& left() noexcept;
+    [[nodiscard]] expression& left() noexcept;
 
     /**
      * @brief returns the left operand.
@@ -98,7 +98,7 @@ public:
      * @return the left operand
      * @return empty if the operand is absent
      */
-    util::optional_ptr<expression> optional_left() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_left() noexcept;
 
     /// @copydoc optional_left()
     [[nodiscard]] util::optional_ptr<expression const> optional_left() const noexcept;
@@ -108,7 +108,7 @@ public:
      * @return the left operand
      * @return empty if the operand is absent
      */
-    util::unique_object_ptr<expression> release_left() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_left() noexcept;
 
     /**
      * @brief sets the left operand.
@@ -121,14 +121,14 @@ public:
      * @brief returns ownership reference of the left operand.
      * @return the left operand
      */
-    util::object_ownership_reference<expression> ownership_left();
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_left();
 
     /**
      * @brief returns the right operand.
      * @return the right operand
      * @warning undefined behavior if the operand is absent
      */
-    expression& right() noexcept;
+    [[nodiscard]] expression& right() noexcept;
 
     /**
      * @brief returns the right operand.
@@ -142,7 +142,7 @@ public:
      * @return the right operand
      * @return empty if the operand is absent
      */
-    util::optional_ptr<expression> optional_right() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_right() noexcept;
 
     /// @copydoc optional_right()
     [[nodiscard]] util::optional_ptr<expression const> optional_right() const noexcept;
@@ -152,7 +152,7 @@ public:
      * @return the right operand
      * @return empty if the operand is absent
      */
-    util::unique_object_ptr<expression> release_right() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_right() noexcept;
 
     /**
      * @brief sets the right operand.
@@ -165,7 +165,7 @@ public:
      * @brief returns ownership reference of the right operand.
      * @return the right operand
      */
-    util::object_ownership_reference<expression> ownership_right();
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_right();
 
     /**
      * @brief returns whether or not the two elements are equivalent.

@@ -87,7 +87,7 @@ public:
      * @brief returns the value reference where this iterator pointing.
      * @return reference of the current value
      */
-    constexpr reference operator*() const noexcept {
+    [[nodiscard]] constexpr reference operator*() const noexcept {
         return extractor_.get(cursor_);
     }
 
@@ -95,7 +95,7 @@ public:
      * @brief returns pointer to the value where this iterator pointing.
      * @return pointer to the current value
      */
-    constexpr pointer operator->() const noexcept {
+    [[nodiscard]] constexpr pointer operator->() const noexcept {
         return std::addressof(operator*());
     }
 
@@ -104,7 +104,7 @@ public:
      * @param offset the offset count from the current position
      * @return reference of the target value
      */
-    constexpr reference operator[](difference_type offset) const noexcept {
+    [[nodiscard]] constexpr reference operator[](difference_type offset) const noexcept {
         return extractor_.get(extractor_.advance(cursor_, offset));
     }
 

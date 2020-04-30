@@ -52,16 +52,16 @@ public:
      * @brief returns the built string.
      * @return the built string
      */
-    std::string str() const;
+    [[nodiscard]] std::string str() const;
 
     /**
      * @brief returns the internal buffer.
      * @return the buffer
      */
-    std::ostringstream& buffer() noexcept;
+    [[nodiscard]] std::ostringstream& buffer() noexcept;
 
     /// @copydoc buffer()
-    std::ostringstream const& buffer() const noexcept;
+    [[nodiscard]] std::ostringstream const& buffer() const noexcept;
 
 private:
     std::ostringstream buffer_;

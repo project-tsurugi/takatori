@@ -114,7 +114,7 @@ public:
      * @return the owner
      * @return nullptr if it is absent
      */
-    parent_type* parent_element() noexcept {
+    [[nodiscard]] parent_type* parent_element() noexcept {
         return parent_;
     }
 
@@ -136,7 +136,7 @@ public:
      * @brief returns pieces of key to point to the target row.
      * @return the target row key
      */
-    tree::tree_fragment_vector<key>& keys() noexcept {
+    [[nodiscard]] tree::tree_fragment_vector<key>& keys() noexcept {
         return keys_;
     }
 

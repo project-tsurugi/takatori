@@ -341,6 +341,29 @@ public:
     }
 
     /**
+     * @brief replaces an existing element with the given element.
+     * @attention the element must be created by an this container's equivalent object_creator.
+     * @tparam U the value type
+     * @tparam D the deleter type
+     * @param position the target element position
+     * @param element the replacement
+     * @return the existing element
+     */
+    template<class U, class D>
+    std::enable_if_t<
+            std::is_convertible_v<U&, reference>,
+            util::unique_object_ptr<value_type>>
+    replace_with(const_iterator position, std::unique_ptr<U, D> element) noexcept {
+        auto iter = begin() + std::distance(cbegin(), position);
+        auto result = elements_.replace_with(position, std::move(element));
+        bless(*iter);
+        if (result) {
+            unbless(*result);
+        }
+        return result;
+    }
+
+    /**
      * @brief replaces an existing element with a new element.
      * @tparam U the replacement type
      * @tparam Args the constructor parameter type of U
@@ -360,7 +383,7 @@ public:
      * @param position the target position
      * @return a pair of the removed element, and the next position of the released element
      */
-    std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position) noexcept {
+    [[nodiscard]] std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position) noexcept {
         auto result = elements_.release(position);
         if (auto&& p = std::get<0>(result)) {
             unbless(*p);
@@ -376,7 +399,7 @@ public:
      * @return a pair of the removed element, and the next position of the released element
      */
     template<class C = typename util::reference_vector<value_type>::copier_type>
-    std::pair<util::reference_vector<value_type, C>, iterator> release(const_iterator first, const_iterator last) noexcept {
+    [[nodiscard]] std::pair<util::reference_vector<value_type, C>, iterator> release(const_iterator first, const_iterator last) noexcept {
         auto result = elements_.template release<C>(first, last);
         for (auto&& e : std::get<0>(result)) {
             unbless_element(e);
@@ -389,7 +412,7 @@ public:
      * @return the removed element
      * @warning undefined behavior if this is empty
      */
-    util::unique_object_ptr<value_type> release_back() noexcept {
+    [[nodiscard]] util::unique_object_ptr<value_type> release_back() noexcept {
         auto result = elements_.release_back();
         if (result) {
             unbless(*result);
@@ -403,7 +426,7 @@ public:
      * @return the released elements
      */
     template<class C = typename util::reference_vector<value_type>::copier_type>
-    util::reference_vector<value_type, C> release_elements() noexcept {
+    [[nodiscard]] util::reference_vector<value_type, C> release_elements() noexcept {
         unbless();
         util::reference_vector<value_type, C> result { std::move(elements_) };
         return result;
@@ -423,8 +446,9 @@ public:
                 [position, this]() -> typename ownership_ref::pointer {
                     return std::addressof(at(static_cast<size_type>(position - cbegin())));
                 },
-                [position, this](typename ownership_ref::unique_pointer replacement) -> void {
-                    put(position, std::move(replacement));
+                [position, this](typename ownership_ref::unique_pointer replacement)
+                        -> typename ownership_ref::unique_pointer {
+                    return replace_with(position, std::move(replacement));
                 }
         };
     }

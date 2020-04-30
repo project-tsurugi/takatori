@@ -41,7 +41,7 @@ constexpr inline bool is_clonable_v = is_clonable<T>::value;
  * @return the created clone
  */
 template<class T>
-inline std::enable_if_t<
+[[nodiscard]] inline std::enable_if_t<
         is_clonable_v<std::remove_cv_t<std::remove_reference_t<T>>>,
         std::add_pointer_t<std::remove_cv_t<std::remove_reference_t<T>>>>
 clone(T&& object, object_creator creator = {}) {
@@ -50,7 +50,7 @@ clone(T&& object, object_creator creator = {}) {
 
 /// @copydoc clone(T&&, object_creator)
 template<class T>
-inline std::enable_if_t<
+[[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
 clone(std::reference_wrapper<T> object, object_creator creator = {}) {
@@ -59,7 +59,7 @@ clone(std::reference_wrapper<T> object, object_creator creator = {}) {
 
 /// @copydoc clone(T&&, object_creator)
 template<class T>
-inline std::enable_if_t<
+[[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
 clone(rvalue_reference_wrapper<T> object, object_creator creator = {}) {
@@ -75,7 +75,7 @@ clone(rvalue_reference_wrapper<T> object, object_creator creator = {}) {
  * @return `nullptr` if the object is absent
  */
 template<class T>
-inline std::enable_if_t<is_clonable_v<T>, T*>
+[[nodiscard]] inline std::enable_if_t<is_clonable_v<T>, T*>
 clone(T const* object, object_creator creator = {}) {
     if (!static_cast<bool>(object)) return nullptr;
     return object->clone(creator);
@@ -91,7 +91,7 @@ clone(T const* object, object_creator creator = {}) {
  * @return empty if the object is absent
  */
 template<class T, class D>
-inline std::enable_if_t<
+[[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
 clone(std::unique_ptr<T, D> const& object, object_creator creator = {}) {
@@ -101,7 +101,7 @@ clone(std::unique_ptr<T, D> const& object, object_creator creator = {}) {
 
 /// @copydoc clone(std::unique_ptr<T, D> const&, object_creator)
 template<class T, class D>
-inline std::enable_if_t<
+[[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
 clone(std::unique_ptr<T, D>&& object, object_creator creator = {}) {
@@ -113,7 +113,7 @@ clone(std::unique_ptr<T, D>&& object, object_creator creator = {}) {
 
 /// @copydoc clone(T const*, object_creator)
 template<class T>
-inline std::enable_if_t<
+[[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
 clone(rvalue_ptr<T> object, object_creator creator = {}) {
@@ -130,7 +130,7 @@ clone(rvalue_ptr<T> object, object_creator creator = {}) {
  * @return empty if input is nullptr
  */
 template<class T>
-inline auto clone_unique(T&& object, object_creator creator = {}) {
+[[nodiscard]] inline auto clone_unique(T&& object, object_creator creator = {}) {
     return creator.wrap_unique(clone(std::forward<T>(object), creator));
 }
 
@@ -143,7 +143,7 @@ inline auto clone_unique(T&& object, object_creator creator = {}) {
  * @return empty if input is nullptr
  */
 template<class T>
-inline auto clone_shared(T&& object, object_creator creator = {}) {
+[[nodiscard]] inline auto clone_shared(T&& object, object_creator creator = {}) {
     return creator.wrap_shared(clone(std::forward<T>(object), creator));
 }
 
@@ -176,7 +176,7 @@ struct clonable_copier : is_clonable<T> {
      * @param object the target object
      * @return the created copy, it must be delete via creator.delete_object()
      */
-    static pointer copy(object_creator creator, value_type const& object) {
+    [[nodiscard]] static pointer copy(object_creator creator, value_type const& object) {
         return clone(object, creator);
     }
 
@@ -186,7 +186,7 @@ struct clonable_copier : is_clonable<T> {
      * @param object the target object
      * @return the created copy, it must be delete via creator.delete_object()
      */
-    static pointer copy(object_creator creator, value_type&& object) {
+    [[nodiscard]] static pointer copy(object_creator creator, value_type&& object) {
         return clone(std::move(object), creator);
     }
 };

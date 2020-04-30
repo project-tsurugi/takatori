@@ -48,7 +48,7 @@ public:
 
     [[nodiscard]] step_kind kind() const noexcept override;
     [[nodiscard]] discard* clone(util::object_creator creator) const& override;
-    discard* clone(util::object_creator creator) && override;
+    [[nodiscard]] discard* clone(util::object_creator creator) && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;

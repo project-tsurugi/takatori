@@ -67,7 +67,7 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] match* clone(util::object_creator creator) const& override;
-    match* clone(util::object_creator creator) && override;
+    [[nodiscard]] match* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the operator kind.
@@ -87,7 +87,7 @@ public:
      * @return the input sequence
      * @warning undefined behavior if the operand is absent
      */
-    expression& input() noexcept;
+    [[nodiscard]] expression& input() noexcept;
 
     /**
      * @brief returns the input sequence.
@@ -101,7 +101,7 @@ public:
      * @return the input sequence
      * @return empty if the input is absent
      */
-    util::optional_ptr<expression> optional_input() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_input() noexcept;
 
     /// @copydoc optional_input()
     [[nodiscard]] util::optional_ptr<expression const> optional_input() const noexcept;
@@ -111,7 +111,7 @@ public:
      * @return the input sequence
      * @return empty if the input is absent
      */
-    util::unique_object_ptr<expression> release_input() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_input() noexcept;
 
     /**
      * @brief sets the input sequence.
@@ -124,14 +124,14 @@ public:
      * @brief returns ownership reference of the input sequence.
      * @return the input sequence
      */
-    util::object_ownership_reference<expression> ownership_input();
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_input();
 
     /**
      * @brief returns the pattern sequence.
      * @return the pattern sequence
      * @warning undefined behavior if the pattern is absent
      */
-    expression& pattern() noexcept;
+    [[nodiscard]] expression& pattern() noexcept;
 
     /**
      * @brief returns the pattern sequence.
@@ -145,7 +145,7 @@ public:
      * @return the pattern sequence
      * @return empty if the pattern is absent
      */
-    util::optional_ptr<expression> optional_pattern() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_pattern() noexcept;
 
     /// @copydoc optional_pattern()
     [[nodiscard]] util::optional_ptr<expression const> optional_pattern() const noexcept;
@@ -155,7 +155,7 @@ public:
      * @return the pattern sequence
      * @return empty if the pattern is absent
      */
-    util::unique_object_ptr<expression> release_pattern() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_pattern() noexcept;
 
     /**
      * @brief sets the pattern sequence.
@@ -168,14 +168,14 @@ public:
      * @brief returns ownership reference of the pattern sequence.
      * @return the pattern sequence
      */
-    util::object_ownership_reference<expression> ownership_pattern();
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_pattern();
 
     /**
      * @brief returns the escape character.
      * @return the escape character
      * @warning undefined behavior if the expression is absent
      */
-    expression& escape() noexcept;
+    [[nodiscard]] expression& escape() noexcept;
 
     /**
      * @brief returns the escape character.
@@ -189,7 +189,7 @@ public:
      * @return the escape character
      * @return empty if the expression is absent
      */
-    util::optional_ptr<expression> optional_escape() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_escape() noexcept;
 
     /// @copydoc optional_escape()
     [[nodiscard]] util::optional_ptr<expression const> optional_escape() const noexcept;
@@ -199,7 +199,7 @@ public:
      * @return the escape character
      * @return empty if the expression is absent
      */
-    util::unique_object_ptr<expression> release_escape() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_escape() noexcept;
 
     /**
      * @brief sets the escape character.
@@ -212,7 +212,7 @@ public:
      * @brief returns ownership reference of the escape character.
      * @return the escape character
      */
-    util::object_ownership_reference<expression> ownership_escape();
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_escape();
 
     /**
      * @brief returns whether or not the two elements are equivalent.

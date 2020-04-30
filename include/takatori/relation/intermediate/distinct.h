@@ -53,18 +53,18 @@ public:
     explicit distinct(distinct&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] distinct* clone(util::object_creator creator) const& override;
-    distinct* clone(util::object_creator creator) && override;
+    [[nodiscard]] distinct* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the input port.
      * @return the input port
      */
-    input_port_type& input() noexcept;
+    [[nodiscard]] input_port_type& input() noexcept;
 
     /// @copydoc input()
     [[nodiscard]] input_port_type const& input() const noexcept;
@@ -73,7 +73,7 @@ public:
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -82,7 +82,7 @@ public:
      * @brief returns the distinct key columns on the input relation.
      * @return the distinct keys
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
     /// @copydoc group_keys()
     [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;

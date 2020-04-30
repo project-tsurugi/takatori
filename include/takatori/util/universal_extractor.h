@@ -44,7 +44,7 @@ public:
      * @param cursor the target cursor
      * @return the reference
      */
-    reference get(cursor_type cursor) const noexcept {
+    [[nodiscard]] reference get(cursor_type cursor) const noexcept {
         return getter_(cursor);
     }
 
@@ -54,7 +54,7 @@ public:
      * @param offset the cursor offset
      * @return the advanced cursor
      */
-    cursor_type advance(cursor_type cursor, difference_type offset) const noexcept {
+    [[nodiscard]] cursor_type advance(cursor_type cursor, difference_type offset) const noexcept {
         return advancer_(cursor, offset);
     }
 
@@ -64,7 +64,7 @@ public:
      * @param to the target cursor
      * @return the distance from the base cursor to the target cursor
      */
-    difference_type distance(cursor_type from, cursor_type to) const noexcept {
+    [[nodiscard]] difference_type distance(cursor_type from, cursor_type to) const noexcept {
         // FIXME: better implementation
         if (from == to) {
             return 0;

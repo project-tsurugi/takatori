@@ -74,10 +74,10 @@ public:
      * @brief returns the relational operator graph of this process.
      * @return the relational operator graph
      */
-    graph::graph<relation::expression>& operators() noexcept;
+    [[nodiscard]] graph::graph<relation::expression>& operators() noexcept;
 
     /// @copydoc operators()
-    graph::graph<relation::expression> const& operators() const noexcept;
+    [[nodiscard]] graph::graph<relation::expression> const& operators() const noexcept;
 
     /**
      * @brief returns the view of upstream exchanges.
@@ -85,10 +85,10 @@ public:
      * @attention this will be invalidated after the upstream connections were changed
      * @return the view of upstream exchanges
      */
-    step_list_view<exchange> upstreams() noexcept;
+    [[nodiscard]] step_list_view<exchange> upstreams() noexcept;
     
     /// @copydoc upstreams()
-    step_list_view<exchange const> upstreams() const noexcept;
+    [[nodiscard]] step_list_view<exchange const> upstreams() const noexcept;
 
     /**
      * @brief returns the view of downstream exchanges.
@@ -96,10 +96,10 @@ public:
      * @attention this will be invalidated after the downstream connections were changed
      * @return the view of downstream exchanges
      */
-    step_list_view<exchange> downstreams() noexcept;
+    [[nodiscard]] step_list_view<exchange> downstreams() noexcept;
 
     /// @copydoc downstreams()
-    step_list_view<exchange const> downstreams() const noexcept;
+    [[nodiscard]] step_list_view<exchange const> downstreams() const noexcept;
     
     /**
      * @brief returns whether or not this obtains input data from the given exchange.
@@ -107,7 +107,7 @@ public:
      * @return true if the given exchange is an upstream of this
      * @return false otherwise
      */
-    bool has_upstream(exchange const& upstream) const noexcept;
+    [[nodiscard]] bool has_upstream(exchange const& upstream) const noexcept;
 
     /**
      * @brief adds a process input.
@@ -133,7 +133,7 @@ public:
      * @return true if the given exchange is a downstream of this
      * @return false otherwise
      */
-    bool has_downstream(exchange const& downstream) const noexcept;
+    [[nodiscard]] bool has_downstream(exchange const& downstream) const noexcept;
 
     /**
      * @brief adds a process output.
@@ -198,7 +198,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, process const& value);
 
 protected:
-    bool equals(step const& other) const noexcept override;
+    [[nodiscard]] bool equals(step const& other) const noexcept override;
     std::ostream& print_to(std::ostream& out) const override;
 
 private:

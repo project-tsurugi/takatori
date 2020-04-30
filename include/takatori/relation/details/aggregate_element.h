@@ -73,7 +73,7 @@ public:
      * @brief returns the aggregate function.
      * @return the aggregate function
      */
-    function_type& function() noexcept;
+    [[nodiscard]] function_type& function() noexcept;
 
     /// @copydoc function()
     [[nodiscard]] function_type const& function() const noexcept;
@@ -82,7 +82,7 @@ public:
      * @brief returns the argument columns of the aggregate function.
      * @return the aggregate targets
      */
-    std::vector<argument_type, util::object_allocator<argument_type>>& arguments() noexcept;
+    [[nodiscard]] std::vector<argument_type, util::object_allocator<argument_type>>& arguments() noexcept;
 
     /// @copydoc arguments()
     [[nodiscard]] std::vector<argument_type, util::object_allocator<argument_type>> const& arguments() const noexcept;
@@ -91,7 +91,7 @@ public:
      * @brief returns the destination column.
      * @return the destination column
      */
-    destination_type& destination() noexcept;
+    [[nodiscard]] destination_type& destination() noexcept;
 
     /// @copydoc destination()
     [[nodiscard]] destination_type const& destination() const noexcept;

@@ -36,13 +36,24 @@ public:
     using unique_pointer = std::unique_ptr<element_type, deleter_type>;
 
     /**
+     * @brief the property getter type.
+     * @return the borrowed element pointer.
+     */
+    using getter_type = std::function<pointer()>;
+
+    /**
+     * @brief the property setter type.
+     * @param replacement the replacement value
+     * @return the original element
+     */
+    using setter_type = std::function<unique_pointer(unique_pointer replacement)>;
+
+    /**
      * @brief creates a new instance.
      * @param getter the property getter
      * @param setter the property setter
      */
-    ownership_reference(
-            std::function<pointer()> getter,
-            std::function<void(unique_pointer replacement)> setter) noexcept
+    ownership_reference(getter_type getter, setter_type setter) noexcept
         : getter_(std::move(getter))
         , setter_(std::move(setter))
     {}
@@ -56,7 +67,9 @@ public:
             return property.get();
         })
         , setter_([&](unique_pointer replacement) {
+            auto result = std::move(property);
             property = std::move(replacement);
+            return result;
         })
     {}
 
@@ -79,7 +92,7 @@ public:
     }
 
     /// @copydoc has_value()
-    explicit operator bool() const {
+    [[nodiscard]] explicit operator bool() const {
         return has_value();
     }
 
@@ -112,16 +125,17 @@ public:
     }
 
     /// @copydoc get()
-    reference operator*() const {
+    [[nodiscard]] reference operator*() const {
         return get();
     }
 
     /**
      * @brief sets a new value into this property.
      * @param value the value
+     * @return the original element
      */
-    void set(unique_pointer value) {
-        setter_(std::move(value));
+    unique_pointer set(unique_pointer value) {
+        return setter_(std::move(value));
     }
 
     /**
@@ -144,8 +158,8 @@ public:
     }
 
 private:
-    std::function<pointer()> getter_;
-    std::function<void(unique_pointer value)> setter_;
+    getter_type getter_;
+    setter_type setter_;
 };
 
 /**

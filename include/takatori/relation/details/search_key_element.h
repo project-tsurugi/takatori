@@ -123,7 +123,7 @@ public:
      * @return the owner
      * @return nullptr if it is absent
      */
-    parent_type* parent_element() noexcept {
+    [[nodiscard]] parent_type* parent_element() noexcept {
         return parent_;
     }
 
@@ -145,7 +145,7 @@ public:
      * @brief returns the search key column on the target relation.
      * @return the variable descriptor
      */
-    descriptor::variable& variable() noexcept {
+    [[nodiscard]] descriptor::variable& variable() noexcept {
         return variable_;
     }
 
@@ -158,7 +158,7 @@ public:
      * @brief returns the search value for the target column.
      * @return the search value
      */
-    scalar::expression& value() noexcept {
+    [[nodiscard]] scalar::expression& value() noexcept {
         return *value_;
     }
 
@@ -172,7 +172,7 @@ public:
      * @return the search value
      * @return empty if the expression is absent
      */
-    util::optional_ptr<scalar::expression> optional_value() noexcept {
+    [[nodiscard]] util::optional_ptr<scalar::expression> optional_value() noexcept {
         return util::optional_ptr { value_.get() };
     }
 
@@ -186,7 +186,7 @@ public:
      * @return the search value
      * @return empty if the expression is absent
      */
-    util::unique_object_ptr<scalar::expression> release_value() noexcept {
+    [[nodiscard]] util::unique_object_ptr<scalar::expression> release_value() noexcept {
         return tree::release_element(std::move(value_));
     }
 

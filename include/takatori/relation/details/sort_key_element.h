@@ -27,7 +27,7 @@ public:
      * @brief returns the sort key column on the relation.
      * @return the variable descriptor of sort key
      */
-    descriptor::variable& variable() noexcept;
+    [[nodiscard]] descriptor::variable& variable() noexcept;
 
     /// @copydoc variable()
     [[nodiscard]] descriptor::variable const& variable() const noexcept;

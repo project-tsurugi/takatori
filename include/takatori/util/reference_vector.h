@@ -614,6 +614,27 @@ public:
     }
 
     /**
+     * @brief replaces an existing element with the given element.
+     * @attention This may create a copy if the element is not created by this container's object creator.
+     * @tparam U the value type
+     * @tparam D the deleter type
+     * @param position the target element position
+     * @param element the replacement
+     * @return the existing element
+     */
+    template<class U, class D>
+    std::enable_if_t<
+            std::is_convertible_v<U&, reference>,
+            unique_object_ptr<value_type>>
+    replace_with(const_iterator position, std::unique_ptr<U, D> element) noexcept {
+        auto iter = to_internal(position);
+        auto* rep = forward_element(std::move(element));
+        auto released = wrap_unique(*iter);
+        *iter = rep;
+        return released;
+    }
+
+    /**
      * @brief replaces an existing element with a new element.
      * @tparam U the replacement type
      * @tparam Args the constructor parameter type of U
@@ -622,7 +643,7 @@ public:
      * @return the replacement
      */
     template<class U = T, class... Args>
-    reference replace(const_iterator position, Args&&... args) {
+    [[nodiscard]] reference replace(const_iterator position, Args&&... args) {
         auto iter = to_internal(position);
         auto* replacement = create_element<U>(std::forward<Args>(args)...);
         delete_element(*iter);
@@ -635,7 +656,7 @@ public:
      * @param position the target position
      * @return a pair of the removed element, and the next position of the released element
      */
-    std::pair<unique_object_ptr<value_type>, iterator> release(const_iterator position) noexcept {
+    [[nodiscard]] std::pair<unique_object_ptr<value_type>, iterator> release(const_iterator position) noexcept {
         auto iter = to_internal(position);
         auto released = wrap_unique(*iter);
         iter = storage_.elements_.erase(iter);
@@ -650,7 +671,7 @@ public:
      * @return a pair of the removed element, and the next position of the released element
      */
     template<class C = copier_type>
-    std::pair<reference_vector<value_type, C>, iterator> release(const_iterator first, const_iterator last) noexcept {
+    [[nodiscard]] std::pair<reference_vector<value_type, C>, iterator> release(const_iterator first, const_iterator last) noexcept {
         auto const fst = to_internal(first);
         auto const lst = to_internal(last);
 
@@ -671,7 +692,7 @@ public:
      * @return the removed element
      * @warning undefined behavior if this is empty
      */
-    unique_object_ptr<value_type> release_back() noexcept {
+    [[nodiscard]] unique_object_ptr<value_type> release_back() noexcept {
         auto released = wrap_unique(storage_.elements_.back());
         storage_.elements_.pop_back();
         return released;
@@ -691,8 +712,9 @@ public:
                 [position, this]() -> typename ownership_ref::pointer {
                     return std::addressof(at(static_cast<size_type>(position - cbegin())));
                 },
-                [position, this](typename ownership_ref::unique_pointer replacement) -> void {
-                    put(position, std::move(replacement));
+                [position, this](typename ownership_ref::unique_pointer replacement)
+                        -> typename ownership_ref::unique_pointer {
+                    return replace_with(position, std::move(replacement));
                 }
         };
     }

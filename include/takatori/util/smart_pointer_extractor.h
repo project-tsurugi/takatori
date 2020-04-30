@@ -31,7 +31,7 @@ struct smart_pointer_extractor {
      * @param cursor the target cursor
      * @return the reference
      */
-    constexpr reference get(cursor_type cursor) const noexcept {
+    [[nodiscard]] constexpr reference get(cursor_type cursor) const noexcept {
         return pointer_traits<smart_pointer>::value(*cursor);
     }
 
@@ -41,7 +41,7 @@ struct smart_pointer_extractor {
      * @param offset the cursor offset
      * @return the advanced cursor
      */
-    constexpr cursor_type advance(cursor_type cursor, difference_type offset) const noexcept {
+    [[nodiscard]] constexpr cursor_type advance(cursor_type cursor, difference_type offset) const noexcept {
         return cursor + offset; // NOLINT
     }
 
@@ -51,7 +51,7 @@ struct smart_pointer_extractor {
      * @param to the target cursor
      * @return the distance from the base cursor to the target cursor
      */
-    constexpr difference_type distance(cursor_type from, cursor_type to) const noexcept {
+    [[nodiscard]] constexpr difference_type distance(cursor_type from, cursor_type to) const noexcept {
         return to - from; // NOLINT
     }
 };

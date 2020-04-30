@@ -31,7 +31,7 @@ public:
     exchange& operator=(exchange&& other) noexcept = delete;
 
     [[nodiscard]] exchange* clone(util::object_creator creator) const& override = 0;
-    exchange* clone(util::object_creator creator) && override = 0;
+    [[nodiscard]] exchange* clone(util::object_creator creator) && override = 0;
 
     /**
      * @brief returns the columns which this exchange accepts from the upstream processes.
@@ -53,7 +53,7 @@ public:
      * @attention this will be invalidated after the upstream connections were changed
      * @return the view of upstream processes
      */
-    step_list_view<process> upstreams() noexcept;
+    [[nodiscard]] step_list_view<process> upstreams() noexcept;
     
     /// @copydoc upstreams()
     [[nodiscard]] step_list_view<process const> upstreams() const noexcept;
@@ -64,7 +64,7 @@ public:
      * @attention this will be invalidated after the downstream connections were changed
      * @return the view of downstream processes
      */
-    step_list_view<process> downstreams() noexcept;
+    [[nodiscard]] step_list_view<process> downstreams() noexcept;
 
     /// @copydoc downstreams()
     [[nodiscard]] step_list_view<process const> downstreams() const noexcept;

@@ -58,26 +58,18 @@ struct graph_element_traits {
      * @param element the target element
      * @param graph the owner
      */
-    static void join(reference element, util::optional_ptr<graph_type> graph);
+    static void join(reference element, util::optional_ptr<graph_type> graph) {
+        element.on_join(graph.get());
+    }
 
     /**
      * @brief tells when the element leaves from the current graph.
      * @details If the element has been a member of some graph, this does nothing.
      * @param element the target element
      */
-    static void leave(reference element);
+    static void leave(reference element) {
+        element.on_leave();
+    }
 };
-
-template<class T>
-inline void
-graph_element_traits<T>::join(reference element, util::optional_ptr<graph_type> graph) {
-    element.on_join(graph.get());
-}
-
-template<class T>
-inline void
-graph_element_traits<T>::leave(reference element) {
-    element.on_leave();
-}
 
 } // namespace takatori::graph

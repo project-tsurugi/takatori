@@ -20,14 +20,14 @@ public:
      * @return the parent element
      * @return nullptr if this is the root or orphaned element
      */
-    virtual tree_element* parent_element() noexcept = 0;
+    [[nodiscard]] virtual tree_element* parent_element() noexcept = 0;
 
     /**
      * @brief returns the parent element.
      * @return the parent element
      * @return nullptr if this is the root or orphaned element
      */
-    virtual tree_element const* parent_element() const noexcept = 0;
+    [[nodiscard]] virtual tree_element const* parent_element() const noexcept = 0;
 
 protected:
     /**

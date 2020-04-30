@@ -373,8 +373,9 @@ TEST_F(tree_element_vector_test, ownership) {
 
     EXPECT_EQ(get(*o), 20);
 
-    o = v.get_object_creator().create_unique<leaf<int>>(-1);
+    auto old = o.set(v.get_object_creator().create_unique<leaf<int>>(-1));
     EXPECT_EQ(get(*o), -1);
+    EXPECT_EQ(get(*old), 20);
     EXPECT_EQ(o->parent_element(), &root);
 }
 

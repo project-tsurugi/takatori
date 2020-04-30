@@ -76,12 +76,12 @@ public:
     explicit join(join&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] join* clone(util::object_creator creator) const& override;
-    join* clone(util::object_creator creator) && override;
+    [[nodiscard]] join* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the input port.
@@ -89,7 +89,7 @@ public:
      * @return the input port
      * @see take_cogroup
      */
-    input_port_type& input() noexcept;
+    [[nodiscard]] input_port_type& input() noexcept;
 
     /// @copydoc input()
     [[nodiscard]] input_port_type const& input() const noexcept;
@@ -98,7 +98,7 @@ public:
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -121,7 +121,7 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    util::optional_ptr<scalar::expression> condition() noexcept;
+    [[nodiscard]] util::optional_ptr<scalar::expression> condition() noexcept;
 
     /**
      * @brief returns the extra condition expression.
@@ -135,7 +135,7 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    util::unique_object_ptr<scalar::expression> release_condition() noexcept;
+    [[nodiscard]] util::unique_object_ptr<scalar::expression> release_condition() noexcept;
 
     /**
      * @brief sets the extra condition expression.
@@ -148,7 +148,7 @@ public:
      * @brief returns ownership of the extra condition expression.
      * @return the extra condition expression
      */
-    util::object_ownership_reference<scalar::expression> ownership_condition() noexcept;
+    [[nodiscard]] util::object_ownership_reference<scalar::expression> ownership_condition() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

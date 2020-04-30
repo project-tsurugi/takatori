@@ -59,7 +59,7 @@ public:
      * @brief returns the time point of now in system clock.
      * @return time point of now
      */
-    static time_point now();
+    [[nodiscard]] static time_point now();
 
     /**
      * @brief returns the elapsed time since 1900-01-01 00:00:00 GMT, ignoring leap seconds.

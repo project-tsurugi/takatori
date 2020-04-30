@@ -102,7 +102,7 @@ public:
 
     [[nodiscard]] step_kind kind() const noexcept override;
     [[nodiscard]] aggregate* clone(util::object_creator creator) const& override;
-    aggregate* clone(util::object_creator creator) && override;
+    [[nodiscard]] aggregate* clone(util::object_creator creator) && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
@@ -112,7 +112,7 @@ public:
      * @details These columns are used for group_keys() or arguments of aggregations()
      * @return the source columns
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& source_columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& source_columns() noexcept;
 
     /// @copydoc source_columns()
     [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& source_columns() const noexcept;
@@ -122,7 +122,7 @@ public:
      * @details These columns must come from group_keys() or destination of aggregations()
      * @return the destination columns
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& destination_columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& destination_columns() noexcept;
 
     /// @copydoc destination_columns()
     [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& destination_columns() const noexcept;
@@ -132,7 +132,7 @@ public:
      * @details each aggregate key column must also appear in the columns(), but not appear in sort_keys().
      * @return the aggregate key columns.
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
 
     /// @copydoc group_keys()
     [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
@@ -142,7 +142,7 @@ public:
      * @details individual arguments must come from source_columns()
      * @return the aggregation elements
      */
-    std::vector<aggregation, util::object_allocator<aggregation>>& aggregations() noexcept;
+    [[nodiscard]] std::vector<aggregation, util::object_allocator<aggregation>>& aggregations() noexcept;
 
     /// @copydoc aggregations()
     [[nodiscard]] std::vector<aggregation, util::object_allocator<aggregation>> const& aggregations() const noexcept;

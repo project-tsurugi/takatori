@@ -47,7 +47,7 @@ public:
      * @brief returns the emit target column on the input relation.
      * @return the variable descriptor of emit target
      */
-    descriptor::variable& source() noexcept;
+    [[nodiscard]] descriptor::variable& source() noexcept;
 
     /// @copydoc source()
     [[nodiscard]] descriptor::variable const& source() const noexcept;

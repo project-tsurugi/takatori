@@ -22,15 +22,18 @@ TEST_F(ownership_reference_test, getter_setter) {
         [&]() {
             return std::addressof(value);
         },
-        [&](std::unique_ptr<int> p) -> void {
+        [&](std::unique_ptr<int> p) -> std::unique_ptr<int> {
+            auto r = std::make_unique<int>(value);
             value = *p;
+            return r;
         }
     };
 
     EXPECT_EQ(r.get(), 0);
 
-    r.set(std::make_unique<int>(100));
+    auto old = r.set(std::make_unique<int>(100));
     EXPECT_EQ(value, 100);
+    EXPECT_EQ(*old, 0);
 }
 
 TEST_F(ownership_reference_test, emptyness) {
@@ -39,12 +42,12 @@ TEST_F(ownership_reference_test, emptyness) {
 
     EXPECT_FALSE(r);
     EXPECT_FALSE(r.find());
-    EXPECT_THROW(r.get(), std::bad_optional_access);
+    EXPECT_THROW((void) r.get(), std::bad_optional_access);
 
     v = std::make_unique<int>(100);
     EXPECT_TRUE(r);
     EXPECT_TRUE(r.find());
-    EXPECT_NO_THROW(r.get());
+    EXPECT_NO_THROW((void) r.get());
 }
 
 TEST_F(ownership_reference_test, output) {

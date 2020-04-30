@@ -35,7 +35,7 @@ public:
      * @return the descriptor of column in the first input
      * @return empty if this column omits the first input
      */
-    std::optional<source_type>& left() noexcept;
+    [[nodiscard]] std::optional<source_type>& left() noexcept;
 
     /// @copydoc left()
     [[nodiscard]] std::optional<source_type> const& left() const noexcept;
@@ -45,7 +45,7 @@ public:
      * @return the descriptor of column in the second input
      * @return empty if this column omits the second input
      */
-    std::optional<source_type>& right() noexcept;
+    [[nodiscard]] std::optional<source_type>& right() noexcept;
 
     /// @copydoc right()
     [[nodiscard]] std::optional<source_type> const& right() const noexcept;
@@ -54,7 +54,7 @@ public:
      * @brief returns the descriptor of destination column.
      * @return the destination column
      */
-    destination_type& destination() noexcept;
+    [[nodiscard]] destination_type& destination() noexcept;
 
     /// @copydoc destination()
     [[nodiscard]] destination_type const& destination() const noexcept;

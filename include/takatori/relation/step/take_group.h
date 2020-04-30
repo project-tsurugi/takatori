@@ -61,18 +61,18 @@ public:
     explicit take_group(take_group&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] take_group* clone(util::object_creator creator) const& override;
-    take_group* clone(util::object_creator creator) && override;
+    [[nodiscard]] take_group* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -81,7 +81,7 @@ public:
      * @brief returns the source relation, must be refer the source exchange.
      * @return the source relation
      */
-    descriptor::relation& source() noexcept;
+    [[nodiscard]] descriptor::relation& source() noexcept;
 
     /// @copydoc source()
     [[nodiscard]] descriptor::relation const& source() const noexcept;
@@ -97,7 +97,7 @@ public:
      * @brief returns the column mappings, from the upstream exchange to output relation.
      * @return the column mappings
      */
-    std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;

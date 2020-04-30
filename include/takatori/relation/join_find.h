@@ -99,18 +99,18 @@ public:
     explicit join_find(join_find&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] join_find* clone(util::object_creator creator) const& override;
-    join_find* clone(util::object_creator creator) && override;
+    [[nodiscard]] join_find* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the left prove input port.
      * @return the left prove input port
      */
-    input_port_type& left() noexcept;
+    [[nodiscard]] input_port_type& left() noexcept;
 
     /// @copydoc left()
     [[nodiscard]] input_port_type const& left() const noexcept;
@@ -119,7 +119,7 @@ public:
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -141,7 +141,7 @@ public:
      * @brief returns the external source relation (as build input).
      * @return the source relation
      */
-    descriptor::relation& source() noexcept;
+    [[nodiscard]] descriptor::relation& source() noexcept;
 
     /// @copydoc source()
     [[nodiscard]] descriptor::relation const& source() const noexcept;
@@ -150,7 +150,7 @@ public:
      * @brief returns the target columns to scan.
      * @return the target columns
      */
-    std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
@@ -159,7 +159,7 @@ public:
      * @brief returns the storage keys and prove values.
      * @return pairs of storage keys and prove values
      */
-    tree::tree_fragment_vector<key>& keys() noexcept;
+    [[nodiscard]] tree::tree_fragment_vector<key>& keys() noexcept;
 
     /// @copydoc keys()
     [[nodiscard]] tree::tree_fragment_vector<key> const& keys() const noexcept;
@@ -169,7 +169,7 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    util::optional_ptr<scalar::expression> condition() noexcept;
+    [[nodiscard]] util::optional_ptr<scalar::expression> condition() noexcept;
 
     /// @copydoc condition()
     [[nodiscard]] util::optional_ptr<scalar::expression const> condition() const noexcept;
@@ -179,7 +179,7 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    util::unique_object_ptr<scalar::expression> release_condition() noexcept;
+    [[nodiscard]] util::unique_object_ptr<scalar::expression> release_condition() noexcept;
 
     /**
      * @brief sets the condition expression.
@@ -192,7 +192,7 @@ public:
      * @brief returns ownership of the condition expression.
      * @return the condition expression
      */
-    util::object_ownership_reference<scalar::expression> ownership_condition() noexcept;
+    [[nodiscard]] util::object_ownership_reference<scalar::expression> ownership_condition() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

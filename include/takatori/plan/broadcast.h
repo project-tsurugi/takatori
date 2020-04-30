@@ -67,7 +67,7 @@ public:
 
     [[nodiscard]] step_kind kind() const noexcept override;
     [[nodiscard]] broadcast* clone(util::object_creator creator) const& override;
-    broadcast* clone(util::object_creator creator) && override;
+    [[nodiscard]] broadcast* clone(util::object_creator creator) && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
@@ -76,7 +76,7 @@ public:
      * @brief returns the columns to exchange.
      * @return the columns to exchange
      */
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;

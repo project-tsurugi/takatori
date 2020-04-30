@@ -124,7 +124,7 @@ public:
      * @return the owner
      * @return nullptr if it is absent
      */
-    parent_type* parent_element() noexcept {
+    [[nodiscard]] parent_type* parent_element() noexcept {
         return parent_;
     }
 
@@ -146,7 +146,7 @@ public:
      * @brief returns the descriptor of target variable.
      * @return the target variable
      */
-    descriptor::variable& variable() noexcept {
+    [[nodiscard]] descriptor::variable& variable() noexcept {
         return variable_;
     }
 
@@ -159,7 +159,7 @@ public:
      * @brief returns the bound expression.
      * @return the bound expression
      */
-    expression& value() noexcept {
+    [[nodiscard]] expression& value() noexcept {
         return *value_;
     }
 
@@ -173,7 +173,7 @@ public:
      * @return the bound expression
      * @return empty if the bound expression is absent
      */
-    util::optional_ptr<expression> optional_value() noexcept {
+    [[nodiscard]] util::optional_ptr<expression> optional_value() noexcept {
         return util::optional_ptr { value_.get() };
     }
 
@@ -186,7 +186,7 @@ public:
      * @brief releases the bound expression.
      * @return the released expression
      */
-    util::unique_object_ptr<expression> release_value() noexcept {
+    [[nodiscard]] util::unique_object_ptr<expression> release_value() noexcept {
         return tree::release_element(std::move(value_));
     }
 
@@ -204,7 +204,7 @@ public:
      * @brief returns ownership of the bound expression.
      * @return the bound expression
      */
-    util::object_ownership_reference<expression> ownership_value() {
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_value() {
         return tree::ownership_element_fragment(parent_, variable_);
     }
 

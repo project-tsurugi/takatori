@@ -186,37 +186,37 @@ public:
      * @return true if this container is empty
      * @return false otherwise
      */
-    bool empty() const noexcept { return pointer_ == nullptr; }
+    [[nodiscard]] bool empty() const noexcept { return pointer_ == nullptr; }
 
     /**
      * @brief returns whether or not the this container has a managed object.
      * @return true if this container has a managed object
      * @return false otherwise
      */
-    bool has_value() const noexcept { return !empty(); }
+    [[nodiscard]] bool has_value() const noexcept { return !empty(); }
 
     /**
      * @brief returns reference of the managed object.
      * @warning undefined behavior if this container is empty
      * @return the managed object
      */
-    reference value() const { return *pointer_; }
+    [[nodiscard]] reference value() const { return *pointer_; }
 
     /**
      * @brief returns pointer to the managed object.
      * @return pointer to the managed object
      * @return nullptr if this container is empty
      */
-    pointer get() const noexcept { return pointer_; }
+    [[nodiscard]] pointer get() const noexcept { return pointer_; }
 
     /// @copydoc has_value()
-    explicit operator bool() const noexcept { return has_value(); }
+    [[nodiscard]] explicit operator bool() const noexcept { return has_value(); }
 
     /// @copydoc value()
-    reference operator*() const { return value(); }
+    [[nodiscard]] reference operator*() const { return value(); }
 
     /// @copydoc get()
-    pointer operator->() const noexcept { return get(); }
+    [[nodiscard]] pointer operator->() const noexcept { return get(); }
 
     /**
      * @brief returns the creator.
@@ -235,7 +235,7 @@ private:
     object_creator creator_;
 
     template<class U, class E>
-    static pointer copy_or_move(std::unique_ptr<U, E>&& ptr, object_creator creator) {
+    [[nodiscard]] static pointer copy_or_move(std::unique_ptr<U, E>&& ptr, object_creator creator) {
         if (!ptr) {
             return nullptr;
         }
@@ -245,7 +245,7 @@ private:
         return copier_type::copy(creator, *ptr);
     }
 
-    pointer do_copy() const {
+    [[nodiscard]] pointer do_copy() const {
         if (pointer_ == nullptr) {
             return nullptr;
         }

@@ -83,16 +83,16 @@ public:
      * @warning undefined behavior if the reference is empty
      * @see get()
      */
-    constexpr reference value() { return std::move(*entry_); }
+    [[nodiscard]] constexpr reference value() { return std::move(*entry_); }
 
     /// @copydoc has_value()
-    explicit constexpr operator bool() const noexcept { return has_value(); }
+    [[nodiscard]] explicit constexpr operator bool() const noexcept { return has_value(); }
 
     /// @copydoc value()
-    constexpr reference operator*() const noexcept { return value(); }
+    [[nodiscard]] constexpr reference operator*() const noexcept { return value(); }
 
     /// @copydoc get()
-    constexpr pointer operator->() const noexcept { return get(); }
+    [[nodiscard]] constexpr pointer operator->() const noexcept { return get(); }
 
 private:
     pointer entry_ {};

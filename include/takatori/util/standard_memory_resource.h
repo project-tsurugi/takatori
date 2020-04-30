@@ -18,7 +18,7 @@ protected:
      * @param alignment the alignment size of the head of buffer
      * @return pointer to the allocated buffer
      */
-    void* do_allocate(std::size_t bytes, std::size_t alignment) override {
+    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override {
         return ::operator new(bytes, static_cast<std::align_val_t>(alignment));
     }
 

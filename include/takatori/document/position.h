@@ -51,7 +51,7 @@ public:
      * @return true if the line number is valid
      * @return false if the line number is unknown
      */
-    explicit constexpr operator bool() const noexcept {
+    [[nodiscard]] explicit constexpr operator bool() const noexcept {
         return line_number_ != unknown;
     }
 

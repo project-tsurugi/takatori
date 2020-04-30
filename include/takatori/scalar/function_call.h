@@ -65,13 +65,13 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] function_call* clone(util::object_creator creator) const& override;
-    function_call* clone(util::object_creator creator) && override;
+    [[nodiscard]] function_call* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the descriptor of target function.
      * @return the destination type
      */
-    descriptor::function& function() noexcept;
+    [[nodiscard]] descriptor::function& function() noexcept;
 
     /// @copydoc function()
     [[nodiscard]] descriptor::function const& function() const noexcept;
@@ -80,7 +80,7 @@ public:
      * @brief returns the function arguments.
      * @return the function arguments
      */
-    tree::tree_element_vector<expression>& arguments() noexcept;
+    [[nodiscard]] tree::tree_element_vector<expression>& arguments() noexcept;
 
     /// @copydoc arguments()
     [[nodiscard]] tree::tree_element_vector<expression> const& arguments() const noexcept;

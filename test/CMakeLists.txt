@@ -133,7 +133,6 @@ add_test_executable(serializer/object_scanner_test.cpp)
 # utilities
 add_test_executable(util/clonable_test.cpp)
 add_test_executable(util/clonable_ptr_test.cpp)
-add_test_executable(util/consumer_test.cpp)
 add_test_executable(util/downcast_test.cpp)
 add_test_executable(util/enum_set_test.cpp)
 add_test_executable(util/infect_qualifier_test.cpp)

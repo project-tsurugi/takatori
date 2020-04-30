@@ -44,13 +44,13 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] variable_reference* clone(util::object_creator creator) const& override;
-    variable_reference* clone(util::object_creator creator) && override;
+    [[nodiscard]] variable_reference* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the descriptor of target variable.
      * @return the destination type
      */
-    descriptor::variable& variable() noexcept;
+    [[nodiscard]] descriptor::variable& variable() noexcept;
 
     /// @copydoc variable()
     [[nodiscard]] descriptor::variable const& variable() const noexcept;

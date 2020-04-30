@@ -23,7 +23,7 @@ public:
      * @brief returns the key column of the first input relation.
      * @return the descriptor of column in the first input
      */
-    descriptor::variable& left() noexcept;
+    [[nodiscard]] descriptor::variable& left() noexcept;
 
     /// @copydoc left()
     [[nodiscard]] descriptor::variable const& left() const noexcept;
@@ -32,7 +32,7 @@ public:
      * @brief returns the key column of the second input relation.
      * @return the descriptor of column in the second input
      */
-    descriptor::variable& right() noexcept;
+    [[nodiscard]] descriptor::variable& right() noexcept;
 
     /// @copydoc right()
     [[nodiscard]] descriptor::variable const& right() const noexcept;

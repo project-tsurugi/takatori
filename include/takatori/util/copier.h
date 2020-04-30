@@ -68,7 +68,7 @@ struct standard_copier : std::is_copy_constructible<T> {
      * @param object the target object
      * @return the created copy, it must be delete via creator.delete_object()
      */
-    static pointer copy(object_creator creator, value_type const& object) {
+    [[nodiscard]] static pointer copy(object_creator creator, value_type const& object) {
         return creator.create_object<value_type>(object);
     }
 
@@ -78,7 +78,7 @@ struct standard_copier : std::is_copy_constructible<T> {
      * @param object the target object
      * @return the created copy, it must be delete via creator.delete_object()
      */
-    static pointer copy(object_creator creator, value_type&& object) {
+    [[nodiscard]] static pointer copy(object_creator creator, value_type&& object) {
         return creator.create_object<value_type>(std::move(object));
     }
 };

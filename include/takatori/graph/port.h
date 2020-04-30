@@ -128,7 +128,7 @@ public:
      * @brief returns the node which owns this port.
      * @return the owner
      */
-    constexpr node_type& owner() noexcept {
+    [[nodiscard]] constexpr node_type& owner() noexcept {
         return *owner_;
     }
 
@@ -142,7 +142,7 @@ public:
      * @return the opposite port
      * @return empty if this port is not connected
      */
-    constexpr util::optional_ptr<opposite_type> opposite() noexcept {
+    [[nodiscard]] constexpr util::optional_ptr<opposite_type> opposite() noexcept {
         return util::optional_ptr { opposite_ };
     }
 

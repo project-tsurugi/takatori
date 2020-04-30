@@ -59,7 +59,7 @@ public:
      * @brief returns a forward iterator which points the beginning of this container.
      * @return the iterator of beginning (inclusive)
      */
-    iterator begin() noexcept { return std::make_move_iterator(raw_iterator(elements_.data())); }
+    [[nodiscard]] iterator begin() noexcept { return std::make_move_iterator(raw_iterator(elements_.data())); }
 
     /// @copydoc begin()
     [[nodiscard]] const_iterator begin() const noexcept { return std::make_move_iterator(raw_const_iterator(elements_.data())); }
@@ -68,16 +68,16 @@ public:
      * @brief returns a forward iterator which points the ending of this container.
      * @return the iterator of ending (exclusive)
      */
-    iterator end() noexcept { return std::make_move_iterator(raw_iterator(elements_.data() + elements_.size())); } // NOLINT
+    [[nodiscard]] iterator end() noexcept { return std::make_move_iterator(raw_iterator(elements_.data() + elements_.size())); } // NOLINT
 
     /// @copydoc end()
-    const_iterator end() const noexcept { return std::make_move_iterator(raw_const_iterator(elements_.data() + elements_.size())); } // NOLINT
+    [[nodiscard]] const_iterator end() const noexcept { return std::make_move_iterator(raw_const_iterator(elements_.data() + elements_.size())); } // NOLINT
 
     /**
      * @brief returns a backward iterator which points the reversed beginning of this container.
      * @return the reversed iterator of beginning (inclusive)
      */
-    std::reverse_iterator<iterator> rbegin() noexcept { return std::make_reverse_iterator(end()); }
+    [[nodiscard]] std::reverse_iterator<iterator> rbegin() noexcept { return std::make_reverse_iterator(end()); }
 
     /// @copydoc rbegin()
     [[nodiscard]] std::reverse_iterator<const_iterator> rbegin() const noexcept { return std::make_reverse_iterator(end()); }
@@ -86,7 +86,7 @@ public:
      * @brief returns a backward iterator which points the reversed ending of this container.
      * @return the reversed iterator of ending (exclusive)
      */
-    std::reverse_iterator<iterator> rend() noexcept { return std::make_reverse_iterator(begin()); }
+    [[nodiscard]] std::reverse_iterator<iterator> rend() noexcept { return std::make_reverse_iterator(begin()); }
 
     /// @copydoc rend()
     [[nodiscard]] std::reverse_iterator<const_iterator> rend() const noexcept { return std::make_reverse_iterator(begin()); }

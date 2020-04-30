@@ -72,7 +72,7 @@ public:
      * @return true if this is non-zero
      * @return false otherwise
      */
-    explicit constexpr operator bool() const noexcept {
+    [[nodiscard]] explicit constexpr operator bool() const noexcept {
         return years_ != 0
                 || months_ != 0
                 || days_ != 0;

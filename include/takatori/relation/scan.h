@@ -96,18 +96,18 @@ public:
     explicit scan(scan&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] scan* clone(util::object_creator creator) const& override;
-    scan* clone(util::object_creator creator) && override;
+    [[nodiscard]] scan* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -116,7 +116,7 @@ public:
      * @brief returns the source relation.
      * @return the source relation
      */
-    descriptor::relation& source() noexcept;
+    [[nodiscard]] descriptor::relation& source() noexcept;
 
     /// @copydoc source()
     [[nodiscard]] descriptor::relation const& source() const noexcept;
@@ -125,7 +125,7 @@ public:
      * @brief returns the target columns to scan.
      * @return the target columns
      */
-    std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
@@ -134,7 +134,7 @@ public:
      * @brief returns the lower end-point specification.
      * @return the lower end-point specification
      */
-    endpoint& lower() noexcept;
+    [[nodiscard]] endpoint& lower() noexcept;
 
     /// @copydoc lower()
     [[nodiscard]] endpoint const& lower() const noexcept;
@@ -143,7 +143,7 @@ public:
      * @brief returns the upper end-point specification.
      * @return the upper end-point specification
      */
-    endpoint& upper() noexcept;
+    [[nodiscard]] endpoint& upper() noexcept;
 
     /// @copydoc upper()
     [[nodiscard]] endpoint const& upper() const noexcept;

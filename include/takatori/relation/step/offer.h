@@ -65,12 +65,12 @@ public:
     explicit offer(offer&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] offer* clone(util::object_creator creator) const& override;
-    offer* clone(util::object_creator creator) && override;
+    [[nodiscard]] offer* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the input port.
@@ -78,7 +78,7 @@ public:
      * @return the input port
      * @see take_flat
      */
-    input_port_type& input() noexcept;
+    [[nodiscard]] input_port_type& input() noexcept;
 
     /// @copydoc input()
     [[nodiscard]] input_port_type const& input() const noexcept;
@@ -100,7 +100,7 @@ public:
      * @brief returns the column mappings, from the input relation to downstream exchange.
      * @return the column mappings
      */
-    std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
 
     /// @copydoc columns()
     [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;

@@ -50,18 +50,18 @@ public:
     explicit filter(filter&& other, util::object_creator creator);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    util::sequence_view<input_port_type> input_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
-    util::sequence_view<output_port_type> output_ports() noexcept override;
+    [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
     [[nodiscard]] filter* clone(util::object_creator creator) const& override;
-    filter* clone(util::object_creator creator) && override;
+    [[nodiscard]] filter* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the input port.
      * @return the input port
      */
-    input_port_type& input() noexcept;
+    [[nodiscard]] input_port_type& input() noexcept;
 
     /// @copydoc input()
     [[nodiscard]] input_port_type const& input() const noexcept;
@@ -70,7 +70,7 @@ public:
      * @brief returns the output port.
      * @return the output port
      */
-    output_port_type& output() noexcept;
+    [[nodiscard]] output_port_type& output() noexcept;
 
     /// @copydoc output()
     [[nodiscard]] output_port_type const& output() const noexcept;
@@ -80,7 +80,7 @@ public:
      * @return the condition expression
      * @warning undefined behavior if the expression is absent
      */
-    scalar::expression& condition() noexcept;
+    [[nodiscard]] scalar::expression& condition() noexcept;
 
     /**
      * @brief returns the condition expression.
@@ -94,7 +94,7 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    util::optional_ptr<scalar::expression> optional_condition() noexcept;
+    [[nodiscard]] util::optional_ptr<scalar::expression> optional_condition() noexcept;
 
     /// @copydoc optional_condition()
     [[nodiscard]] util::optional_ptr<scalar::expression const> optional_condition() const noexcept;
@@ -104,7 +104,7 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    util::unique_object_ptr<scalar::expression> release_condition() noexcept;
+    [[nodiscard]] util::unique_object_ptr<scalar::expression> release_condition() noexcept;
 
     /**
      * @brief sets the condition expression.
@@ -117,7 +117,7 @@ public:
      * @brief returns the ownership of the condition expression.
      * @return the condition expression
      */
-    util::object_ownership_reference<scalar::expression> ownership_condition();
+    [[nodiscard]] util::object_ownership_reference<scalar::expression> ownership_condition();
 
     /**
      * @brief returns whether or not the two elements are equivalent.

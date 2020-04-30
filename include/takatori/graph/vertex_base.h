@@ -54,13 +54,13 @@ public:
      * @see is_orphaned()
      * @see optional_owner()
      */
-    graph_type& owner() {
+    [[nodiscard]] graph_type& owner() {
         if (auto g = optional_owner()) return *g;
         throw std::domain_error("the vertex is orphaned");
     }
 
     /// @copydoc owner
-    graph_type const& owner() const {
+    [[nodiscard]] graph_type const& owner() const {
         if (auto g = optional_owner()) return *g;
         throw std::domain_error("the vertex is orphaned");
     }
@@ -70,28 +70,28 @@ public:
      * @return the owner
      * @return empty if this vertex is orphaned
      */
-    virtual util::optional_ptr<graph_type> optional_owner() noexcept = 0;
+    [[nodiscard]] virtual util::optional_ptr<graph_type> optional_owner() noexcept = 0;
 
     /// @copydoc optional_owner()
-    virtual util::optional_ptr<graph_type const> optional_owner() const noexcept = 0;
+    [[nodiscard]] virtual util::optional_ptr<graph_type const> optional_owner() const noexcept = 0;
 
     /**
      * @brief returns list of input ports.
      * @return input ports
      */
-    virtual util::sequence_view<input_port_type> input_ports() noexcept = 0;
+    [[nodiscard]] virtual util::sequence_view<input_port_type> input_ports() noexcept = 0;
 
     /// @copydoc input_ports()
-    virtual util::sequence_view<input_port_type const> input_ports() const noexcept = 0;
+    [[nodiscard]] virtual util::sequence_view<input_port_type const> input_ports() const noexcept = 0;
 
     /**
      * @brief returns list of output ports.
      * @return output ports
      */
-    virtual util::sequence_view<output_port_type> output_ports() noexcept = 0;
+    [[nodiscard]] virtual util::sequence_view<output_port_type> output_ports() noexcept = 0;
 
     /// @copydoc output_ports()
-    virtual util::sequence_view<output_port_type const> output_ports() const noexcept = 0;
+    [[nodiscard]] virtual util::sequence_view<output_port_type const> output_ports() const noexcept = 0;
 
     /**
      * @brief handles when this vertex is joined into the given graph.

@@ -66,13 +66,13 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] conditional* clone(util::object_creator creator) const& override;
-    conditional* clone(util::object_creator creator) && override;
+    [[nodiscard]] conditional* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the alternatives.
      * @return the alternatives
      */
-    tree::tree_fragment_vector<alternative>& alternatives() noexcept;
+    [[nodiscard]] tree::tree_fragment_vector<alternative>& alternatives() noexcept;
     
     /// @copydoc alternatives()
     [[nodiscard]] tree::tree_fragment_vector<alternative> const& alternatives() const noexcept;
@@ -82,7 +82,7 @@ public:
      * @return the default_expression expression
      * @return empty if the default expression is absent
      */
-    util::optional_ptr<expression> default_expression() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> default_expression() noexcept;
 
     /// @copydoc default_expression()
     [[nodiscard]] util::optional_ptr<expression const> default_expression() const noexcept;
@@ -98,14 +98,14 @@ public:
      * @brief returns ownership reference of the default expression.
      * @return the default expression
      */
-    util::object_ownership_reference<expression> ownership_default_expression();
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_default_expression();
 
     /**
      * @brief releases the default_expression expression.
      * @return the released expression
      * @return empty if the default expression is absent
      */
-    util::unique_object_ptr<expression> release_default_expression() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_default_expression() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

@@ -118,7 +118,7 @@ public:
      * @brief returns the port ID.
      * @return the port ID (in node).
      */
-    constexpr id_type id() const noexcept {
+    [[nodiscard]] constexpr id_type id() const noexcept {
         return id_;
     }
 
@@ -126,12 +126,12 @@ public:
      * @brief returns the node which owns this port.
      * @return the owner
      */
-    constexpr node_type& owner() noexcept {
+    [[nodiscard]] constexpr node_type& owner() noexcept {
         return *owner_;
     }
 
     /// @copydoc owner()
-    constexpr node_type const& owner() const noexcept {
+    [[nodiscard]] constexpr node_type const& owner() const noexcept {
         return *owner_;
     }
 
@@ -140,12 +140,12 @@ public:
      * @return the opposite ports
      * @attention the returned list was disabled after the opposite set was changed
      */
-    multiport_list_view<opposite_type> opposites() noexcept {
+    [[nodiscard]] multiport_list_view<opposite_type> opposites() noexcept {
         return multiport_list_view<opposite_type> { opposites_.data(), opposites_.size() };
     }
 
     /// @copydoc opposites()
-    multiport_list_view<opposite_type const> opposites() const noexcept {
+    [[nodiscard]] multiport_list_view<opposite_type const> opposites() const noexcept {
         return multiport_list_view<opposite_type const> { opposites_.data(), opposites_.size() };
     }
 
@@ -155,7 +155,7 @@ public:
      * @return true if it is connected to this
      * @return false otherwise
      */
-    bool is_connected(opposite_type const& port) const {
+    [[nodiscard]] bool is_connected(opposite_type const& port) const {
         return std::find(opposites_.begin(), opposites_.end(), std::addressof(port));
     }
 

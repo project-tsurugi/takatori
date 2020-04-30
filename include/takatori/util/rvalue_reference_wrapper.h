@@ -56,7 +56,7 @@ public:
     [[nodiscard]] constexpr reference get() const noexcept { return std::move(*entry_); }
 
     /// @copydoc get()
-    constexpr operator T&&() const noexcept { return get(); } // NOLINT
+    [[nodiscard]] constexpr operator T&&() const noexcept { return get(); } // NOLINT
 
 private:
     pointer entry_;

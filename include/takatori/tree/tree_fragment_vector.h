@@ -193,7 +193,7 @@ public:
      * @return the element on the position
      * @throws std::out_of_bound if the position is out of bound
      */
-    reference at(size_type position) {
+    [[nodiscard]] reference at(size_type position) {
         return elements_.at(position);
     }
 
@@ -208,12 +208,12 @@ public:
      * @return the element on the position
      * @warning undefined behavior if the position is out of bound
      */
-    reference operator[](size_type position) {
+    [[nodiscard]] reference operator[](size_type position) {
         return elements_[position];
     }
 
     /// @copydoc operator[]()
-    const_reference operator[](size_type position) const {
+    [[nodiscard]] const_reference operator[](size_type position) const {
         return elements_[position];
     }
 
@@ -222,7 +222,7 @@ public:
      * @return reference of the first element
      * @warning undefined behavior if this is empty
      */
-    reference front() {
+    [[nodiscard]] reference front() {
         return elements_.front();
     }
 
@@ -236,7 +236,7 @@ public:
      * @return reference of the last element
      * @warning undefined behavior if this is empty
      */
-    reference back() {
+    [[nodiscard]] reference back() {
         return elements_.back();
     }
 
@@ -479,7 +479,7 @@ public:
      * @brief returns a forward iterator which points the beginning of this container.
      * @return the iterator of beginning (inclusive)
      */
-    iterator begin() noexcept {
+    [[nodiscard]] iterator begin() noexcept {
         return elements_.begin();
     }
 
@@ -497,7 +497,7 @@ public:
      * @brief returns a forward iterator which points the ending of this container.
      * @return the iterator of ending (exclusive)
      */
-    iterator end() noexcept {
+    [[nodiscard]] iterator end() noexcept {
         return elements_.end();
     }
 
@@ -515,7 +515,7 @@ public:
      * @brief returns a backward iterator which points the reversed beginning of this container.
      * @return the reversed iterator of beginning (inclusive)
      */
-    reverse_iterator rbegin() noexcept {
+    [[nodiscard]] reverse_iterator rbegin() noexcept {
         return elements_.rbegin();
     }
 
@@ -533,7 +533,7 @@ public:
      * @brief returns a backward iterator which points the reversed ending of this container.
      * @return the reversed iterator of ending (exclusive)
      */
-    reverse_iterator rend() noexcept {
+    [[nodiscard]] reverse_iterator rend() noexcept {
         return elements_.rend();
     }
 

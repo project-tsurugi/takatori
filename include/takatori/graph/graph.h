@@ -160,13 +160,13 @@ public:
      * @return the element position
      * @return end() if it is not found
      */
-    iterator find(const_reference element) {
+    [[nodiscard]] iterator find(const_reference element) {
         auto iter = vertices_.find(entry_key(element));
         return iterator(iter);
     }
 
     /// @copydoc find()
-    const_iterator find(const_reference element) const {
+    [[nodiscard]] const_iterator find(const_reference element) const {
         auto iter = vertices_.find(entry_key(element));
         return const_iterator(iter);
     }
@@ -304,17 +304,17 @@ public:
      * @brief returns a forward iterator which points the beginning of this container.
      * @return the iterator of beginning (inclusive)
      */
-    iterator begin() noexcept {
+    [[nodiscard]] iterator begin() noexcept {
         return iterator { vertices_.begin() };
     }
 
     /// @copydoc begin()
-    const_iterator begin() const noexcept {
+    [[nodiscard]] const_iterator begin() const noexcept {
         return cbegin();
     }
 
     /// @copydoc begin()
-    const_iterator cbegin() const noexcept {
+    [[nodiscard]] const_iterator cbegin() const noexcept {
         return const_iterator { vertices_.cbegin() };
     }
 
@@ -322,17 +322,17 @@ public:
      * @brief returns a forward iterator which points the ending of this container.
      * @return the iterator of ending (exclusive)
      */
-    iterator end() noexcept {
+    [[nodiscard]] iterator end() noexcept {
         return iterator { vertices_.end() };
     }
 
     /// @copydoc end()
-    const_iterator end() const noexcept {
+    [[nodiscard]] const_iterator end() const noexcept {
         return cend();
     }
 
     /// @copydoc end()
-    const_iterator cend() const noexcept {
+    [[nodiscard]] const_iterator cend() const noexcept {
         return const_iterator { vertices_.cend() };
     }
 
@@ -340,17 +340,17 @@ public:
      * @brief returns a backward iterator which points the reversed beginning of this container.
      * @return the reversed iterator of beginning (inclusive)
      */
-    std::reverse_iterator<iterator> rbegin() noexcept {
+    [[nodiscard]] std::reverse_iterator<iterator> rbegin() noexcept {
         return std::make_reverse_iterator(end());
     }
 
     /// @copydoc rbegin()
-    std::reverse_iterator<const_iterator> rbegin() const noexcept {
+    [[nodiscard]] std::reverse_iterator<const_iterator> rbegin() const noexcept {
         return crbegin();
     }
 
     /// @copydoc rbegin()
-    std::reverse_iterator<const_iterator> crbegin() const noexcept {
+    [[nodiscard]] std::reverse_iterator<const_iterator> crbegin() const noexcept {
         return std::make_reverse_iterator(cend());
     }
 
@@ -358,17 +358,17 @@ public:
      * @brief returns a backward iterator which points the reversed ending of this container.
      * @return the reversed iterator of ending (exclusive)
      */
-    std::reverse_iterator<iterator> rend() noexcept {
+    [[nodiscard]] std::reverse_iterator<iterator> rend() noexcept {
         return std::make_reverse_iterator(begin());
     }
 
     /// @copydoc rend()
-    std::reverse_iterator<const_iterator> rend() const noexcept {
+    [[nodiscard]] std::reverse_iterator<const_iterator> rend() const noexcept {
         return crend();
     }
 
     /// @copydoc rend()
-    std::reverse_iterator<const_iterator> crend() const noexcept {
+    [[nodiscard]] std::reverse_iterator<const_iterator> crend() const noexcept {
         return std::make_reverse_iterator(cbegin());
     }
 
@@ -398,7 +398,7 @@ public:
 private:
     entity_type vertices_;
 
-    static constexpr entry_type entry_key(const_reference element) noexcept {
+    [[nodiscard]] static constexpr entry_type entry_key(const_reference element) noexcept {
         return const_cast<entry_type>(std::addressof(element));  // NOLINT
     }
 
@@ -424,7 +424,7 @@ private:
     }
 
     template<class U, class... Args>
-    util::unique_object_ptr<U> create_element(Args&&... args) {
+    [[nodiscard]] util::unique_object_ptr<U> create_element(Args&&... args) {
         return get_object_creator().template create_unique<U>(std::forward<Args>(args)...);
     }
 

@@ -60,7 +60,7 @@ public:
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] unary* clone(util::object_creator creator) const& override;
-    unary* clone(util::object_creator creator) && override;
+    [[nodiscard]] unary* clone(util::object_creator creator) && override;
 
     /**
      * @brief returns the operator kind.
@@ -80,7 +80,7 @@ public:
      * @return the expression operand
      * @warning undefined behavior if the operand is absent
      */
-    expression& operand() noexcept;
+    [[nodiscard]] expression& operand() noexcept;
 
     /**
      * @brief returns the expression operand.
@@ -94,7 +94,7 @@ public:
      * @return the expression operand
      * @return empty if the operand is absent
      */
-    util::optional_ptr<expression> optional_operand() noexcept;
+    [[nodiscard]] util::optional_ptr<expression> optional_operand() noexcept;
 
     /// @copydoc optional_operand()
     [[nodiscard]] util::optional_ptr<expression const> optional_operand() const noexcept;
@@ -104,7 +104,7 @@ public:
      * @return the expression operand
      * @return empty if the operand is absent
      */
-    util::unique_object_ptr<expression> release_operand() noexcept;
+    [[nodiscard]] util::unique_object_ptr<expression> release_operand() noexcept;
 
     /**
      * @brief sets the expression operand.
@@ -117,7 +117,7 @@ public:
      * @brief returns ownership reference of the expression operand.
      * @return the expression operand
      */
-    util::object_ownership_reference<expression> ownership_operand();
+    [[nodiscard]] util::object_ownership_reference<expression> ownership_operand();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
