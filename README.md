@@ -34,8 +34,7 @@ cd third_party/fpdecimal
 mkdir -p build
 cd build
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Release [-DCMAKE_INSTALL_PREFIX=/path/to/install] -DBUILD_TESTS=OFF -DBUILD_DOCUMENTS=OFF ..
-ninja
-ninja install
+cmake --build . --target install --clean-first
 ```
 
 ## How to build
@@ -44,7 +43,7 @@ ninja install
 mkdir -p build
 cd build
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
-ninja
+cmake --build .
 ```
 
 available options:
@@ -59,7 +58,7 @@ available options:
 ### install
 
 ```sh
-ninja install
+cmake --build . --target install
 ```
 
 ### run tests
@@ -71,7 +70,7 @@ ctest
 ### generate documents
 
 ```sh
-ninja doxygen
+cmake --build . --target doxygen
 ```
 
 ## License
