@@ -341,29 +341,6 @@ public:
     }
 
     /**
-     * @brief replaces an existing element with the given element.
-     * @attention the element must be created by an this container's equivalent object_creator.
-     * @tparam U the value type
-     * @tparam D the deleter type
-     * @param position the target element position
-     * @param element the replacement
-     * @return the existing element
-     */
-    template<class U, class D>
-    std::enable_if_t<
-            std::is_convertible_v<U&, reference>,
-            util::unique_object_ptr<value_type>>
-    replace_with(const_iterator position, std::unique_ptr<U, D> element) noexcept {
-        auto iter = begin() + std::distance(cbegin(), position);
-        auto result = elements_.replace_with(position, std::move(element));
-        bless(*iter);
-        if (result) {
-            unbless(*result);
-        }
-        return result;
-    }
-
-    /**
      * @brief replaces an existing element with a new element.
      * @tparam U the replacement type
      * @tparam Args the constructor parameter type of U
@@ -433,6 +410,29 @@ public:
     }
 
     /**
+     * @brief replaces an existing element with the given element, and returns the existing.
+     * @attention the element must be created by an this container's equivalent object_creator.
+     * @tparam U the value type
+     * @tparam D the deleter type
+     * @param position the target element position
+     * @param element the replacement
+     * @return the existing element
+     */
+    template<class U, class D>
+    [[nodiscard]] std::enable_if_t<
+            std::is_convertible_v<U&, reference>,
+            util::unique_object_ptr<value_type>>
+    exchange(const_iterator position, std::unique_ptr<U, D> element) noexcept {
+        auto index = static_cast<size_type>(std::distance(cbegin(), position));
+        auto result = elements_.exchange(position, std::move(element));
+        bless(at(index));
+        if (result) {
+            unbless(*result);
+        }
+        return result;
+    }
+
+    /**
      * @brief returns ownership reference of the element on the given position.
      * @details If the entry was modified via the returned ownership, it behaves like as if
      *      put(const_iterator, std::unique_ptr<U, D>) was called.
@@ -448,7 +448,7 @@ public:
                 },
                 [position, this](typename ownership_ref::unique_pointer replacement)
                         -> typename ownership_ref::unique_pointer {
-                    return replace_with(position, std::move(replacement));
+                    return exchange(position, std::move(replacement));
                 }
         };
     }

@@ -132,9 +132,17 @@ public:
     /**
      * @brief sets a new value into this property.
      * @param value the value
+     */
+    void set(unique_pointer value) {
+        setter_(std::move(value));
+    }
+
+    /**
+     * @brief sets a new value into this property and returns the original element.
+     * @param value the value
      * @return the original element
      */
-    unique_pointer set(unique_pointer value) {
+    [[nodiscard]] unique_pointer exchange(unique_pointer value) {
         return setter_(std::move(value));
     }
 

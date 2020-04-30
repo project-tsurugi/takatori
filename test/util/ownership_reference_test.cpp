@@ -31,7 +31,7 @@ TEST_F(ownership_reference_test, getter_setter) {
 
     EXPECT_EQ(r.get(), 0);
 
-    auto old = r.set(std::make_unique<int>(100));
+    auto old = r.exchange(std::make_unique<int>(100));
     EXPECT_EQ(value, 100);
     EXPECT_EQ(*old, 0);
 }

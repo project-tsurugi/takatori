@@ -614,27 +614,6 @@ public:
     }
 
     /**
-     * @brief replaces an existing element with the given element.
-     * @attention This may create a copy if the element is not created by this container's object creator.
-     * @tparam U the value type
-     * @tparam D the deleter type
-     * @param position the target element position
-     * @param element the replacement
-     * @return the existing element
-     */
-    template<class U, class D>
-    std::enable_if_t<
-            std::is_convertible_v<U&, reference>,
-            unique_object_ptr<value_type>>
-    replace_with(const_iterator position, std::unique_ptr<U, D> element) noexcept {
-        auto iter = to_internal(position);
-        auto* rep = forward_element(std::move(element));
-        auto released = wrap_unique(*iter);
-        *iter = rep;
-        return released;
-    }
-
-    /**
      * @brief replaces an existing element with a new element.
      * @tparam U the replacement type
      * @tparam Args the constructor parameter type of U
@@ -699,6 +678,27 @@ public:
     }
 
     /**
+     * @brief replaces an existing element with the given element, and returns the existing.
+     * @attention This may create a copy if the element is not created by this container's object creator.
+     * @tparam U the value type
+     * @tparam D the deleter type
+     * @param position the target element position
+     * @param element the replacement
+     * @return the existing element
+     */
+    template<class U, class D>
+    [[nodiscard]] std::enable_if_t<
+            std::is_convertible_v<U&, reference>,
+            unique_object_ptr<value_type>>
+    exchange(const_iterator position, std::unique_ptr<U, D> element) {
+        auto iter = to_internal(position);
+        auto* rep = forward_element(std::move(element));
+        auto released = wrap_unique(*iter);
+        *iter = rep;
+        return released;
+    }
+
+    /**
      * @brief returns ownership reference of the element on the given position.
      * @details If the entry was modified via the returned ownership, it behaves like as if
      *      put(const_iterator, std::unique_ptr<U, D>) was called.
@@ -714,7 +714,7 @@ public:
                 },
                 [position, this](typename ownership_ref::unique_pointer replacement)
                         -> typename ownership_ref::unique_pointer {
-                    return replace_with(position, std::move(replacement));
+                    return exchange(position, std::move(replacement));
                 }
         };
     }
