@@ -107,6 +107,11 @@ add_test_executable(plan/aggregate_test.cpp)
 add_test_executable(plan/broadcast_test.cpp)
 add_test_executable(plan/discard_test.cpp)
 add_test_executable(plan/plan_dispatch_test.cpp)
+add_test_executable(plan/plan_graph_test.cpp)
+
+# statement models
+add_test_executable(statement/execute_test.cpp)
+add_test_executable(statement/statement_write_test.cpp)
 
 # tree models
 add_test_executable(tree/tree_element_test.cpp)

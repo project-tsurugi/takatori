@@ -101,6 +101,40 @@ void downstream_enumerator::operator()(expression const& expr, const_consumer_ty
     downstreams0(expr, consumer);
 }
 
+template<class Graph, class Expr>
+static void enumerate_top0(Graph& g, std::function<void(Expr&)> const& consumer) {
+    for (auto&& e : g) {
+        if (e.input_ports().empty()) {
+            consumer(e);
+        }
+    }
+}
+
+template<class Graph, class Expr>
+static void enumerate_bottom0(Graph& g, std::function<void(Expr&)> const& consumer) {
+    for (auto&& e : g) {
+        if (e.output_ports().empty()) {
+            consumer(e);
+        }
+    }
+}
+
+void enumerate_top(graph_type& g, consumer_type const& consumer) {
+    enumerate_top0(g, consumer);
+}
+
+void enumerate_top(graph_type const& g, const_consumer_type const& consumer) {
+    enumerate_top0(g, consumer);
+}
+
+void enumerate_bottom(graph_type& g, consumer_type const& consumer) {
+    enumerate_bottom0(g, consumer);
+}
+
+void enumerate_bottom(graph_type const& g, const_consumer_type const& consumer) {
+    enumerate_bottom0(g, consumer);
+}
+
 void sort_from_upstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
     ::takatori::graph::topological_sort<upstream_enumerator>(g, consumer, creator);
 }

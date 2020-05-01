@@ -20,6 +20,25 @@ using consumer_type = std::function<void(step&)>;
 using const_consumer_type = std::function<void(step const&)>;
 
 /**
+ * @brief merges expressions in the source graph into the destination.
+ * @details this may create a copy of each step in source, but reorganize the connections between steps.
+ * @param source the source graph
+ * @param destination the destination graph
+ * @param creator the object creator (for working space)
+ * @see graph_type::merge()
+ */
+void merge_into(
+        graph_type const& source,
+        graph_type& destination,
+        util::object_creator creator = {});
+
+/// @copydoc merge_into()
+void merge_into(
+        graph_type&& source,
+        graph_type& destination,
+        util::object_creator creator = {});
+
+/**
  * @brief enumerates upstream steps.
  */
 struct upstream_enumerator {
@@ -48,6 +67,26 @@ struct downstream_enumerator {
     /// @copydoc operator()()
     void operator()(step const& s, std::function<void(step const&)> const& consumer) const;
 };
+
+/**
+ * @brief enumerates steps which have no upstreams.
+ * @param g the target graph
+ * @param consumer the destination consumer
+ */
+void enumerate_top(graph_type& g, consumer_type const& consumer);
+
+/// @copydoc enumerate_top()
+void enumerate_top(graph_type const& g, const_consumer_type const& consumer);
+
+/**
+ * @brief enumerates steps which have no downstreams.
+ * @param g the target graph
+ * @param consumer the destination consumer
+ */
+void enumerate_bottom(graph_type& g, consumer_type const& consumer);
+
+/// @copydoc enumerate_bottom()
+void enumerate_bottom(graph_type const& g, const_consumer_type const& consumer);
 
 /**
  * @brief apply topological sort (from upstream to downstream) to the graph.

@@ -126,6 +126,12 @@ add_library(takatori
     plan/discard.cpp
     plan/graph.cpp
 
+    # statement
+    statement/statement.cpp
+    statement/execute.cpp
+    statement/write.cpp
+    statement/details/write_tuple.cpp
+
     # document
     document/basic_document.cpp
     document/region.cpp

@@ -96,13 +96,12 @@ write& write::operator_kind(write::operator_kind_type operator_kind) noexcept {
     return *this;
 }
 
-descriptor::relation const& write::destination() const noexcept {
+descriptor::relation& write::destination() noexcept {
     return destination_;
 }
 
-write& write::destination(descriptor::relation destination) noexcept {
-    destination_ = std::move(destination);
-    return *this;
+descriptor::relation const& write::destination() const noexcept {
+    return destination_;
 }
 
 std::vector<write::key, util::object_allocator<write::key>>& write::keys() noexcept {

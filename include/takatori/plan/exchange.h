@@ -22,6 +22,9 @@ class process;
  */
 class exchange : public step {
 public:
+    /// @brief the adjacent step type.
+    using adjacent_type = process;
+
     [[nodiscard]] step_kind kind() const noexcept override = 0;
 
     ~exchange() override;

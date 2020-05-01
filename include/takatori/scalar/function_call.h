@@ -37,7 +37,8 @@ public:
             descriptor::function function,
             util::reference_vector<expression, Copier> arguments) noexcept
         : function_(std::move(function))
-        , arguments_(*this, std::move(arguments)) {}
+        , arguments_(*this, std::move(arguments))
+    {}
 
     /**
      * @brief creates a new object.

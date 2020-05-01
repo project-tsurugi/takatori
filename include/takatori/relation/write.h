@@ -109,14 +109,10 @@ public:
      * @brief returns the destination relation.
      * @return the destination relation
      */
-    [[nodiscard]] descriptor::relation const& destination() const noexcept;
+    [[nodiscard]] descriptor::relation& destination() noexcept;
 
-    /**
-     * @brief sets the destination relation.
-     * @param destination the destination relation, must represent an index to distinguish individual entries
-     * @return this
-     */
-    write& destination(descriptor::relation destination) noexcept;
+    /// @brief destination()
+    [[nodiscard]] descriptor::relation const& destination() const noexcept;
 
     /**
      * @brief returns write target keys in the input relation.

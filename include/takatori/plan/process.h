@@ -25,6 +25,9 @@ class process : public step {
 public:
     /// @brief the kind of this step.
     static constexpr step_kind tag = step_kind::process;
+
+    /// @brief the adjacent step type.
+    using adjacent_type = exchange;
     
     ~process() override;
     process(process const& other) = delete;

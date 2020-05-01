@@ -3,6 +3,7 @@
 #include "tree_fragment_traits.h"
 #include "tree_element_util.h"
 
+#include <takatori/util/optional_ptr.h>
 #include <takatori/util/ownership_reference.h>
 #include <takatori/util/reference_vector.h>
 
@@ -82,10 +83,9 @@ public:
      * @param parent the parent element
      * @param creator the object creator
      */
-    explicit tree_element_vector(parent_type& parent, util::object_creator creator = {}) noexcept
-        : parent_(std::addressof(parent)), elements_(creator)
+    explicit tree_element_vector(util::optional_ptr<parent_type> parent, util::object_creator creator = {}) noexcept
+        : parent_(std::move(parent)), elements_(creator)
     {}
-
 
     /**
      * @brief constructs a new object.
@@ -96,8 +96,8 @@ public:
      * @param elements the source elements
      */
     template<class U, class C = typename util::reference_vector<value_type>::copier_type>
-    explicit tree_element_vector(parent_type& parent, util::reference_vector<U, C> elements) noexcept
-        : parent_(std::addressof(parent)), elements_(std::move(elements))
+    explicit tree_element_vector(util::optional_ptr<parent_type> parent, util::reference_vector<U, C> elements) noexcept
+        : parent_(std::move(parent)), elements_(std::move(elements))
     {
         bless();
     }
@@ -114,6 +114,15 @@ public:
     tree_element_vector& operator=(util::reference_vector<U, C> elements) noexcept {
         assign(std::move(elements));
         return *this;
+    }
+
+    /**
+     * @brief change its parent element.
+     * @param parent the parent element
+     */
+    void parent_element(parent_type* parent) {
+        parent_.reset(parent);
+        bless();
     }
 
     /**
@@ -542,10 +551,10 @@ public:
     }
 
 private:
-    parent_type* parent_;
+    util::optional_ptr<parent_type> parent_;
     entity_type elements_ {};
 
-    void bless(reference element) { bless_element(*parent_, element); }
+    void bless(reference element) { bless_element(parent_, element); }
     void unbless(reference element) { unbless_element(element); }
 
     void bless() {
