@@ -2,6 +2,8 @@
 
 #include <unordered_map>
 
+#include <cassert>
+
 #include <takatori/plan/process.h>
 #include <takatori/plan/exchange.h>
 
