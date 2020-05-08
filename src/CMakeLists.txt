@@ -149,6 +149,7 @@ add_library(takatori
     # util
     util/assertion.cpp
     util/exception.cpp
+    util/fail.cpp
     util/object_creator.cpp
     util/string_builder.cpp
 )
