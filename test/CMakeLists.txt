@@ -136,10 +136,12 @@ add_test_executable(serializer/json_printer_test.cpp)
 add_test_executable(serializer/object_scanner_test.cpp)
 
 # utilities
+add_test_executable(util/assertion_test.cpp)
 add_test_executable(util/clonable_test.cpp)
 add_test_executable(util/clonable_ptr_test.cpp)
 add_test_executable(util/downcast_test.cpp)
 add_test_executable(util/enum_set_test.cpp)
+add_test_executable(util/exception_test.cpp)
 add_test_executable(util/infect_qualifier_test.cpp)
 add_test_executable(util/object_creator_test.cpp)
 add_test_executable(util/optional_ptr_test.cpp)

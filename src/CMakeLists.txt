@@ -147,6 +147,8 @@ add_library(takatori
     serializer/details/step_property_scanner.cpp
 
     # util
+    util/assertion.cpp
+    util/exception.cpp
     util/object_creator.cpp
     util/string_builder.cpp
 )
@@ -164,6 +166,25 @@ target_link_libraries(takatori
     PRIVATE ICU::i18n
     PRIVATE ICU::io
 )
+
+# FIXME: move to common core module
+target_compile_definitions(takatori
+    PUBLIC BOOST_ENABLE_ASSERT_DEBUG_HANDLER
+)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_link_libraries(takatori
+        PUBLIC Boost::stacktrace_backtrace
+        PUBLIC ${CMAKE_DL_LIBS}
+    )
+    target_compile_definitions(takatori
+        PUBLIC BOOST_STACKTRACE_USE_BACKTRACE
+    )
+else()
+    # FIXME: more compilers
+    target_link_libraries(takatori
+        PUBLIC Boost::stacktrace_noop
+    )
+endif()
 
 if (USE_BOOST_MEMORY_RESOURCE)
     target_link_libraries(takatori PUBLIC Boost::container)

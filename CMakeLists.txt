@@ -28,8 +28,12 @@ find_package(ICU 60
         io
     REQUIRED)
 
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost 1.65
     COMPONENTS container
+    COMPONENTS stacktrace_backtrace
     REQUIRED)
 
 find_package(Doxygen
