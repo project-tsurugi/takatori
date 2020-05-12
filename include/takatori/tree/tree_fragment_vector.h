@@ -3,11 +3,10 @@
 #include <type_traits>
 #include <vector>
 
-#include <cassert>
-
 #include "tree_fragment_traits.h"
 #include "tree_element_util.h"
 
+#include <takatori/util/assertion.h>
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/rvalue_initializer_list.h>
@@ -378,7 +377,7 @@ public:
         auto before = elements_.size();
         auto result = elements_.insert(position, list);
         auto after = elements_.size();
-        assert(after >= before); // NOLINT
+        BOOST_ASSERT(after >= before); // NOLINT
         bless(result, result + (after - before));
         return result;
     }
@@ -393,7 +392,7 @@ public:
         auto before = elements_.size();
         auto result = elements_.insert(position, list.begin(), list.end());
         auto after = elements_.size();
-        assert(after >= before); // NOLINT
+        BOOST_ASSERT(after >= before); // NOLINT
         bless(result, result + (after - before));
         return result;
     }
@@ -411,7 +410,7 @@ public:
         auto before = elements_.size();
         auto result = elements_.insert(position, first, last);
         auto after = elements_.size();
-        assert(after >= before); // NOLINT
+        BOOST_ASSERT(after >= before); // NOLINT
         bless(result, result + (after - before));
         return result;
     }
@@ -597,7 +596,7 @@ private:
 
     template<class Iter>
     void bless(Iter first, Iter last) {
-        assert(first <= last);  // NOLINT
+        BOOST_ASSERT(first <= last); // NOLINT
         for (auto iter = first; iter != last; ++iter) {
             bless(*iter);
         }

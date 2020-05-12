@@ -2,8 +2,7 @@
 
 #include <stdexcept>
 
-#include <cassert>
-
+#include <takatori/util/assertion.h>
 #include <takatori/util/string_builder.h>
 
 #include "../graph/topological_sort.h"
@@ -44,7 +43,7 @@ graph_type release(graph_type& source, util::sequence_view<expression const*> el
     for (auto* element : elements) {
         if (auto entity = source.release(*element)) {
             auto&& r = results.insert(std::move(entity));
-            assert(std::addressof(r) == element); // NOLINT
+            BOOST_ASSERT(std::addressof(r) == element); // NOLINT
             migrated.emplace_back(std::addressof(r));
         } else {
             throw std::invalid_argument(string_builder {}

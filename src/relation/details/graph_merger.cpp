@@ -1,6 +1,6 @@
 #include "graph_merger.h"
 
-#include <cassert>
+#include <takatori/util/assertion.h>
 
 namespace takatori::relation::details {
 
@@ -56,12 +56,12 @@ void graph_merger::repair_connections(node_type const& source, node_type& destin
     auto source_iter = source_inputs.begin();
     auto destination_iter = destination_inputs.begin();
     while (source_iter != source_inputs.end()) {
-        assert(destination_iter != destination_inputs.end()); // NOLINT
+        BOOST_ASSERT(destination_iter != destination_inputs.end()); // NOLINT
         repair_opposite(*source_iter, *destination_iter);
         ++source_iter;
         ++destination_iter;
     }
-    assert(destination_iter == destination_inputs.end()); // NOLINT
+    BOOST_ASSERT(destination_iter == destination_inputs.end()); // NOLINT
 }
 
 void graph_merger::repair_opposite(input_port_type const& source, input_port_type& destination) {
@@ -70,8 +70,8 @@ void graph_merger::repair_opposite(input_port_type const& source, input_port_typ
         node_type const& source_upstream = source_opposite->owner();
         port_index_type output_index = source_opposite->index();
         util::optional_ptr<node_type> destination_upstream = find(source_upstream);
-        assert(destination_upstream); // NOLINT
-        assert(output_index < destination_upstream->output_ports().size()); // NOLINT
+        BOOST_ASSERT(destination_upstream); // NOLINT
+        BOOST_ASSERT(output_index < destination_upstream->output_ports().size()); // NOLINT
         auto& destination_opposite = destination_upstream->output_ports()[output_index];
         destination.connect_to(destination_opposite);
     }

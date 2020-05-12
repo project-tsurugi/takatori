@@ -2,11 +2,10 @@
 
 #include <unordered_map>
 
-#include <cassert>
-
 #include <takatori/plan/process.h>
 #include <takatori/plan/exchange.h>
 
+#include <takatori/util/assertion.h>
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
 
@@ -19,7 +18,7 @@ using ::takatori::util::unsafe_downcast;
 
 template<class T, class Mapping>
 void repair_upstreams(Mapping const& mapping, step const& from, step& to) {
-    assert(from.kind() == to.kind()); // NOLINT
+    BOOST_ASSERT(from.kind() == to.kind()); // NOLINT
     auto&& from_t = unsafe_downcast<T>(from);
     auto&& to_t = unsafe_downcast<T>(to);
     for (auto&& from_up : from_t.upstreams()) {
