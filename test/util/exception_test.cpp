@@ -8,7 +8,7 @@ class exception_test : public ::testing::Test {
 public:
     [[noreturn]] void tt(bool with_trace = true) {
         if (with_trace) {
-            throw_with_trace(std::domain_error("w/ trace"));
+            throw_exception(std::domain_error("w/ trace"));
         } else {
             throw std::domain_error("w/o trace");
         }
@@ -16,12 +16,12 @@ public:
 };
 
 TEST_F(exception_test, simple) {
-    EXPECT_THROW(throw_with_trace(std::out_of_range("OOR")), std::out_of_range);
+    EXPECT_THROW(throw_exception(std::out_of_range("OOR")), std::out_of_range);
 }
 
 TEST_F(exception_test, find_trace) {
     try {
-        throw_with_trace(std::invalid_argument("IR"));
+        throw_exception(std::invalid_argument("IR"));
         FAIL();
     } catch (std::invalid_argument const& e) {
         ASSERT_NE(find_trace(e), nullptr);
