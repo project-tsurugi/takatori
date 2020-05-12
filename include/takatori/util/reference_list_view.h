@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iterator>
-#include <stdexcept>
 
+#include "exception.h"
 #include "reference_extractor.h"
 #include "reference_iterator.h"
 
@@ -102,7 +102,7 @@ public:
     [[nodiscard]] constexpr reference at(size_type position) const {
         auto iter = extractor_.advance(first_, static_cast<difference_type>(position));
         if (iter >= last_) {
-            throw std::out_of_range("invalid position");
+            throw_exception(std::out_of_range("invalid position"));
         }
         return extractor_.get(iter);
     }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <functional>
-#include <stdexcept>
 #include <type_traits>
 #include <unordered_set>
 #include <utility>
@@ -11,6 +10,7 @@
 
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
+#include <takatori/util/exception.h>
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 
@@ -222,7 +222,7 @@ public:
      * @tparam D the deleter type
      * @param element the element
      * @return the added element
-     * @throw if the element is absent
+     * @throws if the element is absent
      * @see get_object_creator()
      * @see util::object_creator::is_instance()
      */
@@ -233,7 +233,7 @@ public:
                     std::is_convertible_v<U, const_reference>>>
     U& insert(std::unique_ptr<U, D> element) {
         if (!element) {
-            throw std::invalid_argument("element must not be absent");
+            util::throw_exception(std::invalid_argument("element must not be absent"));
         }
         if (!get_object_creator().is_instance(element)) {
             return insert(util::clone_unique(std::move(*element), get_object_creator()));
@@ -291,7 +291,7 @@ public:
      */
     void merge(graph&& other) {
         if (get_object_creator() != other.get_object_creator()) {
-            throw std::invalid_argument("inconsistent allocator");
+            util::throw_exception(std::invalid_argument("inconsistent allocator"));
         }
         for (auto* v : other.vertices_) {
             bless_element(v);
@@ -417,7 +417,7 @@ private:
     U* insert_element(util::unique_object_ptr<U> element) {
         auto [iter, success] = vertices_.emplace(element.get());
         if (!success) {
-            throw std::logic_error("conflict element ID");
+            util::throw_exception(std::logic_error("conflict element ID"));
         }
         (void) iter;
         return element.release();

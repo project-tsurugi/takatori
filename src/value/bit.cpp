@@ -1,8 +1,10 @@
 #include <takatori/value/bit.h>
 
-#include <stdexcept>
+#include <takatori/util/exception.h>
 
 namespace takatori::value {
+
+using ::takatori::util::throw_exception;
 
 bit::bit(entity_type value) noexcept
     : entity_(std::move(value))
@@ -19,7 +21,7 @@ bit::bit(std::string_view bits, bit::allocator_type const& allocator)
         } else if (c == '1') {
             entity_.push_back(true);
         } else {
-            throw std::invalid_argument(bits.data());
+            throw_exception(std::invalid_argument(bits.data()));
         }
     }
 }

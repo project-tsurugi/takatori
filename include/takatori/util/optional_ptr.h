@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "exception.h"
 #include "hash.h"
 #include "infect_qualifier.h"
 
@@ -347,7 +348,7 @@ private:
 
     void check_() const {
         if (entry_ == nullptr) {
-            throw std::bad_optional_access();
+            throw_exception(std::bad_optional_access());
         }
     }
 };

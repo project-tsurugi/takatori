@@ -5,6 +5,7 @@
 
 #include "port_direction.h"
 
+#include <takatori/util/exception.h>
 #include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/print_support.h>
@@ -166,7 +167,7 @@ public:
      * @param opposite the opposite port
      * @return true if successfully connected
      * @return false if this and the given port are already connected to each other
-     * @throw std::domain_error if this or the opposite port already connected to other ports
+     * @throws std::domain_error if this or the opposite port already connected to other ports
      */
     constexpr bool connect_to(opposite_type& opposite) {
         auto* that = std::addressof(opposite);
@@ -178,7 +179,7 @@ public:
         if (this->opposite_ == that && that->opposite_ == this) {
             return false;
         }
-        throw std::domain_error("already connected");
+        util::throw_exception(std::domain_error("already connected"));
     }
 
     /**
@@ -218,7 +219,7 @@ public:
             that->opposite_ = nullptr;
             return true;
         }
-        throw std::domain_error("inconsistent connection");
+        util::throw_exception(std::domain_error("inconsistent connection"));
     }
 
     /**

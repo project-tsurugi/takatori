@@ -3,9 +3,13 @@
 #include <vector>
 #include <unordered_map>
 
+#include <takatori/util/exception.h>
+
 #include "../util/iomanip_util.h"
 
 namespace takatori::serializer {
+
+using ::takatori::util::throw_exception;
 
 namespace {
 
@@ -119,7 +123,7 @@ public:
     void property_begin(std::string_view value) {
         auto&& top = state_stack_.back();
         if (top.location() != json_location::struct_) {
-            throw std::domain_error("property only can appear in structs directly");
+            throw_exception(std::domain_error("property only can appear in structs directly"));
         }
         state_stack_.emplace_back(value);
     }
@@ -169,7 +173,7 @@ private:
                     out_ << ',';
                     break;
                 case json_location::property:
-                    throw std::domain_error("json property can have upto only one value");
+                    throw_exception(std::domain_error("json property can have upto only one value"));
             }
         }
     }
@@ -177,7 +181,7 @@ private:
     void do_start_object() {
         auto&& top = state_stack_.back();
         if (top.location() == json_location::struct_) {
-            throw std::domain_error("struct can not include values directly");
+            throw_exception(std::domain_error("struct can not include values directly"));
         }
         separate_if_continue(top);
 
@@ -198,7 +202,7 @@ private:
     json_state& validate_location(json_location location) {
         auto&& top = state_stack_.back();
         if (top.location() != location) {
-            throw std::domain_error("invalid JSON structure");
+            throw_exception(std::domain_error("invalid JSON structure"));
         }
         return top;
     }

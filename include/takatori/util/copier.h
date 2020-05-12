@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdexcept>
 #include <type_traits>
 
 #include "clonable.h"
+#include "exception.h"
 
 namespace takatori::util {
 
@@ -35,7 +35,7 @@ struct null_copier {
      * @throws std::runtime_error always
      */
     [[noreturn]] static pointer copy(object_creator, value_type const&) {
-        throw std::runtime_error("copy() is unavailable");
+        throw_exception(std::runtime_error("copy() is unavailable"));
     }
 };
 

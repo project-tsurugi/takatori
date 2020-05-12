@@ -1,6 +1,10 @@
 #include <takatori/plan/step.h>
 
+#include <takatori/util/exception.h>
+
 namespace takatori::plan {
+
+using ::takatori::util::throw_exception;
 
 bool step::is_orphan() const noexcept {
     return !optional_owner();
@@ -8,12 +12,12 @@ bool step::is_orphan() const noexcept {
 
 step::graph_type& step::owner() {
     if (auto g = optional_owner()) return *g;
-    throw std::domain_error("the vertex is orphaned");
+    throw_exception(std::domain_error("the vertex is orphaned"));
 }
 
 step::graph_type const& step::owner() const {
     if (auto g = optional_owner()) return *g;
-    throw std::domain_error("the vertex is orphaned");
+    throw_exception(std::domain_error("the vertex is orphaned"));
 }
 
 util::optional_ptr<step::graph_type> step::optional_owner() noexcept {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iterator>
-#include <stdexcept>
 
+#include "exception.h"
 #include "reference_iterator.h"
 
 namespace takatori::util {
@@ -77,7 +77,7 @@ public:
      */
     [[nodiscard]] constexpr reference at(size_type position) const {
         if (position >= size_) {
-            throw std::out_of_range("invalid position");
+            throw_exception(std::out_of_range("invalid position"));
         }
         return operator[](position);
     }

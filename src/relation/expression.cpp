@@ -1,6 +1,10 @@
 #include <takatori/relation/expression.h>
 
+#include <takatori/util/exception.h>
+
 namespace takatori::relation {
+
+using ::takatori::util::throw_exception;
 
 bool expression::is_orphan() const noexcept {
     return !optional_owner();
@@ -8,12 +12,12 @@ bool expression::is_orphan() const noexcept {
 
 expression::graph_type& expression::owner() {
     if (auto g = optional_owner()) return *g;
-    throw std::domain_error("the vertex is orphaned");
+    throw_exception(std::domain_error("the vertex is orphaned"));
 }
 
 expression::graph_type const& expression::owner() const {
     if (auto g = optional_owner()) return *g;
-    throw std::domain_error("the vertex is orphaned");
+    throw_exception(std::domain_error("the vertex is orphaned"));
 }
 
 util::optional_ptr<expression::graph_type> expression::optional_owner() noexcept {

@@ -3,11 +3,12 @@
 #include <array>
 #include <iostream>
 #include <limits>
-#include <stdexcept>
 #include <type_traits>
 
 #include <cstddef>
 #include <cstdint>
+
+#include "exception.h"
 
 namespace takatori::util {
 
@@ -162,7 +163,7 @@ public:
             class = std::enable_if_t<std::is_convertible_v<T&&, bool>>>
     constexpr static_bitset(std::initializer_list<T> entries) {
         if (entries.size() > size()) {
-            throw std::invalid_argument("too many elements");
+            throw_exception(std::invalid_argument("too many elements"));
         }
         size_type i = 0;
         for (auto v : entries) {
@@ -566,7 +567,7 @@ private:
 
     constexpr void check_range(size_type position) const {
         if (position >= size()) {
-            throw std::out_of_range("invalid bit position");
+            throw_exception(std::out_of_range("invalid bit position"));
         }
     }
 

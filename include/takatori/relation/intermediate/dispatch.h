@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdexcept>
 #include <string>
 #include <type_traits>
 
@@ -27,6 +26,7 @@
 #include "escape.h"
 
 #include <takatori/util/callback.h>
+#include <takatori/util/exception.h>
 
 namespace takatori::relation::intermediate {
 
@@ -34,8 +34,9 @@ namespace takatori::relation::intermediate {
 namespace impl {
 
 [[noreturn]] inline void invalid_expression(expression const& object) {
-    throw std::invalid_argument(
-            std::string { "unsupported relational operator" } += to_string_view(object.kind()));
+    // FIXME: string_builder
+    util::throw_exception(std::invalid_argument(
+            std::string { "unsupported relational operator" } += to_string_view(object.kind())));
 }
 
 /// @private

@@ -1,8 +1,7 @@
 #include <takatori/relation/graph.h>
 
-#include <stdexcept>
-
 #include <takatori/util/assertion.h>
+#include <takatori/util/exception.h>
 #include <takatori/util/string_builder.h>
 
 #include "../graph/topological_sort.h"
@@ -11,6 +10,7 @@
 
 namespace takatori::relation {
 
+using ::takatori::util::throw_exception;
 using ::takatori::util::string_builder;
 
 void merge_into(
@@ -46,10 +46,10 @@ graph_type release(graph_type& source, util::sequence_view<expression const*> el
             BOOST_ASSERT(std::addressof(r) == element); // NOLINT
             migrated.emplace_back(std::addressof(r));
         } else {
-            throw std::invalid_argument(string_builder {}
+            throw_exception(std::invalid_argument(string_builder {}
                     << "migration target must be in the source graph: "
                     << *element
-                    << string_builder::to_string);
+                    << string_builder::to_string));
         }
     }
 

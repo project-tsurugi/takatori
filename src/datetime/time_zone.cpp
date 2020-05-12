@@ -1,10 +1,12 @@
 #include <takatori/datetime/time_zone.h>
 
-#include <stdexcept>
+#include <takatori/util/exception.h>
 
 #include "time_zone_impl.h"
 
 namespace takatori::datetime {
+
+using ::takatori::util::throw_exception;
 
 time_zone const time_zone::UTC { impl::utc() }; // NOLINT
 
@@ -16,7 +18,7 @@ static std::shared_ptr<time_zone::impl> from_offset(std::chrono::minutes offset,
         return impl::utc();
     }
     if (offset <= -24h || offset >= +24h) {
-        if (or_throw) throw std::out_of_range("invalid time zone offset");
+        if (or_throw) throw_exception(std::out_of_range("invalid time zone offset"));
         return {};
     }
     auto abs_offset = offset.count() < 0 ? -offset : offset;
@@ -41,7 +43,7 @@ static std::shared_ptr<time_zone::impl> from_symbol(std::string_view symbol, boo
     using impl = time_zone::impl;
     using namespace std::string_view_literals;
     if (symbol.empty()) {
-        if (or_throw) throw std::invalid_argument("empty time zone symbol");
+        if (or_throw) throw_exception(std::invalid_argument("empty time zone symbol"));
         return {};
     }
     if (symbol == "UTC"sv) {
@@ -50,7 +52,7 @@ static std::shared_ptr<time_zone::impl> from_symbol(std::string_view symbol, boo
     icu::UnicodeString string { symbol.data(), static_cast<std::int32_t>(symbol.size()) };
     std::unique_ptr<impl::entity_type> entity { impl::entity_type::createTimeZone(string) };
     if ((*entity == impl::entity_type::getUnknown()) != 0) {
-        if (or_throw) throw std::invalid_argument(std::string("unknown time zone symbol: ") += symbol);
+        if (or_throw) throw_exception(std::invalid_argument(std::string("unknown time zone symbol: ") += symbol));
         return {};
     }
     return std::make_shared<impl>(std::string { symbol }, std::move(entity));

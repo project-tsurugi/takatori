@@ -1,7 +1,6 @@
 #pragma once
 
 #include <initializer_list>
-#include <stdexcept>
 #include <type_traits>
 
 #include "static_bitset.h"

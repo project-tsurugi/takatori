@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <memory>
 #include <sstream>
-#include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "clonable.h"
 #include "copier.h"
+#include "exception.h"
 #include "object_creator.h"
 #include "ownership_reference.h"
 #include "reference_iterator.h"
@@ -955,13 +955,13 @@ private:
     template<class U, class D>
     [[nodiscard]] pointer forward_element(std::unique_ptr<U, D>&& element) {
         if (!element) {
-            throw std::invalid_argument("element must not be null");
+            throw_exception(std::invalid_argument("element must not be null"));
         }
         if (storage_.creator_.is_instance(element)) {
             return element.release();
         }
         if constexpr (!copier_type::is_available) {
-            throw std::invalid_argument("copying objects is not supported");
+            throw_exception(std::invalid_argument("copying objects is not supported"));
         }
         return copier_type::copy(storage_.creator_, std::move(*element));
     }

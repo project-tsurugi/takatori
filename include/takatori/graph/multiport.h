@@ -7,6 +7,7 @@
 
 #include "port_direction.h"
 
+#include <takatori/util/exception.h>
 #include <takatori/util/object_creator.h>
 #include <takatori/util/print_support.h>
 #include <takatori/util/reference_list_view.h>
@@ -169,7 +170,7 @@ public:
         bool a = internal_connect(opposite);
         bool b = opposite.internal_connect(*this);
         if (a != b) {
-            throw std::domain_error("inconsistent connection");
+            util::throw_exception(std::domain_error("inconsistent connection"));
         }
         return true;
     }
@@ -184,7 +185,7 @@ public:
         bool a = internal_disconnect(opposite);
         bool b = opposite.internal_disconnect(*this);
         if (a != b) {
-            throw std::domain_error("inconsistent connection");
+            util::throw_exception(std::domain_error("inconsistent connection"));
         }
         return a;
     }

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <stdexcept>
 #include <bitset>
 #include <iterator>
 #include <type_traits>
 
 #include <cstdint>
 
+#include <takatori/util/exception.h>
 #include <takatori/util/static_bitset.h>
 
 namespace takatori::util::details {
@@ -57,7 +57,7 @@ public:
      */
     [[nodiscard]] constexpr value_type operator*() const {
         if (index_ >= number_of_universe) {
-            throw std::out_of_range("invalid offset");
+            throw_exception(std::out_of_range("invalid offset"));
         }
         return to_element(index_);
     }

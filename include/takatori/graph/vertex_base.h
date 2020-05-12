@@ -1,11 +1,10 @@
 #pragma once
 
-#include <stdexcept>
-
 #include <cstdint>
 
 #include "port_direction.h"
 
+#include <takatori/util/exception.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/sequence_view.h>
 
@@ -56,13 +55,13 @@ public:
      */
     [[nodiscard]] graph_type& owner() {
         if (auto g = optional_owner()) return *g;
-        throw std::domain_error("the vertex is orphaned");
+        util::throw_exception(std::domain_error("the vertex is orphaned"));
     }
 
     /// @copydoc owner
     [[nodiscard]] graph_type const& owner() const {
         if (auto g = optional_owner()) return *g;
-        throw std::domain_error("the vertex is orphaned");
+        util::throw_exception(std::domain_error("the vertex is orphaned"));
     }
 
     /**

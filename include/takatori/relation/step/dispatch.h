@@ -33,8 +33,9 @@ namespace takatori::relation::step {
 namespace impl {
 
 [[noreturn]] inline void invalid_expression(expression const& object) {
-    throw std::invalid_argument(
-            std::string { "unsupported relational operator" } += to_string_view(object.kind()));
+    // FIXME: string_builder
+    util::throw_exception(std::invalid_argument(
+            std::string { "unsupported relational operator" } += to_string_view(object.kind())));
 }
 
 /// @private

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdexcept>
 #include <string>
 #include <type_traits>
 
@@ -14,6 +13,7 @@
 #include "broadcast.h"
 #include "discard.h"
 
+#include <takatori/util/exception.h>
 #include <takatori/util/callback.h>
 
 namespace takatori::plan {
@@ -22,8 +22,9 @@ namespace takatori::plan {
 namespace impl {
 
 [[noreturn]] inline void invalid_step(step const& object) {
-    throw std::invalid_argument(
-            std::string { "unsupported step kind: " } += to_string_view(object.kind()));
+    // FIXME: string_builder
+    util::throw_exception(std::invalid_argument(
+            std::string { "unsupported step kind: " } += to_string_view(object.kind())));
 }
 
 /// @private
