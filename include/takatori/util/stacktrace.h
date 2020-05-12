@@ -11,4 +11,4 @@
 
 #endif
 
-#include <boost/stacktrace.hpp>
+#include <boost/stacktrace/stacktrace.hpp>

@@ -1,16 +1,22 @@
 #pragma once
 
+#include <iostream>
 #include <stdexcept>
 
-#include "stacktrace.h"
+#include <boost/exception/enable_error_info.hpp>
 
-#include <boost/exception/all.hpp>
+#include <takatori/util/stacktrace.h>
 
 // FIXME: move to common core module
 namespace takatori::util {
 
-/// @brief extended error information about stacktrace.
-using stacktrace_info = ::boost::error_info<struct tag_stacktrace, boost::stacktrace::stacktrace>;
+/// @cond IMPL_DEFS
+namespace impl {
+
+void attach_trace(::boost::exception& exception, ::boost::stacktrace::stacktrace&& trace = {});
+
+} // namespace impl
+/// @endcond
 
 /**
  * @brief throws the given exception.
@@ -23,7 +29,9 @@ using stacktrace_info = ::boost::error_info<struct tag_stacktrace, boost::stackt
  */
 template<class T>
 [[noreturn]] void throw_exception(T const& exception) {
-    throw ::boost::enable_error_info(exception) << stacktrace_info { ::boost::stacktrace::stacktrace {} }; // NOLINT
+    auto enhanced = ::boost::enable_error_info(exception);
+    impl::attach_trace(enhanced);
+    throw std::move(enhanced); // NOLINT(cert-err60-cpp)
 }
 
 /**
@@ -34,7 +42,7 @@ template<class T>
  * @see throw_exception()
  * @see stacktrace_info
  */
-::boost::stacktrace::stacktrace const* find_trace(std::exception const& exception);
+[[nodiscard]] ::boost::stacktrace::stacktrace const* find_trace(std::exception const& exception);
 
 /**
  * @brief appends stacktrace information into the given output stream.
