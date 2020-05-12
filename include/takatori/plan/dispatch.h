@@ -15,6 +15,7 @@
 
 #include <takatori/util/exception.h>
 #include <takatori/util/callback.h>
+#include <takatori/util/string_builder.h>
 
 namespace takatori::plan {
 
@@ -22,9 +23,12 @@ namespace takatori::plan {
 namespace impl {
 
 [[noreturn]] inline void invalid_step(step const& object) {
-    // FIXME: string_builder
-    util::throw_exception(std::invalid_argument(
-            std::string { "unsupported step kind: " } += to_string_view(object.kind())));
+    using ::takatori::util::string_builder;
+    using ::takatori::util::throw_exception;
+    throw_exception(std::invalid_argument(string_builder {}
+            << "unsupported step kind: "
+            << object.kind()
+            << string_builder::to_string));
 }
 
 /// @private

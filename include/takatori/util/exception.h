@@ -40,7 +40,6 @@ template<class T>
  * @return the corresponded stacktrace information
  * @return empty if the exception has no stacktrace information
  * @see throw_exception()
- * @see stacktrace_info
  */
 [[nodiscard]] ::boost::stacktrace::stacktrace const* find_trace(std::exception const& exception);
 
@@ -50,7 +49,6 @@ template<class T>
  * @param out the destination output stream
  * @param exception the source exception
  * @see throw_exception()
- * @see stacktrace_info
  */
 void print_trace(std::ostream& out, std::exception const& exception);
 
