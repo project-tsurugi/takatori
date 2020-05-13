@@ -7,6 +7,10 @@
 
 namespace takatori::scalar {
 
+coalesce::coalesce(util::reference_vector<expression> alternatives) noexcept
+    : alternatives_(*this, std::move(alternatives))
+{}
+
 coalesce::coalesce(std::initializer_list<util::rvalue_reference_wrapper<expression>> alternatives)
     : coalesce({ alternatives.begin(), alternatives.end() })
 {}

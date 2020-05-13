@@ -27,12 +27,9 @@ public:
 
     /**
      * @brief creates a new object.
-     * @tparam Copier the object copying policy (don't care)
      * @param alternatives the alternative expressions
      */
-    template<class Copier = util::clonable_copier<expression>>
-    explicit coalesce(util::reference_vector<expression, Copier> alternatives) noexcept
-        : alternatives_(*this, std::move(alternatives)) {}
+    explicit coalesce(util::reference_vector<expression> alternatives) noexcept;
 
     /**
      * @brief creates a new object.

@@ -28,17 +28,12 @@ public:
 
     /**
      * @brief creates a new object.
-     * @tparam Copier the object copying policy (don't care)
      * @param function the descriptor of the target function
      * @param arguments the argument expressions
      */
-    template<class Copier = util::clonable_copier<expression>>
     explicit function_call(
             descriptor::function function,
-            util::reference_vector<expression, Copier> arguments) noexcept
-        : function_(std::move(function))
-        , arguments_(*this, std::move(arguments))
-    {}
+            util::reference_vector<expression> arguments) noexcept;
 
     /**
      * @brief creates a new object.

@@ -7,6 +7,11 @@
 
 namespace takatori::scalar {
 
+function_call::function_call(descriptor::function function, util::reference_vector<expression> arguments) noexcept
+    : function_(std::move(function))
+    , arguments_(*this, std::move(arguments))
+{}
+
 function_call::function_call(
         descriptor::function function,
         std::initializer_list<util::rvalue_reference_wrapper<expression>> arguments)

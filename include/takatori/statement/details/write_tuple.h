@@ -29,13 +29,9 @@ public:
 
     /**
      * @brief creates a new object.
-     * @tparam Copier the object copying policy (don't care)
      * @param elements the tuple elements
      */
-    template<class Copier = util::clonable_copier<scalar::expression>>
-    explicit write_tuple(util::reference_vector<scalar::expression, Copier> elements) noexcept
-        : elements_(nullptr, std::move(elements))
-    {}
+    explicit write_tuple(util::reference_vector<scalar::expression> elements) noexcept;
 
     /**
      * @brief creates a new instance.

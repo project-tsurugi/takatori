@@ -5,6 +5,10 @@
 
 namespace takatori::statement::details {
 
+write_tuple::write_tuple(util::reference_vector<scalar::expression> elements) noexcept
+    : elements_(nullptr, std::move(elements))
+{}
+
 write_tuple::write_tuple(std::initializer_list<util::rvalue_reference_wrapper<scalar::expression>> elements) noexcept
     : write_tuple({ elements.begin(), elements.end() })
 {}
