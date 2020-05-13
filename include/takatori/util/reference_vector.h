@@ -155,15 +155,17 @@ public:
     using copier_type = Copier;
 
     /**
-     * @brief constructs a new object with default object creator.
+     * @brief constructs a new empty object with default object creator.
      */
     reference_vector() = default;
 
     /**
-     * @brief constructs a new object.
+     * @brief constructs a new empty object.
      * @param creator the object creator
      */
-    explicit reference_vector(object_creator creator) noexcept : storage_(creator) {}
+    reference_vector(object_creator creator) noexcept // NOLINT
+        : storage_(creator)
+    {}
 
     /**
      * @brief constructs a new object.
