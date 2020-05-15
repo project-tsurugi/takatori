@@ -2,17 +2,17 @@
 
 #include <iostream>
 
-#include "expression.h"
-#include "expression_kind.h"
+#include "statement.h"
+#include "statement_kind.h"
 
 #include <takatori/util/meta_type.h>
 
-namespace takatori::scalar {
+namespace takatori::statement {
 
 /**
- * @brief an extension point for scalar expression models.
+ * @brief an extension point for scalar statement models.
  */
-class extension : public expression {
+class extension : public statement {
 public:
     /// @brief the extension ID type.
     using extension_id_type = std::size_t;
@@ -20,10 +20,10 @@ public:
     /// @brief the minimum extension ID for third party extensions.
     static constexpr extension_id_type minimum_user_extension_id = 10'000;
 
-    /// @brief the kind of this expression.
-    static constexpr inline expression_kind tag = expression_kind::extension;
+    /// @brief the kind of this statement.
+    static constexpr inline statement_kind tag = statement_kind::extension;
 
-    [[nodiscard]] expression_kind kind() const noexcept final;
+    [[nodiscard]] statement_kind kind() const noexcept final;
     [[nodiscard]] extension* clone(util::object_creator creator) const& override = 0;
     [[nodiscard]] extension* clone(util::object_creator creator) && override = 0;
 
@@ -67,13 +67,8 @@ protected:
      * @return false otherwise
      */
     [[nodiscard]] virtual bool equals(extension const& other) const noexcept = 0;
-    [[nodiscard]] bool equals(expression const& other) const noexcept final;
+    [[nodiscard]] bool equals(statement const& other) const noexcept final;
     std::ostream& print_to(std::ostream& out) const override = 0;
 };
 
-/**
- * @brief type_of for extension.
- */
-template<> struct type_of<extension::tag> : util::meta_type<extension> {};
-
-} // namespace takatori::scalar
+} // namespace takatori::statement

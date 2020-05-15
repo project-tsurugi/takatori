@@ -113,7 +113,8 @@ add_test_executable(plan/plan_graph_test.cpp)
 
 # statement models
 add_test_executable(statement/execute_test.cpp)
-add_test_executable(statement/statement_write_test.cpp)
+add_test_executable(statement/write_statement_test.cpp)
+add_test_executable(statement/extension_statement_test.cpp)
 
 # tree models
 add_test_executable(tree/tree_element_test.cpp)

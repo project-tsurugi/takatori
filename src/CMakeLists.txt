@@ -132,6 +132,7 @@ add_library(takatori
     statement/statement.cpp
     statement/execute.cpp
     statement/write.cpp
+    statement/extension.cpp
     statement/details/write_tuple.cpp
 
     # document

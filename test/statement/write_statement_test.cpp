@@ -11,14 +11,14 @@
 
 namespace takatori::statement {
 
-class statement_write_test : public ::testing::Test {};
+class write_statement_test : public ::testing::Test {};
 
 static_assert(!std::is_copy_constructible_v<write>);
 static_assert(!std::is_copy_assignable_v<write>);
 static_assert(!std::is_move_constructible_v<write>);
 static_assert(!std::is_move_assignable_v<write>);
 
-TEST_F(statement_write_test, simple) {
+TEST_F(write_statement_test, simple) {
     write stmt {
             write_kind::insert,
             tabledesc("T0"),
@@ -56,7 +56,7 @@ TEST_F(statement_write_test, simple) {
     }
 }
 
-TEST_F(statement_write_test, multi_tuples) {
+TEST_F(write_statement_test, multi_tuples) {
     write stmt {
             write_kind::insert,
             tabledesc("T0"),
@@ -117,7 +117,7 @@ TEST_F(statement_write_test, multi_tuples) {
     }
 }
 
-TEST_F(statement_write_test, clone) {
+TEST_F(write_statement_test, clone) {
     write stmt {
             write_kind::insert,
             tabledesc("T0"),
@@ -142,7 +142,7 @@ TEST_F(statement_write_test, clone) {
     EXPECT_NE(std::addressof(stmt), copy.get());
 }
 
-TEST_F(statement_write_test, clone_move) {
+TEST_F(write_statement_test, clone_move) {
     write stmt {
             write_kind::insert,
             tabledesc("T0"),
@@ -171,7 +171,7 @@ TEST_F(statement_write_test, clone_move) {
     EXPECT_EQ(*copy, *move);
 }
 
-TEST_F(statement_write_test, output) {
+TEST_F(write_statement_test, output) {
     write stmt {
             write_kind::insert,
             tabledesc("T0"),

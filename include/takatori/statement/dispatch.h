@@ -9,6 +9,7 @@
 
 #include "execute.h"
 #include "write.h"
+#include "extension.h"
 
 #include <takatori/util/callback.h>
 
@@ -22,8 +23,7 @@ inline auto dispatch_statement(Callback&& callback, E&& statement, Args&&... arg
     switch (statement.kind()) {
         case execute::tag: return util::polymorphic_callback<execute>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case write::tag: return util::polymorphic_callback<write>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
-
-        // FIXME: other cases
+        case extension::tag: return util::polymorphic_callback<extension>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         default: break;
     }
     std::abort();

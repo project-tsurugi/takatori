@@ -26,7 +26,7 @@ enum class statement_kind {
     // special statements
 
     /// @brief custom statement for compiler or third party extension.
-    extension, // FIXME: impl
+    extension,
 };
 
 /// @brief a set of statement_kind.
