@@ -56,6 +56,7 @@ add_library(takatori
     scalar/function_call.cpp
 
     # scalar - misc.
+    scalar/extension.cpp
 
     # relational
     relation/expression.cpp

@@ -80,7 +80,7 @@ enum class expression_kind {
     // special expressions
 
     /// @brief custom expression for compiler or third party extension.
-    extension, // FIXME: impl
+    extension,
 };
 
 /// @brief a set of expression_kind.

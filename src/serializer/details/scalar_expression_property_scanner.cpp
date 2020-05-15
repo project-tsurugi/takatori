@@ -169,6 +169,12 @@ void scalar_expression_property_scanner::operator()(scalar::function_call const&
     acceptor_.property_end();
 }
 
+void scalar_expression_property_scanner::operator()(scalar::extension const& element) {
+    acceptor_.property_begin("extension_id"sv);
+    acceptor_.unsigned_integer(element.extension_id());
+    acceptor_.property_end();
+}
+
 template<class T>
 void scalar_expression_property_scanner::accept(util::optional_ptr<T const> element) {
     if (element) {

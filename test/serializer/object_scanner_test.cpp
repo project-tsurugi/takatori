@@ -37,6 +37,7 @@
 #include <takatori/scalar/coalesce.h>
 #include <takatori/scalar/let.h>
 #include <takatori/scalar/function_call.h>
+#include <takatori/scalar/extension.h>
 
 #include <takatori/relation/find.h>
 #include <takatori/relation/scan.h>
@@ -76,6 +77,7 @@
 #include <takatori/plan/graph.h>
 
 #include "../testing/descriptors.h"
+#include "../scalar/dummy_extension.h"
 
 namespace takatori::serializer {
 
@@ -396,6 +398,12 @@ TEST_F(object_scanner_test, scalar_function_call) {
                     scalar::variable_reference { vardesc(3) },
                     scalar::variable_reference { vardesc(4) },
             }
+    });
+}
+
+TEST_F(object_scanner_test, scalar_extension) {
+    print(scalar::dummy_extension {
+            "Hello, world!"
     });
 }
 

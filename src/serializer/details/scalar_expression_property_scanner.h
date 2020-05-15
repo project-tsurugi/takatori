@@ -11,6 +11,7 @@
 #include <takatori/scalar/coalesce.h>
 #include <takatori/scalar/let.h>
 #include <takatori/scalar/function_call.h>
+#include <takatori/scalar/extension.h>
 
 #include <takatori/serializer/object_acceptor.h>
 #include <takatori/serializer/object_scanner.h>
@@ -32,6 +33,7 @@ public:
     void operator()(scalar::coalesce const& element);
     void operator()(scalar::let const& element);
     void operator()(scalar::function_call const& element);
+    void operator()(scalar::extension const& element);
 
 private:
     object_scanner& scanner_;

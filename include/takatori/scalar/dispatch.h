@@ -30,7 +30,7 @@
 //#include "record_construct.h"
 //#include "record_get.h"
 
-//#include "extension.h"
+#include "extension.h"
 
 #include <takatori/util/callback.h>
 
@@ -56,6 +56,8 @@ inline auto dispatch_expression(Callback&& callback, E&& expression, Args&&... a
         case function_call::tag: return util::polymorphic_callback<function_call>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
 
         // FIXME: other cases
+
+        case extension::tag: return util::polymorphic_callback<extension>(std::forward<Callback>(callback), std::forward<E>(expression), std::forward<Args>(args)...);
         default: break;
     }
     std::abort();

@@ -63,6 +63,7 @@ add_test_executable(scalar/conditional_test.cpp)
 add_test_executable(scalar/coalesce_test.cpp)
 add_test_executable(scalar/let_test.cpp)
 add_test_executable(scalar/function_call_test.cpp)
+add_test_executable(scalar/extension_scalar_test.cpp)
 add_test_executable(scalar/expression_dispatch_test.cpp)
 add_test_executable(scalar/expression_walk_test.cpp)
 
