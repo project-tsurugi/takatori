@@ -77,6 +77,8 @@
 #include <takatori/plan/graph.h>
 
 #include "../testing/descriptors.h"
+#include "../type/dummy_extension.h"
+#include "../value/dummy_extension.h"
 #include "../scalar/dummy_extension.h"
 
 namespace takatori::serializer {
@@ -192,6 +194,10 @@ TEST_F(object_scanner_test, value_unknown) {
     print(value::unknown { value::unknown_kind::not_a_number });
 }
 
+TEST_F(object_scanner_test, value_extension) {
+    print(value::dummy_extension { "Hello, world!" });
+}
+
 // type
 
 TEST_F(object_scanner_test, type_boolean) {
@@ -251,39 +257,7 @@ TEST_F(object_scanner_test, type_declared) {
 }
 
 TEST_F(object_scanner_test, type_extension) {
-    class test_ext : public type::extension {
-    public:
-        explicit test_ext(std::string value) noexcept : value_(std::move(value)) {}
-
-        test_ext* clone(util::object_creator creator) const& override {
-            return creator.create_object<test_ext>(value_);
-        }
-        test_ext* clone(util::object_creator creator) && override {
-            return creator.create_object<test_ext>(std::move(value_));
-        }
-        extension_id_type extension_id() const noexcept override {
-            return 12'345;
-        }
-        std::string& value() noexcept {
-            return value_;
-        }
-
-    protected:
-        bool equals(extension const& other) const noexcept override {
-            return 12'345 == other.extension_id()
-                    && value_ == util::unsafe_downcast<test_ext>(other).value_;
-        }
-        std::size_t hash() const noexcept override {
-            return util::hash(12'345, value_);
-        }
-        std::ostream& print_to(std::ostream& out) const override {
-            return out << "testing(" << value_ << ")";
-        }
-
-    private:
-        std::string value_;
-    };
-    print(test_ext { "testing" });
+    print(type::dummy_extension { "testing" });
 }
 
 // scalar

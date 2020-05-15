@@ -18,7 +18,7 @@
 // #include "array.h"
 // #include "record.h"
 // #include "error.h"
-// #include "extension.h"
+#include "extension.h"
 
 #include <takatori/util/callback.h>
 
@@ -53,12 +53,13 @@ inline auto dispatch(Callback&& callback, data const& object, Args&&... args) {
         case time_of_day::tag: return util::polymorphic_callback<time_of_day>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case time_point::tag: return util::polymorphic_callback<time_point>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case datetime_interval::tag: return util::polymorphic_callback<datetime_interval>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+
+        // FIXME: other cases
 //        case array::tag: return util::polymorphic_callback<array>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 //        case record::tag: return util::polymorphic_callback<record>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 //        case error::tag: return util::polymorphic_callback<error>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case extension::tag: return util::polymorphic_callback<extension>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 
-        // FIXME: other cases
+        case extension::tag: return util::polymorphic_callback<extension>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         default: break;
     }
     std::abort();

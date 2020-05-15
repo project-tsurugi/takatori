@@ -8,6 +8,7 @@
 #include <takatori/value/time_of_day.h>
 #include <takatori/value/time_point.h>
 #include <takatori/value/datetime_interval.h>
+#include <takatori/value/extension.h>
 
 #include <takatori/serializer/object_acceptor.h>
 
@@ -32,6 +33,7 @@ public:
     void operator()(value::time_of_day const& element);
     void operator()(value::time_point const& element);
     void operator()(value::datetime_interval const& element);
+    void operator()(value::extension const& element);
 
 private:
     object_acceptor& acceptor_;

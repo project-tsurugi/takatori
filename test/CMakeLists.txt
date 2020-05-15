@@ -40,6 +40,7 @@ add_test_executable(value/simple_value_test.cpp)
 add_test_executable(value/decimal_value_test.cpp)
 add_test_executable(value/character_value_test.cpp)
 add_test_executable(value/bit_value_test.cpp)
+add_test_executable(value/extension_value_test.cpp)
 add_test_executable(value/value_dispatch_test.cpp)
 
 # datetime

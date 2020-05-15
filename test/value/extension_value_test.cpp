@@ -1,4 +1,4 @@
-#include <takatori/type/extension.h>
+#include <takatori/value/extension.h>
 
 #include <gtest/gtest.h>
 
@@ -8,18 +8,18 @@
 
 #include "dummy_extension.h"
 
-namespace takatori::type {
+namespace takatori::value {
 
-class extension_type_test : public ::testing::Test {
+class extension_value_test : public ::testing::Test {
 public:
     extension& upcast(extension& object) const noexcept { return object; }
     extension& upcast(extension&& object) const noexcept { return object; }
 };
 
-static_assert(extension::tag == type_kind::extension);
+static_assert(extension::tag == value_kind::extension);
 static_assert(std::is_same_v<type_of_t<extension::tag>, extension>);
 
-TEST_F(extension_type_test, simple) {
+TEST_F(extension_value_test, simple) {
     dummy_extension v { "Hello, world!" };
 
     extension& t = upcast(v);
@@ -29,13 +29,13 @@ TEST_F(extension_type_test, simple) {
     EXPECT_NE(t, dummy_extension("OTHER"));
 }
 
-TEST_F(extension_type_test, hash) {
+TEST_F(extension_value_test, hash) {
     using util::hash;
     EXPECT_EQ(hash(upcast(dummy_extension("A"))), hash(upcast(dummy_extension("A"))));
     EXPECT_NE(hash(upcast(dummy_extension("A"))), hash(upcast(dummy_extension("B"))));
 }
 
-TEST_F(extension_type_test, clone) {
+TEST_F(extension_value_test, clone) {
     dummy_extension v { "Hello, world!" };
     extension& t = upcast(v);
 
@@ -44,7 +44,7 @@ TEST_F(extension_type_test, clone) {
     EXPECT_NE(std::addressof(t), copy.get());
 }
 
-TEST_F(extension_type_test, clone_move) {
+TEST_F(extension_value_test, clone_move) {
     dummy_extension v { "Hello, world!" };
     extension& t = upcast(v);
 
@@ -57,11 +57,11 @@ TEST_F(extension_type_test, clone_move) {
     EXPECT_EQ(*copy, *move);
 }
 
-TEST_F(extension_type_test, output) {
+TEST_F(extension_value_test, output) {
     dummy_extension v { "Hello, world!" };
     extension& t = upcast(v);
 
     std::cout << t << std::endl;
 }
 
-} // namespace takatori::type
+} // namespace takatori::value

@@ -54,14 +54,8 @@ enum class value_kind {
 
     // special values
 
-    /**
-     * @brief compile-time erroneous values.
-     * @attention this must not appear on runtime.
-     */
-    error, // FIXME: impl
-
     /// @brief custom values for compiler or third party extension.
-    extension, // FIXME: impl
+    extension,
 };
 
 /// @brief a set of value_kind.
@@ -103,7 +97,6 @@ constexpr inline std::string_view to_string_view(value_kind value) noexcept {
         case kind::array: return "array"sv;
         case kind::record: return "record"sv;
         case kind::unknown: return "unknown"sv;
-        case kind::error: return "error"sv;
         case kind::extension: return "extension"sv;
     }
     std::abort();

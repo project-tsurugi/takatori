@@ -1,18 +1,18 @@
 #pragma once
 
-#include <iostream>
+#include <optional>
 
-#include "expression.h"
-#include "expression_kind.h"
+#include "value_kind.h"
+#include "data.h"
 
 #include <takatori/util/meta_type.h>
 
-namespace takatori::scalar {
+namespace takatori::value {
 
 /**
- * @brief an extension point for scalar expresion models.
+ * @brief an extension point for value models.
  */
-class extension : public expression {
+class extension : public data {
 public:
     /// @brief the extension ID type.
     using extension_id_type = std::size_t;
@@ -20,10 +20,17 @@ public:
     /// @brief the minimum extension ID for third party extensions.
     static constexpr extension_id_type minimum_user_extension_id = 10'000;
 
-    /// @brief the kind of this expression.
-    static constexpr inline expression_kind tag = expression_kind::extension;
+    /// @brief the kind of this type.
+    static constexpr inline  value_kind tag = value_kind::extension;
 
-    [[nodiscard]] expression_kind kind() const noexcept final;
+    extension() = default;
+    ~extension() override = default;
+    extension(extension const& other) = delete;
+    extension& operator=(extension const& other) = delete;
+    extension(extension&& other) noexcept = delete;
+    extension& operator=(extension&& other) noexcept = delete;
+
+    [[nodiscard]] value_kind kind() const noexcept final;
     [[nodiscard]] extension* clone(util::object_creator creator) const& override = 0;
     [[nodiscard]] extension* clone(util::object_creator creator) && override = 0;
 
@@ -67,7 +74,8 @@ protected:
      * @return false otherwise
      */
     [[nodiscard]] virtual bool equals(extension const& other) const noexcept = 0;
-    [[nodiscard]] bool equals(expression const& other) const noexcept final;
+    [[nodiscard]] bool equals(data const& other) const noexcept final;
+    [[nodiscard]] std::size_t hash() const noexcept override = 0;
     std::ostream& print_to(std::ostream& out) const override = 0;
 };
 
@@ -76,4 +84,7 @@ protected:
  */
 template<> struct type_of<extension::tag> : util::meta_type<extension> {};
 
-} // namespace takatori::scalar
+} // namespace takatori::value
+
+/// @brief provides hash code of takatori::value::extension.
+template<> struct std::hash<takatori::value::extension> : hash<takatori::value::data> {};

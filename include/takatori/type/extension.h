@@ -68,8 +68,8 @@ public:
 
 protected:
     /**
-     * @brief returns whether or not this extension type is equivalent to the target one.
-     * @param other the target extension type
+     * @brief returns whether or not this extension is equivalent to the target one.
+     * @param other the target extension
      * @return true if the both are equivalent
      * @return false otherwise
      */

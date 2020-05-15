@@ -58,4 +58,8 @@ void simple_value_scanner::operator()(value::datetime_interval const& element) {
     acceptor_.value(element.get());
 }
 
+void simple_value_scanner::operator()(value::extension const&) {
+    acceptor_.string("(extension)");
+}
+
 } // namespace takatori::serializer::details

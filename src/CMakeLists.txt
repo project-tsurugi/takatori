@@ -20,6 +20,7 @@ add_library(takatori
     value/time_of_day.cpp
     value/time_point.cpp
     value/datetime_interval.cpp
+    value/extension.cpp
 
     # datetime
     datetime/date.cpp

@@ -17,7 +17,6 @@
 #include "datetime_interval.h"
 // #include "array.h"
 // #include "record.h"
-// #include "user.h"
 // #include "row_reference.h"
 // #include "row_id.h"
 #include "declared.h"

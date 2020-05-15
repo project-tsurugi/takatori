@@ -87,7 +87,6 @@ void value_property_scanner::operator()(value::date const& element) {
     process(element.get(), acceptor_);
 }
 
-
 static void process(datetime::time_of_day value, object_acceptor& acceptor) {
     acceptor.property_begin("hour"sv);
     acceptor.unsigned_integer(value.hour());
@@ -151,6 +150,12 @@ static void process(datetime::time_interval value, object_acceptor& acceptor) {
 void value_property_scanner::operator()(value::datetime_interval const& element) {
     process(element.get().date(), acceptor_);
     process(element.get().time(), acceptor_);
+}
+
+void value_property_scanner::operator()(value::extension const& element) {
+    acceptor_.property_begin("extension_id"sv);
+    acceptor_.unsigned_integer(element.extension_id());
+    acceptor_.property_end();
 }
 
 } // namespace takatori::serializer::details
