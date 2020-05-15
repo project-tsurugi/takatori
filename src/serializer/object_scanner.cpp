@@ -13,6 +13,8 @@
 #include <takatori/plan/graph.h>
 #include <takatori/plan/dispatch.h>
 
+#include <takatori/statement/dispatch.h>
+
 #include <takatori/util/detect.h>
 
 #include "details/simple_value_scanner.h"
@@ -21,6 +23,7 @@
 #include "details/scalar_expression_property_scanner.h"
 #include "details/relation_expression_property_scanner.h"
 #include "details/step_property_scanner.h"
+#include "details/statement_property_scanner.h"
 
 namespace takatori::serializer {
 
@@ -175,6 +178,10 @@ void object_scanner::operator()(plan::step::graph_type const& element, object_ac
     acceptor.array_end();
 }
 
+void object_scanner::operator()(statement::statement const& element, object_acceptor& acceptor) {
+    process_envelope(element, acceptor);
+}
+
 template<descriptor::descriptor_kind Kind>
 static void process_descriptor_body(descriptor::element<Kind> const& element, object_acceptor& acceptor) {
     acceptor.property_begin("entity"sv);
@@ -229,6 +236,11 @@ void object_scanner::properties(relation::expression const& element, object_acce
 void object_scanner::properties(plan::step const& element, object_acceptor& acceptor) {
     details::step_property_scanner s { *this, acceptor };
     plan::dispatch(s, element);
+}
+
+void object_scanner::properties(statement::statement const& element, object_acceptor& acceptor) {
+    details::statement_property_scanner s { *this, acceptor };
+    statement::dispatch(s, element);
 }
 
 template<class T>

@@ -76,10 +76,16 @@
 #include <takatori/plan/discard.h>
 #include <takatori/plan/graph.h>
 
+#include <takatori/statement/execute.h>
+#include <takatori/statement/write.h>
+#include <takatori/statement/extension.h>
+
 #include "../testing/descriptors.h"
 #include "../type/dummy_extension.h"
 #include "../value/dummy_extension.h"
 #include "../scalar/dummy_extension.h"
+
+#include "../statement/dummy_extension.h"
 
 namespace takatori::serializer {
 
@@ -826,6 +832,48 @@ TEST_F(object_scanner_test, plan_graph) {
     r2.output() >> r3.input();
 
     print(p);
+}
+
+TEST_F(object_scanner_test, statement_execute) {
+    statement::execute s;
+    auto&& p = s.execution_plan();
+    auto&& p0 = p.insert(plan::process {});
+
+    auto&& r0 = p0.operators().insert(relation::scan {
+            tabledesc("A"),
+            {
+                    { vardesc(1), vardesc(2) },
+            },
+    });
+    auto&& r1 = p0.operators().insert(relation::emit {
+            vardesc(2),
+    });
+    r0.output() >> r1.input();
+
+    print(s);
+}
+
+TEST_F(object_scanner_test, statement_write) {
+    print(statement::write {
+            statement::write_kind::insert,
+            tabledesc("T0"),
+            {
+                    columndesc("C0"),
+                    columndesc("C1"),
+            },
+            {
+                    {
+                            scalar::variable_reference { vardesc(0) },
+                            scalar::variable_reference { vardesc(1) },
+                    },
+            },
+    });
+}
+
+TEST_F(object_scanner_test, statement_extension) {
+    print(statement::dummy_extension {
+            "Hello, world!"
+    });
 }
 
 } // namespace takatori::serializer

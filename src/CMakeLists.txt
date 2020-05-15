@@ -148,6 +148,7 @@ add_library(takatori
     serializer/details/scalar_expression_property_scanner.cpp
     serializer/details/relation_expression_property_scanner.cpp
     serializer/details/step_property_scanner.cpp
+    serializer/details/statement_property_scanner.cpp
 
     # util
     util/assertion.cpp

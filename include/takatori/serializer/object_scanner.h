@@ -11,6 +11,7 @@
 #include <takatori/scalar/expression.h>
 #include <takatori/relation/expression.h>
 #include <takatori/plan/step.h>
+#include <takatori/statement/statement.h>
 
 #include "object_acceptor.h"
 
@@ -149,7 +150,7 @@ public:
     virtual void operator()(relation::expression::graph_type const& element, object_acceptor& acceptor);
 
     /**
-     * @brief scans a step pass its structural elements into the given acceptor.
+     * @brief scans a step and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
@@ -161,6 +162,13 @@ public:
      * @param acceptor the acceptor
      */
     virtual void operator()(plan::step::graph_type const& element, object_acceptor& acceptor);
+
+    /**
+     * @brief scans a statement and pass its structural elements into the given acceptor.
+     * @param element the target element
+     * @param acceptor the acceptor
+     */
+    virtual void operator()(statement::statement const& element, object_acceptor& acceptor);
 
 protected:
     /**
@@ -219,6 +227,13 @@ protected:
      * @param acceptor the acceptor
      */
     virtual void properties(plan::step const& element, object_acceptor& acceptor);
+
+    /**
+     * @brief scans properties of the given statement.
+     * @param element the target element
+     * @param acceptor the acceptor
+     */
+    virtual void properties(statement::statement const& element, object_acceptor& acceptor);
 
 private:
     bool verbose_ {};
