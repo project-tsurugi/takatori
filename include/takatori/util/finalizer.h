@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <utility>
 
 namespace takatori::util {
 
@@ -31,16 +32,24 @@ public:
 
     /**
      * @brief creates a new instance.
+     * @details after this operation, the given finalizer will become empty.
      * @param other the move source
      */
-    finalizer(finalizer&& other) = default;
+    finalizer(finalizer&& other) noexcept
+        : disposer_(std::exchange(other.disposer_, []{}))
+    {}
 
     /**
      * @brief assigns the given object.
+     * @details This operation will cancel the current finalizer action of this object,
+     *      and the given finalizer will become empty.
      * @param other the move source
      * @return this
      */
-    finalizer& operator=(finalizer&& other) = default;
+    finalizer& operator=(finalizer&& other) noexcept {
+        disposer_ = std::exchange(other.disposer_, []{});
+        return *this;
+    }
 
     /**
      * @brief cancels the current finalize action and replace it with the given action.
