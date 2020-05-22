@@ -102,16 +102,16 @@ public:
      */
     virtual void operator()(descriptor::variable const& element, object_acceptor& acceptor) const;
 
-    /// @copydoc operator()(descriptor::variable const&, object_acceptor&)
+    /// @copydoc operator()(descriptor::variable const&, object_acceptor&) const
     virtual void operator()(descriptor::relation const& element, object_acceptor& acceptor) const;
 
-    /// @copydoc operator()(descriptor::variable const&, object_acceptor&)
+    /// @copydoc operator()(descriptor::variable const&, object_acceptor&) const
     virtual void operator()(descriptor::function const& element, object_acceptor& acceptor) const;
 
-    /// @copydoc operator()(descriptor::variable const&, object_acceptor&)
+    /// @copydoc operator()(descriptor::variable const&, object_acceptor&) const
     virtual void operator()(descriptor::aggregate_function const& element, object_acceptor& acceptor) const;
 
-    /// @copydoc operator()(descriptor::variable const&, object_acceptor&)
+    /// @copydoc operator()(descriptor::variable const&, object_acceptor&) const
     virtual void operator()(descriptor::declared_type const& element, object_acceptor& acceptor) const;
 
     /**
@@ -179,16 +179,16 @@ protected:
      */
     virtual void properties(descriptor::variable const& element, object_acceptor& acceptor) const;
 
-    /// @copydoc properties(descriptor::variable const&, object_acceptor&)
+    /// @copydoc properties(descriptor::variable const&, object_acceptor&) const
     virtual void properties(descriptor::relation const& element, object_acceptor& acceptor) const;
 
-    /// @copydoc properties(descriptor::variable const&, object_acceptor&)
+    /// @copydoc properties(descriptor::variable const&, object_acceptor&) const
     virtual void properties(descriptor::function const& element, object_acceptor& acceptor) const;
 
-    /// @copydoc properties(descriptor::variable const&, object_acceptor&)
+    /// @copydoc properties(descriptor::variable const&, object_acceptor&) const
     virtual void properties(descriptor::aggregate_function const& element, object_acceptor& acceptor) const;
 
-    /// @copydoc properties(descriptor::variable const&, object_acceptor&)
+    /// @copydoc properties(descriptor::variable const&, object_acceptor&) const
     virtual void properties(descriptor::declared_type const& element, object_acceptor& acceptor) const;
 
     /**
