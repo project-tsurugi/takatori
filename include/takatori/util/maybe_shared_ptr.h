@@ -48,16 +48,21 @@ public:
 
     /**
      * @brief creates a new instance with holding ownership.
+     * @tparam U the source element type
      * @param element the shared pointer
      */
-    maybe_shared_ptr(shared_ptr element) noexcept // NOLINT
+    template<
+            class U,
+            class = std::enable_if_t<
+                    std::is_convertible_v<std::shared_ptr<U>, std::shared_ptr<T>>>>
+    maybe_shared_ptr(std::shared_ptr<U> element) noexcept // NOLINT
         : entity_(std::in_place_index<shared_index>, std::move(element))
     {}
 
     /**
      * @brief creates a new instance from the other instance.
-     * @tparam U the source type
-     * @param element the copy type
+     * @tparam U the source element type
+     * @param element the copy source
      */
     template<
             class U,
@@ -69,8 +74,8 @@ public:
 
     /**
      * @brief creates a new instance from the other instance.
-     * @tparam U the source type
-     * @param element the move type
+     * @tparam U the source element type
+     * @param element the move source
      */
     template<
             class U,
@@ -101,18 +106,23 @@ public:
 
     /**
      * @brief assigns the given object with holding ownership.
+     * @tparam U the source element type
      * @param element the shared pointer
      * @return this
      */
-    maybe_shared_ptr& operator=(shared_ptr element) noexcept {
+    template<
+            class U,
+            class = std::enable_if_t<
+                    std::is_convertible_v<std::shared_ptr<U>, std::shared_ptr<T>>>>
+    maybe_shared_ptr& operator=(std::shared_ptr<U> element) noexcept {
         entity_ = decltype(entity_) { std::in_place_index<shared_index>, std::move(element) };
         return *this;
     }
 
     /**
      * @brief assigns given object into this.
-     * @tparam U the source type
-     * @param element the copy type
+     * @tparam U the source element type
+     * @param element the copy source
      * @return this
      */
     template<
@@ -126,8 +136,8 @@ public:
 
     /**
      * @brief assigns given object into this.
-     * @tparam U the source type
-     * @param element the move type
+     * @tparam U the source element type
+     * @param element the move source
      * @return this
      */
     template<

@@ -12,7 +12,9 @@ class Base {};
 class Sub : public Base {};
 
 static_assert(std::is_constructible_v<maybe_shared_ptr<int>, int*>);
+static_assert(std::is_constructible_v<maybe_shared_ptr<int const>, int*>);
 static_assert(std::is_constructible_v<maybe_shared_ptr<int>, std::shared_ptr<int>>);
+static_assert(std::is_constructible_v<maybe_shared_ptr<int const>, std::shared_ptr<int>>);
 static_assert(std::is_constructible_v<maybe_shared_ptr<int>, maybe_shared_ptr<int>>);
 static_assert(std::is_constructible_v<maybe_shared_ptr<Base>, maybe_shared_ptr<Sub>&>);
 
