@@ -20,7 +20,7 @@ namespace takatori::serializer::details {
 
 class scalar_expression_property_scanner {
 public:
-    explicit scalar_expression_property_scanner(object_scanner& scanner, object_acceptor& acceptor) noexcept;
+    explicit scalar_expression_property_scanner(object_scanner const& scanner, object_acceptor& acceptor) noexcept;
 
     void operator()(scalar::immediate const& element);
     void operator()(scalar::variable_reference const& element);
@@ -36,7 +36,7 @@ public:
     void operator()(scalar::extension const& element);
 
 private:
-    object_scanner& scanner_;
+    object_scanner const& scanner_;
     object_acceptor& acceptor_;
 
     template<class T>

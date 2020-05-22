@@ -14,7 +14,7 @@ namespace takatori::serializer::details {
 
 class step_property_scanner {
 public:
-    explicit step_property_scanner(object_scanner& scanner, object_acceptor& acceptor) noexcept;
+    explicit step_property_scanner(object_scanner const& scanner, object_acceptor& acceptor) noexcept;
 
     void operator()(plan::process const& element);
     void operator()(plan::forward const& element);
@@ -24,7 +24,7 @@ public:
     void operator()(plan::discard const& element);
 
 private:
-    object_scanner& scanner_;
+    object_scanner const& scanner_;
     object_acceptor& acceptor_;
 
     template<class T>

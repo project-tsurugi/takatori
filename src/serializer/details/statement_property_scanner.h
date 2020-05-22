@@ -11,14 +11,14 @@ namespace takatori::serializer::details {
 
 class statement_property_scanner {
 public:
-    explicit statement_property_scanner(object_scanner& scanner, object_acceptor& acceptor) noexcept;
+    explicit statement_property_scanner(object_scanner const& scanner, object_acceptor& acceptor) noexcept;
 
     void operator()(statement::execute const& element);
     void operator()(statement::write const& element);
     void operator()(statement::extension const& element);
 
 private:
-    object_scanner& scanner_;
+    object_scanner const& scanner_;
     object_acceptor& acceptor_;
 
     template<class T>

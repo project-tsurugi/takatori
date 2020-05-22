@@ -18,7 +18,7 @@ namespace takatori::serializer::details {
 
 class type_property_scanner {
 public:
-    explicit type_property_scanner(object_scanner& scanner, object_acceptor& acceptor) noexcept;
+    explicit type_property_scanner(object_scanner const& scanner, object_acceptor& acceptor) noexcept;
 
     void operator()(type::boolean const& element);
     void operator()(type::int1 const& element);
@@ -39,7 +39,7 @@ public:
     void operator()(type::extension const& element);
 
 private:
-    object_scanner& scanner_;
+    object_scanner const& scanner_;
     object_acceptor& acceptor_;
 
     void scan(datetime::time_zone const& tz);

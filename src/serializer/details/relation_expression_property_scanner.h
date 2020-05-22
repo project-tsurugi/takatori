@@ -36,7 +36,7 @@ namespace takatori::serializer::details {
 
 class relation_expression_property_scanner {
 public:
-    explicit relation_expression_property_scanner(object_scanner& scanner, object_acceptor& acceptor) noexcept;
+    explicit relation_expression_property_scanner(object_scanner const& scanner, object_acceptor& acceptor) noexcept;
 
     void operator()(relation::find const& element);
     void operator()(relation::scan const& element);
@@ -66,7 +66,7 @@ public:
     void operator()(relation::step::offer const& element);
 
 private:
-    object_scanner& scanner_;
+    object_scanner const& scanner_;
     object_acceptor& acceptor_;
 
     template<class T>

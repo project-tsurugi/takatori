@@ -35,27 +35,27 @@ using tag_t = decltype(T::tag);
 template<class T>
 constexpr bool has_tag_v = util::is_detected_v<tag_t, T>;
 
-void object_scanner::operator()(descriptor::variable const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(descriptor::variable const& element, object_acceptor& acceptor) const {
     process_default(element, acceptor);
 }
 
-void object_scanner::operator()(descriptor::relation const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(descriptor::relation const& element, object_acceptor& acceptor) const {
     process_default(element, acceptor);
 }
 
-void object_scanner::operator()(descriptor::function const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(descriptor::function const& element, object_acceptor& acceptor) const {
     process_default(element, acceptor);
 }
 
-void object_scanner::operator()(descriptor::aggregate_function const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(descriptor::aggregate_function const& element, object_acceptor& acceptor) const {
     process_default(element, acceptor);
 }
 
-void object_scanner::operator()(descriptor::declared_type const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(descriptor::declared_type const& element, object_acceptor& acceptor) const {
     process_default(element, acceptor);
 }
 
-void object_scanner::operator()(value::data const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(value::data const& element, object_acceptor& acceptor) const {
     if (verbose()) {
         process_envelope(element, acceptor);
     } else {
@@ -64,11 +64,11 @@ void object_scanner::operator()(value::data const& element, object_acceptor& acc
     }
 }
 
-void object_scanner::operator()(type::data const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(type::data const& element, object_acceptor& acceptor) const {
     process_default(element, acceptor);
 }
 
-void object_scanner::operator()(scalar::expression const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(scalar::expression const& element, object_acceptor& acceptor) const {
     process_envelope(element, acceptor);
 }
 
@@ -106,7 +106,7 @@ static void accept_port(graph::port<T, D> const& port, object_acceptor& acceptor
     acceptor.struct_end();
 }
 
-void object_scanner::operator()(relation::expression const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(relation::expression const& element, object_acceptor& acceptor) const {
     acceptor.struct_begin();
 
     accept_ref(element, acceptor);
@@ -132,7 +132,7 @@ void object_scanner::operator()(relation::expression const& element, object_acce
     acceptor.struct_end();
 }
 
-void object_scanner::operator()(relation::expression::graph_type const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(relation::expression::graph_type const& element, object_acceptor& acceptor) const {
     acceptor.array_begin();
     relation::sort_from_upstream(element, [&](relation::expression const& v) {
         (*this)(v, acceptor);
@@ -140,7 +140,7 @@ void object_scanner::operator()(relation::expression::graph_type const& element,
     acceptor.array_end();
 }
 
-void object_scanner::operator()(plan::step const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(plan::step const& element, object_acceptor& acceptor) const {
     acceptor.struct_begin();
 
     accept_ref(element, acceptor);
@@ -170,7 +170,7 @@ void object_scanner::operator()(plan::step const& element, object_acceptor& acce
     acceptor.struct_end();
 }
 
-void object_scanner::operator()(plan::step::graph_type const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(plan::step::graph_type const& element, object_acceptor& acceptor) const {
     acceptor.array_begin();
     plan::sort_from_upstream(element, [&](plan::step const& v) {
         (*this)(v, acceptor);
@@ -178,7 +178,7 @@ void object_scanner::operator()(plan::step::graph_type const& element, object_ac
     acceptor.array_end();
 }
 
-void object_scanner::operator()(statement::statement const& element, object_acceptor& acceptor) {
+void object_scanner::operator()(statement::statement const& element, object_acceptor& acceptor) const {
     process_envelope(element, acceptor);
 }
 
@@ -189,42 +189,42 @@ static void process_descriptor_body(descriptor::element<Kind> const& element, ob
     acceptor.property_end();
 }
 
-void object_scanner::properties(descriptor::variable const& element, object_acceptor& acceptor) {
+void object_scanner::properties(descriptor::variable const& element, object_acceptor& acceptor) const {
     process_descriptor_body(element, acceptor);
 }
 
-void object_scanner::properties(descriptor::relation const& element, object_acceptor& acceptor) {
+void object_scanner::properties(descriptor::relation const& element, object_acceptor& acceptor) const {
     process_descriptor_body(element, acceptor);
 }
 
-void object_scanner::properties(descriptor::function const& element, object_acceptor& acceptor) {
+void object_scanner::properties(descriptor::function const& element, object_acceptor& acceptor) const {
     process_descriptor_body(element, acceptor);
 }
 
-void object_scanner::properties(descriptor::aggregate_function const& element, object_acceptor& acceptor) {
+void object_scanner::properties(descriptor::aggregate_function const& element, object_acceptor& acceptor) const {
     process_descriptor_body(element, acceptor);
 }
 
-void object_scanner::properties(descriptor::declared_type const& element, object_acceptor& acceptor) {
+void object_scanner::properties(descriptor::declared_type const& element, object_acceptor& acceptor) const {
     process_descriptor_body(element, acceptor);
 }
 
-void object_scanner::properties(value::data const& element, object_acceptor& acceptor) {
+void object_scanner::properties(value::data const& element, object_acceptor& acceptor) const {
     details::value_property_scanner s { acceptor };
     value::dispatch(s, element);
 }
 
-void object_scanner::properties(type::data const& element, object_acceptor& acceptor) {
+void object_scanner::properties(type::data const& element, object_acceptor& acceptor) const {
     details::type_property_scanner s { *this, acceptor };
     type::dispatch(s, element);
 }
 
-void object_scanner::properties(scalar::expression const& element, object_acceptor& acceptor) {
+void object_scanner::properties(scalar::expression const& element, object_acceptor& acceptor) const {
     details::scalar_expression_property_scanner s { *this, acceptor };
     scalar::dispatch(s, element);
 }
 
-void object_scanner::properties(relation::expression const& element, object_acceptor& acceptor) {
+void object_scanner::properties(relation::expression const& element, object_acceptor& acceptor) const {
     details::relation_expression_property_scanner s { *this, acceptor };
     if (relation::is_available_in_intermediate_plan(element.kind())) {
         relation::intermediate::dispatch(s, element);
@@ -233,18 +233,18 @@ void object_scanner::properties(relation::expression const& element, object_acce
     }
 }
 
-void object_scanner::properties(plan::step const& element, object_acceptor& acceptor) {
+void object_scanner::properties(plan::step const& element, object_acceptor& acceptor) const {
     details::step_property_scanner s { *this, acceptor };
     plan::dispatch(s, element);
 }
 
-void object_scanner::properties(statement::statement const& element, object_acceptor& acceptor) {
+void object_scanner::properties(statement::statement const& element, object_acceptor& acceptor) const {
     details::statement_property_scanner s { *this, acceptor };
     statement::dispatch(s, element);
 }
 
 template<class T>
-void object_scanner::process_default(T const& element, object_acceptor& acceptor) {
+void object_scanner::process_default(T const& element, object_acceptor& acceptor) const {
     if (!verbose()) {
         acceptor.value(element);
     } else {
@@ -253,7 +253,7 @@ void object_scanner::process_default(T const& element, object_acceptor& acceptor
 }
 
 template<class T>
-void object_scanner::process_envelope(T const& element, object_acceptor& acceptor) {
+void object_scanner::process_envelope(T const& element, object_acceptor& acceptor) const {
     acceptor.struct_begin();
 
     acceptor.property_begin("kind"sv);

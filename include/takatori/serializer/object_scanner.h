@@ -100,75 +100,75 @@ public:
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(descriptor::variable const& element, object_acceptor& acceptor);
+    virtual void operator()(descriptor::variable const& element, object_acceptor& acceptor) const;
 
     /// @copydoc operator()(descriptor::variable const&, object_acceptor&)
-    virtual void operator()(descriptor::relation const& element, object_acceptor& acceptor);
+    virtual void operator()(descriptor::relation const& element, object_acceptor& acceptor) const;
 
     /// @copydoc operator()(descriptor::variable const&, object_acceptor&)
-    virtual void operator()(descriptor::function const& element, object_acceptor& acceptor);
+    virtual void operator()(descriptor::function const& element, object_acceptor& acceptor) const;
 
     /// @copydoc operator()(descriptor::variable const&, object_acceptor&)
-    virtual void operator()(descriptor::aggregate_function const& element, object_acceptor& acceptor);
+    virtual void operator()(descriptor::aggregate_function const& element, object_acceptor& acceptor) const;
 
     /// @copydoc operator()(descriptor::variable const&, object_acceptor&)
-    virtual void operator()(descriptor::declared_type const& element, object_acceptor& acceptor);
+    virtual void operator()(descriptor::declared_type const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans a value and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(value::data const& element, object_acceptor& acceptor);
+    virtual void operator()(value::data const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans a type and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(type::data const& element, object_acceptor& acceptor);
+    virtual void operator()(type::data const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans a scalar expression and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(scalar::expression const& element, object_acceptor& acceptor);
+    virtual void operator()(scalar::expression const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans a relation expression and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(relation::expression const& element, object_acceptor& acceptor);
+    virtual void operator()(relation::expression const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans a relation expression graph and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(relation::expression::graph_type const& element, object_acceptor& acceptor);
+    virtual void operator()(relation::expression::graph_type const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans a step and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(plan::step const& element, object_acceptor& acceptor);
+    virtual void operator()(plan::step const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans a step graph and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(plan::step::graph_type const& element, object_acceptor& acceptor);
+    virtual void operator()(plan::step::graph_type const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans a statement and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void operator()(statement::statement const& element, object_acceptor& acceptor);
+    virtual void operator()(statement::statement const& element, object_acceptor& acceptor) const;
 
 protected:
     /**
@@ -177,19 +177,19 @@ protected:
      * @param acceptor the acceptor
      * @note This may be called only if verbose() is enabled.
      */
-    virtual void properties(descriptor::variable const& element, object_acceptor& acceptor);
+    virtual void properties(descriptor::variable const& element, object_acceptor& acceptor) const;
 
     /// @copydoc properties(descriptor::variable const&, object_acceptor&)
-    virtual void properties(descriptor::relation const& element, object_acceptor& acceptor);
+    virtual void properties(descriptor::relation const& element, object_acceptor& acceptor) const;
 
     /// @copydoc properties(descriptor::variable const&, object_acceptor&)
-    virtual void properties(descriptor::function const& element, object_acceptor& acceptor);
+    virtual void properties(descriptor::function const& element, object_acceptor& acceptor) const;
 
     /// @copydoc properties(descriptor::variable const&, object_acceptor&)
-    virtual void properties(descriptor::aggregate_function const& element, object_acceptor& acceptor);
+    virtual void properties(descriptor::aggregate_function const& element, object_acceptor& acceptor) const;
 
     /// @copydoc properties(descriptor::variable const&, object_acceptor&)
-    virtual void properties(descriptor::declared_type const& element, object_acceptor& acceptor);
+    virtual void properties(descriptor::declared_type const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans properties of the given value.
@@ -197,7 +197,7 @@ protected:
      * @param acceptor the acceptor
      * @note This may be called only if verbose() is enabled.
      */
-    virtual void properties(value::data const& element, object_acceptor& acceptor);
+    virtual void properties(value::data const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans properties of the given type.
@@ -205,44 +205,44 @@ protected:
      * @param acceptor the acceptor
      * @note This may be called only if verbose() is enabled.
      */
-    virtual void properties(type::data const& element, object_acceptor& acceptor);
+    virtual void properties(type::data const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans properties of the given expression.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void properties(scalar::expression const& element, object_acceptor& acceptor);
+    virtual void properties(scalar::expression const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans properties of the relation expression.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void properties(relation::expression const& element, object_acceptor& acceptor);
+    virtual void properties(relation::expression const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans properties of the given step.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void properties(plan::step const& element, object_acceptor& acceptor);
+    virtual void properties(plan::step const& element, object_acceptor& acceptor) const;
 
     /**
      * @brief scans properties of the given statement.
      * @param element the target element
      * @param acceptor the acceptor
      */
-    virtual void properties(statement::statement const& element, object_acceptor& acceptor);
+    virtual void properties(statement::statement const& element, object_acceptor& acceptor) const;
 
 private:
     bool verbose_ {};
 
     template<class T>
-    void process_default(T const& element, object_acceptor& acceptor);
+    void process_default(T const& element, object_acceptor& acceptor) const;
 
     template<class T>
-    void process_envelope(T const& element, object_acceptor& acceptor);
+    void process_envelope(T const& element, object_acceptor& acceptor) const;
 };
 
 } // namespace takatori::serializer

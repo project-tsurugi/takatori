@@ -5,7 +5,7 @@ namespace takatori::serializer::details {
 using namespace std::string_view_literals;
 
 relation_expression_property_scanner::relation_expression_property_scanner(
-        object_scanner& scanner,
+        object_scanner const& scanner,
         object_acceptor& acceptor) noexcept
     : scanner_(scanner)
     , acceptor_(acceptor)
