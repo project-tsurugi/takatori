@@ -133,6 +133,7 @@ add_test_executable(graph/topological_sort_test.cpp)
 # document models
 add_test_executable(document/basic_document_test.cpp)
 add_test_executable(document/region_test.cpp)
+add_test_executable(document/document_map_test.cpp)
 
 # serializer
 add_test_executable(serializer/json_printer_test.cpp)

@@ -138,6 +138,7 @@ add_library(takatori
     # document
     document/basic_document.cpp
     document/region.cpp
+    document/document_map.cpp
 
     # serializer
     serializer/json_printer.cpp
