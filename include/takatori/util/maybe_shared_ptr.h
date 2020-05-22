@@ -33,7 +33,6 @@ public:
 
     /**
      * @brief creates a new empty instance.
-     * @param element the reference
      */
     constexpr maybe_shared_ptr(std::nullptr_t = nullptr) noexcept // NOLINT
         : entity_(std::in_place_index<naked_index>)
@@ -41,7 +40,7 @@ public:
 
     /**
      * @brief creates a new instance without holding ownership.
-     * @param pointer the pointer
+     * @param element the pointer
      */
     explicit constexpr maybe_shared_ptr(pointer element) noexcept // NOLINT
         : entity_(std::in_place_index<naked_index>, element)
@@ -327,9 +326,18 @@ inline std::ostream& operator<<(std::ostream& out, maybe_shared_ptr<T> const& va
 
 } // namespace takatori::util
 
+/**
+ * @brief provides hash code of takatori::util::maybe_shared_ptr.
+ * @tparam T the element type
+ */
 template<class T>
 struct std::hash<::takatori::util::maybe_shared_ptr<T>> {
-    std::size_t operator()(::takatori::util::maybe_shared_ptr<T> const& value) noexcept {
-        return std::hash<T*>{}(value.get());
+    /**
+     * @brief returns hash code of the given object.
+     * @param object the target object
+     * @return the computed hash code
+     */
+    std::size_t operator()(::takatori::util::maybe_shared_ptr<T> const& object) noexcept {
+        return std::hash<T*>{}(object.get());
     }
 };
