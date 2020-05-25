@@ -12,6 +12,8 @@ namespace takatori::util {
 
 class clonable_test : public ::testing::Test {};
 
+namespace {
+
 struct NotClonable {};
 
 struct Base {
@@ -25,6 +27,8 @@ struct Sub : Base {
     ~Sub() override = default;
     Sub* clone(object_creator allocator) const override { return allocator.create_object<Sub>(); };
 };
+
+} // namespace
 
 static_assert(!is_clonable_v<NotClonable>);
 static_assert(is_clonable_v<Base>);

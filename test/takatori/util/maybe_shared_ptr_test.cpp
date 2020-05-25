@@ -8,8 +8,12 @@ namespace takatori::util {
 
 class maybe_shared_ptr_test : public ::testing::Test {};
 
+namespace {
+
 class Base {};
 class Sub : public Base {};
+
+} // namespace
 
 static_assert(std::is_constructible_v<maybe_shared_ptr<int>, int*>);
 static_assert(std::is_constructible_v<maybe_shared_ptr<int const>, int*>);

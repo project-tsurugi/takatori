@@ -17,7 +17,7 @@ class process_test : public ::testing::Test {};
 static_assert(process::tag == step_kind::process);
 
 template<class T>
-T& find(process& p) {
+static T& find(process& p) {
     for (auto&& e : p.operators()) {
         if (e.kind() == T::tag) {
             return util::unsafe_downcast<T>(e);

@@ -15,7 +15,7 @@ static_assert(std::is_trivially_copyable_v<static_bitset<64>>);
 static_assert(std::is_trivially_copyable_v<static_bitset<128>>);
 
 template<class... Args>
-constexpr static_bitset<sizeof...(Args)> of(Args... args) {
+static constexpr static_bitset<sizeof...(Args)> of(Args... args) {
     return static_bitset<sizeof...(Args)> { args... };
 }
 

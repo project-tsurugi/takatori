@@ -8,6 +8,8 @@ namespace takatori::util {
 
 class downcast_test : public ::testing::Test {};
 
+namespace {
+
 struct Base {
     Base() = default;
     virtual ~Base() = default;
@@ -17,6 +19,8 @@ struct Sub : Base {
     Sub() = default;
     ~Sub() override = default;
 };
+
+} // namespace
 
 TEST_F(downcast_test, lvalue) {
     std::unique_ptr<Base> sub = std::make_unique<Sub>();

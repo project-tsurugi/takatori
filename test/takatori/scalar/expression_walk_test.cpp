@@ -9,7 +9,7 @@ namespace takatori::scalar {
 class expression_walk_test : public ::testing::Test {};
 
 template<std::size_t N>
-inline void set(std::array<bool, N>& a, std::size_t i) {
+static void set(std::array<bool, N>& a, std::size_t i) {
     if (i >= N) {
         std::ostringstream s;
         s << "out of bound: " << i << " >= " << N;
@@ -24,13 +24,13 @@ inline void set(std::array<bool, N>& a, std::size_t i) {
 }
 
 template<std::size_t N>
-inline void set(std::array<bool, N>& a, immediate const& expr) {
+static void set(std::array<bool, N>& a, immediate const& expr) {
     auto i = value_of<value::int4>(expr);
     set(a, static_cast<std::size_t>(i));
 }
 
 template<std::size_t N>
-inline void check(std::array<bool, N> const& a) {
+static void check(std::array<bool, N> const& a) {
     for (std::size_t i = 0; i < N; ++i) {
         if (!a[i]) {
             std::ostringstream s;
@@ -41,7 +41,7 @@ inline void check(std::array<bool, N> const& a) {
 }
 
 template<std::size_t N>
-inline void check_only_first(std::array<bool, N> const& a) {
+static void check_only_first(std::array<bool, N> const& a) {
     if (!a[0]) {
         throw std::domain_error("not set at 0");
     }

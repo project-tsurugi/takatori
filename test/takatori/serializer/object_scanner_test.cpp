@@ -107,14 +107,14 @@ public:
     }
 };
 
-scalar::immediate const_int4() {
+static scalar::immediate const_int4() {
     return scalar::immediate {
             value::int4 { 100 },
             type::int4 {},
     };
 }
 
-scalar::immediate const_boolean() {
+static scalar::immediate const_boolean() {
     return scalar::immediate {
             value::boolean { true },
             type::boolean {},

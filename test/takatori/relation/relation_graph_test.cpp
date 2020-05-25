@@ -10,7 +10,7 @@ namespace takatori::relation {
 
 class relation_graph_test : public ::testing::Test {};
 
-graph_type release(
+static graph_type release(
         graph_type& source,
         std::initializer_list<std::reference_wrapper<expression const>> elements) {
     std::vector<expression const*> es;

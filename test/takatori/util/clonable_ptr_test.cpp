@@ -12,6 +12,8 @@ namespace takatori::util {
 
 class clonable_ptr_test : public ::testing::Test {};
 
+namespace {
+
 class Obj {
 public:
     Obj() = default;
@@ -36,6 +38,8 @@ struct Sub : Base {
     ~Sub() override = default;
     Sub* clone() const override { return new Sub(); };
 };
+
+} // namespace
 
 TEST_F(clonable_ptr_test, simple) {
     auto obj = make_clonable<Obj>({});

@@ -16,6 +16,8 @@ public:
     }
 };
 
+namespace {
+
 struct Base {
     Base() = default;
     virtual ~Base() = default;
@@ -32,6 +34,8 @@ struct Sub : Base {
 private:
     std::string value_;
 };
+
+} // namespace
 
 static_assert(std::is_base_of_v<null_copier<std::unique_ptr<int>>, typename reference_vector<std::unique_ptr<int>>::copier_type>);
 static_assert(std::is_base_of_v<standard_copier<int>, typename reference_vector<int>::copier_type>);

@@ -1,28 +1,27 @@
+set(test_target takatori-test)
+
+add_executable(${test_target}
+    main.cpp
+)
+target_include_directories(${test_target}
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(${test_target}
+    PUBLIC gtest
+    PRIVATE takatori-impl
+)
+
 function (add_test_executable source_file)
     get_filename_component(test_name "${source_file}" NAME_WE)
-    add_executable(${test_name}
-        ${source_file}
-    )
-    target_include_directories(${test_name}
-        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-    target_link_libraries(${test_name}
-        PRIVATE takatori-impl
-        PRIVATE takatori-test-main
+    target_sources(${test_target}
+        PRIVATE ${source_file}
     )
     add_test(
         NAME ${test_name}
-        COMMAND ${test_name} --gtest_output=xml:${test_name}_gtest_result.xml
+        COMMAND ${test_target} --gtest_filter"${test_name}.*" --gtest_output=xml:${test_name}_gtest_result.xml
     )
 endfunction (add_test_executable)
-
-add_library(takatori-test-main STATIC
-    main.cpp
-)
-
-target_link_libraries(takatori-test-main
-    PUBLIC gtest
-)
 
 # type models
 add_test_executable(takatori/type/simple_type_test.cpp)

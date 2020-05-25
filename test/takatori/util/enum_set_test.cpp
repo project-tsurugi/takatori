@@ -6,6 +6,8 @@ namespace takatori::util {
 
 class enum_set_test : public ::testing::Test {};
 
+namespace {
+
 enum class X {
     _ = -1,
     A = 0, B, C, D, E,
@@ -15,6 +17,8 @@ enum class X {
 std::ostream& operator<<(std::ostream& out, X x) {
     return out << static_cast<char>('A' + static_cast<std::size_t>(x));
 }
+
+} // namespace
 
 using eset = enum_set<X, X::A, X::E>;
 

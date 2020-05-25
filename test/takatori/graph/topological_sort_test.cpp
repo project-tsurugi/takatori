@@ -88,6 +88,8 @@ using simple_graph = typename vertex::graph_type;
 using simple_input = typename vertex::input_port_type;
 using simple_output = typename vertex::input_port_type;
 
+namespace {
+
 struct enumerator {
     void operator()(vertex& v, std::function<void(vertex&)> const& c) {
         for (auto& e : v.output_ports()) {
@@ -100,12 +102,13 @@ struct enumerator {
 
 struct consumer {
     std::vector<vertex*> r;
+
     void operator()(vertex& v) {
         r.emplace_back(std::addressof(v));
     }
 };
 
-static bool eq(
+bool eq(
         std::initializer_list<std::reference_wrapper<vertex const>> expect,
         std::initializer_list<vertex const*> actual) {
     std::set<vertex const*> e;
@@ -113,7 +116,7 @@ static bool eq(
         e.emplace(std::addressof(v));
     }
     for (vertex const* a : actual) {
-        if(auto it = e.find(a); it != e.end()) {
+        if (auto it = e.find(a); it != e.end()) {
             e.erase(it);
         } else {
             return false;
@@ -121,6 +124,8 @@ static bool eq(
     }
     return e.empty();
 }
+
+} // namespace
 
 TEST_F(topological_sort_test, simple) {
     simple_graph g;

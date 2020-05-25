@@ -12,12 +12,16 @@ namespace takatori::util {
 
 class reference_list_view_test : public ::testing::Test {};
 
+namespace {
+
 class Base {
 public:
     Base() = default;
     virtual ~Base() = default;
 };
 class Sub : public Base {};
+
+} // namespace
 
 TEST_F(reference_list_view_test, simple) {
     std::array<int, 3> a { 1, 2, 3 };

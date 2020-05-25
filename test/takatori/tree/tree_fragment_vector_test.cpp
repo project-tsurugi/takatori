@@ -15,6 +15,8 @@ public:
     static T&& rv(T& object) { return std::move(object); }
 };
 
+namespace {
+
 template<bool>
 class copyable {};
 
@@ -59,6 +61,8 @@ private:
 
 template<class T>
 C(T&&) -> C<std::remove_reference_t<T>>;
+
+} // namespace
 
 static_assert(is_tree_fragment_v<tree_fragment_vector<C<int>>>);
 static_assert(std::is_same_v<
