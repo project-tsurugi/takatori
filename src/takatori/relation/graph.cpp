@@ -4,9 +4,9 @@
 #include <takatori/util/exception.h>
 #include <takatori/util/string_builder.h>
 
-#include "../graph/topological_sort.h"
+#include <takatori/graph/topological_sort.h>
 
-#include "details/graph_merger.h"
+#include <takatori/relation/details/graph_merger.h>
 
 namespace takatori::relation {
 

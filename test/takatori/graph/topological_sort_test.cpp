@@ -1,4 +1,4 @@
-#include <graph/topological_sort.h>
+#include <takatori/graph/topological_sort.h>
 
 #include <functional>
 #include <vector>

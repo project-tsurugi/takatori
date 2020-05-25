@@ -1,162 +1,162 @@
 add_library(takatori
 
     # type
-    type/data.cpp
-    type/decimal.cpp
-    type/character.cpp
-    type/bit.cpp
-    type/time_of_day.cpp
-    type/time_point.cpp
-    type/declared.cpp
-    type/extension.cpp
+    takatori/type/data.cpp
+    takatori/type/decimal.cpp
+    takatori/type/character.cpp
+    takatori/type/bit.cpp
+    takatori/type/time_of_day.cpp
+    takatori/type/time_point.cpp
+    takatori/type/declared.cpp
+    takatori/type/extension.cpp
 
     # value
-    value/primitive.cpp
-    value/data.cpp
-    value/decimal.cpp
-    value/character.cpp
-    value/bit.cpp
-    value/date.cpp
-    value/time_of_day.cpp
-    value/time_point.cpp
-    value/datetime_interval.cpp
-    value/extension.cpp
+    takatori/value/primitive.cpp
+    takatori/value/data.cpp
+    takatori/value/decimal.cpp
+    takatori/value/character.cpp
+    takatori/value/bit.cpp
+    takatori/value/date.cpp
+    takatori/value/time_of_day.cpp
+    takatori/value/time_point.cpp
+    takatori/value/datetime_interval.cpp
+    takatori/value/extension.cpp
 
     # datetime
-    datetime/date.cpp
-    datetime/time_of_day.cpp
-    datetime/time_point.cpp
-    datetime/date_interval.cpp
-    datetime/time_interval.cpp
-    datetime/datetime_interval.cpp
-    datetime/time_zone.cpp
-    datetime/time_zone_impl.cpp
-    datetime/printing.cpp
+    takatori/datetime/date.cpp
+    takatori/datetime/time_of_day.cpp
+    takatori/datetime/time_point.cpp
+    takatori/datetime/date_interval.cpp
+    takatori/datetime/time_interval.cpp
+    takatori/datetime/datetime_interval.cpp
+    takatori/datetime/time_zone.cpp
+    takatori/datetime/time_zone_impl.cpp
+    takatori/datetime/printing.cpp
 
     # scalar
-    scalar/expression.cpp
+    takatori/scalar/expression.cpp
 
     # scalar - primary expressions
-    scalar/immediate.cpp
-    scalar/variable_reference.cpp
+    takatori/scalar/immediate.cpp
+    takatori/scalar/variable_reference.cpp
 
     # scalar - unary expressions
-    scalar/unary.cpp
-    scalar/cast.cpp
+    takatori/scalar/unary.cpp
+    takatori/scalar/cast.cpp
 
     # scalar - binary expressions
-    scalar/binary.cpp
-    scalar/compare.cpp
+    takatori/scalar/binary.cpp
+    takatori/scalar/compare.cpp
 
     # scalar - complex expression
-    scalar/match.cpp
-    scalar/conditional.cpp
-    scalar/details/conditional_alternative.cpp
-    scalar/coalesce.cpp
-    scalar/let.cpp
-    scalar/function_call.cpp
+    takatori/scalar/match.cpp
+    takatori/scalar/conditional.cpp
+    takatori/scalar/details/conditional_alternative.cpp
+    takatori/scalar/coalesce.cpp
+    takatori/scalar/let.cpp
+    takatori/scalar/function_call.cpp
 
     # scalar - misc.
-    scalar/extension.cpp
+    takatori/scalar/extension.cpp
 
     # relational
-    relation/expression.cpp
+    takatori/relation/expression.cpp
 
     # relation - scan
-    relation/find.cpp
-    relation/scan.cpp
+    takatori/relation/find.cpp
+    takatori/relation/scan.cpp
 
     # relation - join
-    relation/intermediate/join.cpp
-    relation/join_find.cpp
-    relation/join_scan.cpp
+    takatori/relation/intermediate/join.cpp
+    takatori/relation/join_find.cpp
+    takatori/relation/join_scan.cpp
 
     # relation - tuple by tuple operations
-    relation/project.cpp
-    relation/filter.cpp
-    relation/buffer.cpp
+    takatori/relation/project.cpp
+    takatori/relation/filter.cpp
+    takatori/relation/buffer.cpp
 
     # relation - grouping operations for whole relation
-    relation/intermediate/aggregate.cpp
-    relation/intermediate/distinct.cpp
-    relation/intermediate/limit.cpp
+    takatori/relation/intermediate/aggregate.cpp
+    takatori/relation/intermediate/distinct.cpp
+    takatori/relation/intermediate/limit.cpp
 
     # relation - set operations for whole relation
-    relation/intermediate/union.cpp
-    relation/intermediate/intersection.cpp
-    relation/intermediate/difference.cpp
+    takatori/relation/intermediate/union.cpp
+    takatori/relation/intermediate/intersection.cpp
+    takatori/relation/intermediate/difference.cpp
 
     # relation - DML
-    relation/emit.cpp
-    relation/write.cpp
+    takatori/relation/emit.cpp
+    takatori/relation/write.cpp
 
     # relation - misc.
-    relation/graph.cpp
-    relation/intermediate/escape.cpp
+    takatori/relation/graph.cpp
+    takatori/relation/intermediate/escape.cpp
 
     # relation - dealing with group relations
-    relation/step/join.cpp
-    relation/step/aggregate.cpp
-    relation/step/intersection.cpp
-    relation/step/difference.cpp
-    relation/step/flatten.cpp
+    takatori/relation/step/join.cpp
+    takatori/relation/step/aggregate.cpp
+    takatori/relation/step/intersection.cpp
+    takatori/relation/step/difference.cpp
+    takatori/relation/step/flatten.cpp
 
     # relation - communicate with exchange operators
-    relation/step/take_flat.cpp
-    relation/step/take_group.cpp
-    relation/step/take_cogroup.cpp
-    relation/step/offer.cpp
+    takatori/relation/step/take_flat.cpp
+    takatori/relation/step/take_group.cpp
+    takatori/relation/step/take_cogroup.cpp
+    takatori/relation/step/offer.cpp
 
     # relation - details
-    relation/details/mapping_element.cpp
-    relation/details/emit_element.cpp
-    relation/details/sort_key_element.cpp
-    relation/details/aggregate_element.cpp
-    relation/details/key_pair_element.cpp
-    relation/details/union_element.cpp
-    relation/details/cogroup_element.cpp
-    relation/details/graph_merger.cpp
+    takatori/relation/details/mapping_element.cpp
+    takatori/relation/details/emit_element.cpp
+    takatori/relation/details/sort_key_element.cpp
+    takatori/relation/details/aggregate_element.cpp
+    takatori/relation/details/key_pair_element.cpp
+    takatori/relation/details/union_element.cpp
+    takatori/relation/details/cogroup_element.cpp
+    takatori/relation/details/graph_merger.cpp
 
     # plan
-    plan/step.cpp
-    plan/process.cpp
-    plan/exchange.cpp
-    plan/forward.cpp
-    plan/group.cpp
-    plan/aggregate.cpp
-    plan/broadcast.cpp
-    plan/discard.cpp
-    plan/graph.cpp
+    takatori/plan/step.cpp
+    takatori/plan/process.cpp
+    takatori/plan/exchange.cpp
+    takatori/plan/forward.cpp
+    takatori/plan/group.cpp
+    takatori/plan/aggregate.cpp
+    takatori/plan/broadcast.cpp
+    takatori/plan/discard.cpp
+    takatori/plan/graph.cpp
 
     # statement
-    statement/statement.cpp
-    statement/execute.cpp
-    statement/write.cpp
-    statement/extension.cpp
-    statement/details/write_tuple.cpp
+    takatori/statement/statement.cpp
+    takatori/statement/execute.cpp
+    takatori/statement/write.cpp
+    takatori/statement/extension.cpp
+    takatori/statement/details/write_tuple.cpp
 
     # document
-    document/basic_document.cpp
-    document/region.cpp
-    document/document_map.cpp
+    takatori/document/basic_document.cpp
+    takatori/document/region.cpp
+    takatori/document/document_map.cpp
 
     # serializer
-    serializer/json_printer.cpp
-    serializer/object_scanner.cpp
-    serializer/details/simple_value_scanner.cpp
-    serializer/details/value_property_scanner.cpp
-    serializer/details/type_property_scanner.cpp
-    serializer/details/scalar_expression_property_scanner.cpp
-    serializer/details/relation_expression_property_scanner.cpp
-    serializer/details/step_property_scanner.cpp
-    serializer/details/statement_property_scanner.cpp
+    takatori/serializer/json_printer.cpp
+    takatori/serializer/object_scanner.cpp
+    takatori/serializer/details/simple_value_scanner.cpp
+    takatori/serializer/details/value_property_scanner.cpp
+    takatori/serializer/details/type_property_scanner.cpp
+    takatori/serializer/details/scalar_expression_property_scanner.cpp
+    takatori/serializer/details/relation_expression_property_scanner.cpp
+    takatori/serializer/details/step_property_scanner.cpp
+    takatori/serializer/details/statement_property_scanner.cpp
 
     # util
-    util/assertion.cpp
-    util/exception.cpp
-    util/fail.cpp
-    util/object_creator.cpp
-    util/string_builder.cpp
+    takatori/util/assertion.cpp
+    takatori/util/exception.cpp
+    takatori/util/fail.cpp
+    takatori/util/object_creator.cpp
+    takatori/util/string_builder.cpp
 )
 
 target_include_directories(takatori

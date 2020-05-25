@@ -1,4 +1,4 @@
-#include "relation/details/graph_merger.h"
+#include <takatori/relation/details/graph_merger.h>
 
 #include <gtest/gtest.h>
 

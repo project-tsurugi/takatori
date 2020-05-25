@@ -9,7 +9,7 @@
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
 
-#include "../graph/topological_sort.h"
+#include <takatori/graph/topological_sort.h>
 
 namespace takatori::plan {
 

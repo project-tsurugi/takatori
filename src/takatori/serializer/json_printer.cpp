@@ -5,7 +5,7 @@
 
 #include <takatori/util/exception.h>
 
-#include "../util/iomanip_util.h"
+#include <takatori/util/iomanip_util.h>
 
 namespace takatori::serializer {
 
