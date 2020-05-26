@@ -345,7 +345,6 @@ CMake を利用する際、かならず out-of-source ビルドを行う。
   * unscoped enum は型が弱いので余計なバグを生み出しやすい
   * unqualified access が行いたい場合、別途 `constexpr` で定義する
   * ビットマスク的に使いたい場合、 [`takatori::util::enum_set`](https://github.com/project-tsurugi/takatori/blob/master/include/takatori/util/enum_set.h) のようなコンテナを別途用意する
-    * ただし、上記は `std::bitset` ベースなので `constexpr` にできていない
 * `constexpr std::string_view to_string_view(enum ...)` を定義する
   * 列挙から名前を取得する方法が存在しないため、ボイラープレートとして常に用意する
   * ついでに `operator<<(std::ostream&, ...)` のオーバーロードも定義する
