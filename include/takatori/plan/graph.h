@@ -39,36 +39,6 @@ void merge_into(
         util::object_creator creator = {});
 
 /**
- * @brief enumerates upstream steps.
- */
-struct upstream_enumerator {
-    /**
-     * @brief extracts the upstream steps of the given one.
-     * @param s the target step
-     * @param consumer the result consumer
-     */
-    void operator()(step& s, consumer_type const& consumer) const;
-
-    /// @copydoc operator()()
-    void operator()(step const& s, const_consumer_type const& consumer) const;
-};
-
-/**
- * @brief enumerates downstream steps.
- */
-struct downstream_enumerator {
-    /**
-     * @brief extracts the downstream steps of the given one.
-     * @param s the target step
-     * @param consumer the result consumer
-     */
-    void operator()(step& s, std::function<void(step&)> const& consumer) const;
-
-    /// @copydoc operator()()
-    void operator()(step const& s, std::function<void(step const&)> const& consumer) const;
-};
-
-/**
  * @brief enumerates steps which have no upstreams.
  * @param g the target graph
  * @param consumer the destination consumer
@@ -87,6 +57,42 @@ void enumerate_bottom(graph_type& g, consumer_type const& consumer);
 
 /// @copydoc enumerate_bottom()
 void enumerate_bottom(graph_type const& g, const_consumer_type const& consumer);
+
+/**
+ * @brief returns whether or not the given step has one or more upstream steps.
+ * @param s the target step
+ * @return true if this has any upstream steps
+ * @return false if this has no upstream steps
+ */
+bool has_upstream(step const& s);
+
+/**
+ * @brief returns whether or not the given step has one or more downstream steps.
+ * @param s the target step
+ * @return true if this has any downstream steps
+ * @return false if this has no downstream steps
+ */
+bool has_downstream(step const& s);
+
+/**
+ * @brief enumerates the upstream steps of the given one.
+ * @param s the target step
+ * @param consumer the result consumer
+ */
+void enumerate_upstream(step& s, consumer_type const& consumer);
+
+/// @copydoc enumerate_upstream()
+void enumerate_upstream(step const& s, const_consumer_type const& consumer);
+
+/**
+ * @brief enumerates the downstream steps of the given one.
+ * @param s the target step
+ * @param consumer the result consumer
+ */
+void enumerate_downstream(step& s, consumer_type const& consumer);
+
+/// @copydoc enumerate_downstream()
+void enumerate_downstream(step const& s, const_consumer_type const& consumer);
 
 /**
  * @brief apply topological sort (from upstream to downstream) to the graph.

@@ -149,7 +149,7 @@ void object_scanner::operator()(plan::step const& element, object_acceptor& acce
 
     acceptor.property_begin("upstreams"sv);
     acceptor.array_begin();
-    plan::upstream_enumerator {}(element, [&](plan::step const& s) {
+    plan::enumerate_upstream(element, [&](plan::step const& s) {
         acceptor.struct_begin();
         accept_ref(s, acceptor);
         acceptor.struct_end();
@@ -159,7 +159,7 @@ void object_scanner::operator()(plan::step const& element, object_acceptor& acce
 
     acceptor.property_begin("downstreams"sv);
     acceptor.array_begin();
-    plan::downstream_enumerator {}(element, [&](plan::step const& s) {
+    plan::enumerate_downstream(element, [&](plan::step const& s) {
         acceptor.struct_begin();
         accept_ref(s, acceptor);
         acceptor.struct_end();

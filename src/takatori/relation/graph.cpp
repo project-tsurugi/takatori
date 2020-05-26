@@ -10,6 +10,8 @@
 
 namespace takatori::relation {
 
+using ::takatori::graph::topological_sort;
+
 using ::takatori::util::throw_exception;
 using ::takatori::util::string_builder;
 
@@ -40,7 +42,7 @@ graph_type release(graph_type& source, util::sequence_view<expression const*> el
 
     // migrate all elements in the source graph
     results.reserve(elements.size());
-    for (auto* element : elements) {
+    for (auto const* element : elements) {
         if (auto entity = source.release(*element)) {
             auto&& r = results.insert(std::move(entity));
             BOOST_ASSERT(std::addressof(r) == element); // NOLINT
@@ -66,8 +68,10 @@ graph_type release(graph_type& source, util::sequence_view<expression const*> el
     return results;
 }
 
+namespace {
+
 template<class T>
-static void upstreams0(T& expr, std::function<void(T&)> const& consumer) {
+void upstreams0(T& expr, std::function<void(T&)> const& consumer) {
     for (auto&& port : expr.input_ports()) {
         if (auto opposite = port.opposite()) {
             consumer(opposite->owner());
@@ -76,7 +80,7 @@ static void upstreams0(T& expr, std::function<void(T&)> const& consumer) {
 }
 
 template<class T>
-static void downstreams0(T& expr, std::function<void(T&)> const& consumer) {
+void downstreams0(T& expr, std::function<void(T&)> const& consumer) {
     for (auto&& port : expr.output_ports()) {
         if (auto opposite = port.opposite()) {
             consumer(opposite->owner());
@@ -84,24 +88,8 @@ static void downstreams0(T& expr, std::function<void(T&)> const& consumer) {
     }
 }
 
-void relation::upstream_enumerator::operator()(expression& expr, consumer_type const& consumer) const {
-    upstreams0(expr, consumer);
-}
-
-void upstream_enumerator::operator()(expression const& expr, const_consumer_type const& consumer) const {
-    upstreams0(expr, consumer);
-}
-
-void downstream_enumerator::operator()(expression& expr, consumer_type const& consumer) const {
-    downstreams0(expr, consumer);
-}
-
-void downstream_enumerator::operator()(expression const& expr, const_consumer_type const& consumer) const {
-    downstreams0(expr, consumer);
-}
-
 template<class Graph, class Expr>
-static void enumerate_top0(Graph& g, std::function<void(Expr&)> const& consumer) {
+void enumerate_top0(Graph& g, std::function<void(Expr&)> const& consumer) {
     for (auto&& e : g) {
         if (e.input_ports().empty()) {
             consumer(e);
@@ -110,12 +98,40 @@ static void enumerate_top0(Graph& g, std::function<void(Expr&)> const& consumer)
 }
 
 template<class Graph, class Expr>
-static void enumerate_bottom0(Graph& g, std::function<void(Expr&)> const& consumer) {
+void enumerate_bottom0(Graph& g, std::function<void(Expr&)> const& consumer) {
     for (auto&& e : g) {
         if (e.output_ports().empty()) {
             consumer(e);
         }
     }
+}
+
+struct upstream_enumerator {
+    void operator()(expression& expr, consumer_type const& consumer) const {
+        upstreams0(expr, consumer);
+    }
+    void operator()(expression const& expr, const_consumer_type const& consumer) const {
+        upstreams0(expr, consumer);
+    }
+};
+
+struct downstream_enumerator {
+    void operator()(expression& expr, consumer_type const& consumer) const {
+        downstreams0(expr, consumer);
+    }
+    void operator()(expression const& expr, const_consumer_type const& consumer) const {
+        downstreams0(expr, consumer);
+    }
+};
+
+} // namespace
+
+bool has_upstream(expression const& expr) {
+    return !expr.input_ports().empty();
+}
+
+bool has_downstream(expression const& expr) {
+    return !expr.output_ports().empty();
 }
 
 void enumerate_top(graph_type& g, consumer_type const& consumer) {
@@ -134,20 +150,36 @@ void enumerate_bottom(graph_type const& g, const_consumer_type const& consumer) 
     enumerate_bottom0(g, consumer);
 }
 
+void enumerate_upstream(expression& expr, consumer_type const& consumer) {
+    upstreams0(expr, consumer);
+}
+
+void enumerate_upstream(expression const& expr, const_consumer_type const& consumer) {
+    upstreams0(expr, consumer);
+}
+
+void enumerate_downstream(expression& expr, consumer_type const& consumer) {
+    downstreams0(expr, consumer);
+}
+
+void enumerate_downstream(expression const& expr, const_consumer_type const& consumer) {
+    downstreams0(expr, consumer);
+}
+
 void sort_from_upstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
-    ::takatori::graph::topological_sort<upstream_enumerator>(g, consumer, creator);
+    topological_sort<upstream_enumerator>(g, consumer, creator);
 }
 
 void sort_from_upstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
-    ::takatori::graph::topological_sort<upstream_enumerator>(g, consumer, creator);
+    topological_sort<upstream_enumerator>(g, consumer, creator);
 }
 
 void sort_from_downstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
-    ::takatori::graph::topological_sort<downstream_enumerator>(g, consumer, creator);
+    topological_sort<downstream_enumerator>(g, consumer, creator);
 }
 
 void sort_from_downstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
-    ::takatori::graph::topological_sort<downstream_enumerator>(g, consumer, creator);
+    topological_sort<downstream_enumerator>(g, consumer, creator);
 }
 
 } // namespace takatori::relation

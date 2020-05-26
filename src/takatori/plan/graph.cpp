@@ -13,6 +13,8 @@
 
 namespace takatori::plan {
 
+using ::takatori::graph::topological_sort;
+
 using ::takatori::util::clone_unique;
 using ::takatori::util::unsafe_downcast;
 
@@ -61,8 +63,10 @@ void merge_into(graph_type&& source, graph_type& destination, util::object_creat
     }
 }
 
+namespace {
+
 template<class T>
-static void upstreams0(T& s, std::function<void(T&)> const& consumer) {
+void upstreams0(T& s, std::function<void(T&)> const& consumer) {
     if (s.kind() == step_kind::process) {
         for (auto&& t : unsafe_downcast<process>(s).upstreams()) {
             consumer(t);
@@ -75,7 +79,7 @@ static void upstreams0(T& s, std::function<void(T&)> const& consumer) {
 }
 
 template<class T>
-static void downstreams0(T& s, std::function<void(T&)> const& consumer) {
+void downstreams0(T& s, std::function<void(T&)> const& consumer) {
     if (s.kind() == step_kind::process) {
         for (auto&& t : unsafe_downcast<process>(s).downstreams()) {
             consumer(t);
@@ -87,31 +91,53 @@ static void downstreams0(T& s, std::function<void(T&)> const& consumer) {
     }
 }
 
-void upstream_enumerator::operator()(step& s, consumer_type const& consumer) const {
-    upstreams0(s, consumer);
-}
+struct upstream_enumerator {
+    bool operator()(step const& s) const {
+        if (s.kind() == step_kind::process) {
+            return !unsafe_downcast<process>(s).upstreams().empty();
+        }
+        return !unsafe_downcast<exchange>(s).upstreams().empty();
+    }
+    void operator()(step& s, consumer_type const& consumer) const {
+        upstreams0(s, consumer);
+    }
+    void operator()(step const& s, const_consumer_type const& consumer) const {
+        upstreams0(s, consumer);
+    }
+};
 
-void upstream_enumerator::operator()(step const& s, const_consumer_type const& consumer) const {
-    upstreams0(s, consumer);
-}
-
-void downstream_enumerator::operator()(step& s, consumer_type const& consumer) const {
-    downstreams0(s, consumer);
-}
-
-void downstream_enumerator::operator()(step const& s, const_consumer_type const& consumer) const {
-    downstreams0(s, consumer);
-}
+struct downstream_enumerator {
+    bool operator()(step const& s) const {
+        if (s.kind() == step_kind::process) {
+            return !unsafe_downcast<process>(s).downstreams().empty();
+        }
+        return !unsafe_downcast<exchange>(s).downstreams().empty();
+    }
+    void operator()(step& s, consumer_type const& consumer) const {
+        downstreams0(s, consumer);
+    }
+    void operator()(step const& s, const_consumer_type const& consumer) const {
+        downstreams0(s, consumer);
+    }
+};
 
 template<class Enumerator, class Graph, class Step>
-static void enumerate_edge0(Graph& g, std::function<void(Step&)> const& consumer) {
+void enumerate_edge0(Graph& g, std::function<void(Step&)> const& consumer) {
     for (auto&& s : g) {
-        bool found = false;
-        Enumerator {}(s, [&](Step&) { found = true; });
-        if (!found) {
+        if (!Enumerator {}(s)) {
             consumer(s);
         }
     }
+}
+
+} // namespace
+
+bool has_upstream(step const& s) {
+    return upstream_enumerator {}(s);
+}
+
+bool has_downstream(step const& s) {
+    return downstream_enumerator {}(s);
 }
 
 void enumerate_top(graph_type& g, consumer_type const& consumer) {
@@ -130,20 +156,36 @@ void enumerate_bottom(graph_type const& g, const_consumer_type const& consumer) 
     enumerate_edge0<downstream_enumerator>(g, consumer);
 }
 
+void enumerate_upstream(step& s, consumer_type const& consumer) {
+    upstreams0(s, consumer);
+}
+
+void enumerate_upstream(step const& s, const_consumer_type const& consumer) {
+    upstreams0(s, consumer);
+}
+
+void enumerate_downstream(step& s, consumer_type const& consumer) {
+    downstreams0(s, consumer);
+}
+
+void enumerate_downstream(step const& s, const_consumer_type const& consumer) {
+    downstreams0(s, consumer);
+}
+
 void sort_from_upstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
-    ::takatori::graph::topological_sort<upstream_enumerator>(g, consumer, creator);
+    topological_sort<upstream_enumerator>(g, consumer, creator);
 }
 
 void sort_from_upstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
-    ::takatori::graph::topological_sort<upstream_enumerator>(g, consumer, creator);
+    topological_sort<upstream_enumerator>(g, consumer, creator);
 }
 
 void sort_from_downstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
-    ::takatori::graph::topological_sort<downstream_enumerator>(g, consumer, creator);
+    topological_sort<downstream_enumerator>(g, consumer, creator);
 }
 
 void sort_from_downstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
-    ::takatori::graph::topological_sort<downstream_enumerator>(g, consumer, creator);
+    topological_sort<downstream_enumerator>(g, consumer, creator);
 }
 
 } // namespace takatori::plan

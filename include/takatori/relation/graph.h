@@ -52,37 +52,27 @@ void merge_into(
 graph_type release(graph_type& source, util::sequence_view<expression const*> elements);
 
 /**
- * @brief enumerates upstream expressions.
+ * @brief returns whether or not the given expression can have one or more upstream expressions.
+ * @details This only detects input ports of the given expression, so that,
+ *      this may return `true` if all input ports are disconnected.
+ * @param expr the target expression
+ * @return true if the expression can have one or more upstream expressions
+ * @return false if the expression cannot have any upstream expressions
  */
-struct upstream_enumerator {
-    /**
-     * @brief extracts the upstream expressions of the given one.
-     * @param expr the target expression
-     * @param consumer the result consumer
-     */
-    void operator()(expression& expr, consumer_type const& consumer) const;
-
-    /// @copydoc operator()()
-    void operator()(expression const& expr, const_consumer_type const& consumer) const;
-};
+bool has_upstream(expression const& expr);
 
 /**
- * @brief enumerates downstream expressions.
+ * @brief returns whether or not the given expression can have one or more downstream expressions.
+ * @details This only detects output ports of the given expression, so that,
+ *      this may return `true` if all output ports are disconnected.
+ * @param expr the target expression
+ * @return true if the expression can have one or more downstream expressions
+ * @return false if the expression cannot have any downstream expressions
  */
-struct downstream_enumerator {
-    /**
-     * @brief extracts the downstream expressions of the given one.
-     * @param expr the target expression
-     * @param consumer the result consumer
-     */
-    void operator()(expression& expr, consumer_type const& consumer) const;
-
-    /// @copydoc operator()()
-    void operator()(expression const& expr, const_consumer_type const& consumer) const;
-};
+bool has_downstream(expression const& expr);
 
 /**
- * @brief enumerates steps which have no upstreams.
+ * @brief enumerates expressions which have no upstreams.
  * @param g the target graph
  * @param consumer the destination consumer
  */
@@ -92,7 +82,7 @@ void enumerate_top(graph_type& g, consumer_type const& consumer);
 void enumerate_top(graph_type const& g, const_consumer_type const& consumer);
 
 /**
- * @brief enumerates steps which have no downstreams.
+ * @brief enumerates expressions which have no downstreams.
  * @param g the target graph
  * @param consumer the destination consumer
  */
@@ -100,6 +90,26 @@ void enumerate_bottom(graph_type& g, consumer_type const& consumer);
 
 /// @copydoc enumerate_bottom()
 void enumerate_bottom(graph_type const& g, const_consumer_type const& consumer);
+
+/**
+ * @brief enumerates the upstream expressions of the given one.
+ * @param expr the target expression
+ * @param consumer the result consumer
+ */
+void enumerate_upstream(expression& expr, consumer_type const& consumer);
+
+/// @copydoc enumerate_upstream()
+void enumerate_upstream(expression const& expr, const_consumer_type const& consumer);
+
+/**
+ * @brief enumerates the downstream expressions of the given one.
+ * @param expr the target expression
+ * @param consumer the result consumer
+ */
+void enumerate_downstream(expression& expr, consumer_type const& consumer);
+
+/// @copydoc enumerate_downstream()
+void enumerate_downstream(expression const& expr, const_consumer_type const& consumer);
 
 /**
  * @brief apply topological sort (from upstream to downstream) to the graph.
