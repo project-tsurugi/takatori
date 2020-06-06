@@ -425,7 +425,7 @@ CMake を利用する際、かならず out-of-source ビルドを行う。
   * Markdown 記法が使えるので、インラインのスタイルはそちらでやると覚えることが少ない
   * `const` 違いの getter を作る場合、 `const` 側は `@copydoc ...` で非 `const` のドキュメントを参照する
     * これらをバンドルして一つのドキュメントで済ます方法もあるらしいが、どうもうまくいかない
-  * Doxygen が template deduction guide をうまくハンドル市内みたいなので、 `@private` をつけて対象外にしておく
+  * Doxygen が template deduction guide をうまくハンドルしないみたいなので、 `@private` をつけて対象外にしておく
   * 戻り値が条件によって大きく異なる場合、 `@return` を複数書く
     * 例:
 
