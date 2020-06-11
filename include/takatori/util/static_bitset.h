@@ -1,7 +1,7 @@
 #pragma once
 
 #include <array>
-#include <iostream>
+#include <ostream>
 #include <limits>
 #include <type_traits>
 

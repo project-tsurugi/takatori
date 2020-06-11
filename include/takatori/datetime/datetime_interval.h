@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <iostream>
+#include <ostream>
 
 #include "date_interval.h"
 #include "time_interval.h"

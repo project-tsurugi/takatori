@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <iostream>
+#include <ostream>
 
 #include "object_acceptor.h"
 

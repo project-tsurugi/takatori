@@ -1,7 +1,7 @@
 #pragma once
 
 #include <initializer_list>
-#include <iostream>
+#include <ostream>
 #include <vector>
 
 #include <takatori/tree/tree_element_vector.h>

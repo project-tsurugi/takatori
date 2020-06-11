@@ -1,6 +1,6 @@
 #include <takatori/util/exception.h>
 
-#include <iostream>
+#include <ostream>
 
 #include <boost/exception/error_info.hpp>
 #include <boost/exception/get_error_info.hpp>

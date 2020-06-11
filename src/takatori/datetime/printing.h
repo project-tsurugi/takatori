@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <ostream>
 
 #include <takatori/datetime/date.h>
 #include <takatori/datetime/time_of_day.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <ostream>
 #include <stdexcept>
 
 #include <boost/exception/enable_error_info.hpp>

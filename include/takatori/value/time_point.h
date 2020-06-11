@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chrono>
-#include <iostream>
+#include <ostream>
 
 #include "value_kind.h"
 #include "simple_value.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iomanip>
-#include <iostream>
+#include <ostream>
 
 namespace takatori::util {
 

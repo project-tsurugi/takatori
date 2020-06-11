@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <ostream>
 
 #include <takatori/descriptor/relation.h>
 #include <takatori/descriptor/variable.h>
