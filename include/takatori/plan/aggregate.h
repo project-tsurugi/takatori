@@ -129,7 +129,7 @@ public:
 
     /**
      * @brief returns the aggregate key columns.
-     * @details each aggregate key column must also appear in the columns(), but not appear in sort_keys().
+     * @details each aggregate key column must also appear in the source_columns().
      * @return the aggregate key columns.
      */
     [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
