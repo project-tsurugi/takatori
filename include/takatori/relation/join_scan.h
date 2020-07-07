@@ -256,7 +256,7 @@ private:
 };
 
 /**
- * @brief type_of for join_scan_point.
+ * @brief type_of for join_scan.
  */
 template<> struct type_of<join_scan::tag> : util::meta_type<join_scan> {};
 

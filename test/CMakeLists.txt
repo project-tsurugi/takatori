@@ -84,6 +84,7 @@ add_test_executable(takatori/relation/intermediate/intersection_relation_test.cp
 add_test_executable(takatori/relation/intermediate/difference_relation_test.cpp)
 add_test_executable(takatori/relation/emit_test.cpp)
 add_test_executable(takatori/relation/write_test.cpp)
+add_test_executable(takatori/relation/values_test.cpp)
 add_test_executable(takatori/relation/intermediate/escape_test.cpp)
 add_test_executable(takatori/relation/step/join_group_test.cpp)
 add_test_executable(takatori/relation/step/aggregate_group_test.cpp)

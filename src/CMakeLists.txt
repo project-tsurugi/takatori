@@ -92,6 +92,7 @@ add_library(takatori
 
     # relation - misc.
     takatori/relation/graph.cpp
+    takatori/relation/values.cpp
     takatori/relation/intermediate/escape.cpp
 
     # relation - dealing with group relations
@@ -113,6 +114,7 @@ add_library(takatori
     takatori/relation/details/sort_key_element.cpp
     takatori/relation/details/aggregate_element.cpp
     takatori/relation/details/key_pair_element.cpp
+    takatori/relation/details/values_row.cpp
     takatori/relation/details/union_element.cpp
     takatori/relation/details/cogroup_element.cpp
     takatori/relation/details/graph_merger.cpp

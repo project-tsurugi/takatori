@@ -9,6 +9,7 @@
 #include <takatori/relation/buffer.h>
 #include <takatori/relation/emit.h>
 #include <takatori/relation/write.h>
+#include <takatori/relation/values.h>
 
 #include <takatori/relation/intermediate/join.h>
 #include <takatori/relation/intermediate/aggregate.h>
@@ -47,6 +48,7 @@ public:
     void operator()(relation::buffer const& element);
     void operator()(relation::emit const& element);
     void operator()(relation::write const& element);
+    void operator()(relation::values const& element);
     void operator()(relation::intermediate::join const& element);
     void operator()(relation::intermediate::aggregate const& element);
     void operator()(relation::intermediate::distinct const& element);
@@ -94,6 +96,8 @@ private:
     void accept(relation::details::sort_key_element const& element);
 
     void accept(relation::details::emit_element const& element);
+
+    void accept(relation::details::values_row const& element);
 
     void accept(relation::details::aggregate_element const& element);
 

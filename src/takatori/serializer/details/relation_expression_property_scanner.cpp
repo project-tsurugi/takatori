@@ -137,6 +137,16 @@ void relation_expression_property_scanner::operator()(relation::write const& ele
     acceptor_.property_end();
 }
 
+void relation_expression_property_scanner::operator()(relation::values const& element) {
+    acceptor_.property_begin("columns"sv);
+    accept_foreach(element.columns());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("rows"sv);
+    accept_foreach(element.rows());
+    acceptor_.property_end();
+}
+
 void relation_expression_property_scanner::operator()(relation::intermediate::join const& element) {
     acceptor_.property_begin("operator_kind"sv);
     accept(element.operator_kind());
@@ -411,6 +421,16 @@ void relation_expression_property_scanner::accept(relation::details::emit_elemen
     if (auto&& v = element.name()) {
         acceptor_.string(*v);
     }
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
+}
+
+void relation_expression_property_scanner::accept(relation::details::values_row const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("elements"sv);
+    accept_foreach(element.elements());
     acceptor_.property_end();
 
     acceptor_.struct_end();

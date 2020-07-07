@@ -204,7 +204,7 @@ private:
 };
 
 /**
- * @brief type_of for scan_range.
+ * @brief type_of for scan.
  */
 template<> struct type_of<scan::tag> : util::meta_type<scan> {};
 

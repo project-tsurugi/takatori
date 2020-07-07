@@ -48,6 +48,7 @@
 #include <takatori/relation/buffer.h>
 #include <takatori/relation/emit.h>
 #include <takatori/relation/write.h>
+#include <takatori/relation/values.h>
 
 #include <takatori/relation/intermediate/join.h>
 #include <takatori/relation/intermediate/aggregate.h>
@@ -509,6 +510,21 @@ TEST_F(object_scanner_test, relation_write) {
                     { vardesc(1), vardesc(2) },
                     { vardesc(3), vardesc(4) },
                     { vardesc(5), vardesc(6) },
+            },
+    });
+}
+
+TEST_F(object_scanner_test, relation_values) {
+    print(relation::values {
+            {
+                    vardesc(1),
+                    vardesc(2),
+                    vardesc(3),
+            },
+            {
+                    { const_int4(), const_int4(), const_int4(), },
+                    { const_int4(), const_int4(), const_int4(), },
+                    { const_int4(), const_int4(), const_int4(), },
             },
     });
 }

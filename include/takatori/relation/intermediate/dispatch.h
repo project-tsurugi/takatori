@@ -15,6 +15,7 @@
 #include "../buffer.h"
 #include "../emit.h"
 #include "../write.h"
+#include "../values.h"
 
 #include "join.h"
 #include "aggregate.h"
@@ -56,6 +57,7 @@ inline auto dispatch_expression(Callback&& callback, E&& object, Args&&... args)
         case buffer::tag: return util::polymorphic_callback<buffer>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case emit::tag: return util::polymorphic_callback<emit>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case write::tag: return util::polymorphic_callback<write>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
+        case values::tag: return util::polymorphic_callback<values>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
 
         case join::tag: return util::polymorphic_callback<join>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case aggregate::tag: return util::polymorphic_callback<aggregate>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);

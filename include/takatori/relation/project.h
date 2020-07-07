@@ -131,7 +131,7 @@ private:
 };
 
 /**
- * @brief type_of for select.
+ * @brief type_of for project.
  */
 template<> struct type_of<project::tag> : util::meta_type<project> {};
 

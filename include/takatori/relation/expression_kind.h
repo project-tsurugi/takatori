@@ -60,6 +60,8 @@ enum class expression_kind {
     write,
 
     // misc.
+    /// @brief constructs relation from 2-dimensional scalar expressions.
+    values,
     /// @brief re-defines all column identifiers in relations.
     escape,
 
@@ -129,6 +131,7 @@ constexpr inline std::string_view to_string_view(expression_kind value) noexcept
         case kind::difference_relation: return "difference_relation"sv;
         case kind::emit: return "emit"sv;
         case kind::write: return "write"sv;
+        case kind::values: return "values"sv;
         case kind::escape: return "escape"sv;
         case kind::join_group: return "join_group"sv;
         case kind::aggregate_group: return "aggregate_group"sv;
@@ -179,6 +182,7 @@ inline constexpr bool is_available_in_intermediate_plan(expression_kind value) {
         case kind::difference_relation:
         case kind::emit:
         case kind::write:
+        case kind::values:
         case kind::escape:
             return true;
 
@@ -218,6 +222,7 @@ inline constexpr bool is_available_in_step_plan(expression_kind value) {
         case kind::buffer:
         case kind::emit:
         case kind::write:
+        case kind::values:
         case kind::join_group:
         case kind::aggregate_group:
         case kind::intersection_group:

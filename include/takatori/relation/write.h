@@ -173,7 +173,7 @@ private:
 };
 
 /**
- * @brief type_of for where.
+ * @brief type_of for write.
  */
 template<> struct type_of<write::tag> : util::meta_type<write> {};
 
