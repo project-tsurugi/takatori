@@ -75,7 +75,7 @@ public:
     /**
      * @brief creates a new empty instance.
      */
-    optional_ptr() = default;
+    constexpr optional_ptr() = default;
 
     /**
      * @brief destroys this object.
@@ -131,6 +131,13 @@ public:
      * @brief creates a new empty instance.
      */
     constexpr optional_ptr(std::nullptr_t) noexcept // NOLINT
+        : impl::optional_ptr_base<T>()
+    {}
+
+    /**
+     * @brief creates a new empty instance.
+     */
+    constexpr optional_ptr(std::nullopt_t) noexcept // NOLINT
         : impl::optional_ptr_base<T>()
     {}
 

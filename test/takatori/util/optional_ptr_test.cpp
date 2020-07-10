@@ -48,6 +48,8 @@ static_assert(std::is_assignable_v<optional_ptr<int const>&, optional_ptr<int co
 static_assert(std::is_assignable_v<optional_ptr<int const>&, optional_ptr<int>>);
 static_assert(!std::is_assignable_v<optional_ptr<int>&, optional_ptr<int const>>);
 
+static constexpr optional_ptr<int> constexpr_test {};
+
 TEST_F(optional_reference_test, simple) {
     int x = 100;
     optional_ptr ref {x };
