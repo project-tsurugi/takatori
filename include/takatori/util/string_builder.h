@@ -68,6 +68,49 @@ private:
 };
 
 /**
+ * @brief no-op but has similar API with string_builder.
+ */
+class null_string_builder {
+public:
+    /// @copydoc string_builder::to_string_t
+    using to_string_t = string_builder::to_string_t;
+
+    /// @brief an operator tag to return the built string.
+    static constexpr to_string_t to_string {};
+
+    /**
+     * @brief creates a new instance.
+     */
+    constexpr null_string_builder() = default;
+
+    /**
+     * @brief no-op.
+     * @tparam T the value type
+     */
+    template<class T>
+    constexpr void append(T&&) {
+        // no-op
+    }
+
+    /**
+     * @brief always returns an empty string.
+     * @return the built string
+     */
+    [[nodiscard]] std::string str() const noexcept { // NOLINT: not static for API similarity
+        return {};
+    }
+};
+
+/**
+ * @brief a string_builder which builds a meaningful string only if `NDEBUG` is absent.
+ */
+#if defined(NDEBUG)
+using debug_string_builder = null_string_builder;
+#else
+using debug_string_builder = string_builder;
+#endif
+
+/**
  * @brief appends string representation of the given value.
  * @tparam T the value type
  * @param builder the target string builder
@@ -119,5 +162,23 @@ std::string operator<<(string_builder const& builder, string_builder::to_string_
 
 /// @copydoc operator<<(string_builder&, string_builder::to_string_t)
 std::string operator<<(string_builder&& builder, string_builder::to_string_t);
+
+/**
+ * @brief no-op.
+ * @tparam T the value type
+ * @return the string builder
+ */
+template<class T>
+constexpr null_string_builder operator<<(null_string_builder, T&&) {
+    return {};
+}
+
+/**
+ * @brief returns an empty string.
+ * @return an empty string
+ */
+inline std::string operator<<(null_string_builder, null_string_builder::to_string_t) {
+    return {};
+}
 
 } // namespace takatori::util
