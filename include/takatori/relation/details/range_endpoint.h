@@ -119,7 +119,7 @@ public:
     }
 
     /// @copydoc parent_element()
-    [[nodiscard]] [[nodiscard]] parent_type const* parent_element() const noexcept {
+    [[nodiscard]] parent_type const* parent_element() const noexcept {
         return parent_;
     }
 
