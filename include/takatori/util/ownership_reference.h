@@ -13,7 +13,7 @@ namespace takatori::util {
 
 /**
  * @brief reference of properties.
- * @details THis is designed for modifying polymorphic class objects in the same way.
+ * @details This is designed for modifying polymorphic class objects in the same way.
  * @tparam T the property type
  * @tparam D the deleter type
  */
