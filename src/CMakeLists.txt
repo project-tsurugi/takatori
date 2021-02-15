@@ -7,6 +7,7 @@ add_library(takatori
     takatori/type/bit.cpp
     takatori/type/time_of_day.cpp
     takatori/type/time_point.cpp
+    takatori/type/row_id.cpp
     takatori/type/declared.cpp
     takatori/type/extension.cpp
 
@@ -75,6 +76,7 @@ add_library(takatori
     takatori/relation/project.cpp
     takatori/relation/filter.cpp
     takatori/relation/buffer.cpp
+    takatori/relation/identify.cpp
 
     # relation - grouping operations for whole relation
     takatori/relation/intermediate/aggregate.cpp

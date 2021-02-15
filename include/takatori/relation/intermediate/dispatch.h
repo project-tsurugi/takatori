@@ -13,6 +13,7 @@
 #include "../project.h"
 #include "../filter.h"
 #include "../buffer.h"
+#include "../identify.h"
 #include "../emit.h"
 #include "../write.h"
 #include "../values.h"
@@ -55,6 +56,7 @@ inline auto dispatch_expression(Callback&& callback, E&& object, Args&&... args)
         case project::tag: return util::polymorphic_callback<project>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case filter::tag: return util::polymorphic_callback<filter>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case buffer::tag: return util::polymorphic_callback<buffer>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
+        case identify::tag: return util::polymorphic_callback<identify>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case emit::tag: return util::polymorphic_callback<emit>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case write::tag: return util::polymorphic_callback<write>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case values::tag: return util::polymorphic_callback<values>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);

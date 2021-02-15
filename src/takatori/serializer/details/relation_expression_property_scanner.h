@@ -7,6 +7,7 @@
 #include <takatori/relation/project.h>
 #include <takatori/relation/filter.h>
 #include <takatori/relation/buffer.h>
+#include <takatori/relation/identify.h>
 #include <takatori/relation/emit.h>
 #include <takatori/relation/write.h>
 #include <takatori/relation/values.h>
@@ -46,6 +47,7 @@ public:
     void operator()(relation::project const& element);
     void operator()(relation::filter const& element);
     void operator()(relation::buffer const& element);
+    void operator()(relation::identify const& element);
     void operator()(relation::emit const& element);
     void operator()(relation::write const& element);
     void operator()(relation::values const& element);

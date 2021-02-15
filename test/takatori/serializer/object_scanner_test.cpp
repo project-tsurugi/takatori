@@ -23,6 +23,7 @@
 #include <takatori/type/time_of_day.h>
 #include <takatori/type/time_point.h>
 #include <takatori/type/datetime_interval.h>
+#include <takatori/type/row_id.h>
 #include <takatori/type/declared.h>
 #include <takatori/type/extension.h>
 
@@ -46,6 +47,7 @@
 #include <takatori/relation/project.h>
 #include <takatori/relation/filter.h>
 #include <takatori/relation/buffer.h>
+#include <takatori/relation/identify.h>
 #include <takatori/relation/emit.h>
 #include <takatori/relation/write.h>
 #include <takatori/relation/values.h>
@@ -256,6 +258,10 @@ TEST_F(object_scanner_test, type_datetime_interval) {
 
 TEST_F(object_scanner_test, type_unknown) {
     print(type::unknown {});
+}
+
+TEST_F(object_scanner_test, type_row_id) {
+    print(type::row_id { 72 });
 }
 
 TEST_F(object_scanner_test, type_declared) {
@@ -488,6 +494,13 @@ TEST_F(object_scanner_test, relation_filter) {
 TEST_F(object_scanner_test, relation_buffer) {
     print(relation::buffer {
             3,
+    });
+}
+
+TEST_F(object_scanner_test, relation_identify) {
+    print(relation::identify {
+            vardesc(1),
+            type::row_id { 2 },
     });
 }
 

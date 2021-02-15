@@ -36,6 +36,8 @@ enum class expression_kind {
     filter,
     /// @brief distribute copy of relation into the multiple successors.
     buffer,
+    /// @brief adds a row ID column into relation.
+    identify,
 
     // grouping operations for whole relation
     /// @brief aggregates columns in relation.
@@ -123,6 +125,7 @@ constexpr inline std::string_view to_string_view(expression_kind value) noexcept
         case kind::project: return "project"sv;
         case kind::filter: return "filter"sv;
         case kind::buffer: return "buffer"sv;
+        case kind::identify: return "identify"sv;
         case kind::aggregate_relation: return "aggregate_relation"sv;
         case kind::distinct_relation: return "distinct_relation"sv;
         case kind::limit_relation: return "limit_relation"sv;
@@ -174,6 +177,7 @@ inline constexpr bool is_available_in_intermediate_plan(expression_kind value) {
         case kind::project:
         case kind::filter:
         case kind::buffer:
+        case kind::identify:
         case kind::aggregate_relation:
         case kind::distinct_relation:
         case kind::limit_relation:
@@ -220,6 +224,7 @@ inline constexpr bool is_available_in_step_plan(expression_kind value) {
         case kind::project:
         case kind::filter:
         case kind::buffer:
+        case kind::identify:
         case kind::emit:
         case kind::write:
         case kind::values:

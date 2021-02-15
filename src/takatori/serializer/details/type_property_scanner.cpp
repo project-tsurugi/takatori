@@ -83,6 +83,12 @@ void type_property_scanner::operator()(type::datetime_interval const&) {}
 
 void type_property_scanner::operator()(type::unknown const&) {}
 
+void type_property_scanner::operator()(type::row_id const& element) {
+    acceptor_.property_begin("sequence"sv);
+    acceptor_.unsigned_integer(element.sequence());
+    acceptor_.property_end();
+}
+
 void type_property_scanner::operator()(type::declared const& element) {
     acceptor_.property_begin("binding"sv);
     scanner_(element.binding(), acceptor_);

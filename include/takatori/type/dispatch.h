@@ -18,7 +18,7 @@
 // #include "array.h"
 // #include "record.h"
 // #include "row_reference.h"
-// #include "row_id.h"
+#include "row_id.h"
 #include "declared.h"
 #include "extension.h"
 
@@ -60,7 +60,7 @@ inline auto dispatch(Callback&& callback, data const& object, Args&&... args) {
 //        case record::tag: return util::polymorphic_callback<record>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case unknown::tag: return util::polymorphic_callback<unknown>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 //        case row_reference::tag: return util::polymorphic_callback<row_reference>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
-//        case row_id::tag: return util::polymorphic_callback<row_id>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case row_id::tag: return util::polymorphic_callback<row_id>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case declared::tag: return util::polymorphic_callback<declared>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case extension::tag: return util::polymorphic_callback<extension>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 

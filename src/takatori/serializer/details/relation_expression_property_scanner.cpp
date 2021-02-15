@@ -113,6 +113,16 @@ void relation_expression_property_scanner::operator()(relation::buffer const&) {
     // no special properties
 }
 
+void relation_expression_property_scanner::operator()(relation::identify const& element) {
+    acceptor_.property_begin("variable"sv);
+    accept(element.variable());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("type"sv);
+    accept(element.optional_type());
+    acceptor_.property_end();
+}
+
 void relation_expression_property_scanner::operator()(relation::emit const& element) {
     acceptor_.property_begin("columns"sv);
     accept_foreach(element.columns());

@@ -61,7 +61,7 @@ enum class type_kind {
     row_reference, // FIXME: impl
 
     /// @brief row ID type.
-    row_id, // FIXME: impl
+    row_id,
 
     /**
      * @brief declared type (a.k.a. user defined type).
