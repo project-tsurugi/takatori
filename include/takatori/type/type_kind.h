@@ -35,6 +35,8 @@ enum class type_kind {
     decimal,
     /// @brief character sequence type.
     character,
+    /// @brief octet sequence type.
+    octet,
     /// @brief bit sequence type.
     bit,
     /// @brief date type.
@@ -108,6 +110,7 @@ constexpr inline std::string_view to_string_view(type_kind value) noexcept {
         case kind::float8: return "float8"sv;
         case kind::decimal: return "decimal"sv;
         case kind::character: return "character"sv;
+        case kind::octet: return "octet"sv;
         case kind::bit: return "bit"sv;
         case kind::date: return "date"sv;
         case kind::time_of_day: return "time_of_day"sv;

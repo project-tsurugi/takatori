@@ -49,6 +49,18 @@ void type_property_scanner::operator()(type::character const& element) {
     acceptor_.property_end();
 }
 
+void type_property_scanner::operator()(type::octet const& element) {
+    acceptor_.property_begin("varying"sv);
+    acceptor_.boolean(element.varying());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("length"sv);
+    if (auto&& v = element.length()) {
+        acceptor_.unsigned_integer(*v);
+    }
+    acceptor_.property_end();
+}
+
 void type_property_scanner::operator()(type::bit const& element) {
     acceptor_.property_begin("varying"sv);
     acceptor_.boolean(element.varying());

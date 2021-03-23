@@ -4,6 +4,7 @@ add_library(takatori
     takatori/type/data.cpp
     takatori/type/decimal.cpp
     takatori/type/character.cpp
+    takatori/type/octet.cpp
     takatori/type/bit.cpp
     takatori/type/time_of_day.cpp
     takatori/type/time_point.cpp
