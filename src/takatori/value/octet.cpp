@@ -50,7 +50,20 @@ bool operator!=(octet const& a, octet const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, octet const& value) {
-    return out << "octet(" << value.get() << ")";
+    static constexpr std::array<char, 16> hex {
+            '0', '1', '2', '3',
+            '4', '5', '6', '7',
+            '8', '9', 'a', 'b',
+            'c', 'd', 'e', 'f',
+    };
+    out << "octet(";
+    for (auto c : value.get()) {
+        std::size_t v = static_cast<unsigned char>(c);
+        auto hi = static_cast<std::size_t>((v >> 4U) & 0x0fU);
+        auto lo = static_cast<std::size_t>(v & 0x0fU);
+        out << hex[hi] << hex[lo]; // NOLINT
+    }
+    return out << ")";
 }
 
 } // namespace takatori::value
