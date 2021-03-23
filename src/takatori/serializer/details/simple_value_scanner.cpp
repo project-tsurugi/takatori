@@ -38,6 +38,27 @@ void simple_value_scanner::operator()(value::character const& element) {
     acceptor_.string(element.get());
 }
 
+void simple_value_scanner::operator()(value::octet const& element) {
+    thread_local std::string buffer {};
+    static constexpr std::array<char, 16> hex {
+            '0', '1', '2', '3',
+            '4', '5', '6', '7',
+            '8', '9', 'a', 'b',
+            'c', 'd', 'e', 'f',
+    };
+    auto v = element.get();
+    buffer.resize(v.size() * 2, 0);
+    for (std::size_t i = 0, n = v.size(); i < n; ++i) {
+        std::size_t c = static_cast<unsigned char>(v[i]);
+        auto hi = static_cast<std::size_t>((c >> 4U) & 0x0fU);
+        auto lo = static_cast<std::size_t>(c & 0x0fU);
+        buffer[i * 2 + 0] = hex[hi]; // NOLINT
+        buffer[i * 2 + 1] = hex[lo]; // NOLINT
+    }
+    acceptor_.string(buffer);
+    buffer.clear();
+}
+
 void simple_value_scanner::operator()(value::bit const& element) {
     acceptor_.value(element.get());
 }

@@ -17,6 +17,7 @@ add_library(takatori
     takatori/value/data.cpp
     takatori/value/decimal.cpp
     takatori/value/character.cpp
+    takatori/value/octet.cpp
     takatori/value/bit.cpp
     takatori/value/date.cpp
     takatori/value/time_of_day.cpp

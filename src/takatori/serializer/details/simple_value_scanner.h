@@ -3,6 +3,7 @@
 #include <takatori/value/primitive.h>
 #include <takatori/value/decimal.h>
 #include <takatori/value/character.h>
+#include <takatori/value/octet.h>
 #include <takatori/value/bit.h>
 #include <takatori/value/date.h>
 #include <takatori/value/time_of_day.h>
@@ -25,6 +26,7 @@ public:
     void operator()(value::float8 const& element);
     void operator()(value::decimal const& element);
     void operator()(value::character const& element);
+    void operator()(value::octet const& element);
     void operator()(value::bit const& element);
     void operator()(value::date const& element);
     void operator()(value::time_of_day const& element);

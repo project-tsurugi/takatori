@@ -10,6 +10,7 @@
 #include "primitive.h"
 #include "decimal.h"
 #include "character.h"
+#include "octet.h"
 #include "bit.h"
 #include "date.h"
 #include "time_of_day.h"
@@ -48,6 +49,7 @@ inline auto dispatch(Callback&& callback, data const& object, Args&&... args) {
         case float8::tag: return util::polymorphic_callback<float8>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case decimal::tag: return util::polymorphic_callback<decimal>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case character::tag: return util::polymorphic_callback<character>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case octet::tag: return util::polymorphic_callback<octet>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case bit::tag: return util::polymorphic_callback<bit>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case date::tag: return util::polymorphic_callback<date>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case time_of_day::tag: return util::polymorphic_callback<time_of_day>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);

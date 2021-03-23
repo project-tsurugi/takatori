@@ -54,6 +54,16 @@ void value_property_scanner::operator()(value::character const& element) {
     simple_property(element, acceptor_);
 }
 
+void value_property_scanner::operator()(value::octet const& element) {
+    acceptor_.property_begin("value"sv);
+    acceptor_.array_begin();
+    for (auto c : element.get()) {
+        acceptor_.unsigned_integer(static_cast<unsigned char>(c));
+    }
+    acceptor_.array_end();
+    acceptor_.property_end();
+}
+
 void value_property_scanner::operator()(value::bit const& element) {
     acceptor_.property_begin("value"sv);
     acceptor_.array_begin();

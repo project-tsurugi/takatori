@@ -9,6 +9,7 @@
 #include <takatori/value/primitive.h>
 #include <takatori/value/decimal.h>
 #include <takatori/value/character.h>
+#include <takatori/value/octet.h>
 #include <takatori/value/bit.h>
 #include <takatori/value/date.h>
 #include <takatori/value/time_of_day.h>
@@ -18,6 +19,7 @@
 #include <takatori/type/primitive.h>
 #include <takatori/type/decimal.h>
 #include <takatori/type/character.h>
+#include <takatori/type/octet.h>
 #include <takatori/type/bit.h>
 #include <takatori/type/date.h>
 #include <takatori/type/time_of_day.h>
@@ -95,12 +97,14 @@ using namespace ::takatori::testing;
 
 class object_scanner_test : public ::testing::Test {
 public:
+    bool verbose { true };
+
     template<class T>
     void print(T const& element) {
         std::cout << ::testing::UnitTest::GetInstance()->current_test_info()->name() << ": ";
 
         json_printer printer { std::cout };
-        object_scanner scanner { true };
+        object_scanner scanner { verbose };
         scanner(element, printer);
 
         std::cout << std::endl;
@@ -178,6 +182,15 @@ TEST_F(object_scanner_test, value_character) {
     print(value::character { "\"Hello, world!\"" });
 }
 
+TEST_F(object_scanner_test, value_octet) {
+    print(value::octet { "Hello" });
+}
+
+TEST_F(object_scanner_test, value_octet_simple) {
+    verbose = false;
+    print(value::octet { "Hello" });
+}
+
 TEST_F(object_scanner_test, value_bit) {
     print(value::bit { "00001111" });
 }
@@ -234,6 +247,10 @@ TEST_F(object_scanner_test, type_decimal) {
 
 TEST_F(object_scanner_test, type_character) {
     print(type::character { type::varying, 16 });
+}
+
+TEST_F(object_scanner_test, type_octet) {
+    print(type::octet { 64 });
 }
 
 TEST_F(object_scanner_test, type_bit) {
