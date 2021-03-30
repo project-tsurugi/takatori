@@ -77,7 +77,10 @@ TEST_F(clonable_ptr_test, unique_ptr) {
     EXPECT_EQ(ptr.get(), raw);
 }
 
-TEST_F(clonable_ptr_test, unique_ptr_clone) {
+TEST_F(clonable_ptr_test, unique_ptr_move_clone) {
+    if (!util::object_creator_pmr_enabled) {
+        GTEST_SKIP();
+    }
     pmr::monotonic_buffer_resource resource;
     object_creator creator { &resource };
     auto smart = creator.create_unique<Obj>(100);
@@ -145,7 +148,7 @@ TEST_F(clonable_ptr_test, release) {
     auto raw = obj.get();
     EXPECT_EQ(obj->count(), 0);
 
-    std::unique_ptr<Obj, object_deleter> unique { obj.release(), obj.deleter() };
+    auto unique = obj.creator().wrap_unique(obj.release());
     ASSERT_FALSE(obj);
     EXPECT_EQ(unique.get(), raw);
 }

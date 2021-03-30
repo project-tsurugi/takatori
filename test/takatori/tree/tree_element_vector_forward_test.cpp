@@ -45,6 +45,9 @@ TEST_F(tree_element_vector_forward_test, move) {
 }
 
 TEST_F(tree_element_vector_forward_test, move_mismatch) {
+    if (!util::object_creator_pmr_enabled) {
+        GTEST_SKIP();
+    }
     int parent = 0;
     tree_element_vector<clonable> v { parent };
     v.emplace_back(100);

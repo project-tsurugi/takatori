@@ -980,7 +980,7 @@ private:
     }
 
     unique_object_ptr<value_type> wrap_unique(pointer ptr) noexcept {
-        return unique_object_ptr<value_type>(ptr, object_deleter(storage_.creator_));
+        return storage_.creator_.template wrap_unique<value_type>(ptr);
     }
 
     template<class U, class C>

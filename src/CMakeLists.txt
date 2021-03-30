@@ -196,6 +196,10 @@ else()
     )
 endif()
 
+if (ENABLE_PMR)
+    target_compile_definitions(takatori PUBLIC ENABLE_OBJECT_CREATOR_PMR)
+endif (ENABLE_PMR)
+
 if (USE_BOOST_MEMORY_RESOURCE)
     target_link_libraries(takatori PUBLIC Boost::container)
     target_compile_definitions(takatori PUBLIC USE_BOOST_MEMORY_RESOURCE)

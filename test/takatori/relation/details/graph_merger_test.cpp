@@ -109,6 +109,9 @@ TEST_F(graph_merger_test, move) {
 }
 
 TEST_F(graph_merger_test, move_copy) {
+    if (!util::object_creator_pmr_enabled) {
+        GTEST_SKIP();
+    }
     G g;
     auto* p1 = &g.insert(filter { constant(1) });
     auto* p2 = &g.insert(filter { constant(2) });

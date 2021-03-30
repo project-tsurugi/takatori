@@ -222,13 +222,7 @@ public:
      * @brief returns the creator.
      * @return the creator
      */
-    object_creator creator() const noexcept { return creator_; }
-
-    /**
-     * @brief returns the corresponded deleter.
-     * @return the corresponded deleter
-     */
-    object_deleter deleter() const noexcept { return creator_; }
+    [[nodiscard]] object_creator creator() const noexcept { return creator_; }
 
 private:
     pointer pointer_ {};

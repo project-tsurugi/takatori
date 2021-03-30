@@ -609,6 +609,9 @@ TEST_F(reference_vector_test, insert_unique) {
 }
 
 TEST_F(reference_vector_test, insert_unique_clone) {
+    if (!util::object_creator_pmr_enabled) {
+        GTEST_SKIP();
+    }
     pmr::monotonic_buffer_resource resource;
     object_creator custom { &resource };
 
@@ -701,6 +704,9 @@ TEST_F(reference_vector_test, push_back_unique) {
 }
 
 TEST_F(reference_vector_test, push_back_unique_clone) {
+    if (!util::object_creator_pmr_enabled) {
+        GTEST_SKIP();
+    }
     pmr::monotonic_buffer_resource resource;
     object_creator custom { &resource };
 
@@ -795,6 +801,9 @@ TEST_F(reference_vector_test, put_unique) {
 }
 
 TEST_F(reference_vector_test, put_unique_clone) {
+    if (!util::object_creator_pmr_enabled) {
+        GTEST_SKIP();
+    }
     pmr::monotonic_buffer_resource resource;
     object_creator custom { &resource };
 

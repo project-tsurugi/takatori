@@ -30,7 +30,7 @@ util::unique_object_ptr<std::remove_const_t<E>> forward(util::object_creator cre
 template<class E, class D>
 util::unique_object_ptr<E> forward(util::object_creator creator, std::unique_ptr<E, D>&& element) {
     if (!element) {
-        return { nullptr, util::object_deleter(creator) };
+        return creator.wrap_unique<E>(nullptr);
     }
     return util::clone_unique(std::move(element), creator);
 }

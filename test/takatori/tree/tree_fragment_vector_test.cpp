@@ -136,6 +136,7 @@ TEST_F(tree_fragment_vector_test, ctor_vector_creator) {
     EXPECT_EQ(v[2].parent_element(), &root);
 }
 
+#ifdef ENABLE_OBJECT_CREATOR_PMR
 TEST_F(tree_fragment_vector_test, ctor_vector_creator_compatible) {
     util::pmr::monotonic_buffer_resource resource;
 
@@ -183,6 +184,7 @@ TEST_F(tree_fragment_vector_test, ctor_vector_creator_incompatible) {
     EXPECT_EQ(v[1].parent_element(), &root);
     EXPECT_EQ(v[2].parent_element(), &root);
 }
+#endif // ENABLE_OBJECT_CREATOR_PMR
 
 TEST_F(tree_fragment_vector_test, ctor_initializer_list) {
     int root = -1;
@@ -634,7 +636,7 @@ TEST_F(tree_fragment_vector_test, release_elements) {
     auto r = v.release_elements();
 
     EXPECT_TRUE(v.empty());
-    EXPECT_EQ(v.get_object_creator(), util::object_creator(r.get_allocator().resource()));
+    EXPECT_EQ(v.get_object_creator(), util::object_creator(r.get_allocator()));
 
     ASSERT_EQ(r.size(), 3);
     EXPECT_EQ(r[0], 1);

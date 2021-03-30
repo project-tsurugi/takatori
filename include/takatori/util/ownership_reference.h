@@ -175,6 +175,6 @@ private:
  * @tparam T the property value type
  */
 template<class T>
-using object_ownership_reference = ownership_reference<T, object_deleter>;
+using object_ownership_reference = ownership_reference<T, object_creator::deleter_type<T>>;
 
 } // namespace takatori::util

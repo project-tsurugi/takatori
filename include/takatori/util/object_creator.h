@@ -15,6 +15,45 @@ namespace takatori::util {
 class object_creator;
 class object_deleter;
 
+#ifdef ENABLE_OBJECT_CREATOR_PMR
+/// @brief whether or not object_creator supports Polymorphic Memory Resource.
+static constexpr bool object_creator_pmr_enabled = true;
+
+/**
+ * @brief allocator type that compatible with object_creator.
+ */
+template<class T>
+using object_allocator = pmr::polymorphic_allocator<T>;
+
+/**
+ * @brief unique_ptr that created with object_creator.
+ * @tparam T the value type
+ * @see object_creator::create_unique()
+ * @see object_creator::wrap_unique()
+ */
+template<class T>
+using unique_object_ptr = std::unique_ptr<T, object_deleter>;
+#else
+/// @brief whether or not object_creator supports Polymorphic Memory Resource.
+static constexpr bool object_creator_pmr_enabled = false;
+
+/**
+ * @brief allocator type that compatible with object_creator.
+ */
+template<class T>
+using object_allocator = std::allocator<T>;
+
+/**
+ * @brief unique_ptr that created with object_creator.
+ * @tparam T the value type
+ * @see object_creator::create_unique()
+ * @see object_creator::wrap_unique()
+ */
+template<class T>
+using unique_object_ptr = std::unique_ptr<T, std::default_delete<T>>;
+#endif // ENABLE_OBJECT_CREATOR_PMR
+
+
 /**
  * @brief tests whether or not the target type supports copy construction with object_creator - T(T const&, object_creator).
  * @tparam T the target type
@@ -38,21 +77,6 @@ template<class T>
 constexpr inline bool is_move_constructible_with_object_creator_v = is_move_constructible_with_object_creator<T>::value;
 
 /**
- * @brief unique_ptr that created with object_creator.
- * @tparam T the value type
- * @see object_creator::create_unique()
- * @see object_creator::wrap_unique()
- */
-template<class T>
-using unique_object_ptr = std::unique_ptr<T, object_deleter>;
-
-/**
- * @brief allocator type that compatible with object_creator.
- */
-template<class T>
-using object_allocator = pmr::polymorphic_allocator<T>;
-
-/**
  * @brief creates and deletes objects.
  */
 class object_creator {
@@ -65,11 +89,19 @@ public:
     using allocator_type = object_allocator<T>;
 
     /**
+     * @brief the corresponded deleter type.
+     * @tparam T value type
+     */
+    template<class T>
+    using deleter_type = typename unique_object_ptr<T>::deleter_type;
+
+#ifdef ENABLE_OBJECT_CREATOR_PMR
+    /**
      * @brief creates a new instance.
      * @param resource the underlying memory resource
      */
-    constexpr object_creator(pmr::memory_resource* resource = get_standard_memory_resource()) noexcept // NOLINT
-        : resource_(resource)
+    constexpr object_creator(pmr::memory_resource* resource = get_standard_memory_resource()) noexcept : // NOLINT
+        resource_ { resource }
     {}
 
     /**
@@ -78,9 +110,30 @@ public:
      * @param allocator the polymorphic allocator
      */
     template<class T>
-    object_creator(allocator_type<T> const& allocator) noexcept // NOLINT
-        : object_creator(allocator.resource())
+    object_creator(allocator_type<T> const& allocator) noexcept : // NOLINT
+        object_creator {
+                allocator.resource(),
+        }
     {}
+#else
+    /**
+     * @brief creates a new instance.
+     */
+    constexpr object_creator() noexcept = default;
+
+    /**
+     * @brief creates a new instance.
+     * @attention in the current configuration, this will ignore the passed memory resource
+     */
+    constexpr object_creator(pmr::memory_resource*) noexcept {} // NOLINT
+
+    /**
+     * @brief creates a new instance.
+     * @tparam T the allocator value type (ignored)
+     */
+    template<class T>
+    constexpr object_creator(allocator_type<T> const&) noexcept {} // NOLINT
+#endif // ENABLE_OBJECT_CREATOR_PMR
 
     /**
      * @brief wraps an object crated by this into std::unique_ptr to delete it.
@@ -144,6 +197,7 @@ public:
      */
     template<class E, class D>
     [[nodiscard]] bool is_instance(std::unique_ptr<E, D> const& ptr) const noexcept {
+#ifdef ENABLE_OBJECT_CREATOR_PMR
         if constexpr (std::is_same_v<D, std::default_delete<E>> && !std::is_array_v<E>) { // NOLINT
             return resource_->is_equal(*get_standard_memory_resource());
         }
@@ -151,6 +205,10 @@ public:
             return ptr.get_deleter().creator() == *this;
         }
         return false;
+#else
+        (void) ptr;
+        return std::is_same_v<D, std::default_delete<E>> && !std::is_array_v<E>;
+#endif
     }
 
     /**
@@ -217,7 +275,11 @@ public:
      */
     template<class T>
     [[nodiscard]] void* allocate(std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t)) {
+#ifdef ENABLE_OBJECT_CREATOR_PMR
         return resource_->allocate(bytes, alignment);
+#else
+        return ::operator new(bytes, static_cast<std::align_val_t>(alignment));
+#endif // ENABLE_OBJECT_CREATOR_PMR
     }
 
     /**
@@ -228,7 +290,13 @@ public:
      */
     template<class T>
     void deallocate(void* pointer, std::size_t bytes = sizeof(T), std::size_t alignment = alignof(max_align_t)) {
+#ifdef ENABLE_OBJECT_CREATOR_PMR
         resource_->deallocate(pointer, bytes, alignment);
+#else
+        (void) bytes;
+        (void) alignment;
+        ::operator delete(pointer);
+#endif // ENABLE_OBJECT_CREATOR_PMR
     }
 
     /**
@@ -238,7 +306,11 @@ public:
      */
     template<class T = void>
     [[nodiscard]] allocator_type<T> allocator(std::in_place_type_t<T> = std::in_place_type<T>) const noexcept {
+#ifdef ENABLE_OBJECT_CREATOR_PMR
         return allocator_type<T>(resource_);
+#else
+        return {};
+#endif // ENABLE_OBJECT_CREATOR_PMR
     }
 
     /**
@@ -260,7 +332,9 @@ public:
     friend bool operator!=(object_creator a, object_creator b) noexcept;
 
 private:
+#ifdef ENABLE_OBJECT_CREATOR_PMR
     pmr::memory_resource* resource_;
+#endif // ENABLE_OBJECT_CREATOR_PMR
 };
 
 /**
@@ -268,6 +342,7 @@ private:
  */
 class object_deleter {
 public:
+#ifdef ENABLE_OBJECT_CREATOR_PMR
     /**
      * @brief creates a new instance.
      * @param creator the object creator
@@ -275,6 +350,12 @@ public:
     constexpr object_deleter(object_creator creator = {}) noexcept // NOLINT
         : creator_(creator)
     {}
+#else
+    /**
+     * @brief creates a new instance.
+     */
+    constexpr object_deleter(object_creator = {}) {} // NOLINT
+#endif // ENABLE_OBJECT_CREATOR_PMR
 
     /**
      * @brief destroys object and releases the underlying resource of it.
@@ -285,7 +366,7 @@ public:
     void operator()(T* object) {
         // NOTE: shared_ptr may pass nullptr
         if (object != nullptr) {
-            creator_.delete_object(object);
+            creator().delete_object(object);
         }
     }
 
@@ -293,8 +374,12 @@ public:
      * @brief returns the corresponded creator.
      * @return the corresponded creator
      */
-    [[nodiscard]] constexpr object_creator creator() const noexcept {
+    [[nodiscard]] constexpr object_creator creator() const noexcept { // NOLINT(readability-convert-member-functions-to-static)
+#ifdef ENABLE_OBJECT_CREATOR_PMR
         return creator_;
+#else
+        return {};
+#endif // ENABLE_OBJECT_CREATOR_PMR
     }
 
     /**
@@ -316,7 +401,9 @@ public:
     friend bool operator!=(object_deleter a, object_deleter b) noexcept;
 
 private:
+#ifdef ENABLE_OBJECT_CREATOR_PMR
     object_creator creator_;
+#endif // ENABLE_OBJECT_CREATOR_PMR
 };
 
 /**
@@ -327,12 +414,40 @@ object_creator standard_object_creator() noexcept;
 
 template<class T>
 inline unique_object_ptr<T> object_creator::wrap_unique(T* object) {
+#ifdef ENABLE_OBJECT_CREATOR_PMR
     return unique_object_ptr<T>(object, object_deleter { *this });
+#else
+    return unique_object_ptr<T>(object);
+#endif // ENABLE_OBJECT_CREATOR_PMR
 }
 
 template<class T>
 inline std::shared_ptr<T> object_creator::wrap_shared(T* object) {
-    return std::shared_ptr<T>(object, object_deleter { *this }, allocator<T>());
+#ifdef ENABLE_OBJECT_CREATOR_PMR
+    return std::shared_ptr<T> {
+            object,
+            object_deleter { *this },
+            allocator<T>(),
+    };
+#else
+    return std::shared_ptr<T> { object };
+#endif // ENABLE_OBJECT_CREATOR_PMR
+}
+
+/**
+ * @brief returns object_creator corresponded with the given deleter.
+ * @tparam T the deleter element type
+ * @param deleter the target deleter
+ * @return the related object creator
+ */
+template<class T = void>
+inline constexpr object_creator get_object_creator_from_deleter(object_creator::deleter_type<T> const& deleter) noexcept {
+#ifdef ENABLE_OBJECT_CREATOR_PMR
+    return deleter.creator();
+#else
+    (void) deleter;
+    return {};
+#endif // ENABLE_OBJECT_CREATOR_PMR
 }
 
 /// @cond IMPL_DEFS
@@ -340,11 +455,12 @@ namespace impl {
 
 template<class Allocator>
 struct allocator_compatibility_tester {
-    bool operator()(object_creator, Allocator const&) const noexcept {
+    constexpr bool operator()(object_creator, Allocator const&) const noexcept {
         return false;
     }
 };
 
+#ifdef ENABLE_OBJECT_CREATOR_PMR
 template<class T>
 struct allocator_compatibility_tester<std::allocator<T>> {
     bool operator()(object_creator creator, std::allocator<T> const&) const noexcept {
@@ -364,7 +480,15 @@ struct allocator_compatibility_tester<object_allocator<T>> {
         return creator == object_creator(allocator);
     }
 };
+#else
+template<class T>
+struct allocator_compatibility_tester<std::allocator<T>> {
+    constexpr bool operator()(object_creator, std::allocator<T> const&) const noexcept {
+        return !std::is_array_v<T>;
+    }
+};
 
+#endif // ENABLE_OBJECT_CREATOR_PMR
 } // namespace impl
 /// @endcond
 

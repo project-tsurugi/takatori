@@ -274,6 +274,9 @@ TEST_F(graph_test, insert_unique_ptr) {
 }
 
 TEST_F(graph_test, insert_unique_ptr_custom) {
+    if (!util::object_creator_pmr_enabled) {
+        GTEST_SKIP();
+    }
     util::pmr::monotonic_buffer_resource mbr;
     util::object_creator c { &mbr };
     auto v = c.create_unique<vertex>(10);
