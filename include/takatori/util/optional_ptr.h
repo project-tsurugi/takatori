@@ -403,13 +403,13 @@ template<class T, class U>
 inline constexpr bool operator==(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept {
     if (!a) return b.empty();
     if (!b) return false;
-    return *a == *b;
+    return a.get() == b.get() || *a == *b;
 }
 
 /// @copydoc operator==()
 template<class T, class U>
 inline constexpr bool operator==(optional_ptr<T> const& a, U const& b) noexcept {
-    return a && *a == b;
+    return a && (a.get() == std::addressof(b) || *a == b);
 }
 
 /// @copydoc operator==()
