@@ -6,11 +6,11 @@
 #include <utility>
 
 #include "descriptor_kind.h"
+#include "binding_info.h"
 
 #include <takatori/document/region.h>
 
 #include <takatori/util/hash.h>
-#include <takatori/util/object.h>
 #include <takatori/util/optional_ptr.h>
 
 namespace takatori::descriptor {
@@ -22,6 +22,9 @@ namespace takatori::descriptor {
 template<descriptor_kind Kind>
 class element {
 public:
+    /// @brief the entity type.
+    using entity_type = binding_info<Kind>;
+
     /// @brief the descriptor kind
     static constexpr inline descriptor_kind tag = Kind;
 
@@ -29,8 +32,8 @@ public:
      * @brief creates a new instance.
      * @param entity the entity
      */
-    explicit element(std::shared_ptr<util::object> entity) noexcept
-        : entity_(std::move(entity))
+    explicit element(std::shared_ptr<entity_type> entity) noexcept :
+        entity_ { std::move(entity) }
     {}
 
     /**
@@ -38,7 +41,7 @@ public:
      * @return the descriptor entity
      * @warning undefined behavior if the entity is absent
      */
-    [[nodiscard]] util::object& entity() const noexcept {
+    [[nodiscard]] entity_type& entity() const noexcept {
         return *entity_;
     }
 
@@ -47,7 +50,7 @@ public:
      * @return the descriptor entity
      * @return empty if the entity is absent
      */
-    [[nodiscard]] util::optional_ptr<util::object> optional_entity() const noexcept {
+    [[nodiscard]] util::optional_ptr<entity_type> optional_entity() const noexcept {
         return util::optional_ptr { entity_.get() };
     }
 
@@ -55,7 +58,7 @@ public:
      * @brief returns the descriptor entity.
      * @return the descriptor entity
      */
-    [[nodiscard]] std::shared_ptr<util::object> const& shared_entity() const noexcept {
+    [[nodiscard]] std::shared_ptr<entity_type> const& shared_entity() const noexcept {
         return entity_;
     }
 
@@ -73,7 +76,7 @@ public:
     }
 
 private:
-    std::shared_ptr<util::object> entity_;
+    std::shared_ptr<entity_type> entity_;
     document::region region_ {};
 };
 

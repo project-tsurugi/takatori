@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <utility>
 
-#include "value_object.h"
+#include "mock_binding_info.h"
 
 #include <takatori/descriptor/variable.h>
 #include <takatori/descriptor/relation.h>
@@ -15,35 +15,45 @@ namespace takatori::testing {
 
 template<class T, descriptor::descriptor_kind Kind>
 inline T const& value_of(descriptor::element<Kind> const& desc) {
-    return testing::value_object<T>::extract(desc.entity());
+    return mock_binding_info<Kind, T>::extract(desc.entity());
 }
 
+template<class Desc, class Value>
+using descriptor_binding_info = mock_binding_info<Desc::tag, Value>;
+
 inline descriptor::variable vardesc(int v) {
-    return descriptor::variable { std::make_shared<testing::value_object<int>>(v) };
+    using descriptor_type = descriptor::variable;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, int>>(v) };
 }
 
 inline descriptor::function funcdesc(int v) {
-    return descriptor::function { std::make_shared<testing::value_object<int>>(v) };
+    using descriptor_type = descriptor::function;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, int>>(v) };
 }
 
 inline descriptor::relation tabledesc(std::string_view name) {
-    return descriptor::relation { std::make_shared<testing::value_object<std::string>>(std::string {name}) };
+    using descriptor_type = descriptor::relation;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, std::string>>(std::string { name }) };
 }
 
 inline descriptor::relation exchangedesc(std::string_view name) {
-    return descriptor::relation { std::make_shared<testing::value_object<std::string>>(std::string {name}) };
+    using descriptor_type = descriptor::relation;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, std::string>>(std::string { name }) };
 }
 
 inline descriptor::variable columndesc(std::string_view name) {
-    return descriptor::variable { std::make_shared<testing::value_object<std::string>>(std::string {name}) };
+    using descriptor_type = descriptor::variable;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, std::string>>(std::string { name }) };
 }
 
 inline descriptor::aggregate_function aggdesc(std::string_view name) {
-    return descriptor::aggregate_function { std::make_shared<testing::value_object<std::string>>(std::string {name}) };
+    using descriptor_type = descriptor::aggregate_function;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, std::string>>(std::string { name }) };
 }
 
 inline descriptor::declared_type typedesc(std::string_view name) {
-    return descriptor::declared_type { std::make_shared<testing::value_object<std::string>>(std::string {name}) };
+    using descriptor_type = descriptor::declared_type;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, std::string>>(std::string { name }) };
 }
 
 } // namespace takatori::testing
