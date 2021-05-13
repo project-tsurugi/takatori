@@ -7,9 +7,8 @@
 namespace takatori::relation::step {
 
 take_cogroup::take_cogroup(
-        std::vector<group, util::object_allocator<group>> groups,
-        util::object_creator creator) noexcept
-    : output_(*this, 0, creator)
+        std::vector<group> groups) noexcept
+    : output_(*this, 0)
     , groups_(std::move(groups))
 {}
 
@@ -18,28 +17,26 @@ take_cogroup::take_cogroup(std::initializer_list<group> groups)
 {}
 
 
-take_cogroup::take_cogroup(take_cogroup const& other, util::object_creator creator)
+take_cogroup::take_cogroup(util::clone_tag_t, take_cogroup const& other)
     : take_cogroup(
-            decltype(groups_) { other.groups_, creator.allocator() },
-            creator)
+            decltype(groups_) { other.groups_ })
 {}
 
-take_cogroup::take_cogroup(take_cogroup&& other, util::object_creator creator)
+take_cogroup::take_cogroup(util::clone_tag_t, take_cogroup&& other)
     : take_cogroup(
-            decltype(groups_) { std::move(other.groups_), creator.allocator() },
-            creator)
+            decltype(groups_) { std::move(other.groups_) })
 {}
 
 expression_kind take_cogroup::kind() const noexcept {
     return tag;
 }
 
-take_cogroup* take_cogroup::clone(util::object_creator creator) const& {
-    return creator.create_object<take_cogroup>(*this, creator);
+take_cogroup* take_cogroup::clone() const& {
+    return new take_cogroup(util::clone_tag, *this); // NOLINT
 }
 
-take_cogroup* take_cogroup::clone(util::object_creator creator)&& {
-    return creator.create_object<take_cogroup>(std::move(*this), creator);
+take_cogroup* take_cogroup::clone()&& {
+    return new take_cogroup(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 
@@ -67,11 +64,11 @@ take_cogroup::output_port_type const& take_cogroup::output() const noexcept {
     return output_;
 }
 
-std::vector<take_cogroup::group, util::object_allocator<take_cogroup::group>>& take_cogroup::groups() noexcept {
+std::vector<take_cogroup::group>& take_cogroup::groups() noexcept {
     return groups_;
 }
 
-std::vector<take_cogroup::group, util::object_allocator<take_cogroup::group>> const& take_cogroup::groups() const noexcept {
+std::vector<take_cogroup::group> const& take_cogroup::groups() const noexcept {
     return groups_;
 }
 

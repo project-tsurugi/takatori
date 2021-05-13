@@ -12,12 +12,12 @@ type_kind time_of_day::kind() const noexcept {
     return tag;
 }
 
-time_of_day* time_of_day::clone(util::object_creator creator) const& {
-    return creator.create_object<time_of_day>(time_zone_);
+time_of_day* time_of_day::clone() const& {
+     return new time_of_day(time_zone_); // NOLINT
 }
 
-time_of_day* time_of_day::clone(util::object_creator creator) && {
-    return creator.create_object<time_of_day>(std::move(time_zone_));
+time_of_day* time_of_day::clone() && {
+     return new time_of_day(std::move(time_zone_)); // NOLINT
 }
 
 std::optional<datetime::time_zone> const& time_of_day::time_zone() const noexcept {

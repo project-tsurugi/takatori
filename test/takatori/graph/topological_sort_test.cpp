@@ -63,13 +63,13 @@ public:
         return outputs_;
     }
 
-    vertex* clone(util::object_creator creator) const& {
-        return creator.create_object<vertex>(value_, inputs_.size(), outputs_.size());
+    vertex* clone() const& {
+         return new vertex(value_, inputs_.size(), outputs_.size()); // NOLINT
     }
 
     /// @copydoc clone()
-    vertex* clone(util::object_creator creator) && {
-        return creator.create_object<vertex>(value_, inputs_.size(), outputs_.size());
+    vertex* clone() && {
+         return new vertex(value_, inputs_.size(), outputs_.size()); // NOLINT
     }
 
     void on_join(graph_type* graph) noexcept override {

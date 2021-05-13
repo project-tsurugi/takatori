@@ -14,12 +14,12 @@ value_kind time_of_day::kind() const noexcept {
     return tag;
 }
 
-time_of_day* time_of_day::clone(util::object_creator creator) const& {
-    return creator.create_object<time_of_day>(entity_);
+time_of_day* time_of_day::clone() const& {
+     return new time_of_day(entity_); // NOLINT
 }
 
-time_of_day* time_of_day::clone(util::object_creator creator) && {
-    return creator.create_object<time_of_day>(entity_);
+time_of_day* time_of_day::clone() && {
+     return new time_of_day(entity_); // NOLINT
 }
 
 std::ostream& operator<<(std::ostream& out, time_of_day const& value) {

@@ -8,8 +8,8 @@
 #include "expression_kind.h"
 #include "unary_operator.h"
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
@@ -32,7 +32,7 @@ public:
      */
     explicit unary(
             operator_kind_type operator_kind,
-            util::unique_object_ptr<expression> operand) noexcept;
+            std::unique_ptr<expression> operand) noexcept;
 
     /**
      * @brief creates a new object.
@@ -47,20 +47,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit unary(unary const& other, util::object_creator creator) noexcept;
+    explicit unary(util::clone_tag_t, unary const& other) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit unary(unary&& other, util::object_creator creator) noexcept;
+    explicit unary(util::clone_tag_t, unary&& other) noexcept;
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] unary* clone(util::object_creator creator) const& override;
-    [[nodiscard]] unary* clone(util::object_creator creator) && override;
+    [[nodiscard]] unary* clone() const& override;
+    [[nodiscard]] unary* clone() && override;
 
     /**
      * @brief returns the operator kind.
@@ -104,20 +102,20 @@ public:
      * @return the expression operand
      * @return empty if the operand is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_operand() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_operand() noexcept;
 
     /**
      * @brief sets the expression operand.
      * @param operand the replacement
      * @return this
      */
-    unary& operand(util::unique_object_ptr<expression> operand) noexcept;
+    unary& operand(std::unique_ptr<expression> operand) noexcept;
 
     /**
      * @brief returns ownership reference of the expression operand.
      * @return the expression operand
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_operand();
+    [[nodiscard]] util::ownership_reference<expression> ownership_operand();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -151,7 +149,7 @@ protected:
 
 private:
     operator_kind_type operator_kind_;
-    util::unique_object_ptr<expression> operand_;
+    std::unique_ptr<expression> operand_;
 };
 
 /**

@@ -39,7 +39,7 @@ public:
      */
     explicit constexpr bit(varying_t varying, std::optional<size_type> length = {}) noexcept
         : varying_(varying)
-        , length_(std::move(length))
+        , length_(length)
     {}
 
     ~bit() override = default;
@@ -49,8 +49,8 @@ public:
     bit& operator=(bit&& other) noexcept = delete;
 
     [[nodiscard]] type_kind kind() const noexcept override;
-    [[nodiscard]] bit* clone(util::object_creator creator) const& override;
-    [[nodiscard]] bit* clone(util::object_creator creator) && override;
+    [[nodiscard]] bit* clone() const& override;
+    [[nodiscard]] bit* clone() && override;
 
     /**
      * @brief returns whether or not this bit sequence can vary its length.
@@ -106,8 +106,6 @@ protected:
 private:
     bool varying_;
     std::optional<size_type> length_;
-
-    friend class util::object_creator;
 };
 
 template<> struct type_of<bit::tag> : util::meta_type<bit> {};

@@ -69,13 +69,12 @@ public:
 
     /**
      * @brief returns a clone of this object.
-     * @param creator the object creator
      * @return the created clone
      */
-    [[nodiscard]] virtual step* clone(util::object_creator creator) const& = 0;
+    [[nodiscard]] virtual step* clone() const& = 0;
 
     /// @copydoc clone()
-    [[nodiscard]] virtual step* clone(util::object_creator creator) && = 0;
+    [[nodiscard]] virtual step* clone() && = 0;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

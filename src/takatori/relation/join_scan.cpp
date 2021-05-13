@@ -14,13 +14,12 @@ namespace takatori::relation {
 join_scan::join_scan(
         operator_kind_type operator_kind,
         descriptor::relation source,
-        std::vector<column, util::object_allocator<column>> columns,
+        std::vector<column> columns,
         endpoint lower,
         endpoint upper,
-        util::unique_object_ptr<scalar::expression> condition,
-        util::object_creator creator) noexcept
-    : left_(*this, 0, creator)
-    , output_(*this, 0, creator)
+        std::unique_ptr<scalar::expression> condition) noexcept
+    : left_(*this, 0)
+    , output_(*this, 0)
     , operator_kind_(operator_kind)
     , source_(std::move(source))
     , columns_(std::move(columns))
@@ -45,26 +44,24 @@ join_scan::join_scan(
             util::clone_unique(condition))
 {}
 
-join_scan::join_scan(join_scan const& other, util::object_creator creator)
+join_scan::join_scan(util::clone_tag_t, join_scan const& other)
     : join_scan(
             other.operator_kind_,
             other.source_,
-            { other.columns_, creator.allocator() },
-            endpoint { other.lower_, creator },
-            endpoint { other.upper_, creator },
-            tree::forward(creator, other.condition_),
-            creator)
+            { other.columns_ },
+            endpoint { util::clone_tag, other.lower_ },
+            endpoint { util::clone_tag, other.upper_ },
+            tree::forward(other.condition_))
 {}
 
-join_scan::join_scan(join_scan&& other, util::object_creator creator)
+join_scan::join_scan(util::clone_tag_t, join_scan&& other)
     : join_scan(
             other.operator_kind_,
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator() },
-            endpoint { std::move(other.lower_), creator },
-            endpoint { std::move(other.upper_), creator },
-            tree::forward(creator, std::move(other.condition_)),
-            creator)
+            { std::move(other.columns_) },
+            endpoint { util::clone_tag, std::move(other.lower_) },
+            endpoint { util::clone_tag, std::move(other.upper_) },
+            tree::forward(std::move(other.condition_)))
 {}
 
 expression_kind join_scan::kind() const noexcept {
@@ -87,12 +84,12 @@ util::sequence_view<join_scan::output_port_type const> join_scan::output_ports()
     return util::sequence_view { std::addressof(output_) };
 }
 
-join_scan* join_scan::clone(util::object_creator creator) const& {
-    return creator.create_object<join_scan>(*this, creator);
+join_scan* join_scan::clone() const& {
+    return new join_scan(util::clone_tag, *this); // NOLINT
 }
 
-join_scan* join_scan::clone(util::object_creator creator)&& {
-    return creator.create_object<join_scan>(std::move(*this), creator);
+join_scan* join_scan::clone()&& {
+    return new join_scan(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 join_scan::input_port_type& join_scan::left() noexcept {
@@ -128,11 +125,11 @@ descriptor::relation const& join_scan::source() const noexcept {
     return source_;
 }
 
-std::vector<join_scan::column, util::object_allocator<join_scan::column>>& join_scan::columns() noexcept {
+std::vector<join_scan::column>& join_scan::columns() noexcept {
     return columns_;
 }
 
-std::vector<join_scan::column, util::object_allocator<join_scan::column>> const& join_scan::columns() const noexcept {
+std::vector<join_scan::column> const& join_scan::columns() const noexcept {
     return columns_;
 }
 
@@ -160,15 +157,15 @@ util::optional_ptr<scalar::expression const> join_scan::condition() const noexce
     return util::optional_ptr { condition_.get() };
 }
 
-util::unique_object_ptr<scalar::expression> join_scan::release_condition() noexcept {
+std::unique_ptr<scalar::expression> join_scan::release_condition() noexcept {
     return tree::release_element(std::move(condition_));
 }
 
-join_scan& join_scan::condition(util::unique_object_ptr<scalar::expression> condition) noexcept {
+join_scan& join_scan::condition(std::unique_ptr<scalar::expression> condition) noexcept {
     return tree::assign_element(*this, condition_, std::move(condition));
 }
 
-util::object_ownership_reference<scalar::expression> join_scan::ownership_condition() noexcept {
+util::ownership_reference<scalar::expression> join_scan::ownership_condition() noexcept {
     return tree::ownership_element(*this, condition_);
 }
 

@@ -5,28 +5,23 @@
 
 namespace takatori::relation {
 
-buffer::buffer(
-        size_type size,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , outputs_(decltype(outputs_)::allocator_type(creator.allocator<decltype(outputs_)::value_type>()))
+buffer::buffer(size_type size)
+    : input_ { *this, 0 }
 {
     outputs_.reserve(size);
     for (size_type i = 0; i < size; ++i) {
-        outputs_.emplace_back(*this, i, creator);
+        outputs_.emplace_back(*this, i);
     }
 }
 
-buffer::buffer(buffer const& other, util::object_creator creator)
+buffer::buffer(util::clone_tag_t, buffer const& other)
     : buffer(
-            other.outputs_.size(),
-            creator)
+            other.outputs_.size())
 {}
 
-buffer::buffer(buffer&& other, util::object_creator creator)
+buffer::buffer(util::clone_tag_t, buffer&& other)
     : buffer(
-            other.outputs_.size(),
-            creator)
+            other.outputs_.size())
 {}
 
 expression_kind buffer::kind() const noexcept {
@@ -49,12 +44,12 @@ util::sequence_view<buffer::output_port_type const> buffer::output_ports() const
     return util::sequence_view { outputs_ };
 }
 
-buffer* buffer::clone(util::object_creator creator) const& {
-    return creator.create_object<buffer>(*this, creator);
+buffer* buffer::clone() const& {
+    return new buffer(util::clone_tag, *this); // NOLINT
 }
 
-buffer* buffer::clone(util::object_creator creator)&& {
-    return creator.create_object<buffer>(std::move(*this), creator);
+buffer* buffer::clone()&& {
+    return new buffer(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 buffer::input_port_type& buffer::input() noexcept {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -10,8 +11,8 @@
 
 #include <takatori/tree/tree_element_vector.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/reference_vector.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 
@@ -41,20 +42,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit coalesce(coalesce const& other, util::object_creator creator);
+    explicit coalesce(util::clone_tag_t, coalesce const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit coalesce(coalesce&& other, util::object_creator creator);
+    explicit coalesce(util::clone_tag_t, coalesce&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] coalesce* clone(util::object_creator creator) const& override;
-    [[nodiscard]] coalesce* clone(util::object_creator creator) && override;
+    [[nodiscard]] coalesce* clone() const& override;
+    [[nodiscard]] coalesce* clone() && override;
 
     /**
      * @brief returns the alternative expressions.

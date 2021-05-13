@@ -15,24 +15,24 @@ coalesce::coalesce(std::initializer_list<util::rvalue_reference_wrapper<expressi
     : coalesce({ alternatives.begin(), alternatives.end() })
 {}
 
-coalesce::coalesce(coalesce const& other, util::object_creator creator)
-    : coalesce(tree::forward(creator, other.alternatives_))
+coalesce::coalesce(util::clone_tag_t, coalesce const& other)
+    : coalesce(tree::forward(other.alternatives_))
 {}
 
-coalesce::coalesce(coalesce&& other, util::object_creator creator)
-    : coalesce(tree::forward(creator, std::move(other.alternatives_)))
+coalesce::coalesce(util::clone_tag_t, coalesce&& other)
+    : coalesce(tree::forward(std::move(other.alternatives_)))
 {}
 
 expression_kind coalesce::kind() const noexcept {
     return tag;
 }
 
-coalesce* coalesce::clone(util::object_creator creator) const& {
-    return creator.create_object<coalesce>(*this, creator);
+coalesce* coalesce::clone() const& {
+    return new coalesce(util::clone_tag, *this); // NOLINT
 }
 
-coalesce* coalesce::clone(util::object_creator creator) && {
-    return creator.create_object<coalesce>(std::move(*this), creator);
+coalesce* coalesce::clone() && {
+    return new coalesce(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 tree::tree_element_vector<expression>& coalesce::alternatives() noexcept {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -9,7 +10,6 @@
 
 #include <takatori/descriptor/variable.h>
 
-#include <takatori/util/object_creator.h>
 #include <takatori/util/reference_vector.h>
 #include <takatori/util/sequence_view.h>
 
@@ -33,8 +33,8 @@ public:
     exchange(exchange&& other) noexcept = delete;
     exchange& operator=(exchange&& other) noexcept = delete;
 
-    [[nodiscard]] exchange* clone(util::object_creator creator) const& override = 0;
-    [[nodiscard]] exchange* clone(util::object_creator creator) && override = 0;
+    [[nodiscard]] exchange* clone() const& override = 0;
+    [[nodiscard]] exchange* clone() && override = 0;
 
     /**
      * @brief returns the columns which this exchange accepts from the upstream processes.
@@ -169,16 +169,15 @@ public:
 protected:
     /**
      * @brief creates a new object.
-     * @param creator the object creator for internal elements
      */
-    explicit exchange(util::object_creator creator = {}) noexcept;
+    explicit exchange() noexcept = default;
 
     [[nodiscard]] bool equals(step const& other) const noexcept override = 0;
     std::ostream& print_to(std::ostream& out) const override = 0;
 
 private:
-    std::vector<process*, util::object_allocator<process*>> upstreams_;
-    std::vector<process*, util::object_allocator<process*>> downstreams_;
+    std::vector<process*> upstreams_;
+    std::vector<process*> downstreams_;
 
     void internal_add_upstream(process& upstream);
     void internal_remove_upstream(process& upstream) noexcept;

@@ -20,14 +20,6 @@ TEST_F(forward_test, simple) {
     EXPECT_EQ(s.limit(), std::nullopt);
 }
 
-TEST_F(forward_test, creator) {
-    forward s { util::object_creator {} };
-    EXPECT_EQ(s.columns().size(), 0);
-    EXPECT_EQ(s.input_columns().size(), 0);
-    EXPECT_EQ(s.output_columns().size(), 0);
-    EXPECT_EQ(s.limit(), std::nullopt);
-}
-
 TEST_F(forward_test, limits) {
     forward s { 100 };
     EXPECT_EQ(s.columns().size(), 0);

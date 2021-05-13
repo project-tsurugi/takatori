@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "../endpoint_kind.h"
@@ -10,8 +11,8 @@
 
 #include <takatori/descriptor/relation.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 
 namespace takatori::relation::details {
@@ -39,20 +40,12 @@ public:
     range_endpoint() = default;
 
     /**
-     * @brief creates a new instance which represents unbound end-point.
-     * @param creator the object creator
-     */
-    explicit range_endpoint(util::object_creator creator) noexcept
-        : keys_(nullptr, creator)
-    {}
-
-    /**
      * @brief creates a new instance.
      * @param keys pieces of key to point to target row
      * @param kind the end-point kind
      */
     range_endpoint(
-            std::vector<key, util::object_allocator<key>> keys,
+            std::vector<key> keys,
             kind_type kind) noexcept
         : keys_(nullptr, std::move(keys))
         , kind_(kind)
@@ -90,22 +83,20 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit range_endpoint(range_endpoint const& other, util::object_creator creator)
+    explicit range_endpoint(util::clone_tag_t, range_endpoint const& other)
         : range_endpoint(
-                tree::forward(creator, other.keys_),
+                tree::forward(other.keys_),
                 other.kind_)
     {}
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit range_endpoint(range_endpoint&& other, util::object_creator creator)
+    explicit range_endpoint(util::clone_tag_t, range_endpoint&& other)
         : range_endpoint(
-                tree::forward(creator, std::move(other.keys_)),
+                tree::forward(std::move(other.keys_)),
                 other.kind_)
     {}
 

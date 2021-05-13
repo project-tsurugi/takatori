@@ -81,10 +81,9 @@ public:
     /**
      * @brief constructs a new object.
      * @param parent the parent element
-     * @param creator the object creator
      */
-    explicit tree_element_vector(util::optional_ptr<parent_type> parent, util::object_creator creator = {}) noexcept
-        : parent_(std::move(parent)), elements_(creator)
+    explicit tree_element_vector(util::optional_ptr<parent_type> parent) noexcept
+        : parent_ { std::move(parent) }
     {}
 
     /**
@@ -272,7 +271,6 @@ public:
 
     /**
      * @brief inserts the given element.
-     * @attention the element must be created by an this container's equivalent object_creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param position the insertion position
@@ -289,7 +287,6 @@ public:
 
     /**
      * @brief appends the given element into the tail of this.
-     * @attention the element must be created by an this container's equivalent object_creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param element the source element
@@ -334,7 +331,6 @@ public:
 
     /**
      * @brief replaces an existing element with the given element.
-     * @attention the element must be created by an this container's equivalent object_creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param position the target element position
@@ -369,7 +365,7 @@ public:
      * @param position the target position
      * @return a pair of the removed element, and the next position of the released element
      */
-    [[nodiscard]] std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position) noexcept {
+    [[nodiscard]] std::pair<std::unique_ptr<value_type>, iterator> release(const_iterator position) noexcept {
         auto result = elements_.release(position);
         if (auto&& p = std::get<0>(result)) {
             unbless(*p);
@@ -398,7 +394,7 @@ public:
      * @return the removed element
      * @warning undefined behavior if this is empty
      */
-    [[nodiscard]] util::unique_object_ptr<value_type> release_back() noexcept {
+    [[nodiscard]] std::unique_ptr<value_type> release_back() noexcept {
         auto result = elements_.release_back();
         if (result) {
             unbless(*result);
@@ -420,7 +416,6 @@ public:
 
     /**
      * @brief replaces an existing element with the given element, and returns the existing.
-     * @attention the element must be created by an this container's equivalent object_creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param position the target element position
@@ -430,7 +425,7 @@ public:
     template<class U, class D>
     [[nodiscard]] std::enable_if_t<
             std::is_convertible_v<U&, reference>,
-            util::unique_object_ptr<value_type>>
+            std::unique_ptr<value_type>>
     exchange(const_iterator position, std::unique_ptr<U, D> element) noexcept {
         auto index = static_cast<size_type>(std::distance(cbegin(), position));
         auto result = elements_.exchange(position, std::move(element));
@@ -449,8 +444,8 @@ public:
      * @param position the target position
      * @return the element on the given position
      */
-    [[nodiscard]] util::object_ownership_reference<value_type> ownership(const_iterator position) {
-        using ownership_ref = util::object_ownership_reference<value_type>;
+    [[nodiscard]] util::ownership_reference<value_type> ownership(const_iterator position) {
+        using ownership_ref = util::ownership_reference<value_type>;
         return ownership_ref {
                 [position, this]() -> typename ownership_ref::pointer {
                     return std::addressof(at(static_cast<size_type>(position - cbegin())));
@@ -542,14 +537,6 @@ public:
         std::swap(elements_, other.elements_);
     }
 
-    /**
-     * @brief returns the object creator to create/delete objects in this container.
-     * @return the object creator for this container
-     */
-    [[nodiscard]] util::object_creator get_object_creator() const noexcept {
-        return elements_.get_object_creator();
-    }
-
 private:
     util::optional_ptr<parent_type> parent_;
     entity_type elements_ {};
@@ -558,13 +545,13 @@ private:
     void unbless(reference element) { unbless_element(element); }
 
     void bless() {
-        for (auto&& e : elements_) {
+        for (value_type& e : elements_) {
             bless(e);
         }
     }
 
     void unbless() {
-        for (auto&& e : elements_) {
+        for (value_type& e : elements_) {
             unbless(e);
         }
     }

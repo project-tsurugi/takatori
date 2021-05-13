@@ -18,11 +18,11 @@ immediate::immediate(value::data&& value, type::data&& type)
             util::clone_shared(std::move(type)))
 {}
 
-immediate::immediate(immediate const& other, util::object_creator) noexcept
+immediate::immediate(util::clone_tag_t, immediate const& other) noexcept
     : immediate(other.value_, other.type_)
 {}
 
-immediate::immediate(immediate&& other, util::object_creator) noexcept
+immediate::immediate(util::clone_tag_t, immediate&& other) noexcept
     : immediate(std::move(other.value_), std::move(other.type_))
 {}
 
@@ -30,12 +30,12 @@ expression_kind immediate::kind() const noexcept {
     return tag;
 }
 
-immediate* immediate::clone(util::object_creator creator) const& {
-    return creator.create_object<immediate>(*this, creator);
+immediate* immediate::clone() const& {
+    return new immediate(util::clone_tag, *this); // NOLINT
 }
 
-immediate* immediate::clone(util::object_creator creator) && {
-    return creator.create_object<immediate>(std::move(*this), creator);
+immediate* immediate::clone() && {
+    return new immediate(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 value::data const& immediate::value() const noexcept {

@@ -10,10 +10,9 @@
 namespace takatori::relation {
 
 values::values(
-        std::vector<column, util::object_allocator<column>> columns,
-        std::vector<row, util::object_allocator<row>> rows,
-        util::object_creator creator) noexcept :
-    output_ { *this, 0, creator },
+        std::vector<column> columns,
+        std::vector<row> rows) noexcept :
+    output_ { *this, 0 },
     columns_ { std::move(columns) },
     rows_ { *this, std::move(rows) }
 {}
@@ -32,19 +31,17 @@ values::values(
     }
 }
 
-values::values(values const& other, util::object_creator creator) :
+values::values(util::clone_tag_t, values const& other) :
     values {
-            { other.columns_, creator.allocator() },
-            tree::forward(creator, other.rows_),
-            creator,
+            { other.columns_ },
+            tree::forward(other.rows_),
     }
 {}
 
-values::values(values&& other, util::object_creator creator) :
+values::values(util::clone_tag_t, values&& other) :
     values {
-            { std::move(other.columns_), creator.allocator() },
-            tree::forward(creator, std::move(other.rows_)),
-            creator,
+            { std::move(other.columns_) },
+            tree::forward(std::move(other.rows_)),
     }
 {}
 
@@ -52,12 +49,12 @@ expression_kind values::kind() const noexcept {
     return tag;
 }
 
-values* values::clone(util::object_creator creator) const& {
-    return creator.create_object<values>(*this, creator);
+values* values::clone() const& {
+    return new values(util::clone_tag, *this); // NOLINT
 }
 
-values* values::clone(util::object_creator creator)&& {
-    return creator.create_object<values>(std::move(*this), creator);
+values* values::clone()&& {
+    return new values(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 
@@ -85,11 +82,11 @@ values::output_port_type const& values::output() const noexcept {
     return output_;
 }
 
-std::vector<values::column, util::object_allocator<values::column>>& values::columns() noexcept {
+std::vector<values::column>& values::columns() noexcept {
     return columns_;
 }
 
-std::vector<values::column, util::object_allocator<values::column>> const& values::columns() const noexcept {
+std::vector<values::column> const& values::columns() const noexcept {
     return columns_;
 }
 

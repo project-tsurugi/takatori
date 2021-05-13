@@ -1,14 +1,14 @@
 #pragma once
 
-#include <ostream>
 #include <initializer_list>
+#include <memory>
+#include <ostream>
 #include <vector>
 
 #include <takatori/descriptor/relation.h>
+#include <takatori/util/clone_tag.h>
 
 #include "mapping_element.h"
-
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::details {
 
@@ -31,7 +31,7 @@ public:
      */
     explicit cogroup_element(
             descriptor::relation source,
-            std::vector<column, util::object_allocator<column>> columns,
+            std::vector<column> columns,
             bool mandatory = false) noexcept;
 
     /**
@@ -51,16 +51,14 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit cogroup_element(cogroup_element const& other, util::object_creator creator);
+    explicit cogroup_element(util::clone_tag_t, cogroup_element const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit cogroup_element(cogroup_element&& other, util::object_creator creator);
+    explicit cogroup_element(util::clone_tag_t, cogroup_element&& other);
 
     /**
      * @brief returns the source relation, must be refer the source exchange.
@@ -75,10 +73,10 @@ public:
      * @brief returns the column mappings, from the upstream exchange to output relation.
      * @return the column mappings
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not this group is mandatory.
@@ -97,7 +95,7 @@ public:
 
 private:
     descriptor::relation source_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<column> columns_;
     bool mandatory_;
 };
 

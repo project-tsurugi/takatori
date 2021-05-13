@@ -17,27 +17,23 @@ using ::takatori::util::string_builder;
 
 void merge_into(
         graph_type const& source,
-        graph_type& destination,
-        util::object_creator creator) {
-    details::graph_merger merger { destination, creator };
+        graph_type& destination) {
+    details::graph_merger merger { destination };
     merger.add(source);
     merger.resolve();
 }
 
 void merge_into(
         graph_type&& source,
-        graph_type& destination,
-        util::object_creator creator) {
-    details::graph_merger merger { destination, creator };
+        graph_type& destination) {
+    details::graph_merger merger { destination };
     merger.add(std::move(source));
     merger.resolve();
 }
 
 graph_type release(graph_type& source, util::sequence_view<expression const*> elements) {
-    graph_type results { source.get_object_creator() };
-    std::vector<expression*, util::object_allocator<expression*>> migrated {
-            source.get_object_creator().template allocator<expression*>(),
-    };
+    graph_type results {};
+    std::vector<expression*> migrated {};
     migrated.reserve(elements.size());
 
     // migrate all elements in the source graph
@@ -166,20 +162,20 @@ void enumerate_downstream(expression const& expr, const_consumer_type const& con
     downstreams0(expr, consumer);
 }
 
-void sort_from_upstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
-    topological_sort<upstream_enumerator>(g, consumer, creator);
+void sort_from_upstream(graph_type& g, consumer_type const& consumer) {
+    topological_sort<upstream_enumerator>(g, consumer);
 }
 
-void sort_from_upstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
-    topological_sort<upstream_enumerator>(g, consumer, creator);
+void sort_from_upstream(graph_type const& g, const_consumer_type const& consumer) {
+    topological_sort<upstream_enumerator>(g, consumer);
 }
 
-void sort_from_downstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
-    topological_sort<downstream_enumerator>(g, consumer, creator);
+void sort_from_downstream(graph_type& g, consumer_type const& consumer) {
+    topological_sort<downstream_enumerator>(g, consumer);
 }
 
-void sort_from_downstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
-    topological_sort<downstream_enumerator>(g, consumer, creator);
+void sort_from_downstream(graph_type const& g, const_consumer_type const& consumer) {
+    topological_sort<downstream_enumerator>(g, consumer);
 }
 
 } // namespace takatori::relation

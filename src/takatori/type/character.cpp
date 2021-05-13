@@ -8,12 +8,12 @@ type_kind character::kind() const noexcept {
     return tag;
 }
 
-character* character::clone(util::object_creator creator) const& {
-    return creator.create_object<character>(varying_t { varying_ }, length_);
+character* character::clone() const& {
+     return new character(varying_t { varying_ }, length_); // NOLINT
 }
 
-character* character::clone(util::object_creator creator) && {
-    return creator.create_object<character>(varying_t { varying_ }, std::move(length_));
+character* character::clone() && {
+     return new character(varying_t { varying_ }, std::move(length_)); // NOLINT
 }
 
 bool operator==(character const& a, character const& b) noexcept {

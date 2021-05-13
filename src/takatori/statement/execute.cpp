@@ -4,30 +4,30 @@
 
 namespace takatori::statement {
 
-execute::execute(plan::graph_type&& execution_plan) noexcept
-    : execution_plan_(std::move(execution_plan))
+execute::execute(plan::graph_type&& execution_plan) noexcept :
+    execution_plan_ { std::move(execution_plan) }
 {}
 
-execute::execute(execute const& other, util::object_creator creator) noexcept
-    : execute(plan::graph_type { creator })
+execute::execute(util::clone_tag_t, execute const& other) noexcept :
+    execute {}
 {
-    merge_into(other.execution_plan_, execution_plan_, creator);
+    merge_into(other.execution_plan_, execution_plan_);
 }
 
-execute::execute(execute&& other, util::object_creator) noexcept
-    : execute(std::move(other.execution_plan_))
+execute::execute(util::clone_tag_t, execute&& other) noexcept :
+    execute { std::move(other.execution_plan_) }
 {}
 
 statement_kind execute::kind() const noexcept {
     return tag;
 }
 
-execute* execute::clone(util::object_creator creator) const& {
-    return creator.create_object<execute>(*this, creator);
+execute* execute::clone() const& {
+    return new execute(util::clone_tag, *this); // NOLINT
 }
 
-execute* execute::clone(util::object_creator creator) && {
-    return creator.create_object<execute>(std::move(*this), creator);
+execute* execute::clone() && {
+    return new execute(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 plan::graph_type& execute::execution_plan() noexcept {

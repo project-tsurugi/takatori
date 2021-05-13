@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <optional>
 #include <utility>
@@ -13,7 +14,7 @@
 #include <takatori/relation/sort_direction.h>
 #include <takatori/relation/details/sort_key_element.h>
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 
 namespace takatori::plan {
 
@@ -53,27 +54,18 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param creator the object creator for internal elements
-     * @note the created object does not have any exchange columns, please define them using columns()
-     */
-    explicit group(util::object_creator creator) noexcept;
-
-    /**
-     * @brief creates a new object.
      * @param columns the exchange columns
      * @param group_keys the group key columns: each column must also appear in the exchange columns
      * @param sort_keys the sort key elements: each column must also appear in the exchange columns, but not in group key columns
      * @param limit the max number of rows in each group
      * @param mode the group mode of this exchange operation
-     * @param creator the object creator for internal elements
      */
     explicit group(
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns,
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-            std::vector<sort_key, util::object_allocator<sort_key>> sort_keys = {},
+            std::vector<descriptor::variable> columns,
+            std::vector<descriptor::variable> group_keys,
+            std::vector<sort_key> sort_keys = {},
             std::optional<size_type> limit = {},
-            mode_type mode = mode_default,
-            util::object_creator creator = {}) noexcept;
+            mode_type mode = mode_default) noexcept;
 
     /**
      * @brief creates a new object.
@@ -94,21 +86,19 @@ public:
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit group(group const& other, util::object_creator creator);
+    explicit group(util::clone_tag_t, group const& other);
 
     /**
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit group(group&& other, util::object_creator creator);
+    explicit group(util::clone_tag_t, group&& other);
 
     [[nodiscard]] step_kind kind() const noexcept override;
-    [[nodiscard]] group* clone(util::object_creator creator) const& override;
-    [[nodiscard]] group* clone(util::object_creator creator) && override;
+    [[nodiscard]] group* clone() const& override;
+    [[nodiscard]] group* clone() && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
@@ -117,20 +107,20 @@ public:
      * @brief returns the columns to exchange.
      * @return the columns to exchange
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& columns() const noexcept;
 
     /**
      * @brief returns the group key columns.
      * @details each group key column must also appear in the columns(), but not appear in sort_keys().
      * @return the group key columns.
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& group_keys() noexcept;
 
     /// @copydoc group_keys()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& group_keys() const noexcept;
 
     /**
      * @brief returns the sort key elements.
@@ -138,10 +128,10 @@ public:
      *      Each sort key column must also appear in the columns(), but not appear in group_keys().
      * @return the sort key elements
      */
-    [[nodiscard]] std::vector<sort_key, util::object_allocator<sort_key>>& sort_keys() noexcept;
+    [[nodiscard]] std::vector<sort_key>& sort_keys() noexcept;
 
     /// @copydoc sort_keys()
-    [[nodiscard]] std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;
+    [[nodiscard]] std::vector<sort_key> const& sort_keys() const noexcept;
 
     /**
      * @brief returns group mode of this exchange operation.
@@ -209,9 +199,9 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns_ {};
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_ {};
-    std::vector<sort_key, util::object_allocator<sort_key>> sort_keys_ {};
+    std::vector<descriptor::variable> columns_ {};
+    std::vector<descriptor::variable> group_keys_ {};
+    std::vector<sort_key> sort_keys_ {};
     std::optional<size_type> limit_ {};
     mode_type mode_ { mode_default };
 };

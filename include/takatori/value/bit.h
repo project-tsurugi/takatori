@@ -11,7 +11,6 @@
 #include "simple_value.h"
 
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::value {
 
@@ -26,11 +25,8 @@ public:
     /// @brief the bit block type.
     using block_type = std::uint64_t;
 
-    /// @brief the allocator type
-    using allocator_type = util::object_allocator<block_type>;
-
     /// @brief the entity type
-    using entity_type = boost::dynamic_bitset<block_type, allocator_type>;
+    using entity_type = boost::dynamic_bitset<block_type>;
 
     /// @brief the view type
     using view_type = std::add_lvalue_reference_t<std::add_const_t<entity_type>>;
@@ -44,10 +40,9 @@ public:
     /**
      * @brief creates a new instance.
      * @param bits string representation of bit sequence, each character must be either '0' or '1'
-     * @param allocator the allocator
      * @throws std::invalid_argument if the string representation is not valid
      */
-    explicit bit(std::string_view bits, allocator_type const& allocator = {});
+    explicit bit(std::string_view bits);
 
     ~bit() override = default;
     bit(bit const& other) = delete;
@@ -56,8 +51,8 @@ public:
     bit& operator=(bit&& other) noexcept = delete;
 
     [[nodiscard]] value_kind kind() const noexcept override;
-    [[nodiscard]] bit* clone(util::object_creator creator) const& override;
-    [[nodiscard]] bit* clone(util::object_creator creator) && override;
+    [[nodiscard]] bit* clone() const& override;
+    [[nodiscard]] bit* clone() && override;
 
     /**
      * @brief returns the entity value.
@@ -75,8 +70,6 @@ protected:
 
 private:
     entity_type entity_;
-
-    friend class util::object_creator;
 };
 
 /**

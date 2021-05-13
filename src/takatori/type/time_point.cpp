@@ -12,12 +12,12 @@ type_kind time_point::kind() const noexcept {
     return tag;
 }
 
-time_point* time_point::clone(util::object_creator creator) const& {
-    return creator.create_object<time_point>(time_zone_);
+time_point* time_point::clone() const& {
+     return new time_point(time_zone_); // NOLINT
 }
 
-time_point* time_point::clone(util::object_creator creator) && {
-    return creator.create_object<time_point>(std::move(time_zone_));
+time_point* time_point::clone() && {
+     return new time_point(std::move(time_zone_)); // NOLINT
 }
 
 std::optional<datetime::time_zone> const& time_point::time_zone() const noexcept {

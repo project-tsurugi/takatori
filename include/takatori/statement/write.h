@@ -7,6 +7,7 @@
 #include <takatori/scalar/expression.h>
 #include <takatori/relation/write_kind.h>
 #include <takatori/tree/tree_fragment_vector.h>
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 
 #include "statement.h"
@@ -44,8 +45,8 @@ public:
     explicit write(
             operator_kind_type operator_kind,
             descriptor::relation destination,
-            std::vector<column, util::object_allocator<column>> columns,
-            std::vector<tuple, util::object_allocator<tuple>> tuples) noexcept;
+            std::vector<column> columns,
+            std::vector<tuple> tuples) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -63,20 +64,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit write(write const& other, util::object_creator creator) noexcept;
+    explicit write(util::clone_tag_t, write const& other) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit write(write&& other, util::object_creator creator) noexcept;
+    explicit write(util::clone_tag_t, write&& other) noexcept;
 
     [[nodiscard]] statement_kind kind() const noexcept override;
-    [[nodiscard]] write* clone(util::object_creator creator) const& override;
-    [[nodiscard]] write* clone(util::object_creator creator) && override;
+    [[nodiscard]] write* clone() const& override;
+    [[nodiscard]] write* clone() && override;
 
     /**
      * @brief returns the operator kind.
@@ -105,10 +104,10 @@ public:
      * @return This designates each mapping between table column and its value to write.
      *      Each elements in the individual tuples() must be ordered by this sequence of columns.
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns the tuples to write.
@@ -153,7 +152,7 @@ protected:
 private:
     operator_kind_type operator_kind_;
     descriptor::relation destination_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<column> columns_;
     tree::tree_fragment_vector<tuple> tuples_;
 };
 

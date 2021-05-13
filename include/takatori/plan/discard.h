@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -7,7 +8,7 @@
 #include "exchange.h"
 #include "step_kind.h"
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 
 namespace takatori::plan {
 
@@ -26,29 +27,21 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param creator the object creator for internal elements
-     */
-    explicit discard(util::object_creator creator) noexcept;
-
-    /**
-     * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit discard(discard const& other, util::object_creator creator);
+    explicit discard(util::clone_tag_t, discard const& other);
 
     /**
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit discard(discard&& other, util::object_creator creator);
+    explicit discard(util::clone_tag_t, discard&& other);
 
     [[nodiscard]] step_kind kind() const noexcept override;
-    [[nodiscard]] discard* clone(util::object_creator creator) const& override;
-    [[nodiscard]] discard* clone(util::object_creator creator) && override;
+    [[nodiscard]] discard* clone() const& override;
+    [[nodiscard]] discard* clone() && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;

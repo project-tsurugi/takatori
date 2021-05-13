@@ -9,8 +9,8 @@
 
 #include <takatori/descriptor/variable.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::scalar {
 
@@ -31,20 +31,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit variable_reference(variable_reference const& other, util::object_creator creator) noexcept;
+    explicit variable_reference(util::clone_tag_t, variable_reference const& other) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit variable_reference(variable_reference&& other, util::object_creator creator) noexcept;
+    explicit variable_reference(util::clone_tag_t, variable_reference&& other) noexcept;
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] variable_reference* clone(util::object_creator creator) const& override;
-    [[nodiscard]] variable_reference* clone(util::object_creator creator) && override;
+    [[nodiscard]] variable_reference* clone() const& override;
+    [[nodiscard]] variable_reference* clone() && override;
 
     /**
      * @brief returns the descriptor of target variable.

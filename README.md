@@ -53,8 +53,6 @@ available options:
 * `-DBUILD_TESTS=OFF` - don't build test programs
 * `-DBUILD_DOCUMENTS=OFF` - don't build documents by doxygen
 * `-DFORCE_INSTALL_RPATH=ON` - automatically configure `INSTALL_RPATH` for non-default library paths
-* `-DENABLE_PMR=OFF` - don't use Polymorphic Memory Resource for IR models
-* `-DUSE_BOOST_MEMORY_RESOURCE=OFF` - use standard `<memory_resource>` instead of Boost implementation
 
 ### install
 

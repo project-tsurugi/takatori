@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 
 #include <takatori/descriptor/variable.h>
@@ -9,7 +10,7 @@
 #include <takatori/tree/tree_element_util.h>
 #include <takatori/tree/tree_element_forward.h>
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/ownership_reference.h>
 
@@ -32,7 +33,7 @@ public:
      */
     explicit search_key_element(
             descriptor::variable variable,
-            util::unique_object_ptr<scalar::expression> value) noexcept
+            std::unique_ptr<scalar::expression> value) noexcept
         : variable_(std::move(variable))
         , value_(std::move(value))
     {}
@@ -43,7 +44,7 @@ public:
      * @param variable the search key column on the target relation
      */
     explicit search_key_element(
-            util::unique_object_ptr<scalar::expression> value,
+            std::unique_ptr<scalar::expression> value,
             descriptor::variable variable) noexcept
         : variable_(std::move(variable))
         , value_(std::move(value))
@@ -99,23 +100,21 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit search_key_element(search_key_element const& other, util::object_creator creator)
+    explicit search_key_element(util::clone_tag_t, search_key_element const& other)
         : search_key_element(
                 other.variable_,
-                tree::forward(creator, other.value_))
+                tree::forward(other.value_))
     {}
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit search_key_element(search_key_element&& other, util::object_creator creator)
+    explicit search_key_element(util::clone_tag_t, search_key_element&& other)
         : search_key_element(
                 std::move(other.variable_),
-                tree::forward(creator, std::move(other.value_)))
+                tree::forward(std::move(other.value_)))
     {}
 
     /**
@@ -186,7 +185,7 @@ public:
      * @return the search value
      * @return empty if the expression is absent
      */
-    [[nodiscard]] util::unique_object_ptr<scalar::expression> release_value() noexcept {
+    [[nodiscard]] std::unique_ptr<scalar::expression> release_value() noexcept {
         return tree::release_element(std::move(value_));
     }
 
@@ -195,7 +194,7 @@ public:
      * @param value the search value
      * @return this
      */
-    search_key_element& value(util::unique_object_ptr<scalar::expression> value) noexcept {
+    search_key_element& value(std::unique_ptr<scalar::expression> value) noexcept {
         tree::assign_element_fragment(parent_, value_, std::move(value));
         return *this;
     }
@@ -204,13 +203,13 @@ public:
      * @brief returns ownership of the search value for the target column.
      * @return the search value
      */
-    [[nodiscard]] util::object_ownership_reference<scalar::expression> ownership_value() {
+    [[nodiscard]] util::ownership_reference<scalar::expression> ownership_value() {
         return tree::ownership_element_fragment(parent_, value_);
     }
 
 private:
     descriptor::variable variable_;
-    util::unique_object_ptr<scalar::expression> value_;
+    std::unique_ptr<scalar::expression> value_;
     parent_type* parent_ {};
 };
 

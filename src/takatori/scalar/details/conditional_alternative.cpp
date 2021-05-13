@@ -7,8 +7,8 @@
 namespace takatori::scalar::details {
 
 conditional_alternative::conditional_alternative(
-        util::unique_object_ptr<expression> condition,
-        util::unique_object_ptr<expression> body) noexcept
+        std::unique_ptr<expression> condition,
+        std::unique_ptr<expression> body) noexcept
     : condition_(std::move(condition))
     , body_(std::move(body))
 {}
@@ -21,20 +21,16 @@ conditional_alternative::conditional_alternative(
             util::clone_unique(std::move(body)))
 {}
 
-conditional_alternative::conditional_alternative(
-        conditional_alternative const& other,
-        util::object_creator creator)
+conditional_alternative::conditional_alternative(util::clone_tag_t, conditional_alternative const& other)
     : conditional_alternative(
-            tree::forward(creator, other.condition_),
-            tree::forward(creator, other.body_))
+            tree::forward(other.condition_),
+            tree::forward(other.body_))
 {}
 
-conditional_alternative::conditional_alternative(
-        conditional_alternative&& other,
-        util::object_creator creator)
+conditional_alternative::conditional_alternative(util::clone_tag_t, conditional_alternative&& other)
     : conditional_alternative(
-            tree::forward(creator, std::move(other.condition_)),
-            tree::forward(creator, std::move(other.body_)))
+            tree::forward(std::move(other.condition_)),
+            tree::forward(std::move(other.body_)))
 {}
 
 conditional* conditional_alternative::parent_element() noexcept {
@@ -67,16 +63,16 @@ util::optional_ptr<expression const> conditional_alternative::optional_condition
     return util::optional_ptr { condition_.get() };
 }
 
-conditional_alternative& conditional_alternative::condition(util::unique_object_ptr<expression> condition) noexcept {
+conditional_alternative& conditional_alternative::condition(std::unique_ptr<expression> condition) noexcept {
     tree::assign_element_fragment(parent_, condition_, std::move(condition));
     return *this;
 }
 
-util::unique_object_ptr<expression> conditional_alternative::release_condition() noexcept {
+std::unique_ptr<expression> conditional_alternative::release_condition() noexcept {
     return tree::release_element(std::move(condition_));
 }
 
-util::object_ownership_reference<expression> conditional_alternative::ownership_condition() {
+util::ownership_reference<expression> conditional_alternative::ownership_condition() {
     return tree::ownership_element_fragment(parent_, condition_);
 }
 
@@ -96,16 +92,16 @@ util::optional_ptr<expression const> conditional_alternative::optional_body() co
     return util::optional_ptr { body_.get() };
 }
 
-conditional_alternative& conditional_alternative::body(util::unique_object_ptr<expression> body) noexcept {
+conditional_alternative& conditional_alternative::body(std::unique_ptr<expression> body) noexcept {
     tree::assign_element_fragment(parent_, body_, std::move(body));
     return *this;
 }
 
-util::unique_object_ptr<expression> conditional_alternative::release_body() noexcept {
+std::unique_ptr<expression> conditional_alternative::release_body() noexcept {
     return tree::release_element(std::move(body_));
 }
 
-util::object_ownership_reference<expression> conditional_alternative::ownership_body() {
+util::ownership_reference<expression> conditional_alternative::ownership_body() {
     return tree::ownership_element_fragment(parent_, body_);
 }
 

@@ -6,11 +6,9 @@
 
 namespace takatori::relation::intermediate {
 
-escape::escape(
-        std::vector<mapping, util::object_allocator<mapping>> mappings,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+escape::escape(std::vector<mapping> mappings) noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
     , mappings_(std::move(mappings))
 {}
 
@@ -18,16 +16,14 @@ escape::escape(std::initializer_list<mapping> mappings)
     : escape({ mappings.begin(), mappings.end() })
 {}
 
-escape::escape(escape const& other, util::object_creator creator)
+escape::escape(util::clone_tag_t, escape const& other)
     : escape(
-            decltype(mappings_) { other.mappings_, creator.allocator() },
-            creator)
+            decltype(mappings_) { other.mappings_ })
 {}
 
-escape::escape(escape&& other, util::object_creator creator)
+escape::escape(util::clone_tag_t, escape&& other)
     : escape(
-            decltype(mappings_) { std::move(other.mappings_), creator.allocator() },
-            creator)
+            decltype(mappings_) { std::move(other.mappings_) })
 {}
 
 expression_kind escape::kind() const noexcept {
@@ -50,12 +46,12 @@ util::sequence_view<escape::output_port_type const> escape::output_ports() const
     return util::sequence_view { std::addressof(output_) };
 }
 
-escape* escape::clone(util::object_creator creator) const& {
-    return creator.create_object<escape>(*this, creator);
+escape* escape::clone() const& {
+    return new escape(util::clone_tag, *this); // NOLINT
 }
 
-escape* escape::clone(util::object_creator creator)&& {
-    return creator.create_object<escape>(std::move(*this), creator);
+escape* escape::clone()&& {
+    return new escape(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 escape::input_port_type& escape::input() noexcept {
@@ -74,11 +70,11 @@ escape::output_port_type const& escape::output() const noexcept {
     return output_;
 }
 
-std::vector<escape::mapping, util::object_allocator<escape::mapping>>& escape::mappings() noexcept {
+std::vector<escape::mapping>& escape::mappings() noexcept {
     return mappings_;
 }
 
-std::vector<escape::mapping, util::object_allocator<escape::mapping>> const& escape::mappings() const noexcept {
+std::vector<escape::mapping> const& escape::mappings() const noexcept {
     return mappings_;
 }
 

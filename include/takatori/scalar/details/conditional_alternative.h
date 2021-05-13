@@ -7,7 +7,7 @@
 
 #include <takatori/scalar/expression.h>
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/ownership_reference.h>
 
@@ -48,8 +48,8 @@ public:
      * @param body the body expression
      */
     explicit conditional_alternative(
-            util::unique_object_ptr<expression> condition,
-            util::unique_object_ptr<expression> body) noexcept;
+            std::unique_ptr<expression> condition,
+            std::unique_ptr<expression> body) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -64,16 +64,14 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit conditional_alternative(conditional_alternative const& other, util::object_creator creator);
+    explicit conditional_alternative(util::clone_tag_t, conditional_alternative const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit conditional_alternative(conditional_alternative&& other, util::object_creator creator);
+    explicit conditional_alternative(util::clone_tag_t, conditional_alternative&& other);
 
     ~conditional_alternative() = default;
 
@@ -120,19 +118,19 @@ public:
      * @param condition the condition expression
      * @return this
      */
-    conditional_alternative& condition(util::unique_object_ptr<expression> condition) noexcept;
+    conditional_alternative& condition(std::unique_ptr<expression> condition) noexcept;
 
     /**
      * @brief releases the condition expression.
      * @return the released expression
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_condition() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_condition() noexcept;
 
     /**
      * @brief returns ownership reference of the condition expression.
      * @return the condition expression
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_condition();
+    [[nodiscard]] util::ownership_reference<expression> ownership_condition();
 
     /**
      * @brief returns the body expression.
@@ -158,19 +156,19 @@ public:
      * @param body the body expression
      * @return this
      */
-    conditional_alternative& body(util::unique_object_ptr<expression> body) noexcept;
+    conditional_alternative& body(std::unique_ptr<expression> body) noexcept;
 
     /**
      * @brief releases the body expression.
      * @return the released expression
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_body() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_body() noexcept;
 
     /**
      * @brief returns ownership reference of the body expression.
      * @return the body expression
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_body();
+    [[nodiscard]] util::ownership_reference<expression> ownership_body();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -199,8 +197,8 @@ public:
     friend std::ostream& operator<<(std::ostream& out, conditional_alternative const& value);
 
 private:
-    util::unique_object_ptr<expression> condition_;
-    util::unique_object_ptr<expression> body_;
+    std::unique_ptr<expression> condition_;
+    std::unique_ptr<expression> body_;
 
     parent_type* parent_ {};
 

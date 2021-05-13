@@ -13,12 +13,12 @@ values_row::values_row(std::initializer_list<util::rvalue_reference_wrapper<scal
     : values_row({ elements.begin(), elements.end() })
 {}
 
-values_row::values_row(values_row const& other, util::object_creator creator)
-    : values_row(tree::forward(creator, other.elements_))
+values_row::values_row(util::clone_tag_t, values_row const& other)
+    : values_row(tree::forward(other.elements_))
 {}
 
-values_row::values_row(values_row&& other, util::object_creator creator)
-    : values_row(tree::forward(creator, std::move(other.elements_)))
+values_row::values_row(util::clone_tag_t, values_row&& other)
+    : values_row(tree::forward(std::move(other.elements_)))
 {}
 
 values_row::parent_type* values_row::parent_element() noexcept {

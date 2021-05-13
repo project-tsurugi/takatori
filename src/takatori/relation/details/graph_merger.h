@@ -19,10 +19,9 @@ public:
             std::remove_const_t<node_mapping_entry_type::first_type>,
             node_mapping_entry_type::second_type,
             std::hash<std::remove_const_t<node_mapping_entry_type::first_type>>,
-            std::equal_to<>,
-            util::object_allocator<node_mapping_entry_type>>;
+            std::equal_to<>>;
 
-    explicit graph_merger(graph_type& destination, util::object_creator creator = {}) noexcept;
+    explicit graph_merger(graph_type& destination) noexcept;
 
     graph_merger& add(graph_type const& source);
 

@@ -6,11 +6,10 @@
 namespace takatori::relation::intermediate {
 
 aggregate::aggregate(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-        std::vector<column, util::object_allocator<column>> columns,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+        std::vector<descriptor::variable> group_keys,
+        std::vector<column> columns) noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
     , group_keys_(std::move(group_keys))
     , columns_(std::move(columns))
 {}
@@ -23,16 +22,16 @@ aggregate::aggregate(
             { columns.begin(), columns.end() })
 {}
 
-aggregate::aggregate(aggregate const& other, util::object_creator creator)
+aggregate::aggregate(util::clone_tag_t, aggregate const& other)
     : aggregate(
-            { other.group_keys_, creator.allocator() },
-            { other.columns_, creator.allocator() })
+            { other.group_keys_ },
+            { other.columns_ })
 {}
 
-aggregate::aggregate(aggregate&& other, util::object_creator creator)
+aggregate::aggregate(util::clone_tag_t, aggregate&& other)
     : aggregate(
-            { std::move(other.group_keys_), creator.allocator() },
-            { std::move(other.columns_), creator.allocator() })
+            { std::move(other.group_keys_) },
+            { std::move(other.columns_) })
 {}
 
 expression_kind aggregate::kind() const noexcept {
@@ -55,12 +54,12 @@ util::sequence_view<aggregate::output_port_type const> aggregate::output_ports()
     return util::sequence_view { std::addressof(output_) };
 }
 
-aggregate* aggregate::clone(util::object_creator creator) const& {
-    return creator.create_object<aggregate>(*this, creator);
+aggregate* aggregate::clone() const& {
+    return new aggregate(util::clone_tag, *this); // NOLINT
 }
 
-aggregate* aggregate::clone(util::object_creator creator)&& {
-    return creator.create_object<aggregate>(std::move(*this), creator);
+aggregate* aggregate::clone()&& {
+    return new aggregate(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 aggregate::input_port_type& aggregate::input() noexcept {
@@ -79,19 +78,19 @@ aggregate::output_port_type const& aggregate::output() const noexcept {
     return output_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& aggregate::group_keys() noexcept {
+std::vector<descriptor::variable>& aggregate::group_keys() noexcept {
     return group_keys_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& aggregate::group_keys() const noexcept {
+std::vector<descriptor::variable> const& aggregate::group_keys() const noexcept {
     return group_keys_;
 }
 
-std::vector<aggregate::column, util::object_allocator<aggregate::column>>& aggregate::columns() noexcept {
+std::vector<aggregate::column>& aggregate::columns() noexcept {
     return columns_;
 }
 
-std::vector<aggregate::column, util::object_allocator<aggregate::column>> const& aggregate::columns() const noexcept {
+std::vector<aggregate::column> const& aggregate::columns() const noexcept {
     return columns_;
 }
 

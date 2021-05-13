@@ -13,12 +13,12 @@ write_tuple::write_tuple(std::initializer_list<util::rvalue_reference_wrapper<sc
     : write_tuple({ elements.begin(), elements.end() })
 {}
 
-write_tuple::write_tuple(write_tuple const& other, util::object_creator creator)
-    : write_tuple(tree::forward(creator, other.elements_))
+write_tuple::write_tuple(util::clone_tag_t, write_tuple const& other)
+    : write_tuple(tree::forward(other.elements_))
 {}
 
-write_tuple::write_tuple(write_tuple&& other, util::object_creator creator)
-    : write_tuple(tree::forward(creator, std::move(other.elements_)))
+write_tuple::write_tuple(util::clone_tag_t, write_tuple&& other)
+    : write_tuple(tree::forward(std::move(other.elements_)))
 {}
 
 write_tuple::parent_type* write_tuple::parent_element() noexcept {

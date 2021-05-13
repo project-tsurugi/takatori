@@ -8,12 +8,12 @@ type_kind row_id::kind() const noexcept {
     return tag;
 }
 
-row_id* row_id::clone(util::object_creator creator) const& {
-    return creator.create_object<row_id>(sequence_);
+row_id* row_id::clone() const& {
+     return new row_id(sequence_); // NOLINT
 }
 
-row_id* row_id::clone(util::object_creator creator) && {
-    return creator.create_object<row_id>(sequence_);
+row_id* row_id::clone() && {
+     return new row_id(sequence_); // NOLINT
 }
 
 bool operator==(row_id const& a, row_id const& b) noexcept {

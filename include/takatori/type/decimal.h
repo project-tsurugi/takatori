@@ -28,7 +28,7 @@ public:
      *              which must be less than or equal to precision if it is defined
      */
     explicit constexpr decimal(std::optional<size_type> precision = {}, size_type scale = 0) noexcept
-        : precision_(std::move(precision))
+        : precision_(precision)
         , scale_(scale)
     {}
 
@@ -39,8 +39,8 @@ public:
     decimal& operator=(decimal&& other) noexcept = delete;
 
     [[nodiscard]] type_kind kind() const noexcept override;
-    [[nodiscard]] decimal* clone(util::object_creator creator) const& override;
-    [[nodiscard]] decimal* clone(util::object_creator creator) && override;
+    [[nodiscard]] decimal* clone() const& override;
+    [[nodiscard]] decimal* clone() && override;
 
     /**
      * @brief returns the max number of decimal digits in integral and fractional part.

@@ -10,7 +10,6 @@
 #include "clonable.h"
 #include "copier.h"
 #include "exception.h"
-#include "object_creator.h"
 #include "ownership_reference.h"
 #include "reference_iterator.h"
 
@@ -20,39 +19,34 @@ namespace takatori::util {
 namespace impl {
 
 template<class T, class A>
-inline void delete_vector(object_creator creator, std::vector<T*, A>& elements) {
+inline void delete_vector(std::vector<T*, A>& elements) {
     while (!elements.empty()) {
         auto* element = elements.back();
-        // broken class may have nullptr
-        if (element != nullptr) {
-            creator.delete_object<T>(element);
-        }
+        delete element; // NOLINT
         elements.pop_back();
     }
 }
 
 template<class T>
-using reference_vector_entity = std::vector<T*, object_allocator<T*>>;
+using reference_vector_entity = std::vector<T*>;
 
 template<class T>
 struct reference_vector_storage_base {
-    explicit reference_vector_storage_base(object_creator creator = {}) noexcept
-        : creator_(creator), elements_(creator_.allocator(std::in_place_type<T*>)) {}
+    explicit reference_vector_storage_base() noexcept = default;
     ~reference_vector_storage_base() { clear(); } // NOLINT
     reference_vector_storage_base(reference_vector_storage_base const&) = delete;
     reference_vector_storage_base& operator=(reference_vector_storage_base const&) = delete;
-    reference_vector_storage_base(reference_vector_storage_base&& other) noexcept
-        : creator_(other.creator_), elements_(std::move(other.elements_)) {}
+    reference_vector_storage_base(reference_vector_storage_base&& other) noexcept :
+        elements_ { std::move(other.elements_) }
+    {}
     reference_vector_storage_base& operator=(reference_vector_storage_base&& other) noexcept {
         clear();
-        creator_ = other.creator_;
         elements_ = reference_vector_entity<T>(std::move(other.elements_));
         return *this;
     }
 
-    void clear() noexcept { delete_vector(creator_, elements_); }
+    void clear() noexcept { delete_vector(elements_); }
 
-    object_creator creator_; // NOLINT
     reference_vector_entity<T> elements_; // NOLINT
 };
 
@@ -62,17 +56,19 @@ struct reference_vector_storage;
 template<class T, class C>
 struct reference_vector_storage<T, C, true> : reference_vector_storage_base<T> {
     using reference_vector_storage_base<T>::reference_vector_storage_base;
+    reference_vector_storage() noexcept = default;
 
     ~reference_vector_storage() = default;
 
-    reference_vector_storage(reference_vector_storage const& other) : reference_vector_storage_base<T>(other.creator_) {
+    reference_vector_storage(reference_vector_storage const& other)
+        : reference_vector_storage_base<T> {}
+    {
         elements_ = other.copy_elements();
     }
 
     reference_vector_storage& operator=(reference_vector_storage const& other) {
         auto elements = other.copy_elements();
         clear();
-        creator_ = other.creator_;
         elements_ = std::move(elements);
         return *this;
     }
@@ -81,19 +77,18 @@ struct reference_vector_storage<T, C, true> : reference_vector_storage_base<T> {
     reference_vector_storage& operator=(reference_vector_storage&&) noexcept = default;
 
     using reference_vector_storage_base<T>::clear;
-    using reference_vector_storage_base<T>::creator_;
     using reference_vector_storage_base<T>::elements_;
 
     [[nodiscard]] reference_vector_entity<T> copy_elements() const {
-        reference_vector_entity<T> result { creator_.template allocator<T*>() };
+        reference_vector_entity<T> result {};
         result.reserve(elements_.size());
         try {
             for (auto* element : elements_) {
-                result.push_back(C::copy(creator_, *element));
+                result.push_back(C::copy(*element).release());
             }
             return result;
         } catch (...) {
-            delete_vector(creator_, result);
+            delete_vector(result);
             std::rethrow_exception(std::current_exception());
         }
     }
@@ -102,7 +97,7 @@ struct reference_vector_storage<T, C, true> : reference_vector_storage_base<T> {
 template<class T, class C>
 struct reference_vector_storage<T, C, false> : reference_vector_storage_base<T> {
     using reference_vector_storage_base<T>::reference_vector_storage_base;
-
+    reference_vector_storage() noexcept = default;
     ~reference_vector_storage() = default;
     reference_vector_storage(reference_vector_storage const&) = delete;
     reference_vector_storage& operator=(reference_vector_storage const&) = delete;
@@ -110,7 +105,6 @@ struct reference_vector_storage<T, C, false> : reference_vector_storage_base<T> 
     reference_vector_storage& operator=(reference_vector_storage&&) noexcept = default;
 
     using reference_vector_storage_base<T>::clear;
-    using reference_vector_storage_base<T>::creator_;
     using reference_vector_storage_base<T>::elements_;
 };
 
@@ -155,29 +149,19 @@ public:
     using copier_type = Copier;
 
     /**
-     * @brief constructs a new empty object with default object creator.
+     * @brief constructs a new empty object.
      */
     reference_vector() = default;
-
-    /**
-     * @brief constructs a new empty object.
-     * @param creator the object creator
-     */
-    reference_vector(object_creator creator) noexcept // NOLINT
-        : storage_(creator)
-    {}
 
     /**
      * @brief constructs a new object.
      * @tparam U the element type
      * @param list the initial elements
-     * @param creator the object creator
      */
     template<
             class U,
             class = std::enable_if_t<std::is_convertible_v<typename std::initializer_list<U>::reference, const_reference>>>
-    reference_vector(std::initializer_list<U> list, object_creator creator = {})
-        : storage_(creator)
+    reference_vector(std::initializer_list<U> list)
     {
         assign(list);
     }
@@ -187,13 +171,11 @@ public:
      * @tparam Iter the iterator type
      * @param first the starting position (inclusive)
      * @param last the ending position (exclusive)
-     * @param creator the object creator
      */
     template<
             class Iter,
             class = std::enable_if_t<std::is_convertible_v<typename std::iterator_traits<Iter>::reference, const_reference>>>
-    reference_vector(Iter first, Iter last, object_creator creator = {})
-        : storage_(creator)
+    reference_vector(Iter first, Iter last)
     {
         assign(first, last);
     }
@@ -209,7 +191,6 @@ public:
             class C,
             class = std::enable_if_t<std::is_convertible_v<typename reference_vector<U, C>::pointer, pointer>>>
     reference_vector(reference_vector<U, C> other) noexcept // NOLINT
-        : storage_(other.storage_.creator_)
     {
         auto&& src = other.storage_.elements_;
         unsafe_assign(src.begin(), src.end());
@@ -220,11 +201,9 @@ public:
      * @brief constructs a new object.
      * @tparam C the source copier type
      * @param other the source object
-     * @param creator the object creator
      */
     template<class C>
-    explicit reference_vector(reference_vector<T, C> const& other, object_creator creator)
-        : storage_(creator)
+    explicit reference_vector(reference_vector<T, C> const& other)
     {
         reserve(other.size());
         for (auto&& e : other) {
@@ -236,22 +215,12 @@ public:
      * @brief constructs a new object.
      * @tparam C the source copier type
      * @param other the source object
-     * @param creator the object creator
      */
     template<class C>
-    explicit reference_vector(reference_vector<T, C>&& other, object_creator creator)
-        : storage_(creator)
+    explicit reference_vector(reference_vector<T, C>&& other)
     {
-        if (other.get_object_creator() == creator) {
-            storage_.elements_ = std::move(other.storage_.elements_);
-            other.storage_.elements_.clear(); // may be already empty
-        } else {
-            reserve(other.size());
-            for (auto&& e : other) {
-                push_back(std::move(e));
-            }
-            other.clear();
-        }
+        storage_.elements_ = std::move(other.storage_.elements_);
+        other.storage_.elements_.clear(); // may be already empty
     }
 
     /**
@@ -423,7 +392,6 @@ public:
 
     /**
      * @brief inserts the given element.
-     * @attention This may create a copy if the element is not created by this container's object creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param position the insertion position
@@ -504,7 +472,6 @@ public:
 
     /**
      * @brief appends the given element into the tail of this.
-     * @attention This may create a copy if the element is not created by this container's object creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param element the source element
@@ -575,7 +542,6 @@ public:
 
     /**
      * @brief replaces an existing element with the given element.
-     * @attention This may create a copy if the element is not created by this container's object creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param position the target element position
@@ -637,7 +603,7 @@ public:
      * @param position the target position
      * @return a pair of the removed element, and the next position of the released element
      */
-    [[nodiscard]] std::pair<unique_object_ptr<value_type>, iterator> release(const_iterator position) noexcept {
+    [[nodiscard]] std::pair<std::unique_ptr<value_type>, iterator> release(const_iterator position) noexcept {
         auto iter = to_internal(position);
         auto released = wrap_unique(*iter);
         iter = storage_.elements_.erase(iter);
@@ -656,7 +622,7 @@ public:
         auto const fst = to_internal(first);
         auto const lst = to_internal(last);
 
-        reference_vector<value_type, C> result { storage_.creator_ };
+        reference_vector<value_type, C> result {};
         if (auto distance = std::distance(fst, lst); distance > 0) {
             result.reserve(static_cast<std::size_t>(distance));
         }
@@ -673,7 +639,7 @@ public:
      * @return the removed element
      * @warning undefined behavior if this is empty
      */
-    [[nodiscard]] unique_object_ptr<value_type> release_back() noexcept {
+    [[nodiscard]] std::unique_ptr<value_type> release_back() noexcept {
         auto released = wrap_unique(storage_.elements_.back());
         storage_.elements_.pop_back();
         return released;
@@ -681,7 +647,6 @@ public:
 
     /**
      * @brief replaces an existing element with the given element, and returns the existing.
-     * @attention This may create a copy if the element is not created by this container's object creator.
      * @tparam U the value type
      * @tparam D the deleter type
      * @param position the target element position
@@ -691,7 +656,7 @@ public:
     template<class U, class D>
     [[nodiscard]] std::enable_if_t<
             std::is_convertible_v<U&, reference>,
-            unique_object_ptr<value_type>>
+            std::unique_ptr<value_type>>
     exchange(const_iterator position, std::unique_ptr<U, D> element) {
         auto iter = to_internal(position);
         auto* rep = forward_element(std::move(element));
@@ -708,8 +673,8 @@ public:
      * @param position the target position
      * @return the element on the given position
      */
-    [[nodiscard]] object_ownership_reference<value_type> ownership(const_iterator position) {
-        using ownership_ref = object_ownership_reference<value_type>;
+    [[nodiscard]] ownership_reference<value_type> ownership(const_iterator position) {
+        using ownership_ref = ownership_reference<value_type>;
         return ownership_ref {
                 [position, this]() -> typename ownership_ref::pointer {
                     return std::addressof(at(static_cast<size_type>(position - cbegin())));
@@ -795,7 +760,6 @@ public:
 
     /**
      * @brief exchanges contents between this and the given container.
-     * @attention This also exchanges their object_creator, but object copying strategy does not.
      * @param other the opposite container
      */
     void swap(reference_vector& other) noexcept {
@@ -804,8 +768,7 @@ public:
 
     /**
      * @brief assigns externally allocated elements in the list.
-     * @attention this operation never takes copies of inputs, that is, the input elements must be created by
-     * an object_creator compatible with this container's one.
+     * @attention this operation never takes copies of inputs.
      * @tparam U the element type
      * @param list the source elements
      */
@@ -817,8 +780,7 @@ public:
 
     /**
      * @brief assigns externally allocated elements between the given span.
-     * @attention this operation never takes copies of inputs, that is, the input elements must be created by
-     * an object_creator compatible with this container's one.
+     * @attention this operation never takes copies of inputs.
      * @tparam Iter the iterator type
      * @param first the starting position (inclusive)
      * @param last the ending position (exclusive)
@@ -832,8 +794,7 @@ public:
 
     /**
      * @brief inserts an externally allocated element.
-     * @attention this operation never takes copies of inputs, that is, the input elements must be created by
-     * an object_creator compatible with this container's one.
+     * @attention this operation never takes copies of inputs.
      * @param position the insertion position
      * @param element the target element
      * @return the position where the element inserted
@@ -846,8 +807,7 @@ public:
 
     /**
      * @brief inserts externally allocated elements in the list.
-     * @attention this operation never takes copies of inputs, that is, the input elements must be created by
-     * an object_creator compatible with this container's one.
+     * @attention this operation never takes copies of inputs.
      * @tparam U the element type
      * @param position the insertion position
      * @param list the source elements
@@ -861,8 +821,7 @@ public:
 
     /**
      * @brief inserts externally allocated elements between the given span.
-     * @attention this operation never takes copies of inputs, that is, the input elements must be created by
-     * an object_creator compatible with this container's one.
+     * @attention this operation never takes copies of inputs.
      * @tparam Iter the iterator type
      * @param position the insertion position
      * @param first the starting position (inclusive)
@@ -893,8 +852,7 @@ public:
 
     /**
      * @brief appends an externally allocated of element into the tail of this.
-     * @attention this operation never takes copies of an input, that is, the input elements must be created by
-     * an object_creator compatible with this container's one.
+     * @attention this operation never takes copies of an input.
      * @param element the source element
      * @return the added element
      */
@@ -914,14 +872,6 @@ public:
         delete_element(*iter);
         *iter = element;
         return *element;
-    }
-
-    /**
-     * @brief returns the object creator to create/delete objects in this container.
-     * @return the object creator for this container
-     */
-    [[nodiscard]] object_creator get_object_creator() const noexcept {
-        return storage_.creator_;
     }
 
 private:
@@ -946,12 +896,14 @@ private:
 
     [[nodiscard]] pointer copy_element(const_reference element) {
         static_assert(copier_type::is_available, "copying objects is not supported");
-        return copier_type::copy(storage_.creator_, element);
+        auto copy = copier_type::copy(element);
+        return copy.release();
     }
 
     [[nodiscard]] pointer copy_element(rvalue_reference element) {
         static_assert(copier_type::is_available, "copying objects is not supported");
-        return copier_type::copy(storage_.creator_, std::move(element));
+        auto copy = copier_type::copy(std::move(element));
+        return copy.release();
     }
 
     template<class U, class D>
@@ -959,28 +911,22 @@ private:
         if (!element) {
             throw_exception(std::invalid_argument("element must not be null"));
         }
-        if (storage_.creator_.is_instance(element)) {
-            return element.release();
-        }
-        if constexpr (!copier_type::is_available) {
-            throw_exception(std::invalid_argument("copying objects is not supported"));
-        }
-        return copier_type::copy(storage_.creator_, std::move(*element));
+        return element.release();
     }
 
     template<class U, class... Args>
     [[nodiscard]] pointer create_element(Args&&... args) {
-        return storage_.creator_.template create_object<U>(std::forward<Args>(args)...);
+        return new U(std::forward<Args>(args)...); // NOLINT
     }
 
     void delete_element(pointer object) noexcept {
         if (object != nullptr) {
-            storage_.creator_.template delete_object<T>(object);
+            delete object; // NOLINT
         }
     }
 
-    unique_object_ptr<value_type> wrap_unique(pointer ptr) noexcept {
-        return storage_.creator_.template wrap_unique<value_type>(ptr);
+    std::unique_ptr<value_type> wrap_unique(pointer ptr) noexcept {
+        return std::unique_ptr<value_type> { ptr };
     }
 
     template<class U, class C>
@@ -990,10 +936,6 @@ private:
 /// @private
 template<class T>
 reference_vector(std::initializer_list<T>) -> reference_vector<T>;
-
-/// @private
-template<class T>
-reference_vector(object_creator, std::initializer_list<T>) -> reference_vector<T>;
 
 /**
  * @brief returns whether or not the both vectors have equivalent elements.

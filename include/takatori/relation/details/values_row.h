@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <vector>
 
@@ -8,7 +9,7 @@
 
 #include <takatori/scalar/expression.h>
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 
 namespace takatori::relation {
@@ -43,16 +44,14 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit values_row(values_row const& other, util::object_creator creator);
+    explicit values_row(util::clone_tag_t, values_row const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit values_row(values_row&& other, util::object_creator creator);
+    explicit values_row(util::clone_tag_t, values_row&& other);
 
     ~values_row() = default;
 

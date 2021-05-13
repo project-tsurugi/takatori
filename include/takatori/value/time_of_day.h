@@ -8,7 +8,6 @@
 #include <takatori/datetime/time_of_day.h>
 
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::value {
 
@@ -54,8 +53,8 @@ public:
     time_of_day& operator=(time_of_day&& other) noexcept = delete;
 
     [[nodiscard]] value_kind kind() const noexcept override;
-    [[nodiscard]] time_of_day* clone(util::object_creator creator) const& override;
-    [[nodiscard]] time_of_day* clone(util::object_creator creator) && override;
+    [[nodiscard]] time_of_day* clone() const& override;
+    [[nodiscard]] time_of_day* clone() && override;
 
     /**
      * @brief returns the entity value.
@@ -77,8 +76,6 @@ protected:
 
 private:
     entity_type entity_;
-
-    friend class util::object_creator;
 };
 
 /**

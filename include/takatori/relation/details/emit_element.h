@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <ostream>
 #include <optional>
 #include <string>
@@ -8,7 +9,6 @@
 
 #include <takatori/descriptor/variable.h>
 
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::details {
 
@@ -18,7 +18,7 @@ namespace takatori::relation::details {
 class emit_element {
 public:
     /// @brief the name type.
-    using name_type = std::basic_string<char, std::char_traits<char>, util::object_allocator<char>>;
+    using name_type = std::string;
 
     /**
      * @brief creates a new instance without explicit column name.

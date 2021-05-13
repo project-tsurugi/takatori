@@ -7,15 +7,14 @@ namespace takatori::relation::intermediate {
 
 difference::difference(
         quantifier_kind quantifier,
-        std::vector<group_key_pair, util::object_allocator<group_key_pair>> group_key_pairs,
-        util::object_creator creator) noexcept
-    : inputs_({
-            input_port_type { *this, left_index, creator },
-            input_port_type { *this, right_index, creator },
-    })
-    , output_(*this, 0, creator)
-    , quantifier_(quantifier)
-    , group_key_pairs_(std::move(group_key_pairs))
+        std::vector<group_key_pair> group_key_pairs) noexcept :
+    inputs_{{
+            input_port_type { *this, left_index },
+            input_port_type { *this, right_index },
+    }},
+    output_ { *this, 0 },
+    quantifier_ { quantifier },
+    group_key_pairs_ { std::move(group_key_pairs) }
 {}
 
 difference::difference(
@@ -26,18 +25,16 @@ difference::difference(
             { group_key_pairs.begin(), group_key_pairs.end() })
 {}
 
-difference::difference(difference const& other, util::object_creator creator)
+difference::difference(util::clone_tag_t, difference const& other)
     : difference(
             other.quantifier_,
-            decltype(group_key_pairs_) { other.group_key_pairs_, creator.allocator() },
-            creator)
+            decltype(group_key_pairs_) { other.group_key_pairs_ })
 {}
 
-difference::difference(difference&& other, util::object_creator creator)
+difference::difference(util::clone_tag_t, difference&& other)
     : difference(
             other.quantifier_,
-            decltype(group_key_pairs_) { std::move(other.group_key_pairs_), creator.allocator() },
-            creator)
+            decltype(group_key_pairs_) { std::move(other.group_key_pairs_) })
 {}
 
 expression_kind difference::kind() const noexcept {
@@ -60,12 +57,12 @@ util::sequence_view<difference::output_port_type const> difference::output_ports
     return util::sequence_view { std::addressof(output_) };
 }
 
-difference* difference::clone(util::object_creator creator) const& {
-    return creator.create_object<difference>(*this, creator);
+difference* difference::clone() const& {
+    return new difference(util::clone_tag, *this); // NOLINT
 }
 
-difference* difference::clone(util::object_creator creator)&& {
-    return creator.create_object<difference>(std::move(*this), creator);
+difference* difference::clone()&& {
+    return new difference(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 difference::input_port_type& difference::left() noexcept {
@@ -101,11 +98,11 @@ difference& difference::quantifier(quantifier_kind quantifier) noexcept {
     return *this;
 }
 
-std::vector<difference::group_key_pair, util::object_allocator<difference::group_key_pair>>& difference::group_key_pairs() noexcept {
+std::vector<difference::group_key_pair>& difference::group_key_pairs() noexcept {
     return group_key_pairs_;
 }
 
-std::vector<difference::group_key_pair, util::object_allocator<difference::group_key_pair>> const& difference::group_key_pairs() const noexcept {
+std::vector<difference::group_key_pair> const& difference::group_key_pairs() const noexcept {
     return group_key_pairs_;
 }
 

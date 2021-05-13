@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 
 #include "expression_kind.h"
@@ -11,7 +12,6 @@
 
 #include <takatori/tree/tree_element_base.h>
 
-#include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/sequence_view.h>
 
@@ -95,13 +95,12 @@ public:
      * @details The created clone will become orphaned vertex, that is, this never copies the following:
      *   @li the owner graph
      *   @li the input/output opposites
-     * @param creator the object creator
      * @return the created clone
      */
-    [[nodiscard]] virtual expression* clone(util::object_creator creator) const& = 0;
+    [[nodiscard]] virtual expression* clone() const& = 0;
 
     /// @copydoc clone()
-    [[nodiscard]] virtual expression* clone(util::object_creator creator) && = 0;
+    [[nodiscard]] virtual expression* clone() && = 0;
 
     /**
      * @brief returns the document region of this element.

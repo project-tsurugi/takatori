@@ -9,7 +9,7 @@ namespace takatori::relation::details {
 
 aggregate_element::aggregate_element(
         aggregate_element::function_type function,
-        std::vector<argument_type, util::object_allocator<argument_type>> arguments,
+        std::vector<argument_type> arguments,
         aggregate_element::destination_type destination) noexcept
     : function_(std::move(function))
     , arguments_(std::move(arguments))
@@ -39,17 +39,17 @@ aggregate_element::aggregate_element(
             std::move(destination))
 {}
 
-aggregate_element::aggregate_element(aggregate_element const& other, util::object_creator creator)
+aggregate_element::aggregate_element(util::clone_tag_t, aggregate_element const& other)
     : aggregate_element(
             other.function_,
-            { other.arguments_, creator.allocator() },
+            { other.arguments_ },
             other.destination_)
 {}
 
-aggregate_element::aggregate_element(aggregate_element&& other, util::object_creator creator)
+aggregate_element::aggregate_element(util::clone_tag_t, aggregate_element&& other)
     : aggregate_element(
             std::move(other.function_),
-            { std::move(other.arguments_), creator.allocator() },
+            { std::move(other.arguments_) },
             std::move(other.destination_))
 {}
 
@@ -69,11 +69,11 @@ aggregate_element::destination_type const& aggregate_element::destination() cons
     return destination_;
 }
 
-std::vector<aggregate_element::argument_type, util::object_allocator<aggregate_element::argument_type>>& aggregate_element::arguments() noexcept {
+std::vector<aggregate_element::argument_type>& aggregate_element::arguments() noexcept {
     return arguments_;
 }
 
-std::vector<aggregate_element::argument_type, util::object_allocator<aggregate_element::argument_type>> const& aggregate_element::arguments() const noexcept {
+std::vector<aggregate_element::argument_type> const& aggregate_element::arguments() const noexcept {
     return arguments_;
 }
 

@@ -3,8 +3,8 @@
 #include "../expression.h"
 #include "../expression_kind.h"
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::step {
 
@@ -18,31 +18,28 @@ public:
 
     /**
      * @brief creates a new instance.
-     * @param creator the object creator for internal elements
      */
-    explicit flatten(util::object_creator creator = {}) noexcept;
+    explicit flatten() noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the copy destination
-     * @param creator the object creator
      */
-    explicit flatten(flatten const& other, util::object_creator creator);
+    explicit flatten(util::clone_tag_t, flatten const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move destination
-     * @param creator the object creator
      */
-    explicit flatten(flatten&& other, util::object_creator creator);
+    explicit flatten(util::clone_tag_t, flatten&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] flatten* clone(util::object_creator creator) const& override;
-    [[nodiscard]] flatten* clone(util::object_creator creator) && override;
+    [[nodiscard]] flatten* clone() const& override;
+    [[nodiscard]] flatten* clone() && override;
 
     /**
      * @brief returns the input port.

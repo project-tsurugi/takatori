@@ -108,36 +108,4 @@ TEST_F(graph_merger_test, move) {
     EXPECT_EQ(s2.input().opposite().get(), &s1.output());
 }
 
-TEST_F(graph_merger_test, move_copy) {
-    if (!util::object_creator_pmr_enabled) {
-        GTEST_SKIP();
-    }
-    G g;
-    auto* p1 = &g.insert(filter { constant(1) });
-    auto* p2 = &g.insert(filter { constant(2) });
-    p1->output() >> p2->input();
-
-    util::pmr::monotonic_buffer_resource r;
-    util::object_creator custom { &r };
-    G h { custom };
-    graph_merger m { h };
-    m.add(std::move(g));
-    m.resolve();
-
-    ASSERT_EQ(h.size(), 2);
-    auto i1 = std::find(h.begin(), h.end(), filter { constant(1) });
-    auto i2 = std::find(h.begin(), h.end(), filter { constant(2) });
-    ASSERT_NE(i1, h.end());
-    ASSERT_NE(i2, h.end());
-
-    auto&& d1 = util::downcast<filter>(*i1);
-    auto&& d2 = util::downcast<filter>(*i2);
-    EXPECT_EQ(&d1.owner(), &h);
-    EXPECT_EQ(&d2.owner(), &h);
-    EXPECT_EQ(d1.output().opposite().get(), &d2.input());
-
-    EXPECT_NE(&d1, p1);
-    EXPECT_NE(&d2, p2);
-}
-
 } // namespace takatori::relation::details

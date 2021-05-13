@@ -32,8 +32,8 @@ public:
     declared& operator=(declared&& other) noexcept = delete;
 
     [[nodiscard]] type_kind kind() const noexcept override;
-    [[nodiscard]] declared* clone(util::object_creator creator) const& override;
-    [[nodiscard]] declared* clone(util::object_creator creator) && override;
+    [[nodiscard]] declared* clone() const& override;
+    [[nodiscard]] declared* clone() && override;
 
     /**
      * @brief returns the type information of this declared type.

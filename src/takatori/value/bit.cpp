@@ -10,9 +10,7 @@ bit::bit(entity_type value) noexcept
     : entity_(std::move(value))
 {}
 
-bit::bit(std::string_view bits, bit::allocator_type const& allocator)
-    : entity_(allocator)
-{
+bit::bit(std::string_view bits) {
     entity_.reserve(bits.size());
     for (auto iter = bits.rbegin(); iter != bits.rend(); ++iter) {
         auto c = *iter;
@@ -30,23 +28,12 @@ value_kind bit::kind() const noexcept {
     return tag;
 }
 
-bit* bit::clone(util::object_creator creator) const& {
-    if (creator.is_compatible(entity_.get_allocator())) {
-        return creator.create_object<bit>(entity_);
-    }
-    entity_type copy { creator.allocator() };
-    copy.reserve(entity_.size());
-    for (entity_type::size_type i = 0, n = entity_.size(); i < n; ++i) {
-        copy.push_back(entity_[i]);
-    }
-    return creator.create_object<bit>(std::move(copy));
+bit* bit::clone() const& {
+     return new bit(entity_); // NOLINT
 }
 
-bit* bit::clone(util::object_creator creator) && {
-    if (creator.is_compatible(entity_.get_allocator())) {
-        return creator.create_object<bit>(std::move(entity_));
-    }
-    return clone(creator);
+bit* bit::clone() && {
+     return new bit(std::move(entity_)); // NOLINT
 }
 
 bit::view_type bit::get() const noexcept {

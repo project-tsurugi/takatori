@@ -1,13 +1,15 @@
 #pragma once
 
+#include <memory>
+
 #include "expression.h"
 #include "expression_kind.h"
 
 #include <takatori/descriptor/variable.h>
 #include <takatori/type/row_id.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation {
 
@@ -23,12 +25,10 @@ public:
      * @brief creates a new object.
      * @param variable a descriptor of the target column variable
      * @param type the corresponding column type
-     * @param creator the object creator for internal elements
      */
     explicit identify(
             descriptor::variable variable,
-            std::shared_ptr<type::row_id const> type,
-            util::object_creator creator = {}) noexcept;
+            std::shared_ptr<type::row_id const> type) noexcept;
 
     /**
      * @brief creates a new object.
@@ -43,24 +43,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit identify(identify const& other, util::object_creator creator);
+    explicit identify(util::clone_tag_t, identify const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit identify(identify&& other, util::object_creator creator);
+    explicit identify(util::clone_tag_t, identify&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] identify* clone(util::object_creator creator) const& override;
-    [[nodiscard]] identify* clone(util::object_creator creator) && override;
+    [[nodiscard]] identify* clone() const& override;
+    [[nodiscard]] identify* clone() && override;
 
     /**
      * @brief returns the input port.

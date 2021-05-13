@@ -8,9 +8,8 @@ namespace takatori::relation::step {
 
 take_flat::take_flat(
         descriptor::relation source,
-        std::vector<column, util::object_allocator<column>> columns,
-        util::object_creator creator) noexcept
-    : output_(*this, 0, creator)
+        std::vector<column> columns) noexcept
+    : output_(*this, 0)
     , source_(std::move(source))
     , columns_(std::move(columns))
 {}
@@ -24,30 +23,28 @@ take_flat::take_flat(
 {}
 
 
-take_flat::take_flat(take_flat const& other, util::object_creator creator)
+take_flat::take_flat(util::clone_tag_t, take_flat const& other)
     : take_flat(
             other.source_,
-            { other.columns_, creator.allocator() },
-            creator)
+            { other.columns_ })
 {}
 
-take_flat::take_flat(take_flat&& other, util::object_creator creator)
+take_flat::take_flat(util::clone_tag_t, take_flat&& other)
     : take_flat(
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator() },
-            creator)
+            { std::move(other.columns_) })
 {}
 
 expression_kind take_flat::kind() const noexcept {
     return tag;
 }
 
-take_flat* take_flat::clone(util::object_creator creator) const& {
-    return creator.create_object<take_flat>(*this, creator);
+take_flat* take_flat::clone() const& {
+    return new take_flat(util::clone_tag, *this); // NOLINT
 }
 
-take_flat* take_flat::clone(util::object_creator creator)&& {
-    return creator.create_object<take_flat>(std::move(*this), creator);
+take_flat* take_flat::clone()&& {
+    return new take_flat(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 
@@ -83,11 +80,11 @@ descriptor::relation const& take_flat::source() const noexcept {
     return source_;
 }
 
-std::vector<take_flat::column, util::object_allocator<take_flat::column>>& take_flat::columns() noexcept {
+std::vector<take_flat::column>& take_flat::columns() noexcept {
     return columns_;
 }
 
-std::vector<take_flat::column, util::object_allocator<take_flat::column>> const& take_flat::columns() const noexcept {
+std::vector<take_flat::column> const& take_flat::columns() const noexcept {
     return columns_;
 }
 

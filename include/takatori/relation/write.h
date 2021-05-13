@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "expression.h"
@@ -10,8 +11,8 @@
 
 #include <takatori/descriptor/relation.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation {
 
@@ -39,14 +40,12 @@ public:
      * @param destination the target external relation, must represent an index to distinguish individual entries
      * @param keys the column mappings between the input relation and the destination table for identifying target rows
      * @param columns the column mappings between the input relation and the destination table for setting row contents
-     * @param creator the object creator for internal elements
      */
     explicit write(
             operator_kind_type operator_kind,
             descriptor::relation destination,
-            std::vector<key, util::object_allocator<key>> keys,
-            std::vector<column, util::object_allocator<column>> columns,
-            util::object_creator creator = {}) noexcept;
+            std::vector<key> keys,
+            std::vector<column> columns) noexcept;
 
     /**
      * @brief creates a new object.
@@ -64,24 +63,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit write(write const& other, util::object_creator creator);
+    explicit write(util::clone_tag_t, write const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit write(write&& other, util::object_creator creator);
+    explicit write(util::clone_tag_t, write&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] write* clone(util::object_creator creator) const& override;
-    [[nodiscard]] write* clone(util::object_creator creator) && override;
+    [[nodiscard]] write* clone() const& override;
+    [[nodiscard]] write* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -118,19 +115,19 @@ public:
      * @brief returns write target keys in the input relation.
      * @return the write target keys
      */
-    [[nodiscard]] std::vector<key, util::object_allocator<key>>& keys() noexcept;
+    [[nodiscard]] std::vector<key>& keys() noexcept;
 
     /// @copydoc keys()
-    [[nodiscard]] std::vector<key, util::object_allocator<key>> const& keys() const noexcept;
+    [[nodiscard]] std::vector<key> const& keys() const noexcept;
 
     /**
      * @brief returns column values to write in the input relation.
      * @return the column values
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -168,8 +165,8 @@ private:
     input_port_type input_;
     operator_kind_type operator_kind_;
     descriptor::relation destination_;
-    std::vector<key, util::object_allocator<key>> keys_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<key> keys_;
+    std::vector<column> columns_;
 };
 
 /**

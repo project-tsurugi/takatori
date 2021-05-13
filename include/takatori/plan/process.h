@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -11,7 +12,7 @@
 
 #include <takatori/graph/graph.h>
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/reference_vector.h>
 
 namespace takatori::plan {
@@ -41,37 +42,26 @@ public:
     process() = default;
 
     /**
-     * @brief creates a new object with empty relational operator graph.
-     * @param creator the object creator for internal elements
-     */
-    explicit process(util::object_creator creator) noexcept;
-
-    /**
      * @brief creates a new object.
      * @param operators the relational operator graph
-     * @param creator the object creator for internal elements
      */
-    explicit process(
-            graph::graph<relation::expression> operators,
-            util::object_creator creator = {}) noexcept;
+    explicit process(graph::graph<relation::expression> operators) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit process(process const& other, util::object_creator creator);
+    explicit process(util::clone_tag_t, process const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit process(process&& other, util::object_creator creator);
+    explicit process(util::clone_tag_t, process&& other);
 
     step_kind kind() const noexcept override;
-    process* clone(util::object_creator creator) const& override;
-    process* clone(util::object_creator creator) && override;
+    process* clone() const& override;
+    process* clone() && override;
 
     /**
      * @brief returns the relational operator graph of this process.
@@ -206,8 +196,8 @@ protected:
 
 private:
     graph::graph<relation::expression> operators_ {};
-    std::vector<exchange*, util::object_allocator<exchange*>> upstreams_ {};
-    std::vector<exchange*, util::object_allocator<exchange*>> downstreams_ {};
+    std::vector<exchange*> upstreams_ {};
+    std::vector<exchange*> downstreams_ {};
 
     void internal_add_upstream(exchange& upstream);
     void internal_remove_upstream(exchange& upstream) noexcept;

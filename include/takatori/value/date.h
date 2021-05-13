@@ -8,7 +8,6 @@
 #include <takatori/datetime/date.h>
 
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::value {
 
@@ -49,8 +48,8 @@ public:
     date& operator=(date&& other) noexcept = delete;
 
     [[nodiscard]] value_kind kind() const noexcept override;
-    [[nodiscard]] date* clone(util::object_creator creator) const& override;
-    [[nodiscard]] date* clone(util::object_creator creator) && override;
+    [[nodiscard]] date* clone() const& override;
+    [[nodiscard]] date* clone() && override;
 
     /**
      * @brief returns the entity value.
@@ -72,8 +71,6 @@ protected:
 
 private:
     entity_type entity_;
-
-    friend class util::object_creator;
 };
 
 /**

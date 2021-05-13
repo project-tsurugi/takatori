@@ -23,12 +23,12 @@ value_kind time_point::kind() const noexcept {
     return tag;
 }
 
-time_point* time_point::clone(util::object_creator creator) const& {
-    return creator.create_object<time_point>(entity_);
+time_point* time_point::clone() const& {
+     return new time_point(entity_); // NOLINT
 }
 
-time_point* time_point::clone(util::object_creator creator) && {
-    return creator.create_object<time_point>(entity_);
+time_point* time_point::clone() && {
+     return new time_point(entity_); // NOLINT
 }
 
 std::ostream& operator<<(std::ostream& out, time_point const& value) {

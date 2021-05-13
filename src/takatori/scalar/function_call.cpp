@@ -20,28 +20,28 @@ function_call::function_call(
         { arguments.begin(), arguments.end() })
 {}
 
-function_call::function_call(function_call const& other, util::object_creator creator)
+function_call::function_call(util::clone_tag_t, function_call const& other)
     : function_call(
         other.function_,
-        tree::forward(creator, other.arguments_))
+        tree::forward(other.arguments_))
 {}
 
-function_call::function_call(function_call&& other, util::object_creator creator)
+function_call::function_call(util::clone_tag_t, function_call&& other)
     : function_call(
         std::move(other.function_),
-        tree::forward(creator, std::move(other.arguments_)))
+        tree::forward(std::move(other.arguments_)))
 {}
 
 expression_kind function_call::kind() const noexcept {
     return tag;
 }
 
-function_call* function_call::clone(util::object_creator creator) const& {
-    return creator.create_object<function_call>(*this, creator);
+function_call* function_call::clone() const& {
+    return new function_call(util::clone_tag, *this); // NOLINT
 }
 
-function_call* function_call::clone(util::object_creator creator) && {
-    return creator.create_object<function_call>(std::move(*this), creator);
+function_call* function_call::clone() && {
+    return new function_call(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 descriptor::function& function_call::function() noexcept {

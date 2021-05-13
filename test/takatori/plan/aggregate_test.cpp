@@ -29,21 +29,6 @@ TEST_F(aggregate_test, simple) {
     EXPECT_EQ(s.mode(), group_mode::equivalence);
 }
 
-TEST_F(aggregate_test, creator) {
-    aggregate s { util::object_creator {} };
-    EXPECT_EQ(s.source_columns().size(), 0);
-    EXPECT_EQ(s.destination_columns().size(), 0);
-    EXPECT_TRUE(std::equal(
-            s.input_columns().begin(), s.input_columns().end(),
-            s.source_columns().begin(), s.source_columns().end()));
-    EXPECT_TRUE(std::equal(
-            s.output_columns().begin(), s.output_columns().end(),
-            s.destination_columns().begin(), s.destination_columns().end()));
-    EXPECT_EQ(s.group_keys().size(), 0);
-    EXPECT_EQ(s.aggregations().size(), 0);
-    EXPECT_EQ(s.mode(), group_mode::equivalence);
-}
-
 TEST_F(aggregate_test, group_keys) {
     aggregate s {
             {

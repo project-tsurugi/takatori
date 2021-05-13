@@ -8,11 +8,11 @@ variable_reference::variable_reference(descriptor::variable variable) noexcept
     : variable_(std::move(variable))
 {}
 
-variable_reference::variable_reference(variable_reference const& other, util::object_creator) noexcept
+variable_reference::variable_reference(util::clone_tag_t, variable_reference const& other) noexcept
     : variable_reference(other.variable_)
 {}
 
-variable_reference::variable_reference(variable_reference&& other, util::object_creator) noexcept
+variable_reference::variable_reference(util::clone_tag_t, variable_reference&& other) noexcept
     : variable_reference(std::move(other.variable_))
 {}
 
@@ -20,12 +20,12 @@ expression_kind variable_reference::kind() const noexcept {
     return tag;
 }
 
-variable_reference* variable_reference::clone(util::object_creator creator) const& {
-    return creator.create_object<variable_reference>(*this, creator);
+variable_reference* variable_reference::clone() const& {
+    return new variable_reference(util::clone_tag, *this); // NOLINT
 }
 
-variable_reference* variable_reference::clone(util::object_creator creator) && {
-    return creator.create_object<variable_reference>(std::move(*this), creator);
+variable_reference* variable_reference::clone() && {
+    return new variable_reference(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 descriptor::variable& variable_reference::variable() noexcept {

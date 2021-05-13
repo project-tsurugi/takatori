@@ -10,9 +10,9 @@ namespace takatori::scalar {
 
 match::match(
         match::operator_kind_type operator_kind,
-        util::unique_object_ptr<expression> input,
-        util::unique_object_ptr<expression> pattern,
-        util::unique_object_ptr<expression> escape) noexcept
+        std::unique_ptr<expression> input,
+        std::unique_ptr<expression> pattern,
+        std::unique_ptr<expression> escape) noexcept
     : operator_kind_(operator_kind)
     , input_(tree::bless_element(*this, std::move(input)))
     , pattern_(tree::bless_element(*this, std::move(pattern)))
@@ -31,32 +31,32 @@ match::match(
             util::clone_unique(std::move(escape)))
 {}
 
-match::match(match const& other, util::object_creator creator) noexcept
+match::match(util::clone_tag_t, match const& other) noexcept
     : match(
             other.operator_kind_,
-            tree::forward(creator, other.input_),
-            tree::forward(creator, other.pattern_),
-            tree::forward(creator, other.escape_))
+            tree::forward(other.input_),
+            tree::forward(other.pattern_),
+            tree::forward(other.escape_))
 {}
 
-match::match(match&& other, util::object_creator creator) noexcept
+match::match(util::clone_tag_t, match&& other) noexcept
     : match(
             other.operator_kind_,
-            tree::forward(creator, std::move(other.input_)),
-            tree::forward(creator, std::move(other.pattern_)),
-            tree::forward(creator, std::move(other.escape_)))
+            tree::forward(std::move(other.input_)),
+            tree::forward(std::move(other.pattern_)),
+            tree::forward(std::move(other.escape_)))
 {}
 
 expression_kind match::kind() const noexcept {
     return tag;
 }
 
-match* match::clone(util::object_creator creator) const& {
-    return creator.create_object<match>(*this, creator);
+match* match::clone() const& {
+    return new match(util::clone_tag, *this); // NOLINT
 }
 
-match* match::clone(util::object_creator creator) && {
-    return creator.create_object<match>(std::move(*this), creator);
+match* match::clone() && {
+    return new match(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 match::operator_kind_type match::operator_kind() const noexcept {
@@ -84,15 +84,15 @@ util::optional_ptr<expression const> match::optional_input() const noexcept {
     return util::optional_ptr { input_.get() };
 }
 
-util::unique_object_ptr<expression> match::release_input() noexcept {
+std::unique_ptr<expression> match::release_input() noexcept {
     return tree::release_element(std::move(input_));
 }
 
-match& match::input(util::unique_object_ptr<expression> input) noexcept {
+match& match::input(std::unique_ptr<expression> input) noexcept {
     return tree::assign_element(*this, input_, std::move(input));
 }
 
-util::object_ownership_reference<expression> match::ownership_input() {
+util::ownership_reference<expression> match::ownership_input() {
     return tree::ownership_element(*this, input_);
 }
 
@@ -112,15 +112,15 @@ util::optional_ptr<expression const> match::optional_pattern() const noexcept {
     return util::optional_ptr { pattern_.get() };
 }
 
-util::unique_object_ptr<expression> match::release_pattern() noexcept {
+std::unique_ptr<expression> match::release_pattern() noexcept {
     return tree::release_element(std::move(pattern_));
 }
 
-match& match::pattern(util::unique_object_ptr<expression> pattern) noexcept {
+match& match::pattern(std::unique_ptr<expression> pattern) noexcept {
     return tree::assign_element(*this, pattern_, std::move(pattern));
 }
 
-util::object_ownership_reference<expression> match::ownership_pattern() {
+util::ownership_reference<expression> match::ownership_pattern() {
     return tree::ownership_element(*this, pattern_);
 }
 
@@ -140,15 +140,15 @@ util::optional_ptr<expression const> match::optional_escape() const noexcept {
     return util::optional_ptr { escape_.get() };
 }
 
-util::unique_object_ptr<expression> match::release_escape() noexcept {
+std::unique_ptr<expression> match::release_escape() noexcept {
     return tree::release_element(std::move(escape_));
 }
 
-match& match::escape(util::unique_object_ptr<expression> escape) noexcept {
+match& match::escape(std::unique_ptr<expression> escape) noexcept {
     return tree::assign_element(*this, escape_, std::move(escape));
 }
 
-util::object_ownership_reference<expression> match::ownership_escape() {
+util::ownership_reference<expression> match::ownership_escape() {
     return tree::ownership_element(*this, escape_);
 }
 

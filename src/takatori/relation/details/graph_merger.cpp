@@ -4,9 +4,8 @@
 
 namespace takatori::relation::details {
 
-graph_merger::graph_merger(graph_merger::graph_type& destination, util::object_creator creator) noexcept
-    : destination_(destination)
-    , mappings_(creator.allocator())
+graph_merger::graph_merger(graph_merger::graph_type& destination) noexcept :
+    destination_ { destination }
 {}
 
 graph_merger& graph_merger::add(graph_merger::graph_type const& source) {
@@ -20,18 +19,7 @@ graph_merger& graph_merger::add(graph_merger::graph_type const& source) {
 }
 
 graph_merger& graph_merger::add(graph_merger::graph_type&& source) {
-    if (source.get_object_creator() == destination_.get_object_creator()) {
-        // move
-        destination_.merge(std::move(source));
-    } else {
-        // copy using internal merger
-        graph_merger {
-                destination_,
-                util::object_creator { mappings_.get_allocator() },
-        }.add(source).resolve();
-        // explicitly remove all elements in source
-        source.clear();
-    }
+    destination_.merge(std::move(source));
     return *this;
 }
 

@@ -10,8 +10,8 @@ namespace takatori::scalar {
 
 binary::binary(
         binary::operator_kind_type operator_kind,
-        util::unique_object_ptr<expression> left,
-        util::unique_object_ptr<expression> right) noexcept
+        std::unique_ptr<expression> left,
+        std::unique_ptr<expression> right) noexcept
     : operator_kind_(operator_kind)
     , left_(tree::bless_element(*this, std::move(left)))
     , right_(tree::bless_element(*this, std::move(right)))
@@ -27,30 +27,30 @@ binary::binary(
             util::clone_unique(std::move(right)))
 {}
 
-binary::binary(binary const& other, util::object_creator creator) noexcept
+binary::binary(util::clone_tag_t, binary const& other) noexcept
     : binary(
             other.operator_kind_,
-            tree::forward(creator, other.left_),
-            tree::forward(creator, other.right_))
+            tree::forward(other.left_),
+            tree::forward(other.right_))
 {}
 
-binary::binary(binary&& other, util::object_creator creator) noexcept
+binary::binary(util::clone_tag_t, binary&& other) noexcept
     : binary(
             other.operator_kind_,
-            tree::forward(creator, std::move(other.left_)),
-            tree::forward(creator, std::move(other.right_)))
+            tree::forward(std::move(other.left_)),
+            tree::forward(std::move(other.right_)))
 {}
 
 expression_kind binary::kind() const noexcept {
     return tag;
 }
 
-binary* binary::clone(util::object_creator creator) const& {
-    return creator.create_object<binary>(*this, creator);
+binary* binary::clone() const& {
+    return new binary(util::clone_tag, *this); // NOLINT
 }
 
-binary* binary::clone(util::object_creator creator) && {
-    return creator.create_object<binary>(std::move(*this), creator);
+binary* binary::clone() && {
+    return new binary(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 binary::operator_kind_type binary::operator_kind() const noexcept {
@@ -78,15 +78,15 @@ util::optional_ptr<expression const> binary::optional_left() const noexcept {
     return util::optional_ptr { left_.get() };
 }
 
-util::unique_object_ptr<expression> binary::release_left() noexcept {
+std::unique_ptr<expression> binary::release_left() noexcept {
     return tree::release_element(std::move(left_));
 }
 
-binary& binary::left(util::unique_object_ptr<expression> left) noexcept {
+binary& binary::left(std::unique_ptr<expression> left) noexcept {
     return tree::assign_element(*this, left_, std::move(left));
 }
 
-util::object_ownership_reference<expression> binary::ownership_left() {
+util::ownership_reference<expression> binary::ownership_left() {
     return tree::ownership_element(*this, left_);
 }
 
@@ -106,15 +106,15 @@ util::optional_ptr<expression const> binary::optional_right() const noexcept {
     return util::optional_ptr { right_.get() };
 }
 
-util::unique_object_ptr<expression> binary::release_right() noexcept {
+std::unique_ptr<expression> binary::release_right() noexcept {
     return tree::release_element(std::move(right_));
 }
 
-binary& binary::right(util::unique_object_ptr<expression> right) noexcept {
+binary& binary::right(std::unique_ptr<expression> right) noexcept {
     return tree::assign_element(*this, right_, std::move(right));
 }
 
-util::object_ownership_reference<expression> binary::ownership_right() {
+util::ownership_reference<expression> binary::ownership_right() {
     return tree::ownership_element(*this, right_);
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 #include <utility>
 
@@ -10,8 +11,8 @@
 
 #include <takatori/descriptor/variable.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::intermediate {
 
@@ -31,11 +32,8 @@ public:
      * @param mappings the variable mappings:
      *      each source represents the input column,
      *      and destination represents the output column
-     * @param creator the object creator for internal elements
      */
-    explicit escape(
-            std::vector<mapping, util::object_allocator<mapping>> mappings,
-            util::object_creator creator = {}) noexcept;
+    explicit escape(std::vector<mapping> mappings) noexcept;
 
     /**
      * @brief creates a new object.
@@ -48,24 +46,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit escape(escape const& other, util::object_creator creator);
+    explicit escape(util::clone_tag_t, escape const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit escape(escape&& other, util::object_creator creator);
+    explicit escape(util::clone_tag_t, escape&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] escape* clone(util::object_creator creator) const& override;
-    [[nodiscard]] escape* clone(util::object_creator creator) && override;
+    [[nodiscard]] escape* clone() const& override;
+    [[nodiscard]] escape* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -91,10 +87,10 @@ public:
      *      and destination represents the output column
      * @return the key columns
      */
-    [[nodiscard]] std::vector<mapping, util::object_allocator<mapping>>& mappings() noexcept;
+    [[nodiscard]] std::vector<mapping>& mappings() noexcept;
 
     /// @copydoc mappings()
-    [[nodiscard]] std::vector<mapping, util::object_allocator<mapping>> const& mappings() const noexcept;
+    [[nodiscard]] std::vector<mapping> const& mappings() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -131,7 +127,7 @@ protected:
 private:
     input_port_type input_;
     output_port_type output_;
-    std::vector<mapping, util::object_allocator<mapping>> mappings_;
+    std::vector<mapping> mappings_;
 };
 
 } // namespace takatori::relation::intermediate

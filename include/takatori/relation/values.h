@@ -5,6 +5,8 @@
 #include <takatori/descriptor/variable.h>
 #include <takatori/scalar/expression.h>
 #include <takatori/tree/tree_fragment_vector.h>
+
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 
 #include "expression.h"
@@ -31,12 +33,10 @@ public:
      * @brief creates a new instance.
      * @param columns the destination columns
      * @param rows the each row data; must be ordered by `columns`
-     * @param creator the object creator
      */
     explicit values(
-            std::vector<column, util::object_allocator<column>> columns,
-            std::vector<row, util::object_allocator<row>> rows,
-            util::object_creator creator = {}) noexcept;
+            std::vector<column> columns,
+            std::vector<row> rows) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -51,24 +51,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit values(values const& other, util::object_creator creator);
+    explicit values(util::clone_tag_t, values const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit values(values&& other, util::object_creator creator);
+    explicit values(util::clone_tag_t, values&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] values* clone(util::object_creator creator) const& override;
-    [[nodiscard]] values* clone(util::object_creator creator) && override;
+    [[nodiscard]] values* clone() const& override;
+    [[nodiscard]] values* clone() && override;
 
     /**
      * @brief returns the output port.
@@ -84,10 +82,10 @@ public:
      * @return This designates each mapping between table column and its value to values.
      *      Each elements in the individual rows() must be ordered by this sequence of columns.
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns the rows to values.
@@ -131,7 +129,7 @@ protected:
 
 private:
     output_port_type output_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<column> columns_;
     tree::tree_fragment_vector<row> rows_;
 };
 

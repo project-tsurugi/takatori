@@ -11,7 +11,6 @@
 #include "simple_value.h"
 
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::value {
 
@@ -45,8 +44,8 @@ public:
     decimal& operator=(decimal&& other) noexcept = delete;
 
     [[nodiscard]] value_kind kind() const noexcept override;
-    [[nodiscard]] decimal* clone(util::object_creator creator) const& override;
-    [[nodiscard]] decimal* clone(util::object_creator creator) && override;
+    [[nodiscard]] decimal* clone() const& override;
+    [[nodiscard]] decimal* clone() && override;
 
     /**
      * @brief returns the entity value.
@@ -64,8 +63,6 @@ protected:
 
 private:
     entity_type entity_;
-
-    friend class util::object_creator;
 };
 
 /**

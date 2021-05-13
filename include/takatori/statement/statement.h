@@ -8,7 +8,6 @@
 
 #include <takatori/tree/tree_element_base.h>
 
-#include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 
 namespace takatori::statement {
@@ -44,13 +43,12 @@ public:
 
     /**
      * @brief returns a clone of this object.
-     * @param creator the object creator
      * @return the created clone
      */
-    [[nodiscard]] virtual statement* clone(util::object_creator creator) const& = 0;
+    [[nodiscard]] virtual statement* clone() const& = 0;
 
     /// @copydoc clone()
-    [[nodiscard]] virtual statement* clone(util::object_creator creator) && = 0;
+    [[nodiscard]] virtual statement* clone() && = 0;
 
     /**
      * @brief returns the parent element.

@@ -39,7 +39,7 @@ public:
      */
     explicit constexpr octet(varying_t varying, std::optional<size_type> length = {}) noexcept
         : varying_(varying)
-        , length_(std::move(length))
+        , length_(length)
     {}
 
     ~octet() override = default;
@@ -49,8 +49,8 @@ public:
     octet& operator=(octet&& other) noexcept = delete;
 
     [[nodiscard]] type_kind kind() const noexcept override;
-    [[nodiscard]] octet* clone(util::object_creator creator) const& override;
-    [[nodiscard]] octet* clone(util::object_creator creator) && override;
+    [[nodiscard]] octet* clone() const& override;
+    [[nodiscard]] octet* clone() && override;
 
     /**
      * @brief returns whether or not this octet sequence can vary its length.
@@ -106,8 +106,6 @@ protected:
 private:
     bool varying_;
     std::optional<size_type> length_;
-
-    friend class util::object_creator;
 };
 
 template<> struct type_of<octet::tag> : util::meta_type<octet> {};

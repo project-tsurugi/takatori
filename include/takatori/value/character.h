@@ -8,7 +8,6 @@
 #include "simple_value.h"
 
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::value {
 
@@ -20,11 +19,8 @@ public:
     /// @brief the kind of this type.
     static constexpr inline value_kind tag = value_kind::character;
 
-    /// @brief the allocator type
-    using allocator_type = util::object_allocator<char>;
-
     /// @brief the entity type
-    using entity_type = std::basic_string<char, std::char_traits<char>, allocator_type>;
+    using entity_type = std::string;
 
     /// @brief the view type
     using view_type = std::string_view;
@@ -39,11 +35,10 @@ public:
      * @brief creates a new instance.
      * @tparam T the character like object
      * @param value the character string
-     * @param allocator the allocator
      */
     template<class T>
-    explicit character(T const& value, allocator_type const& allocator = {})
-        : entity_(value, allocator)
+    explicit character(T const& value) :
+        entity_ { value }
     {}
 
     ~character() override = default;
@@ -53,8 +48,8 @@ public:
     character& operator=(character&& other) noexcept = delete;
 
     [[nodiscard]] value_kind kind() const noexcept override;
-    [[nodiscard]] character* clone(util::object_creator creator) const& override;
-    [[nodiscard]] character* clone(util::object_creator creator) && override;
+    [[nodiscard]] character* clone() const& override;
+    [[nodiscard]] character* clone() && override;
 
     /**
      * @brief returns the entity value.
@@ -72,8 +67,6 @@ protected:
 
 private:
     entity_type entity_;
-
-    friend class util::object_creator;
 };
 
 /**

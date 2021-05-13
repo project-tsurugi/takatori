@@ -14,13 +14,12 @@ join::join(
         operator_kind_type operator_kind,
         endpoint lower,
         endpoint upper,
-        util::unique_object_ptr<scalar::expression> condition,
-        util::object_creator creator) noexcept
+        std::unique_ptr<scalar::expression> condition) noexcept
     : inputs_({
-        input_port_type { *this, left_index, creator },
-        input_port_type { *this, right_index, creator },
+        input_port_type { *this, left_index },
+        input_port_type { *this, right_index },
     })
-    , output_(*this, 0, creator)
+    , output_(*this, 0)
     , operator_kind_(operator_kind)
     , lower_(tree::bless_element(*this, std::move(lower)))
     , upper_(tree::bless_element(*this, std::move(upper)))
@@ -29,14 +28,12 @@ join::join(
 
 join::join(
         operator_kind_type operator_kind,
-        util::unique_object_ptr<scalar::expression> condition,
-        util::object_creator creator) noexcept
+        std::unique_ptr<scalar::expression> condition) noexcept
     : join(
         operator_kind,
-        decltype(lower_) { creator },
-        decltype(upper_) { creator },
-        std::move(condition),
-        creator)
+        decltype(lower_) {},
+        decltype(upper_) {},
+        std::move(condition))
 {}
 
 join::join(
@@ -47,22 +44,20 @@ join::join(
             util::clone_unique(condition))
 {}
 
-join::join(join const& other, util::object_creator creator)
+join::join(util::clone_tag_t, join const& other)
     : join(
             other.operator_kind_,
-            endpoint { other.lower_, creator },
-            endpoint { other.upper_, creator },
-            tree::forward(creator, other.condition_),
-            creator)
+            endpoint { util::clone_tag, other.lower_ },
+            endpoint { util::clone_tag, other.upper_ },
+            tree::forward(other.condition_))
 {}
 
-join::join(join&& other, util::object_creator creator)
+join::join(util::clone_tag_t, join&& other)
     : join(
             other.operator_kind_,
-            endpoint { std::move(other.lower_), creator },
-            endpoint { std::move(other.upper_), creator },
-            tree::forward(creator, std::move(other.condition_)),
-            creator)
+            endpoint { util::clone_tag, std::move(other.lower_) },
+            endpoint { util::clone_tag, std::move(other.upper_) },
+            tree::forward(std::move(other.condition_)))
 {}
 
 expression_kind join::kind() const noexcept {
@@ -85,12 +80,12 @@ util::sequence_view<join::output_port_type const> join::output_ports() const noe
     return util::sequence_view { std::addressof(output_) };
 }
 
-join* join::clone(util::object_creator creator) const& {
-    return creator.create_object<join>(*this, creator);
+join* join::clone() const& {
+    return new join(util::clone_tag, *this); // NOLINT
 }
 
-join* join::clone(util::object_creator creator)&& {
-    return creator.create_object<join>(std::move(*this), creator);
+join* join::clone()&& {
+    return new join(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 join::input_port_type& join::left() noexcept {
@@ -150,15 +145,15 @@ util::optional_ptr<scalar::expression const> join::condition() const noexcept {
     return util::optional_ptr { condition_.get() };
 }
 
-util::unique_object_ptr<scalar::expression> join::release_condition() noexcept {
+std::unique_ptr<scalar::expression> join::release_condition() noexcept {
     return tree::release_element(std::move(condition_));
 }
 
-join& join::condition(util::unique_object_ptr<scalar::expression> condition) noexcept {
+join& join::condition(std::unique_ptr<scalar::expression> condition) noexcept {
     return tree::assign_element(*this, condition_, std::move(condition));
 }
 
-util::object_ownership_reference<scalar::expression> join::ownership_condition() noexcept {
+util::ownership_reference<scalar::expression> join::ownership_condition() noexcept {
     return tree::ownership_element(*this, condition_);
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "../expression.h"
@@ -8,8 +9,8 @@
 
 #include <takatori/descriptor/variable.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::intermediate {
 
@@ -25,11 +26,9 @@ public:
      * @brief creates a new object.
      * @param group_keys the key columns on the input relation:
      *      this operation distinguishes individual rows by these keys
-     * @param creator the object creator for internal elements
      */
     explicit distinct(
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-            util::object_creator creator = {}) noexcept;
+            std::vector<descriptor::variable> group_keys) noexcept;
 
     /**
      * @brief creates a new object.
@@ -41,24 +40,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit distinct(distinct const& other, util::object_creator creator);
+    explicit distinct(util::clone_tag_t, distinct const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit distinct(distinct&& other, util::object_creator creator);
+    explicit distinct(util::clone_tag_t, distinct&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] distinct* clone(util::object_creator creator) const& override;
-    [[nodiscard]] distinct* clone(util::object_creator creator) && override;
+    [[nodiscard]] distinct* clone() const& override;
+    [[nodiscard]] distinct* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -82,10 +79,10 @@ public:
      * @brief returns the distinct key columns on the input relation.
      * @return the distinct keys
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& group_keys() noexcept;
 
     /// @copydoc group_keys()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& group_keys() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -122,7 +119,7 @@ protected:
 private:
     input_port_type input_;
     output_port_type output_;
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_;
+    std::vector<descriptor::variable> group_keys_;
 };
 
 } // namespace takatori::relation::intermediate

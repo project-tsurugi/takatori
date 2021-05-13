@@ -4,7 +4,6 @@
 
 #include <takatori/graph/vertex_base.h>
 
-#include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 
 namespace takatori::graph {
@@ -60,13 +59,13 @@ public:
         return util::sequence_view { &output_ };
     }
 
-    simple_vertex* clone(util::object_creator creator) const& {
-        return creator.create_object<simple_vertex>(value_ * 2);
+    simple_vertex* clone() const& {
+         return new simple_vertex(value_ * 2); // NOLINT
     }
 
     /// @copydoc clone()
-    simple_vertex* clone(util::object_creator creator) && {
-        return creator.create_object<simple_vertex>(value_ + 1);
+    simple_vertex* clone() && {
+         return new simple_vertex(value_ + 1); // NOLINT
     }
 
     void on_join(graph_type* graph) noexcept override {

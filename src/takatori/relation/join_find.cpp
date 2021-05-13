@@ -12,12 +12,11 @@ namespace takatori::relation {
 join_find::join_find(
         operator_kind_type operator_kind,
         descriptor::relation source,
-        std::vector<column, util::object_allocator<column>> columns,
-        std::vector<key, util::object_allocator<key>> keys,
-        util::unique_object_ptr<scalar::expression> condition,
-        util::object_creator creator) noexcept
-    : left_(*this, 0, creator)
-    , output_(*this, 0, creator)
+        std::vector<column> columns,
+        std::vector<key> keys,
+        std::unique_ptr<scalar::expression> condition) noexcept
+    : left_(*this, 0)
+    , output_(*this, 0)
     , operator_kind_(operator_kind)
     , source_(std::move(source))
     , columns_(std::move(columns))
@@ -39,24 +38,22 @@ join_find::join_find(
             util::clone_unique(condition))
 {}
 
-join_find::join_find(join_find const& other, util::object_creator creator)
+join_find::join_find(util::clone_tag_t, join_find const& other)
     : join_find(
             other.operator_kind_,
             other.source_,
-            { other.columns_, creator.allocator() },
-            tree::forward(creator, other.keys_),
-            tree::forward(creator, other.condition_),
-            creator)
+            { other.columns_ },
+            tree::forward(other.keys_),
+            tree::forward(other.condition_))
 {}
 
-join_find::join_find(join_find&& other, util::object_creator creator)
+join_find::join_find(util::clone_tag_t, join_find&& other)
     : join_find(
             other.operator_kind_,
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator() },
-            tree::forward(creator, std::move(other.keys_)),
-            tree::forward(creator, std::move(other.condition_)),
-            creator)
+            { std::move(other.columns_) },
+            tree::forward(std::move(other.keys_)),
+            tree::forward(std::move(other.condition_)))
 {}
 
 expression_kind join_find::kind() const noexcept {
@@ -79,12 +76,12 @@ util::sequence_view<join_find::output_port_type const> join_find::output_ports()
     return util::sequence_view { std::addressof(output_) };
 }
 
-join_find* join_find::clone(util::object_creator creator) const& {
-    return creator.create_object<join_find>(*this, creator);
+join_find* join_find::clone() const& {
+    return new join_find(util::clone_tag, *this); // NOLINT
 }
 
-join_find* join_find::clone(util::object_creator creator)&& {
-    return creator.create_object<join_find>(std::move(*this), creator);
+join_find* join_find::clone()&& {
+    return new join_find(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 join_find::input_port_type& join_find::left() noexcept {
@@ -120,11 +117,11 @@ descriptor::relation const& join_find::source() const noexcept {
     return source_;
 }
 
-std::vector<join_find::column, util::object_allocator<join_find::column>>& join_find::columns() noexcept {
+std::vector<join_find::column>& join_find::columns() noexcept {
     return columns_;
 }
 
-std::vector<join_find::column, util::object_allocator<join_find::column>> const& join_find::columns() const noexcept {
+std::vector<join_find::column> const& join_find::columns() const noexcept {
     return columns_;
 }
 
@@ -144,15 +141,15 @@ util::optional_ptr<scalar::expression const> join_find::condition() const noexce
     return util::optional_ptr { condition_.get() };
 }
 
-util::unique_object_ptr<scalar::expression> join_find::release_condition() noexcept {
+std::unique_ptr<scalar::expression> join_find::release_condition() noexcept {
     return tree::release_element(std::move(condition_));
 }
 
-join_find& join_find::condition(util::unique_object_ptr<scalar::expression> condition) noexcept {
+join_find& join_find::condition(std::unique_ptr<scalar::expression> condition) noexcept {
     return tree::assign_element(*this, condition_, std::move(condition));
 }
 
-util::object_ownership_reference<scalar::expression> join_find::ownership_condition() noexcept {
+util::ownership_reference<scalar::expression> join_find::ownership_condition() noexcept {
     return tree::ownership_element(*this, condition_);
 }
 

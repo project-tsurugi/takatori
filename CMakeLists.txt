@@ -14,8 +14,6 @@ option(BUILD_SHARED_LIBS "build shared libraries instead of static" ON)
 option(FORCE_INSTALL_RPATH "automatically add library directory of custom prefixes to INSTALL_RPATH" OFF)
 
 option(ENABLE_COVERAGE "enable coverage on debug build" OFF)
-option(ENABLE_PMR "enable Polymorphic Memory Resource" ON)
-option(USE_BOOST_MEMORY_RESOURCE "use boost/container/pmr/memory_resource instead of C++ standard" ON)
 
 include(GNUInstallDirs)
 

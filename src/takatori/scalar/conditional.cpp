@@ -9,8 +9,8 @@
 namespace takatori::scalar {
 
 conditional::conditional(
-        std::vector<alternative, util::object_allocator<alternative>> alternatives,
-        util::unique_object_ptr<expression> default_expression) noexcept
+        std::vector<alternative> alternatives,
+        std::unique_ptr<expression> default_expression) noexcept
     : alternatives_(*this, std::move(alternatives))
     , default_expression_(tree::bless_element(*this, std::move(default_expression)))
 {}
@@ -23,28 +23,28 @@ conditional::conditional(
             util::clone_unique(default_expression))
 {}
 
-conditional::conditional(conditional const& other, util::object_creator creator)
+conditional::conditional(util::clone_tag_t, conditional const& other)
     : conditional(
-            tree::forward(creator, other.alternatives_),
-            tree::forward(creator, other.default_expression_))
+            tree::forward(other.alternatives_),
+            tree::forward(other.default_expression_))
 {}
 
-conditional::conditional(conditional&& other, util::object_creator creator)
+conditional::conditional(util::clone_tag_t, conditional&& other)
     : conditional(
-            tree::forward(creator, std::move(other.alternatives_)),
-            tree::forward(creator, std::move(other.default_expression_)))
+            tree::forward(std::move(other.alternatives_)),
+            tree::forward(std::move(other.default_expression_)))
 {}
 
 expression_kind conditional::kind() const noexcept {
     return tag;
 }
 
-conditional* conditional::clone(util::object_creator creator) const& {
-    return creator.create_object<conditional>(*this, creator);
+conditional* conditional::clone() const& {
+    return new conditional(util::clone_tag, *this); // NOLINT
 }
 
-conditional* conditional::clone(util::object_creator creator) && {
-    return creator.create_object<conditional>(std::move(*this), creator);
+conditional* conditional::clone() && {
+    return new conditional(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 tree::tree_fragment_vector<conditional::alternative>& conditional::alternatives() noexcept {
@@ -63,11 +63,11 @@ util::optional_ptr<expression const> conditional::default_expression() const noe
     return util::optional_ptr { default_expression_.get() };
 }
 
-conditional& conditional::default_expression(util::unique_object_ptr<expression> default_expression) noexcept {
+conditional& conditional::default_expression(std::unique_ptr<expression> default_expression) noexcept {
     return tree::assign_element(*this, default_expression_, std::move(default_expression));
 }
 
-util::unique_object_ptr<expression> conditional::release_default_expression() noexcept {
+std::unique_ptr<expression> conditional::release_default_expression() noexcept {
     return tree::release_element(std::move(default_expression_));
 }
 

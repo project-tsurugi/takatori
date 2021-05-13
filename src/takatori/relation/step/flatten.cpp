@@ -4,29 +4,25 @@
 
 namespace takatori::relation::step {
 
-flatten::flatten(util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+flatten::flatten() noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
 {}
 
-flatten::flatten(flatten const&, util::object_creator creator)
-    : flatten(creator)
-{}
+flatten::flatten(util::clone_tag_t, flatten const&) : flatten{} {}
 
-flatten::flatten(flatten&&, util::object_creator creator)
-    : flatten(creator)
-{}
+flatten::flatten(util::clone_tag_t, flatten&&) : flatten {} {}
 
 expression_kind flatten::kind() const noexcept {
     return tag;
 }
 
-flatten* flatten::clone(util::object_creator creator) const& {
-    return creator.create_object<flatten>(*this, creator);
+flatten* flatten::clone() const& {
+    return new flatten(util::clone_tag, *this); // NOLINT
 }
 
-flatten* flatten::clone(util::object_creator creator)&& {
-    return creator.create_object<flatten>(std::move(*this), creator);
+flatten* flatten::clone()&& {
+    return new flatten(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 util::sequence_view<flatten::input_port_type> flatten::input_ports() noexcept {

@@ -11,11 +11,11 @@ public:
 
     explicit dummy_extension(std::string value) noexcept : value_(std::move(value)) {}
 
-    [[nodiscard]] dummy_extension* clone(util::object_creator creator) const& override {
-        return creator.create_object<dummy_extension>(value_);
+    [[nodiscard]] dummy_extension* clone() const& override {
+         return new dummy_extension(value_); // NOLINT
     }
-    [[nodiscard]] dummy_extension* clone(util::object_creator creator) && override {
-        return creator.create_object<dummy_extension>(std::move(value_));
+    [[nodiscard]] dummy_extension* clone() && override {
+         return new dummy_extension(std::move(value_)); // NOLINT
     }
     [[nodiscard]] extension_id_type extension_id() const noexcept override {
         return extension_tag;

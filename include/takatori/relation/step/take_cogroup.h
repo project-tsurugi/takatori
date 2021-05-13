@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "../expression.h"
@@ -8,8 +9,8 @@
 
 #include "../details/cogroup_element.h"
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::step {
 
@@ -27,11 +28,9 @@ public:
     /**
      * @brief creates a new instance.
      * @param groups the individual source groups information, from corresponded upstream exchanges
-     * @param creator the object creator for internal elements
      */
     explicit take_cogroup(
-            std::vector<group, util::object_allocator<group>> groups,
-            util::object_creator creator = {}) noexcept;
+            std::vector<group> groups) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -42,24 +41,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit take_cogroup(take_cogroup const& other, util::object_creator creator);
+    explicit take_cogroup(util::clone_tag_t, take_cogroup const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit take_cogroup(take_cogroup&& other, util::object_creator creator);
+    explicit take_cogroup(util::clone_tag_t, take_cogroup&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] take_cogroup* clone(util::object_creator creator) const& override;
-    [[nodiscard]] take_cogroup* clone(util::object_creator creator) && override;
+    [[nodiscard]] take_cogroup* clone() const& override;
+    [[nodiscard]] take_cogroup* clone() && override;
 
     /**
      * @brief returns the output port.
@@ -75,10 +72,10 @@ public:
      * @details Each group member must describes about the corresponded upstream exchange.
      * @return the source groups
      */
-    [[nodiscard]] std::vector<group, util::object_allocator<group>>& groups() noexcept;
+    [[nodiscard]] std::vector<group>& groups() noexcept;
 
     /// @copydoc groups()
-    [[nodiscard]] std::vector<group, util::object_allocator<group>> const& groups() const noexcept;
+    [[nodiscard]] std::vector<group> const& groups() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -114,7 +111,7 @@ protected:
 
 private:
     output_port_type output_;
-    std::vector<group, util::object_allocator<group>> groups_;
+    std::vector<group> groups_;
 };
 
 } // namespace takatori::relation::step

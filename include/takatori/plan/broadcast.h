@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <optional>
 #include <utility>
@@ -9,7 +10,7 @@
 #include "exchange.h"
 #include "step_kind.h"
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 
 namespace takatori::plan {
 
@@ -29,19 +30,9 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param creator the object creator for internal elements
-     * @note the created object does not have any exchange columns, please define them using columns()
-     */
-    explicit broadcast(util::object_creator creator) noexcept;
-
-    /**
-     * @brief creates a new object.
      * @param columns the exchange columns
-     * @param creator the object creator for internal elements
      */
-    explicit broadcast(
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns,
-            util::object_creator creator = {}) noexcept;
+    explicit broadcast(std::vector<descriptor::variable> columns) noexcept;
 
     /**
      * @brief creates a new object.
@@ -53,21 +44,19 @@ public:
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit broadcast(broadcast const& other, util::object_creator creator);
+    explicit broadcast(util::clone_tag_t, broadcast const& other);
 
     /**
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit broadcast(broadcast&& other, util::object_creator creator);
+    explicit broadcast(util::clone_tag_t, broadcast&& other);
 
     [[nodiscard]] step_kind kind() const noexcept override;
-    [[nodiscard]] broadcast* clone(util::object_creator creator) const& override;
-    [[nodiscard]] broadcast* clone(util::object_creator creator) && override;
+    [[nodiscard]] broadcast* clone() const& override;
+    [[nodiscard]] broadcast* clone() && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
@@ -76,10 +65,10 @@ public:
      * @brief returns the columns to exchange.
      * @return the columns to exchange
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -116,7 +105,7 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns_ {};
+    std::vector<descriptor::variable> columns_ {};
 };
 
 } // namespace takatori::plan

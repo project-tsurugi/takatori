@@ -2,6 +2,7 @@
 
 #include <array>
 #include <initializer_list>
+#include <memory>
 #include <vector>
 #include <utility>
 
@@ -12,8 +13,8 @@
 
 #include <takatori/descriptor/variable.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::intermediate {
 
@@ -36,12 +37,10 @@ public:
      * @param quantifier the set quantifier of this operation
      * @param group_key_pairs the key element pairs:
      *      this operation distinguishes individual rows by these keys
-     * @param creator the object creator for internal elements
      */
     explicit intersection(
             quantifier_kind quantifier,
-            std::vector<group_key_pair, util::object_allocator<group_key_pair>> group_key_pairs,
-            util::object_creator creator = {}) noexcept;
+            std::vector<group_key_pair> group_key_pairs) noexcept;
 
     /**
      * @brief creates a new object.
@@ -56,24 +55,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit intersection(intersection const& other, util::object_creator creator);
+    explicit intersection(util::clone_tag_t, intersection const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit intersection(intersection&& other, util::object_creator creator);
+    explicit intersection(util::clone_tag_t, intersection&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] intersection* clone(util::object_creator creator) const& override;
-    [[nodiscard]] intersection* clone(util::object_creator creator) && override;
+    [[nodiscard]] intersection* clone() const& override;
+    [[nodiscard]] intersection* clone() && override;
 
     /**
      * @brief returns the left input port.
@@ -119,10 +116,10 @@ public:
      * @brief returns the key columns on the input relations.
      * @return the key columns
      */
-    [[nodiscard]] std::vector<group_key_pair, util::object_allocator<group_key_pair>>& group_key_pairs() noexcept;
+    [[nodiscard]] std::vector<group_key_pair>& group_key_pairs() noexcept;
 
     /// @copydoc group_key_pairs()
-    [[nodiscard]] std::vector<group_key_pair, util::object_allocator<group_key_pair>> const& group_key_pairs() const noexcept;
+    [[nodiscard]] std::vector<group_key_pair> const& group_key_pairs() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -160,7 +157,7 @@ private:
     std::array<input_port_type, 2> inputs_;
     output_port_type output_;
     quantifier_kind quantifier_;
-    std::vector<group_key_pair, util::object_allocator<group_key_pair>> group_key_pairs_;
+    std::vector<group_key_pair> group_key_pairs_;
 
     static inline constexpr std::size_t left_index = 0;
     static inline constexpr std::size_t right_index = left_index + 1;

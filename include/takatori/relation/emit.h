@@ -1,14 +1,15 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "expression.h"
 #include "expression_kind.h"
 #include "details/emit_element.h"
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation {
 
@@ -26,11 +27,9 @@ public:
     /**
      * @brief creates a new object.
      * @param columns the columns to be emitted in the input relation
-     * @param creator the object creator for internal elements
      */
     explicit emit(
-            std::vector<column, util::object_allocator<column>> columns,
-            util::object_creator creator = {}) noexcept;
+            std::vector<column> columns) noexcept;
 
     /**
      * @brief creates a new object.
@@ -42,24 +41,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit emit(emit const& other, util::object_creator creator);
+    explicit emit(util::clone_tag_t, emit const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit emit(emit&& other, util::object_creator creator);
+    explicit emit(util::clone_tag_t, emit&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] emit* clone(util::object_creator creator) const& override;
-    [[nodiscard]] emit* clone(util::object_creator creator) && override;
+    [[nodiscard]] emit* clone() const& override;
+    [[nodiscard]] emit* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -74,10 +71,10 @@ public:
      * @brief returns emit target columns in the input relation.
      * @return the emit target columns
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -113,7 +110,7 @@ protected:
 
 private:
     input_port_type input_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<column> columns_;
 };
 
 /**

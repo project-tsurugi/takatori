@@ -6,12 +6,12 @@ value_kind datetime_interval::kind() const noexcept {
     return tag;
 }
 
-datetime_interval* datetime_interval::clone(util::object_creator creator) const& {
-    return creator.create_object<datetime_interval>(entity_);
+datetime_interval* datetime_interval::clone() const& {
+     return new datetime_interval(entity_); // NOLINT
 }
 
-datetime_interval* datetime_interval::clone(util::object_creator creator) && {
-    return creator.create_object<datetime_interval>(entity_);
+datetime_interval* datetime_interval::clone() && {
+     return new datetime_interval(entity_); // NOLINT
 }
 
 bool datetime_interval::equals(data const& other) const noexcept {

@@ -7,26 +7,17 @@
 
 namespace takatori::plan {
 
-forward::forward(util::object_creator creator) noexcept
-    : exchange(creator)
-    , columns_(creator.allocator())
-    , limit_(std::nullopt)
-{}
-
 forward::forward(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns,
-        std::optional<size_type> limit,
-        util::object_creator creator) noexcept
-    : exchange(creator)
-    , columns_(std::move(columns))
-    , limit_(std::move(limit))
+        std::vector<descriptor::variable> columns,
+        std::optional<size_type> limit) noexcept
+    : columns_(std::move(columns))
+    , limit_(limit)
 {}
 
-forward::forward(std::optional<size_type> limit, util::object_creator creator) noexcept
+forward::forward(std::optional<size_type> limit) noexcept
     : forward(
-            decltype(columns_) { creator.allocator() },
-            std::move(limit),
-            creator)
+            decltype(columns_) {},
+            limit)
 {}
 
 forward::forward(
@@ -34,33 +25,31 @@ forward::forward(
         std::optional<size_type> limit) noexcept
     : forward(
             decltype(columns_) { columns.begin(), columns.end() },
-            std::move(limit))
+            limit)
 {}
 
-forward::forward(forward const& other, util::object_creator creator)
+forward::forward(util::clone_tag_t, forward const& other)
     : forward(
-            { other.columns_, creator.allocator() },
-            other.limit_,
-            creator)
+            { other.columns_ },
+            other.limit_)
 {}
 
-forward::forward(forward&& other, util::object_creator creator)
+forward::forward(util::clone_tag_t, forward&& other)
     : forward(
-            { std::move(other.columns_), creator.allocator() },
-            std::move(other.limit_),
-            creator)
+            { std::move(other.columns_) },
+            other.limit_)
 {}
 
 step_kind forward::kind() const noexcept {
     return tag;
 }
 
-forward* forward::clone(util::object_creator creator) const& {
-    return creator.create_object<forward>(*this, creator);
+forward* forward::clone() const& {
+    return new forward(util::clone_tag, *this); // NOLINT
 }
 
-forward* forward::clone(util::object_creator creator) && {
-    return creator.create_object<forward>(std::move(*this), creator);
+forward* forward::clone() && {
+    return new forward(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 util::sequence_view<descriptor::variable const> forward::input_columns() const noexcept {
@@ -71,11 +60,11 @@ util::sequence_view<descriptor::variable const> forward::output_columns() const 
     return util::sequence_view { columns_ };
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& forward::columns() noexcept {
+std::vector<descriptor::variable>& forward::columns() noexcept {
     return columns_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& forward::columns() const noexcept {
+std::vector<descriptor::variable> const& forward::columns() const noexcept {
     return columns_;
 }
 
@@ -84,7 +73,7 @@ std::optional<forward::size_type> const& forward::limit() const noexcept {
 }
 
 forward& forward::limit(std::optional<forward::size_type> limit) noexcept {
-    limit_ = std::move(limit);
+    limit_ = limit;
     return *this;
 }
 

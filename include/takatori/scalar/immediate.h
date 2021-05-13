@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -10,8 +11,8 @@
 #include <takatori/type/data.h>
 #include <takatori/value/data.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::scalar {
 
@@ -45,20 +46,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit immediate(immediate const& other, util::object_creator creator) noexcept;
+    explicit immediate(util::clone_tag_t, immediate const& other) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit immediate(immediate&& other, util::object_creator creator) noexcept;
+    explicit immediate(util::clone_tag_t, immediate&& other) noexcept;
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] immediate* clone(util::object_creator creator) const& override;
-    [[nodiscard]] immediate* clone(util::object_creator creator) && override;
+    [[nodiscard]] immediate* clone() const& override;
+    [[nodiscard]] immediate* clone() && override;
 
     /**
      * @brief returns the immediate value.

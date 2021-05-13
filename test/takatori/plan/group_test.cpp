@@ -23,17 +23,6 @@ TEST_F(group_test, simple) {
     EXPECT_EQ(s.mode(), group_mode::equivalence);
 }
 
-TEST_F(group_test, creator) {
-    group s { util::object_creator {} };
-    EXPECT_EQ(s.input_columns().size(), 0);
-    EXPECT_EQ(s.output_columns().size(), 0);
-    EXPECT_EQ(s.columns().size(), 0);
-    EXPECT_EQ(s.group_keys().size(), 0);
-    EXPECT_EQ(s.sort_keys().size(), 0);
-    EXPECT_EQ(s.limit(), std::nullopt);
-    EXPECT_EQ(s.mode(), group_mode::equivalence);
-}
-
 TEST_F(group_test, columns) {
     group s {
             {

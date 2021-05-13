@@ -8,8 +8,8 @@
 #include "expression_kind.h"
 #include "match_operator.h"
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
@@ -33,9 +33,9 @@ public:
      */
     explicit match(
             operator_kind_type operator_kind,
-            util::unique_object_ptr<expression> input,
-            util::unique_object_ptr<expression> pattern,
-            util::unique_object_ptr<expression> escape) noexcept;
+            std::unique_ptr<expression> input,
+            std::unique_ptr<expression> pattern,
+            std::unique_ptr<expression> escape) noexcept;
 
     /**
      * @brief creates a new object.
@@ -54,20 +54,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit match(match const& other, util::object_creator creator) noexcept;
+    explicit match(util::clone_tag_t, match const& other) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit match(match&& other, util::object_creator creator) noexcept;
+    explicit match(util::clone_tag_t, match&& other) noexcept;
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] match* clone(util::object_creator creator) const& override;
-    [[nodiscard]] match* clone(util::object_creator creator) && override;
+    [[nodiscard]] match* clone() const& override;
+    [[nodiscard]] match* clone() && override;
 
     /**
      * @brief returns the operator kind.
@@ -111,20 +109,20 @@ public:
      * @return the input sequence
      * @return empty if the input is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_input() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_input() noexcept;
 
     /**
      * @brief sets the input sequence.
      * @param input the replacement
      * @return this
      */
-    match& input(util::unique_object_ptr<expression> input) noexcept;
+    match& input(std::unique_ptr<expression> input) noexcept;
 
     /**
      * @brief returns ownership reference of the input sequence.
      * @return the input sequence
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_input();
+    [[nodiscard]] util::ownership_reference<expression> ownership_input();
 
     /**
      * @brief returns the pattern sequence.
@@ -155,20 +153,20 @@ public:
      * @return the pattern sequence
      * @return empty if the pattern is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_pattern() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_pattern() noexcept;
 
     /**
      * @brief sets the pattern sequence.
      * @param pattern the replacement
      * @return this
      */
-    match& pattern(util::unique_object_ptr<expression> pattern) noexcept;
+    match& pattern(std::unique_ptr<expression> pattern) noexcept;
 
     /**
      * @brief returns ownership reference of the pattern sequence.
      * @return the pattern sequence
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_pattern();
+    [[nodiscard]] util::ownership_reference<expression> ownership_pattern();
 
     /**
      * @brief returns the escape character.
@@ -199,20 +197,20 @@ public:
      * @return the escape character
      * @return empty if the expression is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_escape() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_escape() noexcept;
 
     /**
      * @brief sets the escape character.
      * @param escape the replacement
      * @return this
      */
-    match& escape(util::unique_object_ptr<expression> escape) noexcept;
+    match& escape(std::unique_ptr<expression> escape) noexcept;
 
     /**
      * @brief returns ownership reference of the escape character.
      * @return the escape character
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_escape();
+    [[nodiscard]] util::ownership_reference<expression> ownership_escape();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -246,9 +244,9 @@ protected:
 
 private:
     operator_kind_type operator_kind_;
-    util::unique_object_ptr<expression> input_;
-    util::unique_object_ptr<expression> pattern_;
-    util::unique_object_ptr<expression> escape_;
+    std::unique_ptr<expression> input_;
+    std::unique_ptr<expression> pattern_;
+    std::unique_ptr<expression> escape_;
 };
 
 /**

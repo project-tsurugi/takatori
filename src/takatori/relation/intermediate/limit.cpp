@@ -8,12 +8,11 @@ namespace takatori::relation::intermediate {
 
 limit::limit(
         std::optional<size_type> count,
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-        std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
-    , count_(std::move(count))
+        std::vector<descriptor::variable> group_keys,
+        std::vector<sort_key> sort_keys) noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
+    , count_(count)
     , group_keys_(std::move(group_keys))
     , sort_keys_(std::move(sort_keys))
 {}
@@ -23,25 +22,23 @@ limit::limit(
         std::initializer_list<descriptor::variable> group_keys,
         std::initializer_list<sort_key> sort_keys)
     : limit(
-            std::move(count),
+            count,
             { group_keys.begin(), group_keys.end() },
             { sort_keys.begin(), sort_keys.end() })
 {}
 
-limit::limit(limit const& other, util::object_creator creator)
+limit::limit(util::clone_tag_t, limit const& other)
     : limit(
             other.count_,
-            { other.group_keys_, creator.allocator() },
-            { other.sort_keys_, creator.allocator() },
-            creator)
+            { other.group_keys_ },
+            { other.sort_keys_ })
 {}
 
-limit::limit(limit&& other, util::object_creator creator)
+limit::limit(util::clone_tag_t, limit&& other)
     : limit(
-            std::move(other.count_),
-            { std::move(other.group_keys_), creator.allocator() },
-            { std::move(other.sort_keys_), creator.allocator() },
-            creator)
+            other.count_,
+            { std::move(other.group_keys_) },
+            { std::move(other.sort_keys_) })
 {}
 
 expression_kind limit::kind() const noexcept {
@@ -64,12 +61,12 @@ util::sequence_view<limit::output_port_type const> limit::output_ports() const n
     return util::sequence_view { std::addressof(output_) };
 }
 
-limit* limit::clone(util::object_creator creator) const& {
-    return creator.create_object<limit>(*this, creator);
+limit* limit::clone() const& {
+    return new limit(util::clone_tag, *this); // NOLINT
 }
 
-limit* limit::clone(util::object_creator creator)&& {
-    return creator.create_object<limit>(std::move(*this), creator);
+limit* limit::clone()&& {
+    return new limit(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 limit::input_port_type& limit::input() noexcept {
@@ -93,23 +90,23 @@ std::optional<limit::size_type> const& limit::count() const noexcept {
 }
 
 limit& limit::count(std::optional<size_type> count) noexcept {
-    count_ = std::move(count);
+    count_ = count;
     return *this;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& limit::group_keys() noexcept {
+std::vector<descriptor::variable>& limit::group_keys() noexcept {
     return group_keys_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& limit::group_keys() const noexcept {
+std::vector<descriptor::variable> const& limit::group_keys() const noexcept {
     return group_keys_;
 }
 
-std::vector<limit::sort_key, util::object_allocator<limit::sort_key>>& limit::sort_keys() noexcept {
+std::vector<limit::sort_key>& limit::sort_keys() noexcept {
     return sort_keys_;
 }
 
-std::vector<limit::sort_key, util::object_allocator<limit::sort_key>> const& limit::sort_keys() const noexcept {
+std::vector<limit::sort_key> const& limit::sort_keys() const noexcept {
     return sort_keys_;
 }
 

@@ -4,7 +4,6 @@
 #include <vector>
 #include <unordered_set>
 
-#include <takatori/util/object_creator.h>
 #include <takatori/util/infect_qualifier.h>
 
 namespace takatori::graph {
@@ -12,8 +11,7 @@ namespace takatori::graph {
 template<class Enumerator, class Graph>
 void topological_sort(
         Graph& g,
-        std::function<void(util::infect_const_t<Graph, typename Graph::element_type>&)> const& consumer,
-        util::object_creator creator = {}) {
+        std::function<void(util::infect_const_t<Graph, typename Graph::element_type>&)> const& consumer) {
     using enumerator_type = Enumerator;
     using element_type = util::infect_const_t<Graph, typename Graph::element_type>&;
     using reference = std::add_lvalue_reference_t<element_type>;
@@ -23,14 +21,13 @@ void topological_sort(
         pointer const element_ptr {};
         bool visited { false };
     };
-    std::vector<dfs_entry, util::object_allocator<dfs_entry>> dfs_stack { creator.allocator() };
+    std::vector<dfs_entry> dfs_stack {};
     dfs_stack.reserve(g.size());
 
     std::unordered_set<
             pointer,
             std::hash<pointer>,
-            std::equal_to<>,
-            util::object_allocator<pointer>> saw { creator.allocator() };
+            std::equal_to<>> saw {};
     saw.reserve(g.size());
 
     for (auto&& e : g) {

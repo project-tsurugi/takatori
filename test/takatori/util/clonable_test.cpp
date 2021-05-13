@@ -10,13 +10,7 @@
 
 namespace takatori::util {
 
-class clonable_test : public ::testing::Test {
-protected:
-    template<class T = void>
-    static util::object_creator to_creator(util::object_creator::deleter_type<T> const& deleter) {
-        return util::get_object_creator_from_deleter(deleter);
-    }
-};
+class clonable_test : public ::testing::Test {};
 
 namespace {
 
@@ -25,13 +19,13 @@ struct NotClonable {};
 struct Base {
     Base() = default;
     virtual ~Base() = default;
-    virtual Base* clone(object_creator) const = 0;
+    virtual Base* clone() const = 0;
 };
 
 struct Sub : Base {
     Sub() = default;
     ~Sub() override = default;
-    Sub* clone(object_creator allocator) const override { return allocator.create_object<Sub>(); };
+    Sub* clone() const override { return new Sub(); };
 };
 
 } // namespace
@@ -94,39 +88,17 @@ TEST_F(clonable_test, unique_ptr) {
 }
 
 TEST_F(clonable_test, unique_ptr_rvalue_compatible_deleter) {
-    object_creator c;
-    std::unique_ptr<Base, object_creator::deleter_type<Base>> ptr = c.create_unique<Sub>();
-    auto raw = ptr.get();
-    auto copy = clone_unique(std::move(ptr), c);
-    EXPECT_EQ(raw, copy.get());
-}
-
-TEST_F(clonable_test, unique_ptr_rvalue_incompatible_deleter) {
-    if (!util::object_creator_pmr_enabled) {
-        GTEST_SKIP();
-    }
     std::unique_ptr<Base> ptr = std::make_unique<Sub>();
     auto raw = ptr.get();
-
-    pmr::monotonic_buffer_resource r;
-    object_creator c { &r };
-    auto copy = clone_unique(std::move(ptr), c);
-    EXPECT_NE(raw, copy.get());
+    auto copy = clone_unique(std::move(ptr));
+    EXPECT_EQ(raw, copy.get());
 }
 
 TEST_F(clonable_test, clone_shared) {
     std::unique_ptr<Base> ptr = std::make_unique<Sub>();
 
-    pmr::monotonic_buffer_resource r;
-    object_creator c { &r };
-    auto copy = clone_shared(*ptr, c);
+    auto copy = clone_shared(*ptr);
     EXPECT_NE(ptr.get(), copy.get());
-
-    if (util::object_creator_pmr_enabled) {
-        auto* deleter = std::get_deleter<object_creator::deleter_type<Base>>(copy);
-        ASSERT_TRUE(deleter);
-        EXPECT_EQ(to_creator(*deleter), c);
-    }
 }
 
 } // namespace takatori::util

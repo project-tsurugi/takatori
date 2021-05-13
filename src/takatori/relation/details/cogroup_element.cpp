@@ -9,7 +9,7 @@ namespace takatori::relation::details {
 
 cogroup_element::cogroup_element(
         descriptor::relation source,
-        std::vector<column, util::object_allocator<column>> columns,
+        std::vector<column> columns,
         bool mandatory) noexcept
     : source_(std::move(source))
     , columns_(std::move(columns))
@@ -26,17 +26,17 @@ cogroup_element::cogroup_element(
             mandatory)
 {}
 
-cogroup_element::cogroup_element(cogroup_element const& other, util::object_creator creator)
+cogroup_element::cogroup_element(util::clone_tag_t, cogroup_element const& other)
     : cogroup_element(
             other.source_,
-            { other.columns_, creator.allocator() },
+            { other.columns_ },
             other.mandatory_)
 {}
 
-cogroup_element::cogroup_element(cogroup_element&& other, util::object_creator creator)
+cogroup_element::cogroup_element(util::clone_tag_t, cogroup_element&& other)
     : cogroup_element(
             other.source_,
-            { std::move(other.columns_), creator.allocator() },
+            { std::move(other.columns_) },
             other.mandatory_)
 {}
 
@@ -48,11 +48,11 @@ descriptor::relation const& cogroup_element::source() const noexcept {
     return source_;
 }
 
-std::vector<cogroup_element::column, util::object_allocator<cogroup_element::column>>& cogroup_element::columns() noexcept {
+std::vector<cogroup_element::column>& cogroup_element::columns() noexcept {
     return columns_;
 }
 
-std::vector<cogroup_element::column, util::object_allocator<cogroup_element::column>> const& cogroup_element::columns() const noexcept {
+std::vector<cogroup_element::column> const& cogroup_element::columns() const noexcept {
     return columns_;
 }
 

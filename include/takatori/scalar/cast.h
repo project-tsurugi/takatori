@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <string_view>
 
@@ -11,9 +11,9 @@
 
 #include <takatori/type/data.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/enum_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/ownership_reference.h>
 
@@ -39,7 +39,7 @@ public:
     explicit cast(
             std::shared_ptr<type::data const> type,
             loss_policy_type loss_policy,
-            util::unique_object_ptr<expression> operand) noexcept;
+            std::unique_ptr<expression> operand) noexcept;
 
     /**
      * @brief creates a new object.
@@ -56,20 +56,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit cast(cast const& other, util::object_creator creator);
+    explicit cast(util::clone_tag_t, cast const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit cast(cast&& other, util::object_creator creator);
+    explicit cast(util::clone_tag_t, cast&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] cast* clone(util::object_creator creator) const& override;
-    [[nodiscard]] cast* clone(util::object_creator creator) && override;
+    [[nodiscard]] cast* clone() const& override;
+    [[nodiscard]] cast* clone() && override;
 
     /**
      * @brief returns the destination type.
@@ -141,20 +139,20 @@ public:
      * @return the expression operand
      * @return empty if the operand is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_operand() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_operand() noexcept;
 
     /**
      * @brief sets the expression operand.
      * @param operand the replacement
      * @return this
      */
-    cast& operand(util::unique_object_ptr<expression> operand) noexcept;
+    cast& operand(std::unique_ptr<expression> operand) noexcept;
 
     /**
      * @brief returns ownership reference of the expression operand.
      * @return the expression operand
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_operand();
+    [[nodiscard]] util::ownership_reference<expression> ownership_operand();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -189,7 +187,7 @@ protected:
 private:
     std::shared_ptr<type::data const> type_;
     loss_policy_type loss_policy_;
-    util::unique_object_ptr<expression> operand_;
+    std::unique_ptr<expression> operand_;
 };
 
 /**

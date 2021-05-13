@@ -91,11 +91,6 @@ std::ostream& operator<<(std::ostream& out, exchange const& value) {
     return value.print_to(out);
 }
 
-exchange::exchange(util::object_creator creator) noexcept
-        : upstreams_(creator.allocator())
-        , downstreams_(creator.allocator())
-{}
-
 void exchange::internal_add_upstream(process& upstream) {
     auto element = std::addressof(upstream);
     auto&& elements = upstreams_;

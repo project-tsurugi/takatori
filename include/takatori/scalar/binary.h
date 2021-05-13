@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -8,8 +9,8 @@
 #include "expression_kind.h"
 #include "binary_operator.h"
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/ownership_reference.h>
 
 namespace takatori::scalar {
@@ -33,8 +34,8 @@ public:
      */
     explicit binary(
             operator_kind_type operator_kind,
-            util::unique_object_ptr<expression> left,
-            util::unique_object_ptr<expression> right) noexcept;
+            std::unique_ptr<expression> left,
+            std::unique_ptr<expression> right) noexcept;
 
     /**
      * @brief creates a new object.
@@ -51,20 +52,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit binary(binary const& other, util::object_creator creator) noexcept;
+    explicit binary(util::clone_tag_t, binary const& other) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit binary(binary&& other, util::object_creator creator) noexcept;
+    explicit binary(util::clone_tag_t, binary&& other) noexcept;
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] binary* clone(util::object_creator creator) const& override;
-    [[nodiscard]] binary* clone(util::object_creator creator) && override;
+    [[nodiscard]] binary* clone() const& override;
+    [[nodiscard]] binary* clone() && override;
 
     /**
      * @brief returns the operator kind.
@@ -108,20 +107,20 @@ public:
      * @return the left operand
      * @return empty if the operand is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_left() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_left() noexcept;
 
     /**
      * @brief sets the left operand.
      * @param left the replacement
      * @return this
      */
-    binary& left(util::unique_object_ptr<expression> left) noexcept;
+    binary& left(std::unique_ptr<expression> left) noexcept;
 
     /**
      * @brief returns ownership reference of the left operand.
      * @return the left operand
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_left();
+    [[nodiscard]] util::ownership_reference<expression> ownership_left();
 
     /**
      * @brief returns the right operand.
@@ -152,20 +151,20 @@ public:
      * @return the right operand
      * @return empty if the operand is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_right() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_right() noexcept;
 
     /**
      * @brief sets the right operand.
      * @param right the replacement
      * @return this
      */
-    binary& right(util::unique_object_ptr<expression> right) noexcept;
+    binary& right(std::unique_ptr<expression> right) noexcept;
 
     /**
      * @brief returns ownership reference of the right operand.
      * @return the right operand
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_right();
+    [[nodiscard]] util::ownership_reference<expression> ownership_right();
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -199,8 +198,8 @@ protected:
 
 private:
     operator_kind_type operator_kind_;
-    util::unique_object_ptr<expression> left_;
-    util::unique_object_ptr<expression> right_;
+    std::unique_ptr<expression> left_;
+    std::unique_ptr<expression> right_;
 };
 
 /**

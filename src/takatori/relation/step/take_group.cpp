@@ -8,9 +8,8 @@ namespace takatori::relation::step {
 
 take_group::take_group(
         descriptor::relation source,
-        std::vector<column, util::object_allocator<column>> columns,
-        util::object_creator creator) noexcept
-    : output_(*this, 0, creator)
+        std::vector<column> columns) noexcept
+    : output_(*this, 0)
     , source_(std::move(source))
     , columns_(std::move(columns))
 {}
@@ -24,30 +23,28 @@ take_group::take_group(
 {}
 
 
-take_group::take_group(take_group const& other, util::object_creator creator)
+take_group::take_group(util::clone_tag_t, take_group const& other)
     : take_group(
             other.source_,
-            { other.columns_, creator.allocator() },
-            creator)
+            { other.columns_ })
 {}
 
-take_group::take_group(take_group&& other, util::object_creator creator)
+take_group::take_group(util::clone_tag_t, take_group&& other)
     : take_group(
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator() },
-            creator)
+            { std::move(other.columns_) })
 {}
 
 expression_kind take_group::kind() const noexcept {
     return tag;
 }
 
-take_group* take_group::clone(util::object_creator creator) const& {
-    return creator.create_object<take_group>(*this, creator);
+take_group* take_group::clone() const& {
+    return new take_group(util::clone_tag, *this); // NOLINT
 }
 
-take_group* take_group::clone(util::object_creator creator)&& {
-    return creator.create_object<take_group>(std::move(*this), creator);
+take_group* take_group::clone()&& {
+    return new take_group(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 
@@ -88,11 +85,11 @@ take_group& take_group::source(descriptor::relation source) noexcept {
     return *this;
 }
 
-std::vector<take_group::column, util::object_allocator<take_group::column>>& take_group::columns() noexcept {
+std::vector<take_group::column>& take_group::columns() noexcept {
     return columns_;
 }
 
-std::vector<take_group::column, util::object_allocator<take_group::column>> const& take_group::columns() const noexcept {
+std::vector<take_group::column> const& take_group::columns() const noexcept {
     return columns_;
 }
 

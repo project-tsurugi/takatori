@@ -35,12 +35,12 @@ public:
         return Kind;
     }
 
-    [[nodiscard]] simple_type* clone(util::object_creator creator) const& override {
-        return creator.create_object<simple_type<Kind>>();
+    [[nodiscard]] simple_type* clone() const& override {
+        return new simple_type<Kind>(); // NOLINT
     }
 
-    [[nodiscard]] simple_type* clone(util::object_creator creator) && override {
-        return creator.create_object<simple_type<Kind>>();
+    [[nodiscard]] simple_type* clone() && override {
+        return new simple_type<Kind>(); // NOLINT
     }
 
 protected:

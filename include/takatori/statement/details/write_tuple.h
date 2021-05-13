@@ -8,7 +8,7 @@
 
 #include <takatori/scalar/expression.h>
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 
 namespace takatori::statement {
@@ -43,16 +43,14 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit write_tuple(write_tuple const& other, util::object_creator creator);
+    explicit write_tuple(util::clone_tag_t, write_tuple const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit write_tuple(write_tuple&& other, util::object_creator creator);
+    explicit write_tuple(util::clone_tag_t, write_tuple&& other);
 
     ~write_tuple() = default;
 

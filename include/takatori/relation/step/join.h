@@ -1,13 +1,15 @@
 #pragma once
 
+#include <memory>
+
 #include "../expression.h"
 #include "../expression_kind.h"
 #include "../join_kind.h"
 
 #include <takatori/scalar/expression.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/ownership_reference.h>
 #include <takatori/util/rvalue_ptr.h>
 
@@ -45,12 +47,10 @@ public:
      * @brief creates a new instance.
      * @param operator_kind the join kind
      * @param condition the extra join condition expression
-     * @param creator the object creator for internal elements
      */
     explicit join(
             operator_kind_type operator_kind,
-            util::unique_object_ptr<scalar::expression> condition,
-            util::object_creator creator = {}) noexcept;
+            std::unique_ptr<scalar::expression> condition) noexcept;
 
     /**
      * @brief creates a new object.
@@ -64,24 +64,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy destination
-     * @param creator the object creator
      */
-    explicit join(join const& other, util::object_creator creator);
+    explicit join(util::clone_tag_t, join const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move destination
-     * @param creator the object creator
      */
-    explicit join(join&& other, util::object_creator creator);
+    explicit join(util::clone_tag_t, join&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] join* clone(util::object_creator creator) const& override;
-    [[nodiscard]] join* clone(util::object_creator creator) && override;
+    [[nodiscard]] join* clone() const& override;
+    [[nodiscard]] join* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -135,20 +133,20 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    [[nodiscard]] util::unique_object_ptr<scalar::expression> release_condition() noexcept;
+    [[nodiscard]] std::unique_ptr<scalar::expression> release_condition() noexcept;
 
     /**
      * @brief sets the extra condition expression.
      * @param condition the replacement
      * @return this
      */
-    join& condition(util::unique_object_ptr<scalar::expression> condition) noexcept;
+    join& condition(std::unique_ptr<scalar::expression> condition) noexcept;
 
     /**
      * @brief returns ownership of the extra condition expression.
      * @return the extra condition expression
      */
-    [[nodiscard]] util::object_ownership_reference<scalar::expression> ownership_condition() noexcept;
+    [[nodiscard]] util::ownership_reference<scalar::expression> ownership_condition() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -186,7 +184,7 @@ private:
     input_port_type input_;
     output_port_type output_;
     operator_kind_type operator_kind_;
-    util::unique_object_ptr<scalar::expression> condition_;
+    std::unique_ptr<scalar::expression> condition_;
 };
 
 } // namespace takatori::relation::step

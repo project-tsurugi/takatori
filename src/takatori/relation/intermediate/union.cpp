@@ -8,13 +8,12 @@ namespace takatori::relation::intermediate {
 
 union_::union_(
         quantifier_kind quantifier,
-        std::vector<mapping, util::object_allocator<mapping>> mappings,
-        util::object_creator creator) noexcept
+        std::vector<mapping> mappings) noexcept
     : inputs_({
-            input_port_type { *this, left_index, creator },
-            input_port_type { *this, right_index, creator },
+            input_port_type { *this, left_index },
+            input_port_type { *this, right_index },
     })
-    , output_(*this, 0, creator)
+    , output_(*this, 0)
     , quantifier_(quantifier)
     , mappings_(std::move(mappings))
 {}
@@ -27,18 +26,16 @@ union_::union_(
             { mappings.begin(), mappings.end() })
 {}
 
-union_::union_(union_ const& other, util::object_creator creator)
+union_::union_(util::clone_tag_t, union_ const& other)
     : union_(
             other.quantifier_,
-            decltype(mappings_) { other.mappings_, creator.allocator() },
-            creator)
+            decltype(mappings_) { other.mappings_ })
 {}
 
-union_::union_(union_&& other, util::object_creator creator)
+union_::union_(util::clone_tag_t, union_&& other)
     : union_(
             other.quantifier_,
-            decltype(mappings_) { other.mappings_, creator.allocator() },
-            creator)
+            decltype(mappings_) { other.mappings_ })
 {}
 
 expression_kind union_::kind() const noexcept {
@@ -61,12 +58,12 @@ util::sequence_view<union_::output_port_type const> union_::output_ports() const
     return util::sequence_view { std::addressof(output_) };
 }
 
-union_* union_::clone(util::object_creator creator) const& {
-    return creator.create_object<union_>(*this, creator);
+union_* union_::clone() const& {
+    return new union_(util::clone_tag, *this); // NOLINT
 }
 
-union_* union_::clone(util::object_creator creator)&& {
-    return creator.create_object<union_>(std::move(*this), creator);
+union_* union_::clone()&& {
+    return new union_(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 union_::input_port_type& union_::left() noexcept {
@@ -102,11 +99,11 @@ union_& union_::quantifier(quantifier_kind quantifier) noexcept {
     return *this;
 }
 
-std::vector<union_::mapping, util::object_allocator<union_::mapping>>& union_::mappings() noexcept {
+std::vector<union_::mapping>& union_::mappings() noexcept {
     return mappings_;
 }
 
-std::vector<union_::mapping, util::object_allocator<union_::mapping>> const& union_::mappings() const noexcept {
+std::vector<union_::mapping> const& union_::mappings() const noexcept {
     return mappings_;
 }
 

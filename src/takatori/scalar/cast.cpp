@@ -11,7 +11,7 @@ namespace takatori::scalar {
 cast::cast(
         std::shared_ptr<type::data const> type,
         cast::loss_policy_type loss_policy,
-        util::unique_object_ptr<expression> operand) noexcept
+        std::unique_ptr<expression> operand) noexcept
     : type_(std::move(type))
     , loss_policy_(loss_policy)
     , operand_(tree::bless_element(*this, std::move(operand))) {}
@@ -25,30 +25,30 @@ cast::cast(
             loss_policy,
             util::clone_unique(std::move(operand))) {}
 
-cast::cast(cast const& other, util::object_creator creator)
+cast::cast(util::clone_tag_t, cast const& other)
     : cast(
             other.type_,
             other.loss_policy_,
-            tree::forward(creator, other.operand_))
+            tree::forward(other.operand_))
 {}
 
-cast::cast(cast&& other, util::object_creator creator)
+cast::cast(util::clone_tag_t, cast&& other)
     : cast(
             std::move(other.type_),
             other.loss_policy_,
-            tree::forward(creator, std::move(other.operand_)))
+            tree::forward(std::move(other.operand_)))
 {}
 
 expression_kind cast::kind() const noexcept {
     return tag;
 }
 
-cast* cast::clone(util::object_creator creator) const& {
-    return creator.create_object<cast>(*this, creator);
+cast* cast::clone() const& {
+    return new cast(util::clone_tag, *this); // NOLINT
 }
 
-cast* cast::clone(util::object_creator creator) && {
-    return creator.create_object<cast>(std::move(*this), creator);
+cast* cast::clone() && {
+    return new cast(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 type::data const& cast::type() const noexcept {
@@ -93,15 +93,15 @@ util::optional_ptr<expression const> cast::optional_operand() const noexcept {
     return util::optional_ptr { operand_.get() };
 }
 
-util::unique_object_ptr<expression> cast::release_operand() noexcept {
+std::unique_ptr<expression> cast::release_operand() noexcept {
     return tree::release_element(std::move(operand_));
 }
 
-cast& cast::operand(util::unique_object_ptr<expression> operand) noexcept {
+cast& cast::operand(std::unique_ptr<expression> operand) noexcept {
     return tree::assign_element(*this, operand_, std::move(operand));
 }
 
-util::object_ownership_reference<expression> cast::ownership_operand() {
+util::ownership_reference<expression> cast::ownership_operand() {
     return tree::ownership_element(*this, operand_);
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <optional>
 #include <vector>
 
@@ -14,8 +15,8 @@
 #include <takatori/descriptor/relation.h>
 #include <takatori/descriptor/variable.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation {
 
@@ -49,15 +50,13 @@ public:
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
      *      and each `value` cannot include any variables declared in `columns.destination`s 
      * @param limit the maximum number of output records
-     * @param creator the object creator for internal elements
      */
     explicit scan(
             descriptor::relation source,
-            std::vector<column, util::object_allocator<column>> columns,
+            std::vector<column> columns,
             endpoint lower,
             endpoint upper,
-            std::optional<std::size_t> limit,
-            util::object_creator creator = {}) noexcept;
+            std::optional<std::size_t> limit) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -84,24 +83,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit scan(scan const& other, util::object_creator creator);
+    explicit scan(util::clone_tag_t, scan const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit scan(scan&& other, util::object_creator creator);
+    explicit scan(util::clone_tag_t, scan&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] scan* clone(util::object_creator creator) const& override;
-    [[nodiscard]] scan* clone(util::object_creator creator) && override;
+    [[nodiscard]] scan* clone() const& override;
+    [[nodiscard]] scan* clone() && override;
 
     /**
      * @brief returns the output port.
@@ -125,10 +122,10 @@ public:
      * @brief returns the target columns to scan.
      * @return the target columns
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns the lower end-point specification.
@@ -197,7 +194,7 @@ protected:
 private:
     output_port_type output_;
     descriptor::relation source_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<column> columns_;
     endpoint lower_;
     endpoint upper_;
     std::optional<std::size_t> limit_;

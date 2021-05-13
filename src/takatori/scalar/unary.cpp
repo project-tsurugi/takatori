@@ -10,7 +10,7 @@ namespace takatori::scalar {
 
 unary::unary(
         unary::operator_kind_type operator_kind,
-        util::unique_object_ptr<expression> operand) noexcept
+        std::unique_ptr<expression> operand) noexcept
     : operator_kind_(operator_kind)
     , operand_(tree::bless_element(*this, std::move(operand)))
 {}
@@ -23,28 +23,28 @@ unary::unary(
             util::clone_unique(std::move(operand)))
 {}
 
-unary::unary(unary const& other, util::object_creator creator) noexcept
+unary::unary(util::clone_tag_t, unary const& other) noexcept
     : unary(
             other.operator_kind_,
-            tree::forward(creator, other.operand_))
+            tree::forward(other.operand_))
 {}
 
-unary::unary(unary&& other, util::object_creator creator) noexcept
+unary::unary(util::clone_tag_t, unary&& other) noexcept
     : unary(
             other.operator_kind_,
-            tree::forward(creator, std::move(other.operand_)))
+            tree::forward(std::move(other.operand_)))
 {}
 
 expression_kind unary::kind() const noexcept {
     return tag;
 }
 
-unary* unary::clone(util::object_creator creator) const& {
-    return creator.create_object<unary>(*this, creator);
+unary* unary::clone() const& {
+    return new unary(util::clone_tag, *this); // NOLINT
 }
 
-unary* unary::clone(util::object_creator creator) && {
-    return creator.create_object<unary>(std::move(*this), creator);
+unary* unary::clone() && {
+    return new unary(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 unary::operator_kind_type unary::operator_kind() const noexcept {
@@ -72,15 +72,15 @@ util::optional_ptr<expression const> unary::optional_operand() const noexcept {
     return util::optional_ptr { operand_.get() };
 }
 
-util::unique_object_ptr<expression> unary::release_operand() noexcept {
+std::unique_ptr<expression> unary::release_operand() noexcept {
     return tree::release_element(std::move(operand_));
 }
 
-unary& unary::operand(util::unique_object_ptr<expression> operand) noexcept {
+unary& unary::operand(std::unique_ptr<expression> operand) noexcept {
     return tree::assign_element(*this, operand_, std::move(operand));
 }
 
-util::object_ownership_reference<expression> unary::ownership_operand() {
+util::ownership_reference<expression> unary::ownership_operand() {
     return tree::ownership_element(*this, operand_);
 }
 

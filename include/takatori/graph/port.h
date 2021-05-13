@@ -1,12 +1,12 @@
 #pragma once
 
 #include <algorithm>
+#include <memory>
 #include <utility>
 
 #include "port_direction.h"
 
 #include <takatori/util/exception.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/print_support.h>
 
@@ -56,22 +56,9 @@ public:
      * @param index the index where this port on the container
      * @warning don't invoke this outside of owner node
      */
-    explicit constexpr port(node_type& owner, index_type index = 0) noexcept
-        : index_(index)
-        , owner_(std::addressof(owner))
-    {}
-
-    /**
-     * @brief constructs a new object.
-     * @param owner the owner node
-     * @param index the index where this port on the container
-     * @param creator the object creator (ignored)
-     * @warning don't invoke this outside of owner node
-     * @note This is designed to keep operational compatibility with multiport
-     */
-    explicit constexpr port(node_type& owner, index_type index, [[maybe_unused]] util::object_creator creator) noexcept
-        : index_(index)
-        , owner_(std::addressof(owner))
+    explicit constexpr port(node_type& owner, index_type index = 0) noexcept :
+        index_ { index },
+        owner_ { std::addressof(owner) }
     {}
 
     ~port() {
@@ -86,10 +73,10 @@ public:
      * @param other the move source
      * @warning this is designed for STL like containers, developers should not use this directly
      */
-    constexpr port(port&& other) noexcept
-        : index_(other.index_)
-        , owner_(other.owner_)
-        , opposite_(other.opposite_)
+    constexpr port(port&& other) noexcept :
+        index_ { other.index_ },
+        owner_ { other.owner_ },
+        opposite_ { other.opposite_ } // NOTE: std::exchange() is not constexpr until C++20
     {
         other.opposite_ = nullptr;
         if (opposite_ != nullptr) {

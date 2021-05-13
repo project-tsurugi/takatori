@@ -10,23 +10,13 @@
 
 namespace takatori::plan {
 
-aggregate::aggregate(util::object_creator creator) noexcept
-    : exchange(creator)
-    , source_columns_(creator.allocator())
-    , destination_columns_(creator.allocator())
-    , group_keys_(creator.allocator())
-    , aggregations_(creator.allocator())
-{}
-
 aggregate::aggregate(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> source_columns,
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> destination_columns,
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-        std::vector<aggregation, util::object_allocator<aggregation>> aggregations,
-        mode_type mode,
-        util::object_creator creator) noexcept
-    : exchange(creator)
-    , source_columns_(std::move(source_columns))
+        std::vector<descriptor::variable> source_columns,
+        std::vector<descriptor::variable> destination_columns,
+        std::vector<descriptor::variable> group_keys,
+        std::vector<aggregation> aggregations,
+        mode_type mode) noexcept
+    : source_columns_(std::move(source_columns))
     , destination_columns_(std::move(destination_columns))
     , group_keys_(std::move(group_keys))
     , aggregations_(std::move(aggregations))
@@ -34,7 +24,7 @@ aggregate::aggregate(
 {}
 
 static void add_if_absent(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& target,
+        std::vector<descriptor::variable>& target,
         descriptor::variable const& value) {
     if (auto iter = std::find(target.begin(), target.end(), value); iter == target.end()) {
         target.emplace_back(value);
@@ -74,36 +64,34 @@ aggregate::aggregate(
     }
 }
 
-aggregate::aggregate(aggregate const& other, util::object_creator creator)
+aggregate::aggregate(util::clone_tag_t, aggregate const& other)
     : aggregate(
-            { other.source_columns_, creator.allocator() },
-            { other.destination_columns_, creator.allocator() },
-            { other.group_keys_, creator.allocator() },
-            { other.aggregations_, creator.allocator() },
-            other.mode_,
-            creator)
+            { other.source_columns_ },
+            { other.destination_columns_ },
+            { other.group_keys_ },
+            { other.aggregations_ },
+            other.mode_)
 {}
 
-aggregate::aggregate(aggregate&& other, util::object_creator creator)
+aggregate::aggregate(util::clone_tag_t, aggregate&& other)
     : aggregate(
-            { std::move(other.source_columns_), creator.allocator() },
-            { std::move(other.destination_columns_), creator.allocator() },
-            { std::move(other.group_keys_), creator.allocator() },
-            { std::move(other.aggregations_), creator.allocator() },
-            other.mode_,
-            creator)
+            { std::move(other.source_columns_) },
+            { std::move(other.destination_columns_) },
+            { std::move(other.group_keys_) },
+            { std::move(other.aggregations_) },
+            other.mode_)
 {}
 
 step_kind aggregate::kind() const noexcept {
     return tag;
 }
 
-aggregate* aggregate::clone(util::object_creator creator) const& {
-    return creator.create_object<aggregate>(*this, creator);
+aggregate* aggregate::clone() const& {
+    return new aggregate(util::clone_tag, *this); // NOLINT
 }
 
-aggregate* aggregate::clone(util::object_creator creator) && {
-    return creator.create_object<aggregate>(std::move(*this), creator);
+aggregate* aggregate::clone() && {
+    return new aggregate(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 util::sequence_view<descriptor::variable const> aggregate::input_columns() const noexcept {
@@ -114,35 +102,35 @@ util::sequence_view<descriptor::variable const> aggregate::output_columns() cons
     return util::sequence_view { destination_columns_ };
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& aggregate::source_columns() noexcept {
+std::vector<descriptor::variable>& aggregate::source_columns() noexcept {
     return source_columns_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& aggregate::source_columns() const noexcept {
+std::vector<descriptor::variable> const& aggregate::source_columns() const noexcept {
     return source_columns_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& aggregate::destination_columns() noexcept {
+std::vector<descriptor::variable>& aggregate::destination_columns() noexcept {
     return destination_columns_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& aggregate::destination_columns() const noexcept {
+std::vector<descriptor::variable> const& aggregate::destination_columns() const noexcept {
     return destination_columns_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& aggregate::group_keys() noexcept {
+std::vector<descriptor::variable>& aggregate::group_keys() noexcept {
     return group_keys_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& aggregate::group_keys() const noexcept {
+std::vector<descriptor::variable> const& aggregate::group_keys() const noexcept {
     return group_keys_;
 }
 
-std::vector<aggregate::aggregation, util::object_allocator<aggregate::aggregation>>& aggregate::aggregations() noexcept {
+std::vector<aggregate::aggregation>& aggregate::aggregations() noexcept {
     return aggregations_;
 }
 
-std::vector<aggregate::aggregation, util::object_allocator<aggregate::aggregation>> const& aggregate::aggregations() const noexcept {
+std::vector<aggregate::aggregation> const& aggregate::aggregations() const noexcept {
     return aggregations_;
 }
 

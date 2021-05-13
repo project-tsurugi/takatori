@@ -11,7 +11,6 @@
 #include <takatori/datetime/time_point.h>
 
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::value {
 
@@ -81,8 +80,8 @@ public:
     time_point& operator=(time_point&& other) noexcept = delete;
 
     [[nodiscard]] value_kind kind() const noexcept override;
-    [[nodiscard]] time_point* clone(util::object_creator creator) const& override;
-    [[nodiscard]] time_point* clone(util::object_creator creator) && override;
+    [[nodiscard]] time_point* clone() const& override;
+    [[nodiscard]] time_point* clone() && override;
 
     /**
      * @brief returns the entity value.
@@ -104,8 +103,6 @@ protected:
 
 private:
     entity_type entity_;
-
-    friend class util::object_creator;
 };
 
 /**

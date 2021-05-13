@@ -9,17 +9,16 @@ namespace takatori::relation {
 
 scan::scan(
         descriptor::relation source,
-        std::vector<column, util::object_allocator<column>> columns,
+        std::vector<column> columns,
         endpoint lower,
         endpoint upper,
-        std::optional<std::size_t> limit,
-        util::object_creator creator) noexcept
-    : output_(*this, 0, creator)
+        std::optional<std::size_t> limit) noexcept
+    : output_(*this, 0)
     , source_(std::move(source))
     , columns_(std::move(columns))
     , lower_(tree::bless_element(*this, std::move(lower)))
     , upper_(tree::bless_element(*this, std::move(upper)))
-    , limit_(std::move(limit))
+    , limit_(limit)
 {}
 
 scan::scan(
@@ -33,27 +32,25 @@ scan::scan(
             { columns.begin(), columns.end() },
             std::move(lower),
             std::move(upper),
-            std::move(limit))
+            limit)
 {}
 
-scan::scan(scan const& other, util::object_creator creator)
+scan::scan(util::clone_tag_t, scan const& other)
     : scan(
             other.source_,
-            { other.columns_, creator.allocator() },
-            endpoint { other.lower_, creator },
-            endpoint { other.upper_, creator },
-            other.limit_,
-            creator)
+            { other.columns_ },
+            endpoint { util::clone_tag, other.lower_ },
+            endpoint { util::clone_tag, other.upper_ },
+            other.limit_)
 {}
 
-scan::scan(scan&& other, util::object_creator creator)
+scan::scan(util::clone_tag_t, scan&& other)
     : scan(
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator() },
-            endpoint { std::move(other.lower_), creator },
-            endpoint { std::move(other.upper_), creator },
-            std::move(other.limit_),
-            creator)
+            { std::move(other.columns_) },
+            endpoint { util::clone_tag, std::move(other.lower_) },
+            endpoint { util::clone_tag, std::move(other.upper_) },
+            other.limit_)
 {}
 
 expression_kind scan::kind() const noexcept {
@@ -76,12 +73,12 @@ util::sequence_view<scan::output_port_type const> scan::output_ports() const noe
     return util::sequence_view { std::addressof(output_) };
 }
 
-scan* scan::clone(util::object_creator creator) const& {
-    return creator.create_object<scan>(*this, creator);
+scan* scan::clone() const& {
+    return new scan(util::clone_tag, *this); // NOLINT
 }
 
-scan* scan::clone(util::object_creator creator)&& {
-    return creator.create_object<scan>(std::move(*this), creator);
+scan* scan::clone()&& {
+    return new scan(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 scan::output_port_type& scan::output() noexcept {
@@ -100,11 +97,11 @@ descriptor::relation const& scan::source() const noexcept {
     return source_;
 }
 
-std::vector<scan::column, util::object_allocator<scan::column>>& scan::columns() noexcept {
+std::vector<scan::column>& scan::columns() noexcept {
     return columns_;
 }
 
-std::vector<scan::column, util::object_allocator<scan::column>> const& scan::columns() const noexcept {
+std::vector<scan::column> const& scan::columns() const noexcept {
     return columns_;
 }
 
@@ -129,7 +126,7 @@ std::optional<std::size_t> const& scan::limit() const noexcept {
 }
 
 scan& scan::limit(std::optional<std::size_t> limit) noexcept {
-    limit_ = std::move(limit);
+    limit_ = limit;
     return *this;
 }
 

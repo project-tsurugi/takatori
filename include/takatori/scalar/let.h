@@ -10,8 +10,8 @@
 
 #include <takatori/tree/tree_fragment_vector.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/ownership_reference.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
@@ -38,8 +38,8 @@ public:
      * @param body the body expression
      */
     explicit let(
-            std::vector<declarator, util::object_allocator<declarator>> variables,
-            util::unique_object_ptr<expression> body) noexcept;
+            std::vector<declarator> variables,
+            std::unique_ptr<expression> body) noexcept;
 
     /**
      * @brief creates a new object.
@@ -62,20 +62,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit let(let const& other, util::object_creator creator);
+    explicit let(util::clone_tag_t, let const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit let(let&& other, util::object_creator creator);
+    explicit let(util::clone_tag_t, let&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] let* clone(util::object_creator creator) const& override;
-    [[nodiscard]] let* clone(util::object_creator creator) && override;
+    [[nodiscard]] let* clone() const& override;
+    [[nodiscard]] let* clone() && override;
 
     /**
      * @brief returns the variables.
@@ -115,20 +113,20 @@ public:
      * @return the body expression
      * @return empty if the body is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_body() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_body() noexcept;
 
     /**
      * @brief sets the body expression.
      * @param body the replacement
      * @return this
      */
-    let& body(util::unique_object_ptr<expression> body) noexcept;
+    let& body(std::unique_ptr<expression> body) noexcept;
 
     /**
      * @brief returns ownership of the body expression.
      * @return the body expression
      */
-    util::object_ownership_reference<expression> ownership_body() noexcept;
+    util::ownership_reference<expression> ownership_body() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -162,7 +160,7 @@ protected:
 
 private:
     tree::tree_fragment_vector<declarator> variables_;
-    util::unique_object_ptr<expression> body_;
+    std::unique_ptr<expression> body_;
 };
 
 /**

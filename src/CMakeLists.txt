@@ -161,7 +161,6 @@ add_library(takatori
     takatori/util/assertion.cpp
     takatori/util/exception.cpp
     takatori/util/fail.cpp
-    takatori/util/object_creator.cpp
     takatori/util/string_builder.cpp
 )
 

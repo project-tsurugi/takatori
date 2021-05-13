@@ -10,8 +10,8 @@ namespace takatori::scalar {
 
 compare::compare(
         operator_kind_type operator_kind,
-        util::unique_object_ptr<expression> left,
-        util::unique_object_ptr<expression> right) noexcept
+        std::unique_ptr<expression> left,
+        std::unique_ptr<expression> right) noexcept
     : operator_kind_(operator_kind)
     , left_(tree::bless_element(*this, std::move(left)))
     , right_(tree::bless_element(*this, std::move(right)))
@@ -27,30 +27,30 @@ compare::compare(
             util::clone_unique(std::move(right)))
 {}
 
-compare::compare(compare const& other, util::object_creator creator) noexcept
+compare::compare(util::clone_tag_t, compare const& other) noexcept
     : compare(
             other.operator_kind_,
-            tree::forward(creator, other.left_),
-            tree::forward(creator, other.right_))
+            tree::forward(other.left_),
+            tree::forward(other.right_))
 {}
 
-compare::compare(compare&& other, util::object_creator creator) noexcept
+compare::compare(util::clone_tag_t, compare&& other) noexcept
     : compare(
             other.operator_kind_,
-            tree::forward(creator, std::move(other.left_)),
-            tree::forward(creator, std::move(other.right_)))
+            tree::forward(std::move(other.left_)),
+            tree::forward(std::move(other.right_)))
 {}
 
 expression_kind compare::kind() const noexcept {
     return tag;
 }
 
-compare* compare::clone(util::object_creator creator) const& {
-    return creator.create_object<compare>(*this, creator);
+compare* compare::clone() const& {
+    return new compare(util::clone_tag, *this); // NOLINT
 }
 
-compare* compare::clone(util::object_creator creator) && {
-    return creator.create_object<compare>(std::move(*this), creator);
+compare* compare::clone() && {
+    return new compare(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 compare::operator_kind_type compare::operator_kind() const noexcept {
@@ -78,15 +78,15 @@ util::optional_ptr<expression const> compare::optional_left() const noexcept {
     return util::optional_ptr { left_.get() };
 }
 
-util::unique_object_ptr<expression> compare::release_left() noexcept {
+std::unique_ptr<expression> compare::release_left() noexcept {
     return tree::release_element(std::move(left_));
 }
 
-compare& compare::left(util::unique_object_ptr<expression> left) noexcept {
+compare& compare::left(std::unique_ptr<expression> left) noexcept {
     return tree::assign_element(*this, left_, std::move(left));
 }
 
-util::object_ownership_reference<expression> compare::ownership_left() {
+util::ownership_reference<expression> compare::ownership_left() {
     return tree::ownership_element(*this, left_);
 }
 
@@ -106,15 +106,15 @@ util::optional_ptr<expression const> compare::optional_right() const noexcept {
     return util::optional_ptr { right_.get() };
 }
 
-util::unique_object_ptr<expression> compare::release_right() noexcept {
+std::unique_ptr<expression> compare::release_right() noexcept {
     return tree::release_element(std::move(right_));
 }
 
-compare& compare::right(util::unique_object_ptr<expression> right) noexcept {
+compare& compare::right(std::unique_ptr<expression> right) noexcept {
     return tree::assign_element(*this, right_, std::move(right));
 }
 
-util::object_ownership_reference<expression> compare::ownership_right() {
+util::ownership_reference<expression> compare::ownership_right() {
     return tree::ownership_element(*this, right_);
 }
 

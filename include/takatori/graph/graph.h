@@ -11,7 +11,6 @@
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
 #include <takatori/util/exception.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 
 namespace takatori::graph {
@@ -30,14 +29,13 @@ public:
     using element_type = T;
 
     /// @brief the set entry type.
-    using entry_type = element_type*;
+    using entry_type = std::add_pointer_t<element_type>;
 
     /// @brief the entity type
     using entity_type = std::unordered_set<
             entry_type,
             std::hash<entry_type>,
-            std::equal_to<>,
-            util::object_allocator<entry_type>>;
+            std::equal_to<>>;
 
     /// @brief the value type
     using value_type = element_type;
@@ -60,15 +58,9 @@ public:
     using const_iterator = graph_iterator<typename entity_type::const_iterator>;
 
     /**
-     * @brief creates a new object with default object creator.
+     * @brief creates a new object.
      */
     graph() = default;
-
-    ~graph() {
-        for (auto&& entry : vertices_) {
-            delete_element(entry);
-        }
-    }
 
     graph(graph const& other) = delete;
     graph& operator=(graph const& other) = delete;
@@ -77,8 +69,8 @@ public:
      * @brief creates a new object.
      * @param other the move source
      */
-    graph(graph&& other) noexcept
-        : vertices_(std::move(other.vertices_))
+    graph(graph&& other) noexcept :
+        vertices_ { std::move(other.vertices_) }
     {
         for (auto* e : vertices_) {
             bless_element(e);
@@ -100,12 +92,13 @@ public:
     }
 
     /**
-     * @brief creates a new object.
-     * @param creator the object creator
+     * @brief destructs this object.
      */
-    explicit graph(util::object_creator creator) noexcept
-        : vertices_(creator.allocator())
-    {}
+    ~graph() {
+        for (auto&& entry : vertices_) {
+            delete_element(entry);
+        }
+    }
 
     /**
      * @brief returns whether or not this graph contains the given element.
@@ -209,36 +202,27 @@ public:
                     std::is_convertible_v<U, const_reference>>>
     U& insert(U&& element) {
         static_assert(util::is_clonable_v<element_type>);
-        auto entry = insert_element(util::clone_unique(std::forward<U>(element), get_object_creator()));
+        auto* entry = insert_element(util::clone_unique(std::forward<U>(element)));
         bless_element(entry);
         return *entry;
     }
 
     /**
      * @brief inserts the given element into this graph.
-     * @details if the allocator of the element is not compatible to this graph,
-     *      this inserts a copy of the element.
      * @tparam U the element type
-     * @tparam D the deleter type
      * @param element the element
      * @return the added element
      * @throws if the element is absent
-     * @see get_object_creator()
-     * @see util::object_creator::is_instance()
      */
     template<
             class U,
-            class D,
             class = std::enable_if_t<
                     std::is_convertible_v<U, const_reference>>>
-    U& insert(std::unique_ptr<U, D> element) {
+    U& insert(std::unique_ptr<U> element) {
         if (!element) {
             util::throw_exception(std::invalid_argument("element must not be absent"));
         }
-        if (!get_object_creator().is_instance(element)) {
-            return insert(util::clone_unique(std::move(*element), get_object_creator()));
-        }
-        auto entry = insert_element(std::move(element));
+        auto* entry = insert_element(std::move(element));
         bless_element(entry);
         return *entry;
     }
@@ -252,8 +236,8 @@ public:
      */
     template<class U = element_type, class... Args>
     U& emplace(Args&&... args) {
-        static_assert(util::is_clonable_v<element_type>);
-        auto entry = insert_element(create_element<U>(std::forward<Args>(args)...));
+        static_assert(std::is_base_of_v<value_type, U>);
+        auto* entry = insert_element(create_element<U>(std::forward<Args>(args)...));
         bless_element(entry);
         return *entry;
     }
@@ -263,7 +247,7 @@ public:
      * @param element the target element
      * @return the released element
      */
-    util::unique_object_ptr<value_type> release(const_reference element) noexcept {
+    std::unique_ptr<value_type> release(const_reference element) noexcept {
         if (auto iter = vertices_.find(entry_key(element)); iter != vertices_.end()) {
             auto kv = release(const_iterator(iter));
             return std::get<0>(std::move(kv));
@@ -276,9 +260,9 @@ public:
      * @param position the target position
      * @return a pair of the removed element, and the next position of the released element
      */
-    std::pair<util::unique_object_ptr<value_type>, iterator> release(const_iterator position) {
+    std::pair<std::unique_ptr<value_type>, iterator> release(const_iterator position) {
         auto iter = position.unwrap();
-        auto result = get_object_creator().wrap_unique(*iter);
+        std::unique_ptr<value_type> result { *iter };
         unbless_element(result.get());
         auto next = vertices_.erase(iter);
         return std::make_pair(std::move(result), iterator { next });
@@ -287,12 +271,8 @@ public:
     /**
      * @brief merges vertices and their connections into this graph.
      * @param other the source graph
-     * @throws std::invalid_argument if get_object_creator() != other.get_object_creator()
      */
     void merge(graph&& other) {
-        if (get_object_creator() != other.get_object_creator()) {
-            util::throw_exception(std::invalid_argument("inconsistent allocator"));
-        }
         for (auto* v : other.vertices_) {
             bless_element(v);
         }
@@ -374,7 +354,6 @@ public:
 
     /**
      * @brief exchanges contents between this and the given graph.
-     * @details This also exchanges their object_creator.
      * @param other the target graph
      */
     void swap(graph& other) noexcept {
@@ -387,14 +366,6 @@ public:
         }
     }
 
-    /**
-     * @brief returns the object creator to create/delete objects in this container.
-     * @return the object creator for this container
-     */
-    [[nodiscard]] util::object_creator get_object_creator() const noexcept {
-        return util::object_creator { vertices_.get_allocator() };
-    }
-
 private:
     entity_type vertices_;
 
@@ -402,19 +373,19 @@ private:
         return const_cast<entry_type>(std::addressof(element));  // NOLINT
     }
 
-    reference bless_element(pointer element) noexcept {
+    reference bless_element(entry_type element) noexcept {
         graph_element_traits<element_type>::join(*element, *this);
         return *element;
     }
 
-    void unbless_element(pointer element) noexcept {
+    void unbless_element(entry_type element) noexcept {
         if (element != nullptr) {
             graph_element_traits<element_type>::leave(*element);
         }
     }
 
     template<class U>
-    U* insert_element(util::unique_object_ptr<U> element) {
+    U* insert_element(std::unique_ptr<U> element) {
         auto [iter, success] = vertices_.emplace(element.get());
         if (!success) {
             util::throw_exception(std::logic_error("conflict element ID"));
@@ -424,14 +395,12 @@ private:
     }
 
     template<class U, class... Args>
-    [[nodiscard]] util::unique_object_ptr<U> create_element(Args&&... args) {
-        return get_object_creator().template create_unique<U>(std::forward<Args>(args)...);
+    [[nodiscard]] std::unique_ptr<U> create_element(Args&&... args) {
+        return std::make_unique<U>(std::forward<Args>(args)...);
     }
 
-    void delete_element(pointer element) noexcept {
-        if (element != nullptr) {
-            get_object_creator().delete_object(element);
-        }
+    static void delete_element(pointer element) noexcept {
+        delete element; // NOLINT
     }
 };
 

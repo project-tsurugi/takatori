@@ -10,7 +10,7 @@
 #include <takatori/tree/tree_element_forward.h>
 
 #include <takatori/util/clonable.h>
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/ownership_reference.h>
 
@@ -33,7 +33,7 @@ public:
      */
     explicit variable_declarator(
             descriptor::variable variable,
-            util::unique_object_ptr<expression> value) noexcept
+            std::unique_ptr<expression> value) noexcept
         : variable_(std::move(variable))
         , value_(std::move(value))
     {}
@@ -44,7 +44,7 @@ public:
      * @param value the bound expression
      */
     explicit variable_declarator(
-            util::unique_object_ptr<expression> value,
+            std::unique_ptr<expression> value,
             descriptor::variable variable) noexcept
         : variable_(std::move(variable))
         , value_(std::move(value))
@@ -100,23 +100,21 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit variable_declarator(variable_declarator const& other, util::object_creator creator)
+    explicit variable_declarator(util::clone_tag_t, variable_declarator const& other)
         : variable_declarator(
                 other.variable_,
-                tree::forward(creator, other.value_))
+                tree::forward(other.value_))
     {}
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit variable_declarator(variable_declarator&& other, util::object_creator creator)
+    explicit variable_declarator(util::clone_tag_t, variable_declarator&& other)
         : variable_declarator(
                 std::move(other.variable_),
-                tree::forward(creator, std::move(other.value_)))
+                tree::forward(std::move(other.value_)))
     {}
 
     /**
@@ -186,7 +184,7 @@ public:
      * @brief releases the bound expression.
      * @return the released expression
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_value() noexcept {
+    [[nodiscard]] std::unique_ptr<expression> release_value() noexcept {
         return tree::release_element(std::move(value_));
     }
 
@@ -195,7 +193,7 @@ public:
      * @param value the bound expression
      * @return this
      */
-    variable_declarator& value(util::unique_object_ptr<expression> value) noexcept {
+    variable_declarator& value(std::unique_ptr<expression> value) noexcept {
         tree::assign_element_fragment(parent_, variable_, std::move(value));
         return *this;
     }
@@ -204,13 +202,13 @@ public:
      * @brief returns ownership of the bound expression.
      * @return the bound expression
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_value() {
+    [[nodiscard]] util::ownership_reference<expression> ownership_value() {
         return tree::ownership_element_fragment(parent_, variable_);
     }
 
 private:
     descriptor::variable variable_;
-    util::unique_object_ptr<expression> value_;
+    std::unique_ptr<expression> value_;
     parent_type* parent_ {};
 };
 

@@ -7,10 +7,9 @@ namespace takatori::relation {
 
 identify::identify(
         descriptor::variable variable,
-        std::shared_ptr<type::row_id const> type,
-        util::object_creator creator) noexcept :
-    input_ { *this, 0, creator },
-    output_ { *this, 0, creator },
+        std::shared_ptr<type::row_id const> type) noexcept :
+    input_ { *this, 0 },
+    output_ { *this, 0 },
     variable_ { std::move(variable) },
     type_ { std::move(type) }
 {}
@@ -23,19 +22,17 @@ identify::identify(descriptor::variable variable, type::row_id&& type) :
     }
 {}
 
-identify::identify(identify const& other, util::object_creator creator) :
+identify::identify(util::clone_tag_t, identify const& other) :
     identify {
             other.variable_,
             other.type_,
-            creator,
     }
 {}
 
-identify::identify(identify&& other, util::object_creator creator) :
+identify::identify(util::clone_tag_t, identify&& other) :
     identify {
             std::move(other.variable_),
             std::move(other.type_),
-            creator,
     }
 {}
 
@@ -59,12 +56,12 @@ util::sequence_view<identify::output_port_type const> identify::output_ports() c
     return util::sequence_view { std::addressof(output_) };
 }
 
-identify* identify::clone(util::object_creator creator) const& {
-    return creator.create_object<identify>(*this, creator);
+identify* identify::clone() const& {
+    return new identify(util::clone_tag, *this); // NOLINT
 }
 
-identify* identify::clone(util::object_creator creator)&& {
-    return creator.create_object<identify>(std::move(*this), creator);
+identify* identify::clone()&& {
+    return new identify(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 identify::input_port_type& identify::input() noexcept {

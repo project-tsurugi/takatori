@@ -1,6 +1,5 @@
 #pragma once
 
-#include <takatori/util/object_creator.h>
 
 namespace takatori::tree {
 
@@ -11,12 +10,12 @@ public:
 
     int count() const noexcept { return count_; }
 
-    clonable* clone(util::object_creator creator) const& {
-        return creator.create_object<clonable>(count_ * 2);
+    clonable* clone() const& {
+         return new clonable(count_ * 2); // NOLINT
     }
 
-    clonable* clone(util::object_creator creator) && {
-        return creator.create_object<clonable>(count_ + 1);
+    clonable* clone() && {
+         return new clonable(count_ + 1); // NOLINT
     }
 
     void parent_element(int* parent) { parent_ = parent; }

@@ -41,7 +41,7 @@ public:
      */
     explicit constexpr character(varying_t varying, std::optional<size_type> length = {}) noexcept
         : varying_(varying.enabled())
-        , length_(std::move(length))
+        , length_(length)
     {}
 
     ~character() override = default;
@@ -51,8 +51,8 @@ public:
     character& operator=(character&& other) noexcept = delete;
 
     [[nodiscard]] type_kind kind() const noexcept override;
-    [[nodiscard]] character* clone(util::object_creator creator) const& override;
-    [[nodiscard]] character* clone(util::object_creator creator) && override;
+    [[nodiscard]] character* clone() const& override;
+    [[nodiscard]] character* clone() && override;
 
     /**
      * @brief returns whether or not this character sequence can vary its length.
@@ -110,8 +110,6 @@ private:
     std::optional<size_type> length_;
 
     // FIXME: national
-
-    friend class util::object_creator;
 };
 
 template<> struct type_of<character::tag> : util::meta_type<character> {};

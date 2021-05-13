@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "../expression.h"
@@ -10,8 +11,8 @@
 
 #include <takatori/descriptor/relation.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::step {
 
@@ -32,12 +33,10 @@ public:
      * @param columns the column mappings between the input relation and downstream exchange;
      *      This may or may not cover all the columns on the target relation.
      *      The unspecified columns are treated as `unknown`
-     * @param creator the object creator for internal elements
      */
     explicit offer(
             descriptor::relation destination,
-            std::vector<column, util::object_allocator<column>> columns,
-            util::object_creator creator = {}) noexcept;
+            std::vector<column> columns) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -53,24 +52,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy destination
-     * @param creator the object creator
      */
-    explicit offer(offer const& other, util::object_creator creator);
+    explicit offer(util::clone_tag_t, offer const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move destination
-     * @param creator the object creator
      */
-    explicit offer(offer&& other, util::object_creator creator);
+    explicit offer(util::clone_tag_t, offer&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] offer* clone(util::object_creator creator) const& override;
-    [[nodiscard]] offer* clone(util::object_creator creator) && override;
+    [[nodiscard]] offer* clone() const& override;
+    [[nodiscard]] offer* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -100,10 +97,10 @@ public:
      * @brief returns the column mappings, from the input relation to downstream exchange.
      * @return the column mappings
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -140,7 +137,7 @@ protected:
 private:
     input_port_type input_;
     descriptor::relation destination_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<column> columns_;
 };
 
 } // namespace takatori::relation::step

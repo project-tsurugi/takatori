@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <optional>
 #include <utility>
@@ -12,7 +13,7 @@
 
 #include <takatori/relation/details/aggregate_element.h>
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 
 namespace takatori::plan {
 
@@ -44,12 +45,6 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param creator the object creator for internal elements
-     */
-    explicit aggregate(util::object_creator creator) noexcept;
-
-    /**
-     * @brief creates a new object.
      * @param source_columns the input columns of this exchange: the upstream processes offer to these columns
      * @param destination_columns the output columns of this exchange:
      *      the downstream processes take from these columns.
@@ -59,15 +54,13 @@ public:
      * @param aggregations the individual aggregation operations:
      *      each aggregate function argument must be also appear in @em source columns
      * @param mode the group mode of this exchange operation
-     * @param creator the object creator for internal elements
      */
     explicit aggregate(
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> source_columns,
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> destination_columns,
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-            std::vector<aggregation, util::object_allocator<aggregation>> aggregations,
-            mode_type mode = mode_default,
-            util::object_creator creator = {}) noexcept;
+            std::vector<descriptor::variable> source_columns,
+            std::vector<descriptor::variable> destination_columns,
+            std::vector<descriptor::variable> group_keys,
+            std::vector<aggregation> aggregations,
+            mode_type mode = mode_default) noexcept;
 
     /**
      * @brief creates a new object.
@@ -88,21 +81,19 @@ public:
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit aggregate(aggregate const& other, util::object_creator creator);
+    explicit aggregate(util::clone_tag_t, aggregate const& other);
 
     /**
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit aggregate(aggregate&& other, util::object_creator creator);
+    explicit aggregate(util::clone_tag_t, aggregate&& other);
 
     [[nodiscard]] step_kind kind() const noexcept override;
-    [[nodiscard]] aggregate* clone(util::object_creator creator) const& override;
-    [[nodiscard]] aggregate* clone(util::object_creator creator) && override;
+    [[nodiscard]] aggregate* clone() const& override;
+    [[nodiscard]] aggregate* clone() && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
@@ -112,40 +103,40 @@ public:
      * @details These columns are used for group_keys() or arguments of aggregations()
      * @return the source columns
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& source_columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& source_columns() noexcept;
 
     /// @copydoc source_columns()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& source_columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& source_columns() const noexcept;
 
     /**
      * @brief returns the destination columns .
      * @details These columns must come from group_keys() or destination of aggregations()
      * @return the destination columns
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& destination_columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& destination_columns() noexcept;
 
     /// @copydoc destination_columns()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& destination_columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& destination_columns() const noexcept;
 
     /**
      * @brief returns the aggregate key columns.
      * @details each aggregate key column must also appear in the source_columns().
      * @return the aggregate key columns.
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& group_keys() noexcept;
 
     /// @copydoc group_keys()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& group_keys() const noexcept;
 
     /**
      * @brief returns the aggregation elements that contain aggregation function, its arguments, and destination column.
      * @details individual arguments must come from source_columns()
      * @return the aggregation elements
      */
-    [[nodiscard]] std::vector<aggregation, util::object_allocator<aggregation>>& aggregations() noexcept;
+    [[nodiscard]] std::vector<aggregation>& aggregations() noexcept;
 
     /// @copydoc aggregations()
-    [[nodiscard]] std::vector<aggregation, util::object_allocator<aggregation>> const& aggregations() const noexcept;
+    [[nodiscard]] std::vector<aggregation> const& aggregations() const noexcept;
 
     /**
      * @brief returns group mode of this exchange operation.
@@ -195,10 +186,10 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> source_columns_ {};
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> destination_columns_ {};
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_ {};
-    std::vector<aggregation, util::object_allocator<aggregation>> aggregations_ {};
+    std::vector<descriptor::variable> source_columns_ {};
+    std::vector<descriptor::variable> destination_columns_ {};
+    std::vector<descriptor::variable> group_keys_ {};
+    std::vector<aggregation> aggregations_ {};
     mode_type mode_ { mode_default };
 };
 

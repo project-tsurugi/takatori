@@ -14,12 +14,12 @@ value_kind decimal::kind() const noexcept {
     return tag;
 }
 
-decimal* decimal::clone(util::object_creator creator) const& {
-    return creator.create_object<decimal>(entity_);
+decimal* decimal::clone() const& {
+     return new decimal(entity_); // NOLINT
 }
 
-decimal* decimal::clone(util::object_creator creator) && {
-    return creator.create_object<decimal>(entity_);
+decimal* decimal::clone() && {
+     return new decimal(entity_); // NOLINT
 }
 
 decimal::view_type decimal::get() const noexcept {

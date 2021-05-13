@@ -59,12 +59,12 @@ public:
         return Kind;
     }
 
-    [[nodiscard]] simple_value* clone(util::object_creator creator) const& override {
-        return creator.create_object<simple_value<Kind>>(entity_);
+    [[nodiscard]] simple_value* clone() const& override {
+        return new simple_value<Kind>(entity_); // NOLINT
     }
 
-    [[nodiscard]] simple_value* clone(util::object_creator creator) && override {
-        return creator.create_object<simple_value<Kind>>(std::move(entity_));
+    [[nodiscard]] simple_value* clone() && override {
+        return new simple_value<Kind>(std::move(entity_)); // NOLINT
     }
 
     /**

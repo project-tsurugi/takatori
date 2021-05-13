@@ -8,11 +8,9 @@
 
 namespace takatori::relation {
 
-project::project(
-        std::vector<column, util::object_allocator<column>> columns,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+project::project(std::vector<column> columns) noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
     , columns_(*this, std::move(columns))
 {}
 
@@ -20,16 +18,14 @@ project::project(std::initializer_list<util::rvalue_reference_wrapper<column>> c
     : project({ columns.begin(), columns.end() })
 {}
 
-project::project(project const& other, util::object_creator creator)
+project::project(util::clone_tag_t, project const& other)
     : project(
-            tree::forward(creator, other.columns_),
-            creator)
+            tree::forward(other.columns_))
 {}
 
-project::project(project&& other, util::object_creator creator)
+project::project(util::clone_tag_t, project&& other)
     : project(
-            tree::forward(creator, std::move(other.columns_)),
-            creator)
+            tree::forward(std::move(other.columns_)))
 {}
 
 expression_kind project::kind() const noexcept {
@@ -52,12 +48,12 @@ util::sequence_view<project::output_port_type const> project::output_ports() con
     return util::sequence_view { std::addressof(output_) };
 }
 
-project* project::clone(util::object_creator creator) const& {
-    return creator.create_object<project>(*this, creator);
+project* project::clone() const& {
+    return new project(util::clone_tag, *this); // NOLINT
 }
 
-project* project::clone(util::object_creator creator)&& {
-    return creator.create_object<project>(std::move(*this), creator);
+project* project::clone()&& {
+    return new project(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 project::input_port_type& project::input() noexcept {

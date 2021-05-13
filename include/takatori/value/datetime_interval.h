@@ -8,7 +8,6 @@
 #include <takatori/datetime/datetime_interval.h>
 
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::value {
 
@@ -82,8 +81,8 @@ public:
     datetime_interval& operator=(datetime_interval&& other) noexcept = delete;
 
     [[nodiscard]] value_kind kind() const noexcept override;
-    [[nodiscard]] datetime_interval* clone(util::object_creator creator) const& override;
-    [[nodiscard]] datetime_interval* clone(util::object_creator creator) && override;
+    [[nodiscard]] datetime_interval* clone() const& override;
+    [[nodiscard]] datetime_interval* clone() && override;
 
     /**
      * @brief returns the entity value.
@@ -105,8 +104,6 @@ protected:
 
 private:
     entity_type entity_;
-
-    friend class util::object_creator;
 };
 
 /**

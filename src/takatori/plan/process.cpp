@@ -21,40 +21,30 @@ process::~process() {
     downstreams_.clear();
 }
 
-process::process(util::object_creator creator) noexcept
-    : operators_(creator)
-    , upstreams_(creator.allocator())
-    , downstreams_(creator.allocator())
+process::process(graph::graph<relation::expression> operators) noexcept
+    : operators_ { std::move(operators) }
 {}
 
-process::process(graph::graph<relation::expression> operators, util::object_creator creator) noexcept
-    : operators_(std::move(operators))
-    , upstreams_(creator.allocator())
-    , downstreams_(creator.allocator())
-{}
-
-process::process(process const& other, util::object_creator creator)
-    : process(creator)
+process::process(util::clone_tag_t, process const& other)
 {
-    relation::merge_into(other.operators_, operators_, creator);
+    relation::merge_into(other.operators_, operators_);
 }
 
-process::process(process&& other, util::object_creator creator)
+process::process(util::clone_tag_t, process&& other)
     : process(
-            std::move(other.operators_),
-            creator)
+            std::move(other.operators_))
 {}
 
 step_kind process::kind() const noexcept {
     return tag;
 }
 
-process* process::clone(util::object_creator creator) const& {
-    return creator.create_object<process>(*this, creator);
+process* process::clone() const& {
+    return new process(util::clone_tag, *this); // NOLINT
 }
 
-process* process::clone(util::object_creator creator) && {
-    return creator.create_object<process>(std::move(*this), creator);
+process* process::clone() && {
+    return new process(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 graph::graph<relation::expression>& process::operators() noexcept {

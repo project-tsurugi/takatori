@@ -5,11 +5,9 @@
 
 namespace takatori::relation::intermediate {
 
-distinct::distinct(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+distinct::distinct(std::vector<descriptor::variable> group_keys) noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
     , group_keys_(std::move(group_keys))
 {}
 
@@ -17,16 +15,14 @@ distinct::distinct(std::initializer_list<descriptor::variable> group_keys)
     : distinct({ group_keys.begin(), group_keys.end() })
 {}
 
-distinct::distinct(distinct const& other, util::object_creator creator)
+distinct::distinct(util::clone_tag_t, distinct const& other)
     : distinct(
-            decltype(group_keys_) { other.group_keys_, creator.allocator() },
-            creator)
+            decltype(group_keys_) { other.group_keys_ })
 {}
 
-distinct::distinct(distinct&& other, util::object_creator creator)
+distinct::distinct(util::clone_tag_t, distinct&& other)
     : distinct(
-            decltype(group_keys_) { std::move(other.group_keys_), creator.allocator() },
-            creator)
+            decltype(group_keys_) { std::move(other.group_keys_) })
 {}
 
 expression_kind distinct::kind() const noexcept {
@@ -49,12 +45,12 @@ util::sequence_view<distinct::output_port_type const> distinct::output_ports() c
     return util::sequence_view { std::addressof(output_) };
 }
 
-distinct* distinct::clone(util::object_creator creator) const& {
-    return creator.create_object<distinct>(*this, creator);
+distinct* distinct::clone() const& {
+    return new distinct(util::clone_tag, *this); // NOLINT
 }
 
-distinct* distinct::clone(util::object_creator creator)&& {
-    return creator.create_object<distinct>(std::move(*this), creator);
+distinct* distinct::clone()&& {
+    return new distinct(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 distinct::input_port_type& distinct::input() noexcept {
@@ -73,11 +69,11 @@ distinct::output_port_type const& distinct::output() const noexcept {
     return output_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& distinct::group_keys() noexcept {
+std::vector<descriptor::variable>& distinct::group_keys() noexcept {
     return group_keys_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& distinct::group_keys() const noexcept {
+std::vector<descriptor::variable> const& distinct::group_keys() const noexcept {
     return group_keys_;
 }
 

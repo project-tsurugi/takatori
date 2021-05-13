@@ -7,15 +7,14 @@ namespace takatori::relation::intermediate {
 
 intersection::intersection(
         quantifier_kind quantifier,
-        std::vector<group_key_pair, util::object_allocator<group_key_pair>> group_key_pairs,
-        util::object_creator creator) noexcept
-    : inputs_({
-            input_port_type { *this, left_index, creator },
-            input_port_type { *this, right_index, creator },
-    })
-    , output_(*this, 0, creator)
-    , quantifier_(quantifier)
-    , group_key_pairs_(std::move(group_key_pairs))
+        std::vector<group_key_pair> group_key_pairs) noexcept:
+    inputs_{{
+            input_port_type { *this, left_index },
+            input_port_type { *this, right_index },
+    }},
+    output_ { *this, 0 },
+    quantifier_(quantifier),
+    group_key_pairs_(std::move(group_key_pairs))
 {}
 
 intersection::intersection(
@@ -26,18 +25,16 @@ intersection::intersection(
             { group_key_pairs.begin(), group_key_pairs.end() })
 {}
 
-intersection::intersection(intersection const& other, util::object_creator creator)
+intersection::intersection(util::clone_tag_t, intersection const& other)
     : intersection(
             other.quantifier_,
-            decltype(group_key_pairs_) { other.group_key_pairs_, creator.allocator() },
-            creator)
+            decltype(group_key_pairs_) { other.group_key_pairs_ })
 {}
 
-intersection::intersection(intersection&& other, util::object_creator creator)
+intersection::intersection(util::clone_tag_t, intersection&& other)
     : intersection(
             other.quantifier_,
-            decltype(group_key_pairs_) { std::move(other.group_key_pairs_), creator.allocator() },
-            creator)
+            decltype(group_key_pairs_) { std::move(other.group_key_pairs_) })
 {}
 
 expression_kind intersection::kind() const noexcept {
@@ -60,12 +57,12 @@ util::sequence_view<intersection::output_port_type const> intersection::output_p
     return util::sequence_view { std::addressof(output_) };
 }
 
-intersection* intersection::clone(util::object_creator creator) const& {
-    return creator.create_object<intersection>(*this, creator);
+intersection* intersection::clone() const& {
+    return new intersection(util::clone_tag, *this); // NOLINT
 }
 
-intersection* intersection::clone(util::object_creator creator)&& {
-    return creator.create_object<intersection>(std::move(*this), creator);
+intersection* intersection::clone()&& {
+    return new intersection(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 intersection::input_port_type& intersection::left() noexcept {
@@ -101,11 +98,11 @@ intersection& intersection::quantifier(quantifier_kind quantifier) noexcept {
     return *this;
 }
 
-std::vector<intersection::group_key_pair, util::object_allocator<intersection::group_key_pair>>& intersection::group_key_pairs() noexcept {
+std::vector<intersection::group_key_pair>& intersection::group_key_pairs() noexcept {
     return group_key_pairs_;
 }
 
-std::vector<intersection::group_key_pair, util::object_allocator<intersection::group_key_pair>> const& intersection::group_key_pairs() const noexcept {
+std::vector<intersection::group_key_pair> const& intersection::group_key_pairs() const noexcept {
     return group_key_pairs_;
 }
 

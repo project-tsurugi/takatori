@@ -2,11 +2,10 @@
 
 #include <functional>
 #include <ostream>
+#include <ostream>
 #include <memory>
-#include <type_traits>
 #include <utility>
 
-#include "object_creator.h"
 #include "optional_ptr.h"
 
 namespace takatori::util {
@@ -169,12 +168,5 @@ private:
     getter_type getter_;
     setter_type setter_;
 };
-
-/**
- * @brief ownership_reference which uses object_creator.
- * @tparam T the property value type
- */
-template<class T>
-using object_ownership_reference = ownership_reference<T, object_creator::deleter_type<T>>;
 
 } // namespace takatori::util

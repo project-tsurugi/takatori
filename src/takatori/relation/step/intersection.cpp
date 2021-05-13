@@ -4,29 +4,25 @@
 
 namespace takatori::relation::step {
 
-intersection::intersection(util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+intersection::intersection() noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
 {}
 
-intersection::intersection(intersection const&, util::object_creator creator)
-    : intersection(creator)
-{}
+intersection::intersection(util::clone_tag_t, intersection const&)  noexcept : intersection {} {}
 
-intersection::intersection(intersection&&, util::object_creator creator)
-    : intersection(creator)
-{}
+intersection::intersection(util::clone_tag_t, intersection&&) noexcept : intersection {} {}
 
 expression_kind intersection::kind() const noexcept {
     return tag;
 }
 
-intersection* intersection::clone(util::object_creator creator) const& {
-    return creator.create_object<intersection>(*this, creator);
+intersection* intersection::clone() const& {
+    return new intersection(util::clone_tag, *this); // NOLINT
 }
 
-intersection* intersection::clone(util::object_creator creator)&& {
-    return creator.create_object<intersection>(std::move(*this), creator);
+intersection* intersection::clone()&& {
+    return new intersection(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 util::sequence_view<intersection::input_port_type> intersection::input_ports() noexcept {

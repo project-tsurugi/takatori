@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "expression.h"
@@ -10,8 +11,8 @@
 
 #include <takatori/tree/tree_fragment_vector.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 
 namespace takatori::relation {
@@ -30,11 +31,9 @@ public:
     /**
      * @brief creates a new object.
      * @param columns the columns definition to add to the input relation
-     * @param creator the object creator for internal elements
      */
     explicit project(
-            std::vector<column, util::object_allocator<column>> columns,
-            util::object_creator creator = {}) noexcept;
+            std::vector<column> columns) noexcept;
 
     /**
      * @brief creates a new object.
@@ -46,24 +45,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit project(project const& other, util::object_creator creator);
+    explicit project(util::clone_tag_t, project const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit project(project&& other, util::object_creator creator);
+    explicit project(util::clone_tag_t, project&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] project* clone(util::object_creator creator) const& override;
-    [[nodiscard]] project* clone(util::object_creator creator) && override;
+    [[nodiscard]] project* clone() const& override;
+    [[nodiscard]] project* clone() && override;
 
     /**
      * @brief returns the input port.

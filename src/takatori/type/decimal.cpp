@@ -8,12 +8,12 @@ type_kind decimal::kind() const noexcept {
     return tag;
 }
 
-decimal* decimal::clone(util::object_creator creator) const& {
-    return creator.create_object<decimal>(precision_, scale_);
+decimal* decimal::clone() const& {
+     return new decimal(precision_, scale_); // NOLINT
 }
 
-decimal* decimal::clone(util::object_creator creator) && {
-    return creator.create_object<decimal>(std::move(precision_), scale_);
+decimal* decimal::clone() && {
+     return new decimal(std::move(precision_), scale_); // NOLINT
 }
 
 bool operator==(decimal const& a, decimal const& b) noexcept {

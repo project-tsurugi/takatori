@@ -10,15 +10,12 @@ value_kind octet::kind() const noexcept {
     return tag;
 }
 
-octet* octet::clone(util::object_creator creator) const& {
-    return creator.create_object<octet>(entity_, creator.allocator());
+octet* octet::clone() const& {
+     return new octet(entity_); // NOLINT
 }
 
-octet* octet::clone(util::object_creator creator) && {
-    if (creator.is_compatible(entity_.get_allocator())) {
-        return creator.create_object<octet>(std::move(entity_));
-    }
-    return creator.create_object<octet>(entity_, creator.allocator());
+octet* octet::clone() && {
+     return new octet(std::move(entity_)); // NOLINT
 }
 
 octet::view_type octet::get() const noexcept {

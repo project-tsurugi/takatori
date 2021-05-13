@@ -20,9 +20,6 @@ struct null_copier {
     /// @brief the object type
     using value_type = std::remove_const_t<T>;
 
-    /// @brief the pointer type
-    using pointer = std::add_pointer_t<T>;
-
     /**
      * @brief the copier of the another object type.
      * @tparam the another object type
@@ -34,7 +31,7 @@ struct null_copier {
      * @brief just raise an error.
      * @throws std::runtime_error always
      */
-    [[noreturn]] static pointer copy(object_creator, value_type const&) {
+    [[noreturn]] static std::unique_ptr<value_type> copy(value_type const&) {
         throw_exception(std::runtime_error("copy() is unavailable"));
     }
 };
@@ -52,9 +49,6 @@ struct standard_copier : std::is_copy_constructible<T> {
     /// @brief the object type
     using value_type = std::remove_const_t<T>;
 
-    /// @brief the pointer type
-    using pointer = std::add_pointer_t<T>;
-
     /**
      * @brief the copier of the another object type.
      * @tparam the another object type
@@ -64,22 +58,20 @@ struct standard_copier : std::is_copy_constructible<T> {
 
     /**
      * @brief returns a new copy of the given object.
-     * @param creator the object creator
      * @param object the target object
-     * @return the created copy, it must be delete via creator.delete_object()
+     * @return the created copy
      */
-    [[nodiscard]] static pointer copy(object_creator creator, value_type const& object) {
-        return creator.create_object<value_type>(object);
+    [[nodiscard]] static std::unique_ptr<value_type> copy(value_type const& object) {
+        return std::make_unique<value_type>(object);
     }
 
     /**
      * @brief returns a new copy of the given object.
-     * @param creator the object creator
      * @param object the target object
-     * @return the created copy, it must be delete via creator.delete_object()
+     * @return the created copy
      */
-    [[nodiscard]] static pointer copy(object_creator creator, value_type&& object) {
-        return creator.create_object<value_type>(std::move(object));
+    [[nodiscard]] static std::unique_ptr<value_type> copy(value_type&& object) {
+        return std::make_unique<value_type>(std::move(object));
     }
 };
 

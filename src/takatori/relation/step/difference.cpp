@@ -4,29 +4,25 @@
 
 namespace takatori::relation::step {
 
-difference::difference(util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+difference::difference() noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
 {}
 
-difference::difference(difference const&, util::object_creator creator)
-    : difference(creator)
-{}
+difference::difference(util::clone_tag_t, difference const&) noexcept : difference {} {}
 
-difference::difference(difference&&, util::object_creator creator)
-    : difference(creator)
-{}
+difference::difference(util::clone_tag_t, difference&&) noexcept : difference {} {}
 
 expression_kind difference::kind() const noexcept {
     return tag;
 }
 
-difference* difference::clone(util::object_creator creator) const& {
-    return creator.create_object<difference>(*this, creator);
+difference* difference::clone() const& {
+    return new difference(util::clone_tag, *this); // NOLINT
 }
 
-difference* difference::clone(util::object_creator creator)&& {
-    return creator.create_object<difference>(std::move(*this), creator);
+difference* difference::clone()&& {
+    return new difference(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 util::sequence_view<difference::input_port_type> difference::input_ports() noexcept {

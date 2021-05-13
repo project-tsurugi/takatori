@@ -1,13 +1,14 @@
 #pragma once
 
-#include <ostream>
 #include <initializer_list>
+#include <memory>
+#include <ostream>
 #include <vector>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/descriptor/aggregate_function.h>
 #include <takatori/descriptor/variable.h>
 
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::details {
 
@@ -33,7 +34,7 @@ public:
      */
     explicit aggregate_element(
             function_type function,
-            std::vector<argument_type, util::object_allocator<argument_type>> arguments,
+            std::vector<argument_type> arguments,
             destination_type destination) noexcept;
 
     /**
@@ -58,16 +59,14 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit aggregate_element(aggregate_element const& other, util::object_creator creator);
+    explicit aggregate_element(util::clone_tag_t, aggregate_element const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit aggregate_element(aggregate_element&& other, util::object_creator creator);
+    explicit aggregate_element(util::clone_tag_t, aggregate_element&& other);
 
     /**
      * @brief returns the aggregate function.
@@ -82,10 +81,10 @@ public:
      * @brief returns the argument columns of the aggregate function.
      * @return the aggregate targets
      */
-    [[nodiscard]] std::vector<argument_type, util::object_allocator<argument_type>>& arguments() noexcept;
+    [[nodiscard]] std::vector<argument_type>& arguments() noexcept;
 
     /// @copydoc arguments()
-    [[nodiscard]] std::vector<argument_type, util::object_allocator<argument_type>> const& arguments() const noexcept;
+    [[nodiscard]] std::vector<argument_type> const& arguments() const noexcept;
 
     /**
      * @brief returns the destination column.
@@ -98,7 +97,7 @@ public:
 
 private:
     function_type function_;
-    std::vector<argument_type, util::object_allocator<argument_type>> arguments_;
+    std::vector<argument_type> arguments_;
     destination_type destination_;
 };
 

@@ -6,42 +6,37 @@
 
 namespace takatori::relation::step {
 
-aggregate::aggregate(
-        std::vector<column, util::object_allocator<column>> columns,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+aggregate::aggregate(std::vector<column> columns) noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
     , columns_(std::move(columns))
 {}
 
-aggregate::aggregate(
-        std::initializer_list<column> columns)
+aggregate::aggregate(std::initializer_list<column> columns)
     : aggregate({ columns.begin(), columns.end() })
 {}
 
 
-aggregate::aggregate(aggregate const& other, util::object_creator creator)
+aggregate::aggregate(util::clone_tag_t, aggregate const& other)
     : aggregate(
-            decltype(columns_) { other.columns_, creator.allocator() },
-            creator)
+            decltype(columns_) { other.columns_ })
 {}
 
-aggregate::aggregate(aggregate&& other, util::object_creator creator)
+aggregate::aggregate(util::clone_tag_t, aggregate&& other)
     : aggregate(
-            decltype(columns_) { std::move(other.columns_), creator.allocator() },
-            creator)
+            decltype(columns_) { std::move(other.columns_) })
 {}
 
 expression_kind aggregate::kind() const noexcept {
     return tag;
 }
 
-aggregate* aggregate::clone(util::object_creator creator) const& {
-    return creator.create_object<aggregate>(*this, creator);
+aggregate* aggregate::clone() const& {
+    return new aggregate(util::clone_tag, *this); // NOLINT
 }
 
-aggregate* aggregate::clone(util::object_creator creator)&& {
-    return creator.create_object<aggregate>(std::move(*this), creator);
+aggregate* aggregate::clone()&& {
+    return new aggregate(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 
@@ -77,11 +72,11 @@ aggregate::output_port_type const& aggregate::output() const noexcept {
     return output_;
 }
 
-std::vector<aggregate::column, util::object_allocator<aggregate::column>>& aggregate::columns() noexcept {
+std::vector<aggregate::column>& aggregate::columns() noexcept {
     return columns_;
 }
 
-std::vector<aggregate::column, util::object_allocator<aggregate::column>> const& aggregate::columns() const noexcept {
+std::vector<aggregate::column> const& aggregate::columns() const noexcept {
     return columns_;
 }
 

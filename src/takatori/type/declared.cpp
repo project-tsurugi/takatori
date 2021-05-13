@@ -12,12 +12,12 @@ type_kind declared::kind() const noexcept {
     return tag;
 }
 
-declared* declared::clone(util::object_creator creator) const& {
-    return creator.create_object<declared>(binding_);
+declared* declared::clone() const& {
+     return new declared(binding_); // NOLINT
 }
 
-declared* declared::clone(util::object_creator creator) && {
-    return creator.create_object<declared>(std::move(binding_));
+declared* declared::clone() && {
+     return new declared(std::move(binding_)); // NOLINT
 }
 
 descriptor::declared_type const& declared::binding() const noexcept {

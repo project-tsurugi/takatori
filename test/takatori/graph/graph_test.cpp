@@ -259,36 +259,16 @@ TEST_F(graph_test, insert_rvalue) {
 }
 
 TEST_F(graph_test, insert_unique_ptr) {
-    util::object_creator c;
-    auto v = c.create_unique<vertex>(10);
+    auto v = std::make_unique<vertex>(10);
     auto* p = v.get();
 
-    simple_graph g { c };
+    simple_graph g {};
     auto&& r = g.insert(std::move(v));
 
     EXPECT_EQ(g.size(), 1);
     EXPECT_TRUE(g.contains(r));
     EXPECT_EQ(&r, p);
     EXPECT_EQ(r.value(), 10);
-    EXPECT_EQ(r.optional_owner().get(), &g);
-}
-
-TEST_F(graph_test, insert_unique_ptr_custom) {
-    if (!util::object_creator_pmr_enabled) {
-        GTEST_SKIP();
-    }
-    util::pmr::monotonic_buffer_resource mbr;
-    util::object_creator c { &mbr };
-    auto v = c.create_unique<vertex>(10);
-    auto* p = v.get();
-
-    simple_graph g;
-    auto&& r = g.insert(std::move(v));
-
-    EXPECT_EQ(g.size(), 1);
-    EXPECT_TRUE(g.contains(r));
-    EXPECT_NE(&r, p);
-    EXPECT_EQ(r.value(), 11); // +1 on move
     EXPECT_EQ(r.optional_owner().get(), &g);
 }
 
@@ -435,22 +415,6 @@ TEST_F(graph_test, swap) {
     EXPECT_EQ(r2.input().opposite().get(), &r1.output());
     EXPECT_EQ(r3.output().opposite().get(), &r4.input());
     EXPECT_EQ(r4.input().opposite().get(), &r3.output());
-}
-
-TEST_F(graph_test, object_creator) {
-    util::pmr::monotonic_buffer_resource resource;
-    util::object_creator custom { &resource };
-
-    simple_graph g { custom };
-    EXPECT_EQ(g.get_object_creator(), custom);
-
-    auto&& v1 = g.emplace(100);
-    auto&& v2 = g.emplace(200);
-    auto&& v3 = g.emplace(300);
-
-    EXPECT_TRUE(g.contains(v1));
-    EXPECT_TRUE(g.contains(v2));
-    EXPECT_TRUE(g.contains(v3));
 }
 
 } // namespace takatori::graph

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <initializer_list>
+#include <memory>
 #include <vector>
 #include <utility>
 
@@ -12,8 +13,8 @@
 
 #include <takatori/descriptor/variable.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::intermediate {
 
@@ -37,12 +38,10 @@ public:
      * @param mappings the column mappings on input/output relations:
      *      the succeeding operators only can refer the destination columns declared in here.
      *      If `quantifier=distinct`, each input column must not be absent
-     * @param creator the object creator for internal elements
      */
     explicit union_(
             quantifier_kind quantifier,
-            std::vector<mapping, util::object_allocator<mapping>> mappings,
-            util::object_creator creator = {}) noexcept;
+            std::vector<mapping> mappings) noexcept;
 
     /**
      * @brief creates a new object.
@@ -58,24 +57,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit union_(union_ const& other, util::object_creator creator);
+    explicit union_(util::clone_tag_t, union_ const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit union_(union_&& other, util::object_creator creator);
+    explicit union_(util::clone_tag_t, union_&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] union_* clone(util::object_creator creator) const& override;
-    [[nodiscard]] union_* clone(util::object_creator creator) && override;
+    [[nodiscard]] union_* clone() const& override;
+    [[nodiscard]] union_* clone() && override;
 
     /**
      * @brief returns the first input port.
@@ -122,10 +119,10 @@ public:
      *      the succeeding operators only can refer the destination columns declared in here
      * @return the column mappings
      */
-    [[nodiscard]] std::vector<mapping, util::object_allocator<mapping>>& mappings() noexcept;
+    [[nodiscard]] std::vector<mapping>& mappings() noexcept;
 
     /// @copydoc mappings()
-    [[nodiscard]] std::vector<mapping, util::object_allocator<mapping>> const& mappings() const noexcept;
+    [[nodiscard]] std::vector<mapping> const& mappings() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -163,7 +160,7 @@ private:
     std::array<input_port_type, 2> inputs_;
     output_port_type output_;
     quantifier_kind quantifier_;
-    std::vector<mapping, util::object_allocator<mapping>> mappings_;
+    std::vector<mapping> mappings_;
 
     static inline constexpr std::size_t left_index = 0;
     static inline constexpr std::size_t right_index = left_index + 1;

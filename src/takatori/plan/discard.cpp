@@ -7,28 +7,20 @@
 
 namespace takatori::plan {
 
-discard::discard(util::object_creator creator) noexcept
-    : exchange(creator)
-{}
+discard::discard(util::clone_tag_t, discard const&) : discard {} {}
 
-discard::discard(discard const&, util::object_creator creator)
-    : discard(creator)
-{}
-
-discard::discard(discard&&, util::object_creator creator)
-    : discard(creator)
-{}
+discard::discard(util::clone_tag_t, discard&&) : discard {} {}
 
 step_kind discard::kind() const noexcept {
     return tag;
 }
 
-discard* discard::clone(util::object_creator creator) const& {
-    return creator.create_object<discard>(*this, creator);
+discard* discard::clone() const& {
+    return new discard(util::clone_tag, *this); // NOLINT
 }
 
-discard* discard::clone(util::object_creator creator) && {
-    return creator.create_object<discard>(std::move(*this), creator);
+discard* discard::clone() && {
+    return new discard(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 util::sequence_view<descriptor::variable const> discard::input_columns() const noexcept {

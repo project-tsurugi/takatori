@@ -32,8 +32,8 @@ public:
     time_point& operator=(time_point&& other) noexcept = delete;
 
     [[nodiscard]] type_kind kind() const noexcept override;
-    [[nodiscard]] time_point* clone(util::object_creator creator) const& override;
-    [[nodiscard]] time_point* clone(util::object_creator creator) && override;
+    [[nodiscard]] time_point* clone() const& override;
+    [[nodiscard]] time_point* clone() && override;
 
     /**
      * @brief returns time zone information.

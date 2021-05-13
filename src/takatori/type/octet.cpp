@@ -8,12 +8,12 @@ type_kind octet::kind() const noexcept {
     return tag;
 }
 
-octet* octet::clone(util::object_creator creator) const& {
-    return creator.create_object<octet>(varying_t { varying_ }, length_);
+octet* octet::clone() const& {
+     return new octet(varying_t { varying_ }, length_); // NOLINT
 }
 
-octet* octet::clone(util::object_creator creator) && {
-    return creator.create_object<octet>(varying_t { varying_ }, std::move(length_));
+octet* octet::clone() && {
+     return new octet(varying_t { varying_ }, std::move(length_)); // NOLINT
 }
 
 bool operator==(octet const& a, octet const& b) noexcept {

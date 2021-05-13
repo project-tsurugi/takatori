@@ -8,7 +8,6 @@
 #include "port_direction.h"
 
 #include <takatori/util/exception.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/print_support.h>
 #include <takatori/util/reference_list_view.h>
 
@@ -62,13 +61,11 @@ public:
      * @brief constructs a new object.
      * @param owner the owner node
      * @param id the port ID (in node)
-     * @param creator the object creator
      * @warning don't invoke this outside of owner node
      */
-    explicit multiport(node_type& owner, id_type id = 0, util::object_creator creator = {}) noexcept
-        : id_(id)
-        , owner_(std::addressof(owner))
-        , opposites_(typename decltype(opposites_)::allocator_type(creator.allocator<opposite_type*>()))
+    explicit multiport(node_type& owner, id_type id = 0) noexcept :
+        id_ { id },
+        owner_ { std::addressof(owner) }
     {}
 
     ~multiport() {
@@ -207,8 +204,7 @@ private:
     id_type id_;
     node_type* owner_;
     static constexpr std::size_t opposite_buffer_size = 4;
-    using opposite_buffer_allocator_type = util::object_allocator<opposite_type*>;
-    boost::container::small_vector<opposite_type*, opposite_buffer_size, opposite_buffer_allocator_type> opposites_ {};
+    boost::container::small_vector<opposite_type*, opposite_buffer_size> opposites_ {};
 
     bool internal_connect(opposite_type& opposite) {
         // NOTE: multi connections

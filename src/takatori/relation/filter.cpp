@@ -8,11 +8,9 @@
 
 namespace takatori::relation {
 
-filter::filter(
-        util::unique_object_ptr<scalar::expression> condition,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+filter::filter(std::unique_ptr<scalar::expression> condition) noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
     , condition_(tree::bless_element(*this, std::move(condition)))
 {}
 
@@ -20,16 +18,14 @@ filter::filter(scalar::expression&& condition) noexcept
     : filter(util::clone_unique(std::move(condition)))
 {}
 
-filter::filter(filter const& other, util::object_creator creator)
+filter::filter(util::clone_tag_t, filter const& other)
     : filter(
-            tree::forward(creator, other.condition_),
-            creator)
+            tree::forward(other.condition_))
 {}
 
-filter::filter(filter&& other, util::object_creator creator)
+filter::filter(util::clone_tag_t, filter&& other)
     : filter(
-            tree::forward(creator, std::move(other.condition_)),
-            creator)
+            tree::forward(std::move(other.condition_)))
 {}
 
 expression_kind filter::kind() const noexcept {
@@ -52,12 +48,12 @@ util::sequence_view<filter::output_port_type const> filter::output_ports() const
     return util::sequence_view { std::addressof(output_) };
 }
 
-filter* filter::clone(util::object_creator creator) const& {
-    return creator.create_object<filter>(*this, creator);
+filter* filter::clone() const& {
+    return new filter(util::clone_tag, *this); // NOLINT
 }
 
-filter* filter::clone(util::object_creator creator)&& {
-    return creator.create_object<filter>(std::move(*this), creator);
+filter* filter::clone()&& {
+    return new filter(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 filter::input_port_type& filter::input() noexcept {
@@ -92,15 +88,15 @@ util::optional_ptr<scalar::expression const> filter::optional_condition() const 
     return util::optional_ptr { condition_.get() };
 }
 
-util::unique_object_ptr<scalar::expression> filter::release_condition() noexcept {
+std::unique_ptr<scalar::expression> filter::release_condition() noexcept {
     return tree::release_element(std::move(condition_));
 }
 
-filter& filter::condition(util::unique_object_ptr<scalar::expression> condition) noexcept {
+filter& filter::condition(std::unique_ptr<scalar::expression> condition) noexcept {
     return tree::assign_element(*this, condition_, std::move(condition));
 }
 
-util::object_ownership_reference<scalar::expression> filter::ownership_condition() {
+util::ownership_reference<scalar::expression> filter::ownership_condition() {
     return tree::ownership_element(*this, condition_);
 }
 

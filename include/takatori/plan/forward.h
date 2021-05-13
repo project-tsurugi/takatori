@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <initializer_list>
 #include <ostream>
 #include <optional>
@@ -9,7 +10,7 @@
 #include "exchange.h"
 #include "step_kind.h"
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 
 namespace takatori::plan {
 
@@ -32,31 +33,20 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param creator the object creator for internal elements
-     * @note the created object does not have any exchange columns, please define them using columns()
-     */
-    explicit forward(util::object_creator creator) noexcept;
-
-    /**
-     * @brief creates a new object.
      * @param limit the max number of rows to forward
-     * @param creator the object creator for internal elements
      * @note the created object does not have any exchange columns, please define them using columns()
      */
     explicit forward(
-            std::optional<size_type> limit,
-            util::object_creator creator = {}) noexcept;
+            std::optional<size_type> limit) noexcept;
 
     /**
      * @brief creates a new object.
      * @param columns the exchange columns
      * @param limit the max number of rows to forward
-     * @param creator the object creator for internal elements
      */
     explicit forward(
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns,
-            std::optional<size_type> limit = std::nullopt,
-            util::object_creator creator = {}) noexcept;
+            std::vector<descriptor::variable> columns,
+            std::optional<size_type> limit = std::nullopt) noexcept;
 
     /**
      * @brief creates a new object.
@@ -71,21 +61,19 @@ public:
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit forward(forward const& other, util::object_creator creator);
+    explicit forward(util::clone_tag_t, forward const& other);
 
     /**
      * @brief creates a new object.
      * @details the created object does not have upstream processes, nor downstream processes.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit forward(forward&& other, util::object_creator creator);
+    explicit forward(util::clone_tag_t, forward&& other);
 
     [[nodiscard]] step_kind kind() const noexcept override;
-    [[nodiscard]] forward* clone(util::object_creator creator) const& override;
-    [[nodiscard]] forward* clone(util::object_creator creator) && override;
+    [[nodiscard]] forward* clone() const& override;
+    [[nodiscard]] forward* clone() && override;
 
     [[nodiscard]] util::sequence_view<descriptor::variable const> input_columns() const noexcept override;
     [[nodiscard]] util::sequence_view<descriptor::variable const> output_columns() const noexcept override;
@@ -94,10 +82,10 @@ public:
      * @brief returns the columns to exchange.
      * @return the columns to exchange
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& columns() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& columns() const noexcept;
 
     /**
      * @brief returns the max number of exchange rows.
@@ -148,7 +136,7 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns_ {};
+    std::vector<descriptor::variable> columns_ {};
     std::optional<size_type> limit_ {};
 };
 

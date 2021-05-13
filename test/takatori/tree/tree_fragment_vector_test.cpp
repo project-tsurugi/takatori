@@ -86,20 +86,6 @@ TEST_F(tree_fragment_vector_test, simple) {
     EXPECT_EQ(v[2].parent_element(), &root);
 }
 
-TEST_F(tree_fragment_vector_test, ctor_object_creator) {
-    int root = -1;
-    tree_fragment_vector<C<int>> v { root, { 1, 2, 3 }};
-
-    ASSERT_EQ(v.size(), 3);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], 2);
-    EXPECT_EQ(v[2], 3);
-
-    EXPECT_EQ(v[0].parent_element(), &root);
-    EXPECT_EQ(v[1].parent_element(), &root);
-    EXPECT_EQ(v[2].parent_element(), &root);
-}
-
 TEST_F(tree_fragment_vector_test, ctor_vector) {
     int root = -1;
     entity_vector<C<int>> v0 { 1, 2, 3 };
@@ -114,77 +100,6 @@ TEST_F(tree_fragment_vector_test, ctor_vector) {
     EXPECT_EQ(v[1].parent_element(), &root);
     EXPECT_EQ(v[2].parent_element(), &root);
 }
-
-TEST_F(tree_fragment_vector_test, ctor_vector_creator) {
-    util::pmr::monotonic_buffer_resource resource;
-
-    int root = -1;
-    using c = C<int, false>;
-    std::vector<c> v0;
-    v0.emplace_back(1);
-    v0.emplace_back(2);
-    v0.emplace_back(3);
-    tree_fragment_vector<c> v { root, std::move(v0), util::object_creator { &resource } };
-
-    ASSERT_EQ(v.size(), 3);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], 2);
-    EXPECT_EQ(v[2], 3);
-
-    EXPECT_EQ(v[0].parent_element(), &root);
-    EXPECT_EQ(v[1].parent_element(), &root);
-    EXPECT_EQ(v[2].parent_element(), &root);
-}
-
-#ifdef ENABLE_OBJECT_CREATOR_PMR
-TEST_F(tree_fragment_vector_test, ctor_vector_creator_compatible) {
-    util::pmr::monotonic_buffer_resource resource;
-
-    int root = -1;
-    using c = C<int, false>;
-    entity_vector<c> v0 { util::pmr::polymorphic_allocator<c>(&resource) };
-    v0.emplace_back(1);
-    v0.emplace_back(2);
-    v0.emplace_back(3);
-    auto* p0 = &v0[0];
-
-    tree_fragment_vector<c> v { root, std::move(v0), util::object_creator { &resource } };
-    EXPECT_EQ(&v[0], p0);
-
-    ASSERT_EQ(v.size(), 3);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], 2);
-    EXPECT_EQ(v[2], 3);
-
-    EXPECT_EQ(v[0].parent_element(), &root);
-    EXPECT_EQ(v[1].parent_element(), &root);
-    EXPECT_EQ(v[2].parent_element(), &root);
-}
-
-TEST_F(tree_fragment_vector_test, ctor_vector_creator_incompatible) {
-    util::pmr::monotonic_buffer_resource resource;
-
-    int root = -1;
-    using c = C<int, false>;
-    entity_vector<c> v0 { util::pmr::polymorphic_allocator<c>(util::pmr::new_delete_resource()) };
-    v0.emplace_back(1);
-    v0.emplace_back(2);
-    v0.emplace_back(3);
-    auto* p0 = &v0[0];
-
-    tree_fragment_vector<c> v { root, std::move(v0), util::object_creator { &resource } };
-    EXPECT_NE(&v[0], p0);
-
-    ASSERT_EQ(v.size(), 3);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], 2);
-    EXPECT_EQ(v[2], 3);
-
-    EXPECT_EQ(v[0].parent_element(), &root);
-    EXPECT_EQ(v[1].parent_element(), &root);
-    EXPECT_EQ(v[2].parent_element(), &root);
-}
-#endif // ENABLE_OBJECT_CREATOR_PMR
 
 TEST_F(tree_fragment_vector_test, ctor_initializer_list) {
     int root = -1;
@@ -278,7 +193,7 @@ TEST_F(tree_fragment_vector_test, at) {
     EXPECT_EQ(v.at(1), 2);
     EXPECT_EQ(v.at(2), 3);
 
-    EXPECT_THROW(v.at(3), std::out_of_range);
+    EXPECT_THROW((void) v.at(3), std::out_of_range);
 }
 
 TEST_F(tree_fragment_vector_test, at_const) {
@@ -291,7 +206,7 @@ TEST_F(tree_fragment_vector_test, at_const) {
     EXPECT_EQ(v.at(1), 2);
     EXPECT_EQ(v.at(2), 3);
 
-    EXPECT_THROW(v.at(3), std::out_of_range);
+    EXPECT_THROW((void) v.at(3), std::out_of_range);
 }
 
 TEST_F(tree_fragment_vector_test, operator_at) {
@@ -636,7 +551,6 @@ TEST_F(tree_fragment_vector_test, release_elements) {
     auto r = v.release_elements();
 
     EXPECT_TRUE(v.empty());
-    EXPECT_EQ(v.get_object_creator(), util::object_creator(r.get_allocator()));
 
     ASSERT_EQ(r.size(), 3);
     EXPECT_EQ(r[0], 1);

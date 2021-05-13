@@ -10,12 +10,12 @@ value_kind date::kind() const noexcept {
     return tag;
 }
 
-date* date::clone(util::object_creator creator) const& {
-    return creator.create_object<date>(entity_);
+date* date::clone() const& {
+     return new date(entity_); // NOLINT
 }
 
-date* date::clone(util::object_creator creator) && {
-    return creator.create_object<date>(entity_);
+date* date::clone() && {
+     return new date(entity_); // NOLINT
 }
 
 bool date::equals(data const& other) const noexcept {

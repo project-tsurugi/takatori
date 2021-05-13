@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -11,7 +12,7 @@
 #include "details/conditional_alternative.h"
 #include <takatori/tree/tree_fragment_vector.h>
 
-#include <takatori/util/object_creator.h>
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/rvalue_ptr.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
@@ -37,8 +38,8 @@ public:
      * @param default_expression the default case expression
      */
     explicit conditional(
-            std::vector<alternative, util::object_allocator<alternative>> alternatives,
-            util::unique_object_ptr<expression> default_expression) noexcept;
+            std::vector<alternative> alternatives,
+            std::unique_ptr<expression> default_expression) noexcept;
 
     /**
      * @brief creates a new object.
@@ -53,20 +54,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit conditional(conditional const& other, util::object_creator creator);
+    explicit conditional(util::clone_tag_t, conditional const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit conditional(conditional&& other, util::object_creator creator);
+    explicit conditional(util::clone_tag_t, conditional&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] conditional* clone(util::object_creator creator) const& override;
-    [[nodiscard]] conditional* clone(util::object_creator creator) && override;
+    [[nodiscard]] conditional* clone() const& override;
+    [[nodiscard]] conditional* clone() && override;
 
     /**
      * @brief returns the alternatives.
@@ -92,20 +91,20 @@ public:
      * @param default_expression the default expression
      * @return this
      */
-    conditional& default_expression(util::unique_object_ptr<expression> default_expression) noexcept;
+    conditional& default_expression(std::unique_ptr<expression> default_expression) noexcept;
 
     /**
      * @brief returns ownership reference of the default expression.
      * @return the default expression
      */
-    [[nodiscard]] util::object_ownership_reference<expression> ownership_default_expression();
+    [[nodiscard]] util::ownership_reference<expression> ownership_default_expression();
 
     /**
      * @brief releases the default_expression expression.
      * @return the released expression
      * @return empty if the default expression is absent
      */
-    [[nodiscard]] util::unique_object_ptr<expression> release_default_expression() noexcept;
+    [[nodiscard]] std::unique_ptr<expression> release_default_expression() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -139,7 +138,7 @@ protected:
 
 private:
     tree::tree_fragment_vector<alternative> alternatives_;
-    util::unique_object_ptr<expression> default_expression_;
+    std::unique_ptr<expression> default_expression_;
 };
 
 /**

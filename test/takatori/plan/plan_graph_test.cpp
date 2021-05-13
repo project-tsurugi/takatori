@@ -108,7 +108,7 @@ TEST_F(plan_graph_test, merge_copy) {
     s1 >> s2;
 
     graph::graph<step> h;
-    merge_into(g, h, h.get_object_creator());
+    merge_into(g, h);
 
     ASSERT_EQ(h.size(), 3);
 
@@ -132,7 +132,7 @@ TEST_F(plan_graph_test, merge_move) {
     s1 >> s2;
 
     graph::graph<step> h;
-    merge_into(std::move(g), h, h.get_object_creator());
+    merge_into(std::move(g), h);
 
     ASSERT_EQ(h.size(), 3);
     EXPECT_TRUE(h.contains(s0));

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "../expression.h"
@@ -9,8 +10,8 @@
 
 #include <takatori/descriptor/variable.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::intermediate {
 
@@ -30,12 +31,10 @@ public:
      * @brief creates a new object.
      * @param group_keys the grouping key columns on the input relation, or empty if aggregates whole the input relation
      * @param columns the individual columns aggregation
-     * @param creator the object creator for internal elements
      */
     explicit aggregate(
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-            std::vector<column, util::object_allocator<column>> columns,
-            util::object_creator creator = {}) noexcept;
+            std::vector<descriptor::variable> group_keys,
+            std::vector<column> columns) noexcept;
 
     /**
      * @brief creates a new object.
@@ -49,24 +48,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit aggregate(aggregate const& other, util::object_creator creator);
+    explicit aggregate(util::clone_tag_t, aggregate const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit aggregate(aggregate&& other, util::object_creator creator);
+    explicit aggregate(util::clone_tag_t, aggregate&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] aggregate* clone(util::object_creator creator) const& override;
-    [[nodiscard]] aggregate* clone(util::object_creator creator) && override;
+    [[nodiscard]] aggregate* clone() const& override;
+    [[nodiscard]] aggregate* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -91,19 +88,19 @@ public:
      * @return the aggregate keys
      * @return empty if this operator aggregates the whole input relation as a single group
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& group_keys() noexcept;
 
     /// @copydoc group_keys()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& group_keys() const noexcept;
 
     /**
      * @brief returns the individual columns aggregation.
      * @return the aggregation specification of each column
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -140,8 +137,8 @@ protected:
 private:
     input_port_type input_;
     output_port_type output_;
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<descriptor::variable> group_keys_;
+    std::vector<column> columns_;
 };
 
 } // namespace takatori::relation::intermediate

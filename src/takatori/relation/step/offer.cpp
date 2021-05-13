@@ -8,9 +8,8 @@ namespace takatori::relation::step {
 
 offer::offer(
         descriptor::relation destination,
-        std::vector<column, util::object_allocator<column>> columns,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
+        std::vector<column> columns) noexcept
+    : input_(*this, 0)
     , destination_(std::move(destination))
     , columns_(std::move(columns))
 {}
@@ -24,30 +23,28 @@ offer::offer(
 {}
 
 
-offer::offer(offer const& other, util::object_creator creator)
+offer::offer(util::clone_tag_t, offer const& other)
     : offer(
             other.destination_,
-            { other.columns_, creator.allocator() },
-            creator)
+            { other.columns_ })
 {}
 
-offer::offer(offer&& other, util::object_creator creator)
+offer::offer(util::clone_tag_t, offer&& other)
     : offer(
             std::move(other.destination_),
-            { std::move(other.columns_), creator.allocator() },
-            creator)
+            { std::move(other.columns_) })
 {}
 
 expression_kind offer::kind() const noexcept {
     return tag;
 }
 
-offer* offer::clone(util::object_creator creator) const& {
-    return creator.create_object<offer>(*this, creator);
+offer* offer::clone() const& {
+    return new offer(util::clone_tag, *this); // NOLINT
 }
 
-offer* offer::clone(util::object_creator creator)&& {
-    return creator.create_object<offer>(std::move(*this), creator);
+offer* offer::clone()&& {
+    return new offer(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 
@@ -84,11 +81,11 @@ offer& offer::destination(descriptor::relation destination) noexcept {
     return *this;
 }
 
-std::vector<offer::column, util::object_allocator<offer::column>>& offer::columns() noexcept {
+std::vector<offer::column>& offer::columns() noexcept {
     return columns_;
 }
 
-std::vector<offer::column, util::object_allocator<offer::column>> const& offer::columns() const noexcept {
+std::vector<offer::column> const& offer::columns() const noexcept {
     return columns_;
 }
 

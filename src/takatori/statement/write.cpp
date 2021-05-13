@@ -10,8 +10,8 @@ namespace takatori::statement {
 write::write(
         operator_kind_type operator_kind,
         descriptor::relation destination,
-        std::vector<column, util::object_allocator<column>> columns,
-        std::vector<tuple, util::object_allocator<tuple>> tuples) noexcept
+        std::vector<column> columns,
+        std::vector<tuple> tuples) noexcept
     : operator_kind_(operator_kind)
     , destination_(std::move(destination))
     , columns_(std::move(columns))
@@ -35,32 +35,32 @@ write::write(
     }
 }
 
-write::write(write const& other, util::object_creator creator) noexcept
+write::write(util::clone_tag_t, write const& other) noexcept
     : write(
             other.operator_kind_,
             other.destination_,
-            { other.columns_, creator.allocator() },
-            tree::forward(creator, other.tuples_))
+            { other.columns_ },
+            tree::forward(other.tuples_))
 {}
 
-write::write(write&& other, util::object_creator creator) noexcept
+write::write(util::clone_tag_t, write&& other) noexcept
     : write(
             other.operator_kind_,
             std::move(other.destination_),
-            { std::move(other.columns_), creator.allocator() },
-            tree::forward(creator, std::move(other.tuples_)))
+            { std::move(other.columns_) },
+            tree::forward(std::move(other.tuples_)))
 {}
 
 statement_kind write::kind() const noexcept {
     return tag;
 }
 
-write* write::clone(util::object_creator creator) const& {
-    return creator.create_object<write>(*this, creator);
+write* write::clone() const& {
+    return new write(util::clone_tag, *this); // NOLINT
 }
 
-write* write::clone(util::object_creator creator) && {
-    return creator.create_object<write>(std::move(*this), creator);
+write* write::clone() && {
+    return new write(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 write::operator_kind_type write::operator_kind() const noexcept {
@@ -80,11 +80,11 @@ descriptor::relation const& write::destination() const noexcept {
     return destination_;
 }
 
-std::vector<write::column, util::object_allocator<write::column>>& write::columns() noexcept {
+std::vector<write::column>& write::columns() noexcept {
     return columns_;
 }
 
-std::vector<write::column, util::object_allocator<write::column>> const& write::columns() const noexcept {
+std::vector<write::column> const& write::columns() const noexcept {
     return columns_;
 }
 

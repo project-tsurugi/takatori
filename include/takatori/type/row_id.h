@@ -38,8 +38,8 @@ public:
     row_id& operator=(row_id&& other) noexcept = delete;
 
     [[nodiscard]] type_kind kind() const noexcept override;
-    [[nodiscard]] row_id* clone(util::object_creator creator) const& override;
-    [[nodiscard]] row_id* clone(util::object_creator creator) && override;
+    [[nodiscard]] row_id* clone() const& override;
+    [[nodiscard]] row_id* clone() && override;
 
     /**
      * @brief returns the sequence number of the target relation.
@@ -83,8 +83,6 @@ protected:
 
 private:
     sequence_type sequence_;
-
-    friend class util::object_creator;
 };
 
 template<> struct type_of<row_id::tag> : util::meta_type<row_id> {};

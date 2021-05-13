@@ -6,17 +6,8 @@
 
 namespace takatori::plan {
 
-broadcast::broadcast(
-        util::object_creator creator) noexcept
-    : exchange(creator)
-    , columns_(creator.allocator())
-{}
-
-broadcast::broadcast(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns,
-        util::object_creator creator) noexcept
-    : exchange(creator)
-    , columns_(std::move(columns))
+broadcast::broadcast(std::vector<descriptor::variable> columns) noexcept :
+    columns_(std::move(columns))
 {}
 
 broadcast::broadcast(std::initializer_list<descriptor::variable> columns)
@@ -24,28 +15,26 @@ broadcast::broadcast(std::initializer_list<descriptor::variable> columns)
         decltype(columns_) { columns.begin(), columns.end() })
 {}
 
-broadcast::broadcast(broadcast const& other, util::object_creator creator)
+broadcast::broadcast(util::clone_tag_t, broadcast const& other)
     : broadcast(
-            decltype(columns_) { other.columns_, creator.allocator() },
-            creator)
+            decltype(columns_) { other.columns_ })
 {}
 
-broadcast::broadcast(broadcast&& other, util::object_creator creator)
+broadcast::broadcast(util::clone_tag_t, broadcast&& other)
     : broadcast(
-            decltype(columns_) { std::move(other.columns_), creator.allocator() },
-            creator)
+            decltype(columns_) { std::move(other.columns_) })
 {}
 
 step_kind broadcast::kind() const noexcept {
     return tag;
 }
 
-broadcast* broadcast::clone(util::object_creator creator) const& {
-    return creator.create_object<broadcast>(*this, creator);
+broadcast* broadcast::clone() const& {
+    return new broadcast(util::clone_tag, *this); // NOLINT
 }
 
-broadcast* broadcast::clone(util::object_creator creator) && {
-    return creator.create_object<broadcast>(std::move(*this), creator);
+broadcast* broadcast::clone() && {
+    return new broadcast(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 util::sequence_view<descriptor::variable const> broadcast::input_columns() const noexcept {
@@ -56,11 +45,11 @@ util::sequence_view<descriptor::variable const> broadcast::output_columns() cons
     return util::sequence_view { columns_ };
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& broadcast::columns() noexcept {
+std::vector<descriptor::variable>& broadcast::columns() noexcept {
     return columns_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& broadcast::columns() const noexcept {
+std::vector<descriptor::variable> const& broadcast::columns() const noexcept {
     return columns_;
 }
 

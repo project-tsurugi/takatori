@@ -24,8 +24,8 @@ public:
     static constexpr inline expression_kind tag = expression_kind::extension;
 
     [[nodiscard]] expression_kind kind() const noexcept final;
-    [[nodiscard]] extension* clone(util::object_creator creator) const& override = 0;
-    [[nodiscard]] extension* clone(util::object_creator creator) && override = 0;
+    [[nodiscard]] extension* clone() const& override = 0;
+    [[nodiscard]] extension* clone() && override = 0;
 
     /**
      * @brief returns the extension ID of this type.

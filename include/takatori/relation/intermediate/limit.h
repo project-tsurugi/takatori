@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <optional>
 #include <vector>
 
@@ -12,8 +13,8 @@
 
 #include <takatori/descriptor/variable.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation::intermediate {
 
@@ -36,13 +37,11 @@ public:
      * @param count the number of rows to keep in the input relation or each group
      * @param group_keys the group key columns on the input relation, or empty to limit for whole relation
      * @param sort_keys the sort key: this operation will only keep the rows from head of the sorted relation
-     * @param creator the object creator for internal elements
      */
     explicit limit(
             std::optional<size_type> count,
-            std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-            std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
-            util::object_creator creator = {}) noexcept;
+            std::vector<descriptor::variable> group_keys,
+            std::vector<sort_key> sort_keys) noexcept;
 
     /**
      * @brief creates a new object.
@@ -58,24 +57,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit limit(limit const& other, util::object_creator creator);
+    explicit limit(util::clone_tag_t, limit const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit limit(limit&& other, util::object_creator creator);
+    explicit limit(util::clone_tag_t, limit&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] limit* clone(util::object_creator creator) const& override;
-    [[nodiscard]] limit* clone(util::object_creator creator) && override;
+    [[nodiscard]] limit* clone() const& override;
+    [[nodiscard]] limit* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -113,19 +110,19 @@ public:
      * @brief returns the limit key columns on the input relation.
      * @return the limit keys
      */
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group_keys() noexcept;
+    [[nodiscard]] std::vector<descriptor::variable>& group_keys() noexcept;
 
     /// @copydoc group_keys()
-    [[nodiscard]] std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group_keys() const noexcept;
+    [[nodiscard]] std::vector<descriptor::variable> const& group_keys() const noexcept;
 
     /**
      * @brief returns the sort key.
      * @return the sort key
      */
-    [[nodiscard]] std::vector<sort_key, util::object_allocator<sort_key>>& sort_keys() noexcept;
+    [[nodiscard]] std::vector<sort_key>& sort_keys() noexcept;
 
     /// @brief sort_keys()
-    [[nodiscard]] std::vector<sort_key, util::object_allocator<sort_key>> const& sort_keys() const noexcept;
+    [[nodiscard]] std::vector<sort_key> const& sort_keys() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -163,8 +160,8 @@ private:
     input_port_type input_;
     output_port_type output_;
     std::optional<size_type> count_;
-    std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys_;
-    std::vector<sort_key, util::object_allocator<sort_key>> sort_keys_;
+    std::vector<descriptor::variable> group_keys_;
+    std::vector<sort_key> sort_keys_;
 };
 
 } // namespace takatori::relation::intermediate

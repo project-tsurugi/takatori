@@ -85,7 +85,7 @@ TEST_F(process_test, copy) {
     r0.output() >> r1.input();
 
     graph::graph<step> g;
-    auto&& p1 = g.emplace<process>(p0, util::object_creator {});
+    auto&& p1 = g.emplace<process>(util::clone_tag, p0);
 
     ASSERT_EQ(p0.operators().size(), 2);
     EXPECT_GT(r0.output(), r1.input());
@@ -110,7 +110,7 @@ TEST_F(process_test, move) {
     r0.output() >> r1.input();
 
     graph::graph<step> g;
-    auto&& p1 = g.emplace<process>(std::move(p0), util::object_creator {});
+    auto&& p1 = g.emplace<process>(util::clone_tag, std::move(p0));
 
     ASSERT_EQ(p1.operators().size(), 2);
     auto&& r0c = find<relation::scan>(p1);

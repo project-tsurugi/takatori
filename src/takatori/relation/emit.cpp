@@ -6,10 +6,8 @@
 
 namespace takatori::relation {
 
-emit::emit(
-        std::vector<column, util::object_allocator<column>> columns,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
+emit::emit(std::vector<column> columns) noexcept
+    : input_(*this, 0)
     , columns_(std::move(columns))
 {}
 
@@ -18,28 +16,26 @@ emit::emit(std::initializer_list<column> columns)
 {}
 
 
-emit::emit(emit const& other, util::object_creator creator)
+emit::emit(util::clone_tag_t, emit const& other)
     : emit(
-            decltype(columns_) { other.columns_, creator.allocator() },
-            creator)
+            decltype(columns_) { other.columns_ })
 {}
 
-emit::emit(emit&& other, util::object_creator creator)
+emit::emit(util::clone_tag_t, emit&& other)
     : emit(
-            decltype(columns_) { std::move(other.columns_), creator.allocator() },
-            creator)
+            decltype(columns_) { std::move(other.columns_) })
 {}
 
 expression_kind emit::kind() const noexcept {
     return tag;
 }
 
-emit* emit::clone(util::object_creator creator) const& {
-    return creator.create_object<emit>(*this, creator);
+emit* emit::clone() const& {
+    return new emit(util::clone_tag, *this); // NOLINT
 }
 
-emit* emit::clone(util::object_creator creator)&& {
-    return creator.create_object<emit>(std::move(*this), creator);
+emit* emit::clone()&& {
+    return new emit(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 
@@ -67,11 +63,11 @@ emit::input_port_type const& emit::input() const noexcept {
     return input_;
 }
 
-std::vector<emit::column, util::object_allocator<emit::column>>& emit::columns() noexcept {
+std::vector<emit::column>& emit::columns() noexcept {
     return columns_;
 }
 
-std::vector<emit::column, util::object_allocator<emit::column>> const& emit::columns() const noexcept {
+std::vector<emit::column> const& emit::columns() const noexcept {
     return columns_;
 }
 

@@ -7,26 +7,17 @@
 
 namespace takatori::plan {
 
-group::group(util::object_creator creator) noexcept
-    : exchange(creator)
-    , columns_(creator.allocator())
-    , group_keys_(creator.allocator())
-    , sort_keys_(creator.allocator())
-{}
-
 group::group(
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> columns,
-        std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> group_keys,
-        std::vector<sort_key, util::object_allocator<sort_key>> sort_keys,
+        std::vector<descriptor::variable> columns,
+        std::vector<descriptor::variable> group_keys,
+        std::vector<sort_key> sort_keys,
         std::optional<size_type> limit,
-        mode_type mode,
-        util::object_creator creator) noexcept
-    : exchange(creator)
-    , columns_(std::move(columns))
+        mode_type mode) noexcept
+    : columns_(std::move(columns))
     , group_keys_(std::move(group_keys))
     , sort_keys_(std::move(sort_keys))
-    , limit_(std::move(limit))
-        , mode_(mode)
+    , limit_(limit)
+    , mode_(mode)
 {}
 
 group::group(
@@ -39,40 +30,38 @@ group::group(
             { columns.begin(), columns.end() },
             { group_keys.begin(), group_keys.end() },
             { sort_keys.begin(), sort_keys.end() },
-            std::move(limit),
+            limit,
             mode)
 {}
 
-group::group(group const& other, util::object_creator creator)
+group::group(util::clone_tag_t, group const& other)
     : group(
-            { other.columns_, creator.allocator() },
-            { other.group_keys_, creator.allocator() },
-            { other.sort_keys_, creator.allocator() },
+            { other.columns_ },
+            { other.group_keys_ },
+            { other.sort_keys_ },
             other.limit_,
-            other.mode_,
-            creator)
+            other.mode_)
 {}
 
-group::group(group&& other, util::object_creator creator)
+group::group(util::clone_tag_t, group&& other)
     : group(
-            { std::move(other.columns_), creator.allocator() },
-            { std::move(other.group_keys_), creator.allocator() },
-            { std::move(other.sort_keys_), creator.allocator() },
-            std::move(other.limit_),
-            other.mode_,
-            creator)
+            { std::move(other.columns_) },
+            { std::move(other.group_keys_) },
+            { std::move(other.sort_keys_) },
+            other.limit_,
+            other.mode_)
 {}
 
 step_kind group::kind() const noexcept {
     return tag;
 }
 
-group* group::clone(util::object_creator creator) const& {
-    return creator.create_object<group>(*this, creator);
+group* group::clone() const& {
+    return new group(util::clone_tag, *this); // NOLINT
 }
 
-group* group::clone(util::object_creator creator) && {
-    return creator.create_object<group>(std::move(*this), creator);
+group* group::clone() && {
+    return new group(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 util::sequence_view<descriptor::variable const> group::input_columns() const noexcept {
@@ -83,27 +72,27 @@ util::sequence_view<descriptor::variable const> group::output_columns() const no
     return util::sequence_view { columns_ };
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group::columns() noexcept {
+std::vector<descriptor::variable>& group::columns() noexcept {
     return columns_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group::columns() const noexcept {
+std::vector<descriptor::variable> const& group::columns() const noexcept {
     return columns_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>>& group::group_keys() noexcept {
+std::vector<descriptor::variable>& group::group_keys() noexcept {
     return group_keys_;
 }
 
-std::vector<descriptor::variable, util::object_allocator<descriptor::variable>> const& group::group_keys() const noexcept {
+std::vector<descriptor::variable> const& group::group_keys() const noexcept {
     return group_keys_;
 }
 
-std::vector<group::sort_key, util::object_allocator<group::sort_key>>& group::sort_keys() noexcept {
+std::vector<group::sort_key>& group::sort_keys() noexcept {
     return sort_keys_;
 }
 
-std::vector<group::sort_key, util::object_allocator<group::sort_key>> const& group::sort_keys() const noexcept {
+std::vector<group::sort_key> const& group::sort_keys() const noexcept {
     return sort_keys_;
 }
 
@@ -112,7 +101,7 @@ std::optional<group::size_type> const& group::limit() const noexcept {
 }
 
 group& group::limit(std::optional<group::size_type> limit) noexcept {
-    limit_ = std::move(limit);
+    limit_ = limit;
     return *this;
 }
 

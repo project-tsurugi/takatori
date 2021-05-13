@@ -7,7 +7,6 @@
 #include "tree_element_util.h"
 
 #include <takatori/util/assertion.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/rvalue_initializer_list.h>
 
@@ -54,7 +53,7 @@ public:
     /// @brief the value type
     using value_type = T;
     /// @brief internal allocator type.
-    using allocator_type = util::object_allocator<T>;
+    using allocator_type = std::allocator<T>;
     /// @brief internal entity type
     using entity_type = std::vector<value_type, allocator_type>;
 
@@ -88,11 +87,9 @@ public:
     /**
      * @brief constructs a new object.
      * @param parent the parent element
-     * @param creator the object creator
      */
-    tree_fragment_vector(util::optional_ptr<parent_type> parent = {}, util::object_creator creator = {}) // NOLINT
+    tree_fragment_vector(util::optional_ptr<parent_type> parent = {}) // NOLINT
         : parent_(std::move(parent))
-        , elements_(creator.allocator(std::in_place_type<value_type>))
     {
         bless(elements_);
     }
@@ -113,30 +110,11 @@ public:
      * @brief constructs a new object.
      * @param parent the parent element
      * @param elements the initial elements
-     * @param creator the object creator
-     */
-    template<class Allocator>
-    tree_fragment_vector(
-            util::optional_ptr<parent_type> parent,
-            std::vector<value_type, Allocator> elements,
-            util::object_creator creator = {})
-        : parent_(std::move(parent))
-        , elements_(adapt_vector(std::move(elements), creator))
-    {
-        bless(elements_);
-    }
-
-    /**
-     * @brief constructs a new object.
-     * @param parent the parent element
-     * @param elements the initial elements
-     * @param creator the object creator
      */
     tree_fragment_vector(
             util::optional_ptr<parent_type> parent,
-            std::initializer_list<T> elements,
-            util::object_creator creator = {})
-        : tree_fragment_vector(parent, creator)
+            std::initializer_list<T> elements)
+        : tree_fragment_vector(parent)
     {
         assign(elements);
     }
@@ -145,13 +123,11 @@ public:
      * @brief constructs a new object.
      * @param parent the parent element
      * @param elements the initial elements
-     * @param creator the object creator
      */
     tree_fragment_vector(
             util::optional_ptr<parent_type> parent,
-            util::rvalue_initializer_list<T> elements,
-            util::object_creator creator = {})
-        : tree_fragment_vector(parent, creator)
+            util::rvalue_initializer_list<T> elements)
+        : tree_fragment_vector(parent)
     {
         assign(std::move(elements));
     }
@@ -162,15 +138,13 @@ public:
      * @param parent the parent element
      * @param first the first position of initial elements (inclusive)
      * @param last the last position of initial elements (exclusive)
-     * @param creator the object creator
      */
     template<class Iter>
     tree_fragment_vector(
             util::optional_ptr<parent_type> parent,
             Iter first,
-            Iter last,
-            util::object_creator creator = {})
-        : tree_fragment_vector(parent, creator)
+            Iter last)
+        : tree_fragment_vector(parent)
     {
         assign(first, last);
     }
@@ -467,10 +441,9 @@ public:
      * @return the released elements
      */
     entity_type release_elements() noexcept {
-        auto creator = get_object_creator();
         auto result = std::move(elements_);
         unbless(result);
-        elements_ = entity_type(creator.allocator(std::in_place_type<value_type>));
+        elements_ = entity_type {};
         return result;
     }
 
@@ -548,19 +521,10 @@ public:
 
     /**
      * @brief exchanges contents between this and the given container.
-     * @details This also exchanges their util::object_creator, but object copying strategy does not.
      * @param other the opposite container
      */
     void swap(tree_fragment_vector& other) noexcept {
         std::swap(elements_, other.elements_);
-    }
-
-    /**
-     * @brief returns the object creator to create/delete objects in this container.
-     * @return the object creator for this container
-     */
-    [[nodiscard]] util::object_creator get_object_creator() const noexcept {
-        return elements_.get_allocator();
     }
 
 private:
@@ -568,23 +532,6 @@ private:
     entity_type elements_;
 
     using traits = tree_fragment_traits<value_type>;
-
-    template<class Allocator>
-    static entity_type adapt_vector(
-            std::vector<T, Allocator> elements,
-            util::object_creator creator = {}) {
-        if constexpr (std::is_same_v<decltype(elements), entity_type>) {
-            if (creator.is_compatible(elements.get_allocator())) {
-                return std::move(elements);
-            }
-            return { std::move(elements), creator.allocator() };
-        }
-        return {
-                std::make_move_iterator(elements.begin()),
-                std::make_move_iterator(elements.end()),
-                creator.allocator()
-        };
-    }
 
     void bless(reference element) {
         traits::set_parent_element(element, parent_);
@@ -644,22 +591,22 @@ private:
 
 /// @private
 template<class P, class T, class A>
-tree_fragment_vector(P&&, std::vector<T, A>, util::object_creator = {})
+tree_fragment_vector(P&&, std::vector<T, A>)
 -> tree_fragment_vector<T>;
 
 /// @private
 template<class P, class T>
-tree_fragment_vector(P&&, std::initializer_list<T>, util::object_creator = {})
+tree_fragment_vector(P&&, std::initializer_list<T>)
 -> tree_fragment_vector<T>;
 
 /// @private
 template<class P, class T>
-tree_fragment_vector(P&&, util::rvalue_initializer_list<T>, util::object_creator = {})
+tree_fragment_vector(P&&, util::rvalue_initializer_list<T>)
 -> tree_fragment_vector<T>;
 
 /// @private
 template<class P, class Iter>
-tree_fragment_vector(P&&, Iter, Iter, util::object_creator = {})
+tree_fragment_vector(P&&, Iter, Iter)
 -> tree_fragment_vector<typename std::iterator_traits<Iter>::value_type>;
 
 /**

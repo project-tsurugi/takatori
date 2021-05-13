@@ -24,8 +24,8 @@ public:
     static constexpr inline statement_kind tag = statement_kind::extension;
 
     [[nodiscard]] statement_kind kind() const noexcept final;
-    [[nodiscard]] extension* clone(util::object_creator creator) const& override = 0;
-    [[nodiscard]] extension* clone(util::object_creator creator) && override = 0;
+    [[nodiscard]] extension* clone() const& override = 0;
+    [[nodiscard]] extension* clone() && override = 0;
 
     /**
      * @brief returns the extension ID of this type.

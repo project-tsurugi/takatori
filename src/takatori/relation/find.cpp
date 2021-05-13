@@ -11,10 +11,9 @@ namespace takatori::relation {
 
 find::find(
         descriptor::relation source,
-        std::vector<column, util::object_allocator<column>> columns,
-        std::vector<key, util::object_allocator<key>> keys,
-        util::object_creator creator) noexcept
-    : output_(*this, 0, creator)
+        std::vector<column> columns,
+        std::vector<key> keys) noexcept
+    : output_(*this, 0)
     , source_(std::move(source))
     , columns_(std::move(columns))
     , keys_(*this, std::move(keys))
@@ -31,32 +30,30 @@ find::find(
 {}
 
 
-find::find(find const& other, util::object_creator creator)
+find::find(util::clone_tag_t, find const& other)
     : find(
             other.source_,
-            { other.columns_, creator.allocator() },
-            tree::forward(creator, other.keys_),
-            creator)
+            { other.columns_ },
+            tree::forward(other.keys_))
 {}
 
-find::find(find&& other, util::object_creator creator)
+find::find(util::clone_tag_t, find&& other)
     : find(
             std::move(other.source_),
-            { std::move(other.columns_), creator.allocator() },
-            tree::forward(creator, std::move(other.keys_)),
-            creator)
+            { std::move(other.columns_) },
+            tree::forward(std::move(other.keys_)))
 {}
 
 expression_kind find::kind() const noexcept {
     return tag;
 }
 
-find* find::clone(util::object_creator creator) const& {
-    return creator.create_object<find>(*this, creator);
+find* find::clone() const& {
+    return new find(util::clone_tag, *this); // NOLINT
 }
 
-find* find::clone(util::object_creator creator)&& {
-    return creator.create_object<find>(std::move(*this), creator);
+find* find::clone()&& {
+    return new find(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 
@@ -92,11 +89,11 @@ descriptor::relation const& find::source() const noexcept {
     return source_;
 }
 
-std::vector<find::column, util::object_allocator<find::column>>& find::columns() noexcept {
+std::vector<find::column>& find::columns() noexcept {
     return columns_;
 }
 
-std::vector<find::column, util::object_allocator<find::column>> const& find::columns() const noexcept {
+std::vector<find::column> const& find::columns() const noexcept {
     return columns_;
 }
 

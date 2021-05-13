@@ -8,8 +8,8 @@ class reference_vector_test : public ::testing::Test {
 public:
     template<class... Elements>
     static reference_vector<std::remove_reference_t<std::common_type_t<Elements...>>>
-    make_vector(util::object_creator creator, Elements&&... elements) {
-        reference_vector<int> result { creator };
+    make_vector(Elements&&... elements) {
+        reference_vector<int> result {};
         result.reserve(sizeof...(Elements));
         (..., result.template emplace_back<Elements>(std::forward<Elements>(elements)));
         return result;
@@ -21,14 +21,14 @@ namespace {
 struct Base {
     Base() = default;
     virtual ~Base() = default;
-    virtual Base* clone(object_creator) const = 0;
+    virtual Base* clone() const = 0;
     virtual std::string const& get() const = 0;
 };
 
 struct Sub : Base {
     explicit Sub(std::string value) : value_(std::move(value)) {}
     ~Sub() override = default;
-    Sub* clone(object_creator allocator) const override { return allocator.create_object<Sub>(value_); };
+    Sub* clone() const override { return new Sub(value_); };
     std::string const& get() const override { return value_; }
 
 private:
@@ -250,24 +250,6 @@ TEST_F(reference_vector_test, move_assign_null_copier) {
     EXPECT_EQ(&c[2], ps[2]);
 }
 
-TEST_F(reference_vector_test, custom_creator) {
-    pmr::monotonic_buffer_resource resource;
-    object_creator custom { &resource };
-
-    reference_vector<int> v { custom };
-
-    EXPECT_EQ(v.get_object_creator(), custom);
-
-    v.emplace_back(1);
-    v.emplace_back(2);
-    v.emplace_back(3);
-
-    ASSERT_EQ(v.size(), 3);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], 2);
-    EXPECT_EQ(v[2], 3);
-}
-
 TEST_F(reference_vector_test, initializer_list) {
     reference_vector v { 1, 2 };
 
@@ -331,65 +313,6 @@ TEST_F(reference_vector_test, conversion_assign) {
     EXPECT_EQ(&c[2], ps[2]);
 }
 
-TEST_F(reference_vector_test, copy_with_creator) {
-    reference_vector<int> v;
-    v.emplace_back(1);
-    v.emplace_back(2);
-    v.emplace_back(3);
-
-    pmr::monotonic_buffer_resource r;
-    object_creator custom { &r };
-
-    reference_vector<int> c { v, custom };
-    EXPECT_EQ(c.get_object_creator(), custom);
-    ASSERT_EQ(c.size(), 3);
-    EXPECT_EQ(c[0], 1);
-    EXPECT_EQ(c[1], 2);
-    EXPECT_EQ(c[2], 3);
-
-    EXPECT_NE(&c[0], &v[0]);
-    EXPECT_NE(&c[1], &v[1]);
-    EXPECT_NE(&c[2], &v[2]);
-}
-
-TEST_F(reference_vector_test, move_with_creator) {
-    reference_vector<int> v;
-    v.emplace_back(1);
-    v.emplace_back(2);
-    v.emplace_back(3);
-
-    pmr::monotonic_buffer_resource r;
-    object_creator custom { &r };
-
-    reference_vector<int> c { std::move(v), custom };
-    EXPECT_EQ(c.get_object_creator(), custom);
-    ASSERT_EQ(c.size(), 3);
-    EXPECT_EQ(c[0], 1);
-    EXPECT_EQ(c[1], 2);
-    EXPECT_EQ(c[2], 3);
-
-    EXPECT_TRUE(v.empty()); // NOLINT
-}
-
-TEST_F(reference_vector_test, move_with_creator_compatible) {
-    pmr::monotonic_buffer_resource r;
-    object_creator custom { &r };
-
-    reference_vector<int> v { custom };
-    v.emplace_back(1);
-    v.emplace_back(2);
-    v.emplace_back(3);
-
-    reference_vector<int> c { std::move(v), custom };
-    EXPECT_EQ(c.get_object_creator(), custom);
-    ASSERT_EQ(c.size(), 3);
-    EXPECT_EQ(c[0], 1);
-    EXPECT_EQ(c[1], 2);
-    EXPECT_EQ(c[2], 3);
-
-    EXPECT_TRUE(v.empty()); // NOLINT
-}
-
 TEST_F(reference_vector_test, at) {
     reference_vector v { 1, 2, 3 };
 
@@ -397,7 +320,7 @@ TEST_F(reference_vector_test, at) {
     EXPECT_EQ(v.at(0), 1);
     EXPECT_EQ(v.at(1), 2);
     EXPECT_EQ(v.at(2), 3);
-    EXPECT_THROW(v.at(3), std::out_of_range);
+    EXPECT_THROW((void) v.at(3), std::out_of_range);
 }
 
 TEST_F(reference_vector_test, at_const) {
@@ -407,7 +330,7 @@ TEST_F(reference_vector_test, at_const) {
     EXPECT_EQ(v.at(0), 1);
     EXPECT_EQ(v.at(1), 2);
     EXPECT_EQ(v.at(2), 3);
-    EXPECT_THROW(v.at(3), std::out_of_range);
+    EXPECT_THROW((void) v.at(3), std::out_of_range);
 }
 
 TEST_F(reference_vector_test, operator_at) {
@@ -593,7 +516,7 @@ TEST_F(reference_vector_test, insert_rvalue) {
 
 TEST_F(reference_vector_test, insert_unique) {
     reference_vector<int> v { 1, 2, 3 };
-    auto x = v.get_object_creator().create_unique<int>(-1);
+    auto x = std::make_unique<int>(-1);
     auto*p = x.get();
     auto iter = v.insert(v.begin() + 2, std::move(x));
 
@@ -604,30 +527,6 @@ TEST_F(reference_vector_test, insert_unique) {
     EXPECT_EQ(v[3], 3);
 
     EXPECT_EQ(&v[2], p);
-
-    EXPECT_EQ(iter, v.begin() + 2);
-}
-
-TEST_F(reference_vector_test, insert_unique_clone) {
-    if (!util::object_creator_pmr_enabled) {
-        GTEST_SKIP();
-    }
-    pmr::monotonic_buffer_resource resource;
-    object_creator custom { &resource };
-
-    reference_vector<int> v { 1, 2, 3 };
-
-    auto x = custom.create_unique<int>(-1);
-    auto*p = x.get();
-    auto iter = v.insert(v.begin() + 2, std::move(x));
-
-    ASSERT_EQ(v.size(), 4);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], 2);
-    EXPECT_EQ(v[2], -1);
-    EXPECT_EQ(v[3], 3);
-
-    EXPECT_NE(&v[2], p);
 
     EXPECT_EQ(iter, v.begin() + 2);
 }
@@ -691,7 +590,7 @@ TEST_F(reference_vector_test, push_back_rvalue) {
 TEST_F(reference_vector_test, push_back_unique) {
     reference_vector<int> v { 1, 2 };
 
-    auto x = v.get_object_creator().create_unique<int>(-1);
+    auto x = std::make_unique<int>(-1);
     auto*p = x.get();
     v.push_back(std::move(x));
 
@@ -701,27 +600,6 @@ TEST_F(reference_vector_test, push_back_unique) {
     EXPECT_EQ(v[2], -1);
 
     EXPECT_EQ(&v[2], p);
-}
-
-TEST_F(reference_vector_test, push_back_unique_clone) {
-    if (!util::object_creator_pmr_enabled) {
-        GTEST_SKIP();
-    }
-    pmr::monotonic_buffer_resource resource;
-    object_creator custom { &resource };
-
-    reference_vector<int> v { 1, 2 };
-
-    auto x = custom.create_unique<int>(-1);
-    auto*p = x.get();
-    v.push_back(std::move(x));
-
-    ASSERT_EQ(v.size(), 3);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], 2);
-    EXPECT_EQ(v[2], -1);
-
-    EXPECT_NE(&v[2], p);
 }
 
 TEST_F(reference_vector_test, emplace) {
@@ -787,7 +665,7 @@ TEST_F(reference_vector_test, put_back_rvalue) {
 TEST_F(reference_vector_test, put_unique) {
     reference_vector v { 1, 2, 3 };
 
-    auto x = v.get_object_creator().create_unique<int>(-1);
+    auto x = std::make_unique<int>(-1);
     auto*p = x.get();
     auto&& e = v.put(v.begin() + 1, std::move(x));
 
@@ -798,28 +676,6 @@ TEST_F(reference_vector_test, put_unique) {
 
     EXPECT_EQ(&e, &v[1]);
     EXPECT_EQ(&e, p);
-}
-
-TEST_F(reference_vector_test, put_unique_clone) {
-    if (!util::object_creator_pmr_enabled) {
-        GTEST_SKIP();
-    }
-    pmr::monotonic_buffer_resource resource;
-    object_creator custom { &resource };
-
-    reference_vector v { 1, 2, 3 };
-
-    auto x = custom.create_unique<int>(-1);
-    auto*p = x.get();
-    auto&& e = v.put(v.begin() + 1, std::move(x));
-
-    ASSERT_EQ(v.size(), 3);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], -1);
-    EXPECT_EQ(v[2], 3);
-
-    EXPECT_EQ(&e, &v[1]);
-    EXPECT_NE(&e, p);
 }
 
 TEST_F(reference_vector_test, replace) {
@@ -901,7 +757,7 @@ TEST_F(reference_vector_test, ownership) {
 
     EXPECT_EQ(o->get(), "B");
 
-    o = v.get_object_creator().create_unique<Sub>("X");
+    o = std::make_unique<Sub>("X");
     EXPECT_EQ(v[1].get(), "X");
 }
 
@@ -1034,12 +890,11 @@ TEST_F(reference_vector_test, swap) {
 }
 
 TEST_F(reference_vector_test, unsafe_assign) {
-    object_creator oc;
     reference_vector<int> v;
     v.unsafe_assign({
-            oc.create_object<int>(1),
-            oc.create_object<int>(2),
-            oc.create_object<int>(3),
+            new int(1),
+            new int(2),
+            new int(3),
     });
 
     ASSERT_EQ(v.size(), 3);
@@ -1049,12 +904,11 @@ TEST_F(reference_vector_test, unsafe_assign) {
 }
 
 TEST_F(reference_vector_test, unsafe_assign_ref) {
-    object_creator oc;
     reference_vector<Base> v;
     v.unsafe_assign({
-            oc.create_object<Sub>("A"),
-            oc.create_object<Sub>("B"),
-            oc.create_object<Sub>("C"),
+            new Sub("A"),
+            new Sub("B"),
+            new Sub("C"),
     });
 
     ASSERT_EQ(v.size(), 3);
@@ -1064,11 +918,10 @@ TEST_F(reference_vector_test, unsafe_assign_ref) {
 }
 
 TEST_F(reference_vector_test, unsafe_assign_iter) {
-    object_creator oc;
     std::initializer_list<int*> l {
-            oc.create_object<int>(1),
-            oc.create_object<int>(2),
-            oc.create_object<int>(3),
+            new int(1),
+            new int(2),
+            new int(3),
     };
     reference_vector<int> v;
     v.unsafe_assign(l.begin(), l.end());
@@ -1080,11 +933,10 @@ TEST_F(reference_vector_test, unsafe_assign_iter) {
 }
 
 TEST_F(reference_vector_test, unsafe_assign_iter_ref) {
-    object_creator oc;
     std::initializer_list<Base*> l {
-            oc.create_object<Sub>("A"),
-            oc.create_object<Sub>("B"),
-            oc.create_object<Sub>("C"),
+            new Sub("A"),
+            new Sub("B"),
+            new Sub("C"),
     };
     reference_vector<Base> v;
     v.unsafe_assign(l.begin(), l.end());
@@ -1096,9 +948,8 @@ TEST_F(reference_vector_test, unsafe_assign_iter_ref) {
 }
 
 TEST_F(reference_vector_test, unsafe_insert) {
-    object_creator oc;
     reference_vector<int> v { 1, 2, 3 };
-    auto iter = v.unsafe_insert(v.begin() + 2, oc.create_object<int>(-1));
+    auto iter = v.unsafe_insert(v.begin() + 2, new int(-1));
 
     ASSERT_EQ(v.size(), 4);
     EXPECT_EQ(v[0], 1);
@@ -1110,11 +961,10 @@ TEST_F(reference_vector_test, unsafe_insert) {
 }
 
 TEST_F(reference_vector_test, unsafe_insert_list) {
-    object_creator oc;
     reference_vector<int> v { 1, 2 };
     auto iter = v.unsafe_insert(v.begin() + 1, {
-            oc.create_object<int>(-1),
-            oc.create_object<int>(-2),
+            new int(-1),
+            new int(-2),
     });
 
     ASSERT_EQ(v.size(), 4);
@@ -1127,11 +977,10 @@ TEST_F(reference_vector_test, unsafe_insert_list) {
 }
 
 TEST_F(reference_vector_test, unsafe_insert_iter) {
-    object_creator oc;
     reference_vector<int> v { 1, 2 };
     std::initializer_list<int*> il {
-            oc.create_object<int>(-1),
-            oc.create_object<int>(-2),
+            new int(-1),
+            new int(-2),
     };
     auto iter = v.unsafe_insert(v.begin() + 1, il.begin(), il.end());
 
@@ -1145,9 +994,8 @@ TEST_F(reference_vector_test, unsafe_insert_iter) {
 }
 
 TEST_F(reference_vector_test, unsafe_push_back) {
-    object_creator oc;
     reference_vector<int> v { 1, 2, 3 };
-    auto&& e = v.unsafe_push_back(oc.create_object<int>(-1));
+    auto&& e = v.unsafe_push_back(new int(-1));
 
     ASSERT_EQ(v.size(), 4);
     EXPECT_EQ(v[0], 1);
@@ -1159,9 +1007,8 @@ TEST_F(reference_vector_test, unsafe_push_back) {
 }
 
 TEST_F(reference_vector_test, unsafe_put) {
-    object_creator oc;
     reference_vector<int> v { 1, 2, 3 };
-    auto&& e = v.unsafe_put(v.begin() + 1, oc.create_object<int>(-1));
+    auto&& e = v.unsafe_put(v.begin() + 1, new int(-1));
 
     ASSERT_EQ(v.size(), 3);
     EXPECT_EQ(v[0], 1);
@@ -1172,27 +1019,27 @@ TEST_F(reference_vector_test, unsafe_put) {
 }
 
 TEST_F(reference_vector_test, compare) {
-    EXPECT_EQ(make_vector({}, 10), make_vector({}, 10));
-    EXPECT_LE(make_vector({}, 10), make_vector({}, 10));
-    EXPECT_GE(make_vector({}, 10), make_vector({}, 10));
+    EXPECT_EQ(make_vector(10), make_vector(10));
+    EXPECT_LE(make_vector(10), make_vector(10));
+    EXPECT_GE(make_vector(10), make_vector(10));
 
-    EXPECT_NE(make_vector({}, 10, 20), make_vector({}, 20, 10));
+    EXPECT_NE(make_vector(10, 20), make_vector(20, 10));
 
-    EXPECT_NE(make_vector({}, 10), make_vector({}, 20));
-    EXPECT_LT(make_vector({}, 10), make_vector({}, 20));
-    EXPECT_LE(make_vector({}, 10), make_vector({}, 20));
+    EXPECT_NE(make_vector(10), make_vector(20));
+    EXPECT_LT(make_vector(10), make_vector(20));
+    EXPECT_LE(make_vector(10), make_vector(20));
 
-    EXPECT_NE(make_vector({}, 10), make_vector({}, 10, 20));
-    EXPECT_LT(make_vector({}, 10), make_vector({}, 10, 20));
-    EXPECT_LE(make_vector({}, 10), make_vector({}, 10, 20));
+    EXPECT_NE(make_vector(10), make_vector(10, 20));
+    EXPECT_LT(make_vector(10), make_vector(10, 20));
+    EXPECT_LE(make_vector(10), make_vector(10, 20));
 
-    EXPECT_NE(make_vector({}, 20), make_vector({}, 10));
-    EXPECT_GT(make_vector({}, 20), make_vector({}, 10));
-    EXPECT_GE(make_vector({}, 20), make_vector({}, 10));
+    EXPECT_NE(make_vector(20), make_vector(10));
+    EXPECT_GT(make_vector(20), make_vector(10));
+    EXPECT_GE(make_vector(20), make_vector(10));
 
-    EXPECT_NE(make_vector({}, 10, 0), make_vector({}, 10));
-    EXPECT_GT(make_vector({}, 10, 0), make_vector({}, 10));
-    EXPECT_GE(make_vector({}, 10, 0), make_vector({}, 10));
+    EXPECT_NE(make_vector(10, 0), make_vector(10));
+    EXPECT_GT(make_vector(10, 0), make_vector(10));
+    EXPECT_GE(make_vector(10, 0), make_vector(10));
 }
 
 } // namespace takatori::util

@@ -5,6 +5,7 @@
 #include "statement.h"
 #include "statement_kind.h"
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/plan/graph.h>
 
 namespace takatori::statement {
@@ -31,20 +32,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit execute(execute const& other, util::object_creator creator) noexcept;
+    explicit execute(util::clone_tag_t, execute const& other) noexcept;
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit execute(execute&& other, util::object_creator creator) noexcept;
+    explicit execute(util::clone_tag_t, execute&& other) noexcept;
 
     [[nodiscard]] statement_kind kind() const noexcept override;
-    [[nodiscard]] execute* clone(util::object_creator creator) const& override;
-    [[nodiscard]] execute* clone(util::object_creator creator) && override;
+    [[nodiscard]] execute* clone() const& override;
+    [[nodiscard]] execute* clone() && override;
 
     /**
      * @brief returns the step execution plan to execute.

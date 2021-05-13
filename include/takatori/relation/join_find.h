@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <vector>
 
 #include "expression.h"
@@ -17,8 +18,8 @@
 
 #include <takatori/scalar/expression.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/ownership_reference.h>
 #include <takatori/util/rvalue_ptr.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
@@ -54,15 +55,13 @@ public:
      *      and each `value` cannot include any variables declared in `columns.destination` 
      * @param condition the extra join condition expression,
      *      can include variables declared in `columns.destination`
-     * @param creator the object creator for internal elements
      */
     explicit join_find(
             operator_kind_type operator_kind,
             descriptor::relation source,
-            std::vector<column, util::object_allocator<column>> columns,
-            std::vector<key, util::object_allocator<key>> keys,
-            util::unique_object_ptr<scalar::expression> condition,
-            util::object_creator creator = {}) noexcept;
+            std::vector<column> columns,
+            std::vector<key> keys,
+            std::unique_ptr<scalar::expression> condition) noexcept;
 
     /**
      * @brief creates a new object.
@@ -87,24 +86,22 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit join_find(join_find const& other, util::object_creator creator);
+    explicit join_find(util::clone_tag_t, join_find const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit join_find(join_find&& other, util::object_creator creator);
+    explicit join_find(util::clone_tag_t, join_find&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] join_find* clone(util::object_creator creator) const& override;
-    [[nodiscard]] join_find* clone(util::object_creator creator) && override;
+    [[nodiscard]] join_find* clone() const& override;
+    [[nodiscard]] join_find* clone() && override;
 
     /**
      * @brief returns the left prove input port.
@@ -150,10 +147,10 @@ public:
      * @brief returns the target columns to scan.
      * @return the target columns
      */
-    [[nodiscard]] std::vector<column, util::object_allocator<column>>& columns() noexcept;
+    [[nodiscard]] std::vector<column>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<column, util::object_allocator<column>> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
      * @brief returns the storage keys and prove values.
@@ -179,20 +176,20 @@ public:
      * @return the condition expression
      * @return empty if the expression is absent
      */
-    [[nodiscard]] util::unique_object_ptr<scalar::expression> release_condition() noexcept;
+    [[nodiscard]] std::unique_ptr<scalar::expression> release_condition() noexcept;
 
     /**
      * @brief sets the condition expression.
      * @param condition the replacement
      * @return this
      */
-    join_find& condition(util::unique_object_ptr<scalar::expression> condition) noexcept;
+    join_find& condition(std::unique_ptr<scalar::expression> condition) noexcept;
 
     /**
      * @brief returns ownership of the condition expression.
      * @return the condition expression
      */
-    [[nodiscard]] util::object_ownership_reference<scalar::expression> ownership_condition() noexcept;
+    [[nodiscard]] util::ownership_reference<scalar::expression> ownership_condition() noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -231,9 +228,9 @@ private:
     output_port_type output_;
     operator_kind_type operator_kind_;
     descriptor::relation source_;
-    std::vector<column, util::object_allocator<column>> columns_;
+    std::vector<column> columns_;
     tree::tree_fragment_vector<key> keys_;
-    util::unique_object_ptr<scalar::expression> condition_;
+    std::unique_ptr<scalar::expression> condition_;
 };
 
 /**

@@ -5,7 +5,6 @@
 #include <utility>
 
 #include "detect.h"
-#include "object_creator.h"
 #include "pointer_traits.h"
 #include "rvalue_ptr.h"
 #include "rvalue_reference_wrapper.h"
@@ -16,13 +15,13 @@ namespace takatori::util {
 namespace impl {
 
 /// @private
-template<class T> using clonable_t = decltype(std::declval<T>().clone(std::declval<object_creator>()));
+template<class T> using clonable_t = decltype(std::declval<T>().clone());
 
 } // namespace impl
 
 /**
  * @brief tests if the target type supports polymorphic clone.
- * @details The clonable class "T" must have "T* T::clone(object_creator) const".
+ * @details The clonable class "T" must have "T* T::clone() const".
  * @tparam T the target type
  */
 template<class T> using is_clonable = std::is_convertible<
@@ -37,48 +36,46 @@ constexpr inline bool is_clonable_v = is_clonable<T>::value;
  * @brief returns a clone of the given object.
  * @tparam T the object type
  * @param object the object to clone
- * @param creator object creator for creating clones
  * @return the created clone
  */
 template<class T>
 [[nodiscard]] inline std::enable_if_t<
         is_clonable_v<std::remove_cv_t<std::remove_reference_t<T>>>,
         std::add_pointer_t<std::remove_cv_t<std::remove_reference_t<T>>>>
-clone(T&& object, object_creator creator = {}) {
-    return std::forward<T>(object).clone(creator);
+clone(T&& object) {
+    return std::forward<T>(object).clone();
 }
 
-/// @copydoc clone(T&&, object_creator)
+/// @copydoc clone(T&&)
 template<class T>
 [[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
-clone(std::reference_wrapper<T> object, object_creator creator = {}) {
-    return object.get().clone(creator);
+clone(std::reference_wrapper<T> object) {
+    return object.get().clone();
 }
 
-/// @copydoc clone(T&&, object_creator)
+/// @copydoc clone(T&&)
 template<class T>
 [[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
-clone(rvalue_reference_wrapper<T> object, object_creator creator = {}) {
-    return object.get().clone(creator);
+clone(rvalue_reference_wrapper<T> object) {
+    return object.get().clone();
 }
 
 /**
  * @brief returns a clone of the given object.
  * @tparam T the object type
  * @param object the object to clone
- * @param creator object creator for creating clones
  * @return the created clone
  * @return `nullptr` if the object is absent
  */
 template<class T>
 [[nodiscard]] inline std::enable_if_t<is_clonable_v<T>, T*>
-clone(T const* object, object_creator creator = {}) {
+clone(T const* object) {
     if (!static_cast<bool>(object)) return nullptr;
-    return object->clone(creator);
+    return object->clone();
 }
 
 /**
@@ -86,7 +83,6 @@ clone(T const* object, object_creator creator = {}) {
  * @tparam T the object type
  * @tparam D the deleter type
  * @param object the object to clone
- * @param creator object creator for creating clones
  * @return the created clone
  * @return empty if the object is absent
  */
@@ -94,57 +90,56 @@ template<class T, class D>
 [[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
-clone(std::unique_ptr<T, D> const& object, object_creator creator = {}) {
+clone(std::unique_ptr<T, D> const& object) {
     if (!static_cast<bool>(object)) return nullptr;
-    return object->clone(creator);
+    return object->clone();
 }
 
-/// @copydoc clone(std::unique_ptr<T, D> const&, object_creator)
+/// @copydoc clone(std::unique_ptr<T, D> const&)
 template<class T, class D>
 [[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
-clone(std::unique_ptr<T, D>&& object, object_creator creator = {}) {
+clone(std::unique_ptr<T, D>&& object) {
     if (!static_cast<bool>(object)) return {};
-    // FIXME: deep clone?
-    if (creator.is_instance(object)) return object.release();
-    return (std::move(*object)).clone(creator);
+    // TODO: require deep clone?
+    return object.release();
 }
 
-/// @copydoc clone(T const*, object_creator)
+/// @copydoc clone(T const*)
 template<class T>
 [[nodiscard]] inline std::enable_if_t<
         is_clonable_v<T>,
         std::add_pointer_t<std::remove_cv_t<T>>>
-clone(rvalue_ptr<T> object, object_creator creator = {}) {
+clone(rvalue_ptr<T> object) {
     if (!static_cast<bool>(object)) return {};
-    return object.value().clone(creator);
+    return object.value().clone();
 }
 
 /**
  * @brief returns a clone of the given object, and wraps it into std::unique_ptr.
  * @tparam T the object type
  * @param object the object to clone
- * @param creator object creator for creating clones
  * @return the created clone
  * @return empty if input is nullptr
  */
 template<class T>
-[[nodiscard]] inline auto clone_unique(T&& object, object_creator creator = {}) {
-    return creator.wrap_unique(clone(std::forward<T>(object), creator));
+[[nodiscard]] inline auto clone_unique(T&& object) {
+    auto* raw = clone(std::forward<T>(object));
+    return std::unique_ptr<std::remove_pointer_t<decltype(raw)>>(raw);
 }
 
 /**
  * @brief returns a clone of the given object, and wraps it into std::shared_ptr.
  * @tparam T the object type
  * @param object the object to clone
- * @param creator object creator for creating clones
  * @return the created clone
  * @return empty if input is nullptr
  */
 template<class T>
-[[nodiscard]] inline auto clone_shared(T&& object, object_creator creator = {}) {
-    return creator.wrap_shared(clone(std::forward<T>(object), creator));
+[[nodiscard]] inline auto clone_shared(T&& object) {
+    auto* raw = clone(std::forward<T>(object));
+    return std::shared_ptr<std::remove_pointer_t<decltype(raw)>>(raw);
 }
 
 /**
@@ -160,9 +155,6 @@ struct clonable_copier : is_clonable<T> {
     /// @brief the value type
     using value_type = std::remove_const_t<T>;
 
-    /// @brief the pointer type
-    using pointer = std::add_pointer_t<T>;
-
     /**
      * @brief the copier of the another object type.
      * @tparam the another object type
@@ -172,22 +164,18 @@ struct clonable_copier : is_clonable<T> {
 
     /**
      * @brief returns a new copy of the given object.
-     * @param creator the object creator
      * @param object the target object
-     * @return the created copy, it must be delete via creator.delete_object()
      */
-    [[nodiscard]] static pointer copy(object_creator creator, value_type const& object) {
-        return clone(object, creator);
+    [[nodiscard]] static std::unique_ptr<value_type> copy(value_type const& object) {
+        return clone_unique(object);
     }
 
     /**
      * @brief returns a new copy of the given object.
-     * @param creator the object creator
      * @param object the target object
-     * @return the created copy, it must be delete via creator.delete_object()
      */
-    [[nodiscard]] static pointer copy(object_creator creator, value_type&& object) {
-        return clone(std::move(object), creator);
+    [[nodiscard]] static std::unique_ptr<value_type> copy(value_type&& object) {
+        return clone_unique(std::move(object));
     }
 };
 

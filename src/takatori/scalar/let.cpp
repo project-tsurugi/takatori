@@ -9,8 +9,8 @@
 namespace takatori::scalar {
 
 let::let(
-        std::vector<declarator, util::object_allocator<declarator>> variables,
-        util::unique_object_ptr<expression> body) noexcept
+        std::vector<declarator> variables,
+        std::unique_ptr<expression> body) noexcept
     : variables_(*this, std::move(variables))
     , body_(tree::bless_element(*this, std::move(body)))
 {}
@@ -31,28 +31,28 @@ let::let(
             util::clone_unique(body))
 {}
 
-let::let(let const& other, util::object_creator creator)
+let::let(util::clone_tag_t, let const& other)
     : let(
-            tree::forward(creator, other.variables_),
-            tree::forward(creator, other.body_))
+            tree::forward(other.variables_),
+            tree::forward(other.body_))
 {}
 
-let::let(let&& other, util::object_creator creator)
+let::let(util::clone_tag_t, let&& other)
     : let(
-            tree::forward(creator, std::move(other.variables_)),
-            tree::forward(creator, std::move(other.body_)))
+            tree::forward(std::move(other.variables_)),
+            tree::forward(std::move(other.body_)))
 {}
 
 expression_kind let::kind() const noexcept {
     return tag;
 }
 
-let* let::clone(util::object_creator creator) const& {
-    return creator.create_object<let>(*this, creator);
+let* let::clone() const& {
+    return new let(util::clone_tag, *this); // NOLINT
 }
 
-let* let::clone(util::object_creator creator) && {
-    return creator.create_object<let>(std::move(*this), creator);
+let* let::clone() && {
+    return new let(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 tree::tree_fragment_vector<let::declarator>& let::variables() noexcept {
@@ -79,15 +79,15 @@ util::optional_ptr<expression const> let::optional_body() const noexcept {
     return util::optional_ptr { body_.get() };
 }
 
-util::unique_object_ptr<expression> let::release_body() noexcept {
+std::unique_ptr<expression> let::release_body() noexcept {
     return tree::release_element(std::move(body_));
 }
 
-let& let::body(util::unique_object_ptr<expression> body) noexcept {
+let& let::body(std::unique_ptr<expression> body) noexcept {
     return tree::assign_element(*this, body_, std::move(body));
 }
 
-util::object_ownership_reference<expression> let::ownership_body() noexcept {
+util::ownership_reference<expression> let::ownership_body() noexcept {
     return tree::ownership_element(*this, body_);
 }
 

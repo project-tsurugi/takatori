@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "expression.h"
 #include "expression_kind.h"
 
@@ -7,8 +9,8 @@
 
 #include <takatori/scalar/expression.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 
 namespace takatori::relation {
 
@@ -26,31 +28,28 @@ public:
     /**
      * @brief creates a new object.
      * @param size the number of output targets
-     * @param creator the object creator for internal elements
      */
-    explicit buffer(size_type size, util::object_creator creator = {}) noexcept;
+    explicit buffer(size_type size);
 
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit buffer(buffer const& other, util::object_creator creator);
+    explicit buffer(util::clone_tag_t, buffer const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit buffer(buffer&& other, util::object_creator creator);
+    explicit buffer(util::clone_tag_t, buffer&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type> input_ports() noexcept override;
     [[nodiscard]] util::sequence_view<input_port_type const> input_ports() const noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type> output_ports() noexcept override;
     [[nodiscard]] util::sequence_view<output_port_type const> output_ports() const noexcept override;
-    [[nodiscard]] buffer* clone(util::object_creator creator) const& override;
-    [[nodiscard]] buffer* clone(util::object_creator creator) && override;
+    [[nodiscard]] buffer* clone() const& override;
+    [[nodiscard]] buffer* clone() && override;
 
     /**
      * @brief returns the input port.
@@ -101,7 +100,7 @@ protected:
 
 private:
     input_port_type input_;
-    boost::container::small_vector<output_port_type, 4, util::object_allocator<output_port_type>> outputs_;
+    boost::container::small_vector<output_port_type, 4> outputs_;
 };
 
 /**

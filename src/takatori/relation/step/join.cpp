@@ -11,10 +11,9 @@ namespace takatori::relation::step {
 
 join::join(
         operator_kind_type operator_kind,
-        util::unique_object_ptr<scalar::expression> condition,
-        util::object_creator creator) noexcept
-    : input_(*this, 0, creator)
-    , output_(*this, 0, creator)
+        std::unique_ptr<scalar::expression> condition) noexcept
+    : input_(*this, 0)
+    , output_(*this, 0)
     , operator_kind_(operator_kind)
     , condition_(tree::bless_element(*this, std::move(condition)))
 {}
@@ -27,18 +26,16 @@ join::join(
             util::clone_unique(condition))
 {}
 
-join::join(join const& other, util::object_creator creator)
+join::join(util::clone_tag_t, join const& other)
     : join(
             other.operator_kind_,
-            tree::forward(creator, other.condition_),
-            creator)
+            tree::forward(other.condition_))
 {}
 
-join::join(join&& other, util::object_creator creator)
+join::join(util::clone_tag_t, join&& other)
     : join(
             other.operator_kind_,
-            tree::forward(creator, std::move(other.condition_)),
-            creator)
+            tree::forward(std::move(other.condition_)))
 {}
 
 expression_kind join::kind() const noexcept {
@@ -61,12 +58,12 @@ util::sequence_view<join::output_port_type const> join::output_ports() const noe
     return util::sequence_view { std::addressof(output_) };
 }
 
-join* join::clone(util::object_creator creator) const& {
-    return creator.create_object<join>(*this, creator);
+join* join::clone() const& {
+    return new join(util::clone_tag, *this); // NOLINT
 }
 
-join* join::clone(util::object_creator creator)&& {
-    return creator.create_object<join>(std::move(*this), creator);
+join* join::clone()&& {
+    return new join(util::clone_tag, std::move(*this)); // NOLINT;
 }
 
 join::input_port_type& join::input() noexcept {
@@ -102,15 +99,15 @@ util::optional_ptr<scalar::expression const> join::condition() const noexcept {
     return util::optional_ptr { condition_.get() };
 }
 
-util::unique_object_ptr<scalar::expression> join::release_condition() noexcept {
+std::unique_ptr<scalar::expression> join::release_condition() noexcept {
     return tree::release_element(std::move(condition_));
 }
 
-join& join::condition(util::unique_object_ptr<scalar::expression> condition) noexcept {
+join& join::condition(std::unique_ptr<scalar::expression> condition) noexcept {
     return tree::assign_element(*this, condition_, std::move(condition));
 }
 
-util::object_ownership_reference<scalar::expression> join::ownership_condition() noexcept {
+util::ownership_reference<scalar::expression> join::ownership_condition() noexcept {
     return tree::ownership_element(*this, condition_);
 }
 

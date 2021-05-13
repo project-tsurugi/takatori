@@ -31,17 +31,16 @@ void repair_upstreams(Mapping const& mapping, step const& from, step& to) {
     }
 }
 
-void merge_into(graph_type const& source, graph_type& destination, util::object_creator creator) {
+void merge_into(graph_type const& source, graph_type& destination) {
     std::unordered_map<
             plan::step const*,
             plan::step*,
             std::hash<plan::step const*>,
-            std::equal_to<>,
-            util::object_allocator<std::pair<plan::step const* const, plan::step*>>> mapping { creator.allocator() };
+            std::equal_to<>> mapping {};
     destination.reserve(destination.size() + source.size());
     mapping.reserve(source.size());
     for (auto&& e : source) {
-        auto&& copy = destination.insert(clone_unique(e, creator));
+        auto&& copy = destination.insert(clone_unique(e));
         mapping.emplace(std::addressof(e), std::addressof(copy));
     }
     for (auto [source, copy] : mapping) {
@@ -53,14 +52,9 @@ void merge_into(graph_type const& source, graph_type& destination, util::object_
     }
 }
 
-void merge_into(graph_type&& source, graph_type& destination, util::object_creator creator) {
+void merge_into(graph_type&& source, graph_type& destination) {
     destination.reserve(destination.size() + source.size());
-    if (source.get_object_creator() == destination.get_object_creator()) {
-        destination.merge(std::move(source));
-    } else {
-        merge_into(std::as_const(source), destination, creator);
-        source.clear();
-    }
+    destination.merge(std::move(source));
 }
 
 namespace {
@@ -172,20 +166,20 @@ void enumerate_downstream(step const& s, const_consumer_type const& consumer) {
     downstreams0(s, consumer);
 }
 
-void sort_from_upstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
-    topological_sort<upstream_enumerator>(g, consumer, creator);
+void sort_from_upstream(graph_type& g, consumer_type const& consumer) {
+    topological_sort<upstream_enumerator>(g, consumer);
 }
 
-void sort_from_upstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
-    topological_sort<upstream_enumerator>(g, consumer, creator);
+void sort_from_upstream(graph_type const& g, const_consumer_type const& consumer) {
+    topological_sort<upstream_enumerator>(g, consumer);
 }
 
-void sort_from_downstream(graph_type& g, consumer_type const& consumer, util::object_creator creator) {
-    topological_sort<downstream_enumerator>(g, consumer, creator);
+void sort_from_downstream(graph_type& g, consumer_type const& consumer) {
+    topological_sort<downstream_enumerator>(g, consumer);
 }
 
-void sort_from_downstream(graph_type const& g, const_consumer_type const& consumer, util::object_creator creator) {
-    topological_sort<downstream_enumerator>(g, consumer, creator);
+void sort_from_downstream(graph_type const& g, const_consumer_type const& consumer) {
+    topological_sort<downstream_enumerator>(g, consumer);
 }
 
 } // namespace takatori::plan

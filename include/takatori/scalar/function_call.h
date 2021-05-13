@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -11,8 +12,8 @@
 #include <takatori/tree/tree_element_vector.h>
 #include <takatori/descriptor/function.h>
 
+#include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
-#include <takatori/util/object_creator.h>
 #include <takatori/util/reference_vector.h>
 #include <takatori/util/rvalue_reference_wrapper.h>
 
@@ -48,20 +49,18 @@ public:
     /**
      * @brief creates a new object.
      * @param other the copy source
-     * @param creator the object creator
      */
-    explicit function_call(function_call const& other, util::object_creator creator);
+    explicit function_call(util::clone_tag_t, function_call const& other);
 
     /**
      * @brief creates a new object.
      * @param other the move source
-     * @param creator the object creator
      */
-    explicit function_call(function_call&& other, util::object_creator creator);
+    explicit function_call(util::clone_tag_t, function_call&& other);
 
     [[nodiscard]] expression_kind kind() const noexcept override;
-    [[nodiscard]] function_call* clone(util::object_creator creator) const& override;
-    [[nodiscard]] function_call* clone(util::object_creator creator) && override;
+    [[nodiscard]] function_call* clone() const& override;
+    [[nodiscard]] function_call* clone() && override;
 
     /**
      * @brief returns the descriptor of target function.
