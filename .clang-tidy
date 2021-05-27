@@ -27,6 +27,7 @@ llvm-*,\
 -llvm-include-order,\
 -llvm-header-guard,\
 -llvm-namespace-comment,\
+-llvm-qualified-auto,\
 misc-*,\
 -misc-unused-parameters,\
 modernize-*,\

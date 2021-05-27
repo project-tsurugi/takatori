@@ -17,7 +17,7 @@ time_zone::impl::impl(std::string name, std::unique_ptr<entity_type> entity)
     icu::UnicodeString lid;
     icu::UnicodeString cid;
     entity_->getID(lid);
-    UErrorCode status;
+    UErrorCode status {};
     entity_type::getCanonicalID(lid, cid, status);
     if (U_SUCCESS(status) == TRUE) {
         cid.toUTF8String(id_);

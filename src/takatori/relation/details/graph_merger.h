@@ -40,7 +40,7 @@ private:
     node_mapping_type mappings_;
 
     void repair_connections(node_type const& source, node_type& destination);
-    void repair_opposite(input_port_type const& source, input_port_type& destination);
+    void repair_opposite(input_port_type const& source, input_port_type& destination) const;
 };
 
 } // namespace takatori::relation::details

@@ -52,7 +52,7 @@ void graph_merger::repair_connections(node_type const& source, node_type& destin
     BOOST_ASSERT(destination_iter == destination_inputs.end()); // NOLINT
 }
 
-void graph_merger::repair_opposite(input_port_type const& source, input_port_type& destination) {
+void graph_merger::repair_opposite(input_port_type const& source, input_port_type& destination) const {
     destination.disconnect_all();
     if (auto source_opposite = source.opposite()) {
         node_type const& source_upstream = source_opposite->owner();

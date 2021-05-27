@@ -139,7 +139,7 @@ std::ostream& process::print_to(std::ostream& out) const {
 }
 
 void process::internal_add_upstream(exchange& upstream) {
-    auto element = std::addressof(upstream);
+    auto* element = std::addressof(upstream);
     auto&& elements = upstreams_;
     if (auto iter = std::find(elements.begin(), elements.end(), element); iter == elements.end()) {
         elements.push_back(element);
@@ -147,7 +147,7 @@ void process::internal_add_upstream(exchange& upstream) {
 }
 
 void process::internal_remove_upstream(exchange& upstream) noexcept {
-    auto element = std::addressof(upstream);
+    auto* element = std::addressof(upstream);
     auto&& elements = upstreams_;
     if (auto iter = std::find(elements.begin(), elements.end(), element); iter != elements.end()) {
         elements.erase(iter);
@@ -155,7 +155,7 @@ void process::internal_remove_upstream(exchange& upstream) noexcept {
 }
 
 void process::internal_add_downstream(exchange& downstream) {
-    auto element = std::addressof(downstream);
+    auto* element = std::addressof(downstream);
     auto&& elements = downstreams_;
     if (auto iter = std::find(elements.begin(), elements.end(), element); iter == elements.end()) {
         elements.push_back(element);
@@ -163,7 +163,7 @@ void process::internal_add_downstream(exchange& downstream) {
 }
 
 void process::internal_remove_downstream(exchange& downstream) noexcept {
-    auto element = std::addressof(downstream);
+    auto* element = std::addressof(downstream);
     auto&& elements = downstreams_;
     if (auto iter = std::find(elements.begin(), elements.end(), element); iter != elements.end()) {
         elements.erase(iter);
