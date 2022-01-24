@@ -15,6 +15,7 @@ class descriptor_reference_test : public ::testing::Test {};
 using takatori::testing::mock_binding_info;
 using info = mock_binding_info<variable::tag, int>;
 
+static_assert(!std::is_trivially_constructible_v<variable::reference_type>);
 static_assert(std::is_trivially_copyable_v<variable::reference_type>);
 static_assert(std::is_same_v<variable::reference_type::descriptor_type, variable>);
 static_assert(variable::reference_type::tag == variable::tag);
@@ -72,6 +73,10 @@ TEST_F(descriptor_reference_test, hash) {
 TEST_F(descriptor_reference_test, output) {
     variable d { std::make_shared<info>(1) };
     std::cout << d.reference() << std::endl;
+}
+
+TEST_F(descriptor_reference_test, output_empty) {
+    std::cout << variable::reference_type {} << std::endl;
 }
 
 } // namespace takatori::descriptor

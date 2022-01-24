@@ -63,7 +63,7 @@ public:
     }
 
 private:
-    entity_type* entity_;
+    entity_type* entity_ {};
 };
 
 /**
