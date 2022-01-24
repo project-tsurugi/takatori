@@ -7,6 +7,7 @@
 
 #include "descriptor_kind.h"
 #include "binding_info.h"
+#include "reference.h"
 
 #include <takatori/document/region.h>
 
@@ -24,6 +25,9 @@ class element {
 public:
     /// @brief the entity type.
     using entity_type = binding_info<Kind>;
+
+    /// @brief the light weight reference type.
+    using reference_type = class reference<element<Kind>>;
 
     /// @brief the descriptor kind
     static constexpr inline descriptor_kind tag = Kind;
@@ -63,6 +67,14 @@ public:
     }
 
     /**
+     * @brief returns a light weight reference of this descriptor.
+     * @return a reference
+     */
+    [[nodiscard]] reference_type reference() noexcept {
+        return reference_type { *this };
+    }
+
+    /**
      * @brief returns the document region of this element.
      * @return the document region
      */
@@ -94,6 +106,32 @@ inline bool operator==(element<Kind> const& a, element<Kind> const& b) noexcept 
 }
 
 /**
+ * @brief returns whether or not the each element which the descriptor indicates is same.
+ * @tparam Kind the element kind
+ * @param a the first descriptor
+ * @param b a reference of the second descriptor
+ * @return true if the two descriptors are equivalent
+ * @return false otherwise
+ */
+template<descriptor_kind Kind>
+inline bool operator==(element<Kind> const& a, reference<element<Kind>> b) noexcept {
+    return a.optional_entity() == b.optional_entity();
+}
+
+/**
+ * @brief returns whether or not the each element which the descriptor indicates is same.
+ * @tparam Kind the element kind
+ * @param a a reference of the first descriptor
+ * @param b the second descriptor
+ * @return true if the two descriptors are equivalent
+ * @return false otherwise
+ */
+template<descriptor_kind Kind>
+inline bool operator==(reference<element<Kind>> a, element<Kind> const& b) noexcept {
+    return a.optional_entity() == b.optional_entity();
+}
+
+/**
  * @brief returns whether or not the each element which the descriptor indicates is not same.
  * @tparam Kind the element kind
  * @param a the first descriptor
@@ -103,6 +141,32 @@ inline bool operator==(element<Kind> const& a, element<Kind> const& b) noexcept 
  */
 template<descriptor_kind Kind>
 inline bool operator!=(element<Kind> const& a, element<Kind> const& b) noexcept {
+    return !(a == b);
+}
+
+/**
+ * @brief returns whether or not the each element which the descriptor indicates is not same.
+ * @tparam Kind the element kind
+ * @param a the first descriptor
+ * @param b a reference of the second descriptor
+ * @return true if the two descriptors are different
+ * @return false otherwise
+ */
+template<descriptor_kind Kind>
+inline bool operator!=(element<Kind> const& a, reference<element<Kind>> const& b) noexcept {
+    return !(a == b);
+}
+
+/**
+ * @brief returns whether or not the each element which the descriptor indicates is not same.
+ * @tparam Kind the element kind
+ * @param a a reference of the first descriptor
+ * @param b the second descriptor
+ * @return true if the two descriptors are different
+ * @return false otherwise
+ */
+template<descriptor_kind Kind>
+inline bool operator!=(reference<element<Kind>> const& a, element<Kind> const& b) noexcept {
     return !(a == b);
 }
 

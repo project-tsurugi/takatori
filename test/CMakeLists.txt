@@ -54,6 +54,10 @@ add_test_executable(takatori/datetime/datetime_interval_test.cpp)
 add_test_executable(takatori/datetime/time_point_test.cpp)
 add_test_executable(takatori/datetime/time_zone_test.cpp)
 
+# descriptors
+add_test_executable(takatori/descriptor/descriptor_element_test.cpp)
+add_test_executable(takatori/descriptor/descriptor_reference_test.cpp)
+
 # scalar expression models
 add_test_executable(takatori/scalar/immediate_test.cpp)
 add_test_executable(takatori/scalar/variable_reference_test.cpp)
