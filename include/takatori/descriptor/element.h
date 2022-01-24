@@ -70,7 +70,7 @@ public:
      * @brief returns a light weight reference of this descriptor.
      * @return a reference
      */
-    [[nodiscard]] reference_type reference() noexcept {
+    [[nodiscard]] reference_type reference() const noexcept {
         return reference_type { *this };
     }
 
