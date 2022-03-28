@@ -2,6 +2,11 @@
 
 #include <takatori/statement/execute.h>
 #include <takatori/statement/write.h>
+#include <takatori/statement/create_table.h>
+#include <takatori/statement/drop_table.h>
+#include <takatori/statement/create_index.h>
+#include <takatori/statement/drop_index.h>
+#include <takatori/statement/empty.h>
 #include <takatori/statement/extension.h>
 
 #include <takatori/serializer/object_acceptor.h>
@@ -15,11 +20,19 @@ public:
 
     void operator()(statement::execute const& element);
     void operator()(statement::write const& element);
+    void operator()(statement::create_table const& element);
+    void operator()(statement::drop_table const& element);
+    void operator()(statement::create_index const& element);
+    void operator()(statement::drop_index const& element);
+    void operator()(statement::empty const& element);
     void operator()(statement::extension const& element);
 
 private:
     object_scanner const& scanner_;
     object_acceptor& acceptor_;
+
+    template<class T>
+    void accept(std::optional<T> const& element);
 
     template<class T>
     void accept(util::optional_ptr<T const> element);

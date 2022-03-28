@@ -12,6 +12,8 @@ using testing::tabledesc;
 using testing::exchangedesc;
 using testing::columndesc;
 using testing::aggdesc;
+using testing::schemadesc;
+using testing::storagedesc;
 
 using scalar::value_of;
 using scalar::constant;

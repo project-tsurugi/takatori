@@ -13,7 +13,7 @@ namespace takatori::descriptor {
 
 /**
  * @brief a light weight reference of descriptors.
- * @paragraph This has the same equivalence to the target descriptor,
+ * @details This has the same equivalence to the target descriptor,
  *  that is, each descriptor `u` and `v` satisfies
  *  `u == v => u == v.reference()`.
  * @tparam T the descriptor type

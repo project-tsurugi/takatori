@@ -9,6 +9,11 @@
 
 #include "execute.h"
 #include "write.h"
+#include "create_table.h"
+#include "drop_table.h"
+#include "create_index.h"
+#include "drop_index.h"
+#include "empty.h"
 #include "extension.h"
 
 #include <takatori/util/callback.h>
@@ -23,6 +28,11 @@ inline auto dispatch_statement(Callback&& callback, E&& statement, Args&&... arg
     switch (statement.kind()) {
         case execute::tag: return util::polymorphic_callback<execute>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case write::tag: return util::polymorphic_callback<write>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
+        case create_table::tag: return util::polymorphic_callback<create_table>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
+        case drop_table::tag: return util::polymorphic_callback<drop_table>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
+        case create_index::tag: return util::polymorphic_callback<create_index>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
+        case drop_index::tag: return util::polymorphic_callback<drop_index>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
+        case empty::tag: return util::polymorphic_callback<empty>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case extension::tag: return util::polymorphic_callback<extension>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         default: break;
     }

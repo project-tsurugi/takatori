@@ -27,6 +27,12 @@ enum class descriptor_kind {
     /// @brief describes an aggregate function.
     aggregate_function,
 
+    /// @brief describes a schema.
+    schema,
+
+    /// @brief describes a storage.
+    storage,
+
     /// @brief describes a declared type.
     declared_type,
 };
@@ -50,6 +56,8 @@ constexpr inline std::string_view to_string_view(descriptor_kind value) noexcept
         case kind::relation: return "relation"sv;
         case kind::function: return "function"sv;
         case kind::aggregate_function: return "aggregate_function"sv;
+        case kind::schema: return "schema"sv;
+        case kind::storage: return "storage"sv;
         case kind::declared_type: return "declared_type"sv;
     }
     std::abort();

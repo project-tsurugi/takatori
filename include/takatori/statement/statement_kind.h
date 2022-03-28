@@ -23,7 +23,22 @@ enum class statement_kind {
     /// @brief emit rows onto table.
     write,
 
+    // DDL
+    /// @brief define a table.
+    create_table,
+
+    /// @brief remove existing table.
+    drop_table,
+
+    /// @brief define an index.
+    create_index,
+
+    /// @brief remove existing index.
+    drop_index,
+
     // special statements
+    /// @brief does nothing.
+    empty,
 
     /// @brief custom statement for compiler or third party extension.
     extension,
@@ -46,6 +61,11 @@ constexpr inline std::string_view to_string_view(statement_kind value) noexcept 
     switch (value) {
         case kind::execute: return "execute"sv;
         case kind::write: return "write"sv;
+        case kind::create_table: return "create_table"sv;
+        case kind::drop_table: return "drop_table"sv;
+        case kind::create_index: return "create_index"sv;
+        case kind::drop_index: return "drop_index"sv;
+        case kind::empty: return "empty"sv;
         case kind::extension: return "extension"sv;
     }
     std::abort();

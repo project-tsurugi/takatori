@@ -32,6 +32,14 @@ document::region const& statement::region() const noexcept {
     return region_;
 }
 
+std::any& statement::runtime_hint() noexcept {
+    return runtime_hint_;
+}
+
+std::any const& statement::runtime_hint() const noexcept {
+    return runtime_hint_;
+}
+
 bool operator==(statement const& a, statement const& b) noexcept {
     return a.equals(b);
 }

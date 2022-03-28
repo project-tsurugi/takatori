@@ -23,6 +23,9 @@ function (add_test_executable source_file)
     )
 endfunction (add_test_executable)
 
+# names
+add_test_executable(takatori/name/name_test.cpp)
+
 # type models
 add_test_executable(takatori/type/simple_type_test.cpp)
 add_test_executable(takatori/type/decimal_type_test.cpp)
@@ -122,6 +125,11 @@ add_test_executable(takatori/plan/plan_graph_test.cpp)
 # statement models
 add_test_executable(takatori/statement/execute_test.cpp)
 add_test_executable(takatori/statement/write_statement_test.cpp)
+add_test_executable(takatori/statement/create_table_statement_test.cpp)
+add_test_executable(takatori/statement/create_index_statement_test.cpp)
+add_test_executable(takatori/statement/drop_table_statement_test.cpp)
+add_test_executable(takatori/statement/drop_index_statement_test.cpp)
+add_test_executable(takatori/statement/empty_statement_test.cpp)
 add_test_executable(takatori/statement/extension_statement_test.cpp)
 
 # tree models

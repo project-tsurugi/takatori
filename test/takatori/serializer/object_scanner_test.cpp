@@ -83,6 +83,11 @@
 
 #include <takatori/statement/execute.h>
 #include <takatori/statement/write.h>
+#include <takatori/statement/create_table.h>
+#include <takatori/statement/drop_table.h>
+#include <takatori/statement/create_index.h>
+#include <takatori/statement/drop_index.h>
+#include <takatori/statement/empty.h>
 #include <takatori/statement/extension.h>
 
 #include <takatori/testing/descriptors.h>
@@ -128,7 +133,17 @@ static scalar::immediate const_boolean() {
     };
 }
 
-// NOTE: this only checks if it pass without exceptions
+// NOTE: this only checks if it passes without exceptions
+
+// name
+
+TEST_F(object_scanner_test, name_identifier) {
+    print(name::identifier { "hello" });
+}
+
+TEST_F(object_scanner_test, name_name) {
+    print(name::name { "a", "b", "c" });
+}
 
 // descriptor
 
@@ -879,6 +894,8 @@ TEST_F(object_scanner_test, plan_graph) {
     print(p);
 }
 
+// statements
+
 TEST_F(object_scanner_test, statement_execute) {
     statement::execute s;
     auto&& p = s.execution_plan();
@@ -913,6 +930,44 @@ TEST_F(object_scanner_test, statement_write) {
                     },
             },
     });
+}
+
+TEST_F(object_scanner_test, create_table) {
+    print(statement::create_table {
+            schemadesc("S"),
+            storagedesc("T0"),
+            tabledesc("PK"),
+            {
+                    tabledesc("U0"),
+                    tabledesc("U1"),
+                    tabledesc("U2"),
+            },
+    });
+}
+
+TEST_F(object_scanner_test, drop_table) {
+    print(statement::drop_table {
+            schemadesc("S"),
+            storagedesc("T0"),
+    });
+}
+
+TEST_F(object_scanner_test, create_index) {
+    print(statement::create_index {
+            schemadesc("S"),
+            tabledesc("T0"),
+    });
+}
+
+TEST_F(object_scanner_test, drop_index) {
+    print(statement::drop_index {
+            schemadesc("S"),
+            tabledesc("T0"),
+    });
+}
+
+TEST_F(object_scanner_test, statement_empty) {
+    print(statement::empty {});
 }
 
 TEST_F(object_scanner_test, statement_extension) {

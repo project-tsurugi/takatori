@@ -1,5 +1,9 @@
 add_library(takatori
 
+    # name
+    takatori/name/identifier.cpp
+    takatori/name/name.cpp
+
     # type
     takatori/type/data.cpp
     takatori/type/decimal.cpp
@@ -138,6 +142,11 @@ add_library(takatori
     takatori/statement/statement.cpp
     takatori/statement/execute.cpp
     takatori/statement/write.cpp
+    takatori/statement/create_table.cpp
+    takatori/statement/create_index.cpp
+    takatori/statement/drop_table.cpp
+    takatori/statement/drop_index.cpp
+    takatori/statement/empty.cpp
     takatori/statement/extension.cpp
     takatori/statement/details/write_tuple.cpp
 

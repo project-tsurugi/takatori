@@ -9,6 +9,8 @@
 #include <takatori/descriptor/relation.h>
 #include <takatori/descriptor/function.h>
 #include <takatori/descriptor/aggregate_function.h>
+#include <takatori/descriptor/schema.h>
+#include <takatori/descriptor/storage.h>
 #include <takatori/descriptor/declared_type.h>
 
 namespace takatori::testing {
@@ -48,6 +50,16 @@ inline descriptor::variable columndesc(std::string_view name) {
 
 inline descriptor::aggregate_function aggdesc(std::string_view name) {
     using descriptor_type = descriptor::aggregate_function;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, std::string>>(std::string { name }) };
+}
+
+inline descriptor::schema schemadesc(std::string_view name) {
+    using descriptor_type = descriptor::schema;
+    return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, std::string>>(std::string { name }) };
+}
+
+inline descriptor::storage storagedesc(std::string_view name) {
+    using descriptor_type = descriptor::storage;
     return descriptor_type { std::make_shared<descriptor_binding_info<descriptor_type, std::string>>(std::string { name }) };
 }
 

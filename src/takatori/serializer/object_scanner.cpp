@@ -35,6 +35,18 @@ using tag_t = decltype(T::tag);
 template<class T>
 constexpr bool has_tag_v = util::is_detected_v<tag_t, T>;
 
+void object_scanner::operator()(name::identifier const& element, object_acceptor& acceptor) const {
+    acceptor.string(element.token());
+}
+
+void object_scanner::operator()(name::name const& element, object_acceptor& acceptor) const {
+    acceptor.array_begin();
+    for (auto const& child : element) {
+        operator()(child, acceptor);
+    }
+    acceptor.array_end();
+}
+
 void object_scanner::operator()(descriptor::variable const& element, object_acceptor& acceptor) const {
     process_default(element, acceptor);
 }
@@ -52,6 +64,14 @@ void object_scanner::operator()(descriptor::aggregate_function const& element, o
 }
 
 void object_scanner::operator()(descriptor::declared_type const& element, object_acceptor& acceptor) const {
+    process_default(element, acceptor);
+}
+
+void object_scanner::operator()(descriptor::schema const& element, object_acceptor& acceptor) const {
+    process_default(element, acceptor);
+}
+
+void object_scanner::operator()(descriptor::storage const& element, object_acceptor& acceptor) const {
     process_default(element, acceptor);
 }
 
@@ -202,6 +222,14 @@ void object_scanner::properties(descriptor::function const& element, object_acce
 }
 
 void object_scanner::properties(descriptor::aggregate_function const& element, object_acceptor& acceptor) const {
+    process_descriptor_body(element, acceptor);
+}
+
+void object_scanner::properties(descriptor::schema const& element, object_acceptor& acceptor) const {
+    process_descriptor_body(element, acceptor);
+}
+
+void object_scanner::properties(descriptor::storage const& element, object_acceptor& acceptor) const {
     process_descriptor_body(element, acceptor);
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <any>
 #include <ostream>
 
 #include "statement_kind.h"
@@ -90,6 +91,18 @@ public:
     [[nodiscard]] document::region const& region() const noexcept;
 
     /**
+     * @brief returns the user defined run-time hint.
+     * @return the user defined run-time hint
+     * @note this is designed for runtime engine to hold some effective information; compiler never use this field.
+     * @attention operator==() and operator!=() does not treat this field.
+     * @attention clone() operation does not copy this field
+     */
+    [[nodiscard]] std::any& runtime_hint() noexcept;
+
+    /// @copydoc runtime_hint()
+    [[nodiscard]] std::any const& runtime_hint() const noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @param a the first element
      * @param b the second element
@@ -134,6 +147,7 @@ protected:
 private:
     parent_type* parent_ {};
     document::region region_ {};
+    std::any runtime_hint_ {};
 };
 
 } // namespace takatori::statement

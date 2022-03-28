@@ -4,8 +4,12 @@
 #include <takatori/descriptor/relation.h>
 #include <takatori/descriptor/function.h>
 #include <takatori/descriptor/aggregate_function.h>
+#include <takatori/descriptor/schema.h>
+#include <takatori/descriptor/storage.h>
 #include <takatori/descriptor/declared_type.h>
 
+#include <takatori/name/identifier.h>
+#include <takatori/name/name.h>
 #include <takatori/value/data.h>
 #include <takatori/type/data.h>
 #include <takatori/scalar/expression.h>
@@ -96,6 +100,20 @@ public:
     }
 
     /**
+     * @brief scans an identifier and pass its structural elements into the given acceptor.
+     * @param element the target element
+     * @param acceptor the acceptor
+     */
+    virtual void operator()(name::identifier const& element, object_acceptor& acceptor) const;
+
+    /**
+     * @brief scans a name and pass its structural elements into the given acceptor.
+     * @param element the target element
+     * @param acceptor the acceptor
+     */
+    virtual void operator()(name::name const& element, object_acceptor& acceptor) const;
+
+    /**
      * @brief scans a descriptor and pass its structural elements into the given acceptor.
      * @param element the target element
      * @param acceptor the acceptor
@@ -110,6 +128,12 @@ public:
 
     /// @copydoc operator()(descriptor::variable const&, object_acceptor&) const
     virtual void operator()(descriptor::aggregate_function const& element, object_acceptor& acceptor) const;
+
+    /// @copydoc operator()(descriptor::variable const&, object_acceptor&) const
+    virtual void operator()(descriptor::schema const& element, object_acceptor& acceptor) const;
+
+    /// @copydoc operator()(descriptor::variable const&, object_acceptor&) const
+    virtual void operator()(descriptor::storage const& element, object_acceptor& acceptor) const;
 
     /// @copydoc operator()(descriptor::variable const&, object_acceptor&) const
     virtual void operator()(descriptor::declared_type const& element, object_acceptor& acceptor) const;
@@ -187,6 +211,12 @@ protected:
 
     /// @copydoc properties(descriptor::variable const&, object_acceptor&) const
     virtual void properties(descriptor::aggregate_function const& element, object_acceptor& acceptor) const;
+
+    /// @copydoc properties(descriptor::variable const&, object_acceptor&) const
+    virtual void properties(descriptor::schema const& element, object_acceptor& acceptor) const;
+
+    /// @copydoc properties(descriptor::variable const&, object_acceptor&) const
+    virtual void properties(descriptor::storage const& element, object_acceptor& acceptor) const;
 
     /// @copydoc properties(descriptor::variable const&, object_acceptor&) const
     virtual void properties(descriptor::declared_type const& element, object_acceptor& acceptor) const;
