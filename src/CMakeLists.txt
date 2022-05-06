@@ -168,6 +168,7 @@ add_library(takatori
 
     # util
     takatori/util/assertion.cpp
+    takatori/util/buffer_view.cpp
     takatori/util/exception.cpp
     takatori/util/fail.cpp
     takatori/util/string_builder.cpp
