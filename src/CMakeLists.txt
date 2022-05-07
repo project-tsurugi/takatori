@@ -166,6 +166,8 @@ add_library(takatori
     takatori/serializer/details/step_property_scanner.cpp
     takatori/serializer/details/statement_property_scanner.cpp
 
+    takatori/serializer/base128v.cpp
+
     # util
     takatori/util/assertion.cpp
     takatori/util/buffer_view.cpp

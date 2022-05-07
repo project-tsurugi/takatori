@@ -21,11 +21,23 @@ public:
     /// @brief the pointer type.
     using pointer = std::add_pointer_t<value_type>;
 
+    /// @brief the constant pointer type.
+    using const_pointer = std::add_pointer_t<std::add_const_t<value_type>>;
+
     /// @brief the reference type.
     using reference = std::add_lvalue_reference_t<value_type>;
 
     /// @brief the size and position type.
     using size_type = std::size_t;
+
+    /// @brief the iterator type.
+    using iterator = pointer;
+
+    /// @brief the constant iterator type.
+    using const_iterator = const_pointer;
+
+    /// @brief the difference type.
+    using difference_type = std::ptrdiff_t;
 
     /**
      * @brief creates a new empty instance.
@@ -74,7 +86,7 @@ public:
      * @pre `position < this.size()`
      * @attention undefined behavior if the `position >= this.size()`
      */
-    [[nodiscard]] reference operator[](size_type position) const noexcept {
+    [[nodiscard]] constexpr reference operator[](size_type position) const noexcept {
         return *(data_ + position); // NOLINT
     }
 
@@ -85,7 +97,7 @@ public:
      * @pre `position < size()`
      * @throw std::out_of_range if `position >= this.size()`
      */
-    [[nodiscard]] reference at(size_type position) const {
+    [[nodiscard]] constexpr reference at(size_type position) const {
         if (position >= size_) {
             throw std::out_of_range("buffer position is out of range");
         }
@@ -98,7 +110,7 @@ public:
      * @param to the beginning position in this buffer
      * @return a new buffer_view with range of `[from. to)`
      */
-    [[nodiscard]] buffer_view slice(size_type from, size_type to) const {
+    [[nodiscard]] constexpr buffer_view slice(size_type from, size_type to) const {
         if (from > to || to >= size_) {
             throw std::out_of_range("buffer position is out of range");
         }
@@ -106,6 +118,32 @@ public:
             data_ + from, // NOLINT
             to - from,
         };
+    }
+
+    /**
+     * @brief returns a value iterator that points to the beginning of this buffer.
+     * @return an iterator of beginning
+     */
+    [[nodiscard]] constexpr iterator begin() const noexcept {
+        return data_;
+    }
+
+    /// @copydoc begin()
+    [[nodiscard]] constexpr const_iterator cbegin() const noexcept {
+        return const_iterator { begin() };
+    }
+
+    /**
+     * @brief returns a value iterator that points to the ending of this buffer.
+     * @return an iterator of ending
+     */
+    [[nodiscard]] constexpr iterator end() const noexcept {
+        return data_ + size_; // NOLINT
+    }
+
+    /// @copydoc end()
+    [[nodiscard]] constexpr const_iterator cend() const noexcept {
+        return const_iterator { end() };
     }
 
     /**

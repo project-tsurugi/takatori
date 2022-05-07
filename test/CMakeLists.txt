@@ -154,6 +154,7 @@ add_test_executable(takatori/document/document_map_test.cpp)
 # serializer
 add_test_executable(takatori/serializer/json_printer_test.cpp)
 add_test_executable(takatori/serializer/object_scanner_test.cpp)
+add_test_executable(takatori/serializer/base128v_test.cpp)
 
 # utilities
 add_test_executable(takatori/util/assertion_test.cpp)
