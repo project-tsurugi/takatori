@@ -458,13 +458,13 @@ inline constexpr bool operator==(optional_ptr<T> const& a, optional_ptr<U> const
     return a.get() == b.get() || *a == *b;
 }
 
-/// @copydoc operator==()
+/// @copydoc operator==(optional_ptr<T> const&, optional_ptr<U> const&)
 template<class T, class U>
 inline constexpr bool operator==(optional_ptr<T> const& a, U const& b) noexcept {
     return a && (a.get() == std::addressof(b) || *a == b);
 }
 
-/// @copydoc operator==()
+/// @copydoc operator==(optional_ptr<T> const&, optional_ptr<U> const&)
 template<class T, class U>
 inline constexpr bool operator==(T const& a, optional_ptr<U> const& b) noexcept { return b == a; }
 
@@ -504,11 +504,11 @@ inline constexpr bool operator==(std::nullptr_t, optional_ptr<T> const& ref) noe
 template<class T, class U>
 inline constexpr bool operator!=(optional_ptr<T> const& a, optional_ptr<U> const& b) noexcept { return !(a == b); }
 
-/// @copydoc operator!=()
+/// @copydoc operator!=(optional_ptr<T> const&, optional_ptr<U> const&)
 template<class T, class U>
 inline constexpr bool operator!=(optional_ptr<T> const& a, U const& b) noexcept { return !(a == b); }
 
-/// @copydoc operator!=()
+/// @copydoc operator!=(optional_ptr<T> const&, optional_ptr<U> const&)
 template<class T, class U>
 inline constexpr bool operator!=(T const& a, optional_ptr<U> const& b) noexcept { return !(a == b); }
 
