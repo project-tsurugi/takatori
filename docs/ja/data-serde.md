@@ -138,6 +138,46 @@
   * 8要素のグループは、先頭要素から順に LSB から MSB へ配置する
   * 末尾のグループが8要素に満たない場合、 LSB から順に並べ、不足分は 0 で埋める
 
+## リレーションの構造
+
+* notation
+  * `<name>` - 非終端記号
+  * `NAME` - 終端記号、各エントリが該当する
+  * `<element> ::= rule1 | rule2 | ... ;` - `<element>` は `rule1`, `rule2`, ... を導出可能
+  * `element1 element2` - element1 に続いて element2 が出現
+  * `element*` - element の0回以上の繰り返し
+  * `element{N}` - element の `N` 回の繰り返し
+  * `ELEMENT@N` - 値が `N` のエントリ (`ARRAY` または `ROW` 向け)
+
+```bnf
+<relation> ::= <row>* END_OF_CONTENTS
+
+<value> ::= <atom>
+         |  <collection>
+
+<atom> ::= UNKNOWN
+        |  INT
+        |  FLOAT4
+        |  FLOAT8
+        |  DECIMAL
+        |  CHARACTER
+        |  OCTET
+        |  BIT
+        |  DATE
+        |  TIME_OF_DAY
+        |  TIME_POINT
+        |  DATETIME_INTERVAL
+        |  CLOB
+        |  BLOB
+
+<collection> ::= <row>
+              |  <array>
+
+<row> ::= ROW@N <value>{N}
+
+<array> ::= ARRAY@N <value>{N}
+```
+
 ## メモ
 
 * decimal library
