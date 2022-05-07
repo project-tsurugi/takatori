@@ -11,7 +11,10 @@ namespace takatori::serializer {
 /// @brief represents a kind of serialized entry.
 enum class entry_type {
 
-    /// @brief pseudo data type of end of relation mark.
+    /// @brief represents no more contents in the current buffer.
+    buffer_underflow,
+
+    /// @brief represents end of contents.
     end_of_contents,
 
     /// @brief represents value is absent.
@@ -48,7 +51,7 @@ enum class entry_type {
     time_of_day,
 
     /// @brief time-point value.
-    timepoint,
+    time_point,
 
     /// @brief date-time interval value.
     datetime_interval,
@@ -75,6 +78,7 @@ constexpr inline std::string_view to_string_view(entry_type value) noexcept {
     using namespace std::string_view_literals;
     using kind = entry_type;
     switch (value) {
+        case kind::buffer_underflow: return "buffer_underflow"sv;
         case kind::end_of_contents: return "end_of_contents"sv;
         case kind::null: return "null"sv;
         case kind::int_: return "int_"sv;
@@ -86,7 +90,7 @@ constexpr inline std::string_view to_string_view(entry_type value) noexcept {
         case kind::bit: return "bit"sv;
         case kind::date: return "date"sv;
         case kind::time_of_day: return "time_of_day"sv;
-        case kind::timepoint: return "timepoint"sv;
+        case kind::time_point: return "time_point"sv;
         case kind::datetime_interval: return "datetime_interval"sv;
         case kind::row: return "row"sv;
         case kind::array: return "array"sv;

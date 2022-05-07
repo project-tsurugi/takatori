@@ -1,9 +1,9 @@
 #pragma once
 
 #include <ostream>
+#include <stdexcept>
 #include <string_view>
 #include <type_traits>
-#include <stdexcept>
 
 #include <cstddef>
 
@@ -83,8 +83,8 @@ public:
      * @brief returns content at the position on this buffer.
      * @param position the content position
      * @return the buffer content
-     * @pre `position < this.size()`
-     * @attention undefined behavior if the `position >= this.size()`
+     * @pre `position < size()`
+     * @attention undefined behavior if the `position >= size()`
      */
     [[nodiscard]] constexpr reference operator[](size_type position) const noexcept {
         return *(data_ + position); // NOLINT
@@ -95,7 +95,7 @@ public:
      * @param position the content position
      * @return the buffer content
      * @pre `position < size()`
-     * @throw std::out_of_range if `position >= this.size()`
+     * @throw std::out_of_range if `position >= size()`
      */
     [[nodiscard]] constexpr reference at(size_type position) const {
         if (position >= size_) {

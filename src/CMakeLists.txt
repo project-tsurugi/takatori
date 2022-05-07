@@ -166,10 +166,13 @@ add_library(takatori
     takatori/serializer/details/step_property_scanner.cpp
     takatori/serializer/details/statement_property_scanner.cpp
 
+    takatori/serializer/value_input.cpp
+    takatori/serializer/broken_input_exception.cpp
     takatori/serializer/base128v.cpp
 
     # util
     takatori/util/assertion.cpp
+    takatori/util/bitset_view.cpp
     takatori/util/buffer_view.cpp
     takatori/util/exception.cpp
     takatori/util/fail.cpp
