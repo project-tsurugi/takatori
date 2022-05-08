@@ -6,6 +6,7 @@
 #include <type_traits>
 
 #include <cstddef>
+#include <cstring>
 
 namespace takatori::util {
 
@@ -183,19 +184,61 @@ public:
         return const_iterator { end() };
     }
 
-    /**
-     * @brief appends string representation of the given value.
-     * @param out the target output
-     * @param value the target value
-     * @return the output
-     */
-    friend std::ostream& operator<<(std::ostream& out, basic_buffer_view value) {
-        return out << static_cast<void const*>(value.data()) << "+" << value.size();
-    }
-
 private:
     block_pointer data_ { nullptr };
     size_type size_ { 0 };
 };
+
+/**
+ * @brief returns whether or not two buffers have equivalent contents.
+ * @tparam U the first block type
+ * @tparam V the second block type
+ * @param left the first buffer
+ * @param right the second buffer
+ * @return `true` if both have equivalent contents
+ * @return `false` otherwise
+ */
+template<class U, class V>
+[[nodiscard]] constexpr bool operator==(basic_buffer_view<U> left, basic_buffer_view<V> right) noexcept {
+    constexpr auto left_unit_size = sizeof(typename basic_buffer_view<U>::block_type);
+    constexpr auto right_unit_size = sizeof(typename basic_buffer_view<V>::block_type);
+    auto left_byte_size = left.size() * left_unit_size;
+    auto right_byte_size = right.size() * right_unit_size;
+    if (left_byte_size != right_byte_size) {
+        return false;
+    }
+    auto const* left_data = static_cast<void const*>(left.data());
+    auto const* right_data = static_cast<void const*>(right.data());
+    if (left_data == right_data) {
+        return true;
+    }
+    return std::memcmp(left_data, right_data, left_byte_size) == 0;
+}
+
+/**
+ * @brief returns whether or not two buffers have different contents.
+ * @tparam U the first block type
+ * @tparam V the second block type
+ * @param left the first buffer
+ * @param right the second buffer
+ * @return `true` if both have different contents
+ * @return `false` otherwise
+ */
+template<class U, class V>
+[[nodiscard]] constexpr bool operator!=(basic_buffer_view<U> left, basic_buffer_view<V> right) noexcept {
+    return !(left == right);
+}
+
+/**
+ * @brief appends string representation of the given value.
+ * @tparam U the block type
+ * @param out the target output
+ * @param value the target value
+ * @return the output
+ */
+template<class U>
+std::ostream& operator<<(std::ostream& out, basic_buffer_view<U> value) {
+    return out << static_cast<void const*>(value.data()) << "+" << value.size();
+}
 
 } // namespace takatori::util
