@@ -153,7 +153,7 @@ bool write_octet(
  * @return false the remaining buffer is too short to write contents
  */
 bool write_bit(
-        util::bitset_view value,
+        util::const_bitset_view value,
         util::buffer_view::iterator& position,
         util::buffer_view::const_iterator end);
 

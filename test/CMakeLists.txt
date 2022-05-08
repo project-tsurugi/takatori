@@ -158,6 +158,8 @@ add_test_executable(takatori/serializer/base128v_test.cpp)
 
 # utilities
 add_test_executable(takatori/util/assertion_test.cpp)
+add_test_executable(takatori/util/basic_buffer_view_test.cpp)
+add_test_executable(takatori/util/basic_bitset_view_test.cpp)
 add_test_executable(takatori/util/clonable_test.cpp)
 add_test_executable(takatori/util/clonable_ptr_test.cpp)
 add_test_executable(takatori/util/downcast_test.cpp)
@@ -180,3 +182,6 @@ add_test_executable(takatori/util/smart_pointer_extractor_test.cpp)
 add_test_executable(takatori/util/static_bitset_test.cpp)
 add_test_executable(takatori/util/string_builder_test.cpp)
 add_test_executable(takatori/util/universal_extractor_test.cpp)
+
+add_test_executable(takatori/util/details/basic_bit_reference_test.cpp)
+add_test_executable(takatori/util/details/basic_bit_pointer_test.cpp)
