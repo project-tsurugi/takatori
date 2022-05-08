@@ -265,6 +265,7 @@ private:
  * @param right the second pointer
  * @return `true` if both point to the same bit
  * @return `false` otherwise
+ * @attention undefined behavior if two block type is not compatible
  */
 template<class U, class V>
 [[nodiscard]] constexpr bool operator==(basic_bit_pointer<U> left, basic_bit_pointer<V> right) noexcept {
@@ -279,10 +280,74 @@ template<class U, class V>
  * @param right the second pointer
  * @return `true` if each points to the different bit
  * @return `false` otherwise
+ * @attention undefined behavior if two block type is not compatible
  */
 template<class U, class V>
 [[nodiscard]] constexpr bool operator!=(basic_bit_pointer<U> left, basic_bit_pointer<V> right) noexcept {
     return !(left == right);
+}
+
+/**
+ * @brief returns whether or not the first pointer is less then the second one.
+ * @tparam U the first block type
+ * @tparam V the second block type
+ * @param left the first pointer
+ * @param right the second pointer
+ * @return `true` if the first pointer is less then the second one
+ * @return `false` otherwise
+ * @attention undefined behavior if two block type is not compatible
+ */
+template<class U, class V>
+[[nodiscard]] constexpr bool operator<(basic_bit_pointer<U> left, basic_bit_pointer<V> right) noexcept {
+    if (left.block_data() != right.block_data()) {
+        return left.block_data() < right.block_data();
+    }
+    return left.bit_position() < right.bit_position();
+}
+
+/**
+ * @brief returns whether or not the first pointer is greater then the second one.
+ * @tparam U the first block type
+ * @tparam V the second block type
+ * @param left the first pointer
+ * @param right the second pointer
+ * @return `true` if the first pointer is less then the second one
+ * @return `false` otherwise
+ * @attention undefined behavior if two block type is not compatible
+ */
+template<class U, class V>
+[[nodiscard]] constexpr bool operator>(basic_bit_pointer<U> left, basic_bit_pointer<V> right) noexcept {
+    return right < left;
+}
+
+/**
+ * @brief returns whether or not the first pointer is less then or equal to the second one.
+ * @tparam U the first block type
+ * @tparam V the second block type
+ * @param left the first pointer
+ * @param right the second pointer
+ * @return `true` if the first pointer is less then the second one
+ * @return `false` otherwise
+ * @attention undefined behavior if two block type is not compatible
+ */
+template<class U, class V>
+[[nodiscard]] constexpr bool operator<=(basic_bit_pointer<U> left, basic_bit_pointer<V> right) noexcept {
+    return !(right < left);
+}
+
+/**
+ * @brief returns whether or not the first pointer is greater then or equal to the second one.
+ * @tparam U the first block type
+ * @tparam V the second block type
+ * @param left the first pointer
+ * @param right the second pointer
+ * @return `true` if the first pointer is less then the second one
+ * @return `false` otherwise
+ * @attention undefined behavior if two block type is not compatible
+ */
+template<class U, class V>
+[[nodiscard]] constexpr bool operator>=(basic_bit_pointer<U> left, basic_bit_pointer<V> right) noexcept {
+    return !(left < right);
 }
 
 } // namespace takatori::util::details

@@ -112,6 +112,36 @@ TEST_F(basic_bit_pointer_test, conversion) {
     EXPECT_EQ(ptr, const_ptr);
 }
 
+TEST_F(basic_bit_pointer_test, compare) {
+    char c { 'A' };
+
+    using v = basic_bit_pointer<char>;
+
+    EXPECT_TRUE(v(&c, 0) < v(&c, 1));
+    EXPECT_TRUE(v(&c, 0) < v(&c + 1, 0));
+    EXPECT_FALSE(v(&c, 0) < v(&c, 0));
+    EXPECT_FALSE(v(&c, 1) < v(&c, 0));
+    EXPECT_FALSE(v(&c + 1, 0) < v(&c, 0));
+
+    EXPECT_FALSE(v(&c, 0) > v(&c, 1));
+    EXPECT_FALSE(v(&c, 0) > v(&c + 1, 0));
+    EXPECT_FALSE(v(&c, 0) > v(&c, 0));
+    EXPECT_TRUE(v(&c, 1) > v(&c, 0));
+    EXPECT_TRUE(v(&c + 1, 0) > v(&c, 0));
+
+    EXPECT_TRUE(v(&c, 0) <= v(&c, 1));
+    EXPECT_TRUE(v(&c, 0) <= v(&c + 1, 0));
+    EXPECT_TRUE(v(&c, 0) <= v(&c, 0));
+    EXPECT_FALSE(v(&c, 1) <= v(&c, 0));
+    EXPECT_FALSE(v(&c + 1, 0) <= v(&c, 0));
+
+    EXPECT_FALSE(v(&c, 0) >= v(&c, 1));
+    EXPECT_FALSE(v(&c, 0) >= v(&c + 1, 0));
+    EXPECT_TRUE(v(&c, 0) >= v(&c, 0));
+    EXPECT_TRUE(v(&c, 1) >= v(&c, 0));
+    EXPECT_TRUE(v(&c + 1, 0) >= v(&c, 0));
+}
+
 TEST_F(basic_bit_pointer_test, wide) {
     std::uint32_t bits = 0xffff;
 
