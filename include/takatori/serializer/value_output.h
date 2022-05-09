@@ -218,7 +218,7 @@ bool write_time_of_day(
  * @return false the remaining buffer is too short to write contents
  */
 bool write_time_point(
-        datetime::time_of_day value,
+        datetime::time_point value,
         util::buffer_view::iterator& position,
         util::buffer_view::const_iterator end);
 
@@ -233,7 +233,7 @@ bool write_time_point(
  * @return false the remaining buffer is too short to write contents
  */
 bool write_datetime_interval(
-        datetime::time_of_day value,
+        datetime::datetime_interval value,
         util::buffer_view::iterator& position,
         util::buffer_view::const_iterator end);
 
