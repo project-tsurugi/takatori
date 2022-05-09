@@ -11,9 +11,6 @@ namespace takatori::serializer {
 /// @brief represents a kind of serialized entry.
 enum class entry_type {
 
-    /// @brief represents no more contents in the current buffer.
-    buffer_underflow,
-
     /// @brief represents end of contents.
     end_of_contents,
 
@@ -78,7 +75,6 @@ constexpr inline std::string_view to_string_view(entry_type value) noexcept {
     using namespace std::string_view_literals;
     using kind = entry_type;
     switch (value) {
-        case kind::buffer_underflow: return "buffer_underflow"sv;
         case kind::end_of_contents: return "end_of_contents"sv;
         case kind::null: return "null"sv;
         case kind::int_: return "int_"sv;

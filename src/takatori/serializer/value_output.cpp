@@ -17,6 +17,7 @@ namespace takatori::serializer {
 using namespace details;
 
 using util::buffer_view;
+using util::const_bitset_view;
 using util::throw_exception;
 
 using byte_type = buffer_view::value_type;
@@ -254,7 +255,7 @@ bool write_octet(
 }
 
 bool write_bit(
-        util::const_bitset_view value,
+        const_bitset_view value,
         buffer_view::iterator& position,
         buffer_view::const_iterator end) {
     auto bit_size = value.size();

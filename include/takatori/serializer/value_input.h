@@ -26,8 +26,10 @@ namespace takatori::serializer {
  * @param end the buffer ending position
  * @return the current entry type
  * @return entry_type::buffer_underflow if there are no more entries in this buffer
+ * @throw value_input_exception if the buffer is empty
+ * @throw value_input_exception if the input entry type is not supported
  */
-entry_type peek_type(util::buffer_view::const_iterator position, util::buffer_view::const_iterator end) noexcept;
+entry_type peek_type(util::buffer_view::const_iterator position, util::buffer_view::const_iterator end);
 
 /**
  * @brief just consumes `end_of_contents` entry on the current position.
@@ -138,7 +140,7 @@ std::string_view read_octet(util::buffer_view::const_iterator& position, util::b
  * @throws value_input_exception if the encoded value is not valid
  * @see peek_type()
  */
-util::bitset_view read_bit(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
+util::const_bitset_view read_bit(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
 
 /**
  * @brief retrieves `date` entry on the current position.
@@ -174,7 +176,7 @@ datetime::time_of_day read_time_of_day(util::buffer_view::const_iterator& positi
  * @throws value_input_exception if the encoded value is not valid
  * @see peek_type()
  */
-datetime::time_of_day read_time_point(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
+datetime::time_point read_time_point(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
 
 /**
  * @brief retrieves `datetime_interval` entry on the current position.
@@ -186,7 +188,7 @@ datetime::time_of_day read_time_point(util::buffer_view::const_iterator& positio
  * @throws value_input_exception if the encoded value is not valid
  * @see peek_type()
  */
-datetime::time_of_day read_datetime_interval(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
+datetime::datetime_interval read_datetime_interval(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
 
 /**
  * @brief retrieves `array` entry on the current position.

@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include <limits>
+
 namespace takatori::serializer::details {
 
 static constexpr std::uint32_t header_embed_positive_int = 0x00U;
@@ -116,5 +118,7 @@ static constexpr std::uint32_t max_embed_row_size = mask_embed_row + min_embed_r
 static constexpr std::uint32_t min_embed_array_size = 0x01;
 
 static constexpr std::uint32_t max_embed_array_size = mask_embed_array + min_embed_array_size;
+
+static constexpr std::uint32_t limit_size = static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max()) + 1UL;
 
 } // namespace takatori::serializer::details

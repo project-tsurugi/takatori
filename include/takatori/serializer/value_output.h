@@ -16,9 +16,6 @@
 #include <takatori/util/bitset_view.h>
 #include <takatori/util/buffer_view.h>
 
-#include "entry_type.h"
-#include "value_input_exception.h"
-
 namespace takatori::serializer {
 
 /**
