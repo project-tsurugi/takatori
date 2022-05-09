@@ -13,6 +13,7 @@
 namespace takatori::serializer {
 
 using buffer = util::buffer_view;
+using bitset = util::bitset_view;
 
 using namespace details;
 
@@ -39,7 +40,7 @@ public:
 
     static std::string perform(
             std::function<bool(buffer::iterator&, buffer::iterator)> const& action,
-            std::size_t buffer_size = 64) {
+            std::size_t buffer_size = 256) {
         std::string results {};
         results.resize(buffer_size);
         buffer buf { results.data(), results.size() };
@@ -57,6 +58,43 @@ public:
 
     static std::string uint(std::uint64_t value) {
         return perform([=] (auto& iter, auto end) { return base128v::write_unsigned(value, iter, end); });
+    }
+
+    static std::string n_character(std::size_t n) {
+        std::string results {};
+        results.resize(n);
+        for (std::size_t i = 0; i < n; ++i) {
+            results[i] = static_cast<char>('A' + i % 26);
+        }
+        return results;
+    }
+
+    static std::string n_octet(std::size_t n) {
+        std::string results {};
+        results.resize(n);
+        for (std::size_t i = 0; i < n; ++i) {
+            results[i] = static_cast<char>(i);
+        }
+        return results;
+    }
+
+    static std::string n_bit(std::size_t n) {
+        std::string results {};
+        results.resize((n + 7) / 8);
+        bitset bit { results.data(), n };
+        for (std::size_t i = 0; i < n; ++i) {
+            auto&& v = bit[i];
+            if ((i % 2) == 0) {
+                v.flip();
+            }
+            if ((i % 3) == 0) {
+                v.flip();
+            }
+            if ((i % 7) == 0) {
+                v.flip();
+            }
+        }
+        return results;
     }
 
     template<class T, class U>
@@ -153,6 +191,135 @@ TEST_F(value_output_test, write_decimal_full) {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x94,
             }) }),
             perform([](auto& iter, auto end) { return write_decimal("-3.14", iter, end); }));
+}
+
+TEST_F(value_output_test, write_character_embed) {
+    EXPECT_EQ(
+            sequence(header_embed_character + 1 - 1, { "a" }),
+            perform([](auto& iter, auto end) { return write_character("a", iter, end); }));
+    EXPECT_EQ(
+            sequence(header_embed_character + 64 - 1, { n_character(64) }),
+            perform([](auto& iter, auto end) { return write_character(n_character(64), iter, end); }));
+}
+
+TEST_F(value_output_test, write_character_full) {
+    EXPECT_EQ(
+            sequence(header_character, { uint(0) }),
+            perform([](auto& iter, auto end) { return write_character("", iter, end); }));
+    EXPECT_EQ(
+            sequence(header_character, { uint(65), n_character(65) }),
+            perform([](auto& iter, auto end) { return write_character(n_character(65), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_character, { uint(4096), n_character(4096) }),
+            perform([](auto& iter, auto end) { return write_character(n_character(4096), iter, end); }, 4200));
+}
+
+TEST_F(value_output_test, write_octet_embed) {
+    EXPECT_EQ(
+            sequence(header_embed_octet + 1 - 1, { "a" }),
+            perform([](auto& iter, auto end) { return write_octet("a", iter, end); }));
+    EXPECT_EQ(
+            sequence(header_embed_octet + 16 - 1, { n_octet(16) }),
+            perform([](auto& iter, auto end) { return write_octet(n_octet(16), iter, end); }));
+}
+
+TEST_F(value_output_test, write_octet_full) {
+    EXPECT_EQ(
+            sequence(header_octet, { uint(0) }),
+            perform([](auto& iter, auto end) { return write_octet("", iter, end); }));
+    EXPECT_EQ(
+            sequence(header_octet, { uint(17), n_octet(17) }),
+            perform([](auto& iter, auto end) { return write_octet(n_octet(17), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_octet, { uint(4096), n_octet(4096) }),
+            perform([](auto& iter, auto end) { return write_octet(n_octet(4096), iter, end); }, 4200));
+}
+
+TEST_F(value_output_test, write_bit_embed) {
+    EXPECT_EQ(
+            sequence(header_embed_bit + 1 - 1, { bytes({ 0x01 }) }),
+            perform([](auto& iter, auto end) { return write_bit(bytes({ 0xff }), 1, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_embed_bit + 8 - 1, { n_bit(8) }),
+            perform([](auto& iter, auto end) { return write_bit(n_bit(8), 8, iter, end); }));
+}
+
+TEST_F(value_output_test, write_bit_full) {
+    EXPECT_EQ(
+            sequence(header_bit, { uint(0) }),
+            perform([](auto& iter, auto end) { return write_bit("", 0, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_bit, { uint(17), n_bit(17) }),
+            perform([](auto& iter, auto end) { return write_bit(n_bit(17), 17, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_bit, { uint(4096), n_bit(4096) }),
+            perform([](auto& iter, auto end) { return write_bit(n_bit(4096), 4096, iter, end); }, 520));
+}
+
+TEST_F(value_output_test, DISABLED_write_date) {
+    FAIL() << "yet not implemented";
+}
+
+TEST_F(value_output_test, DISABLED_write_time_of_day) {
+    FAIL() << "yet not implemented";
+}
+
+TEST_F(value_output_test, DISABLED_write_time_point) {
+    FAIL() << "yet not implemented";
+}
+
+TEST_F(value_output_test, DISABLED_write_datetime_interval) {
+    FAIL() << "yet not implemented";
+}
+
+TEST_F(value_output_test, write_array_begin_embed) {
+    EXPECT_EQ(
+            bytes({ header_embed_array + 1 - 1 }),
+            perform([](auto& iter, auto end) { return write_array_begin(1, iter, end); }));
+    EXPECT_EQ(
+            bytes({ header_embed_array + 32 - 1 }),
+            perform([](auto& iter, auto end) { return write_array_begin(32, iter, end); }));
+}
+
+TEST_F(value_output_test, write_array_begin_full) {
+    EXPECT_EQ(
+            sequence(header_array, { uint(0) }),
+            perform([](auto& iter, auto end) { return write_array_begin(0, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_array, { uint(33) }),
+            perform([](auto& iter, auto end) { return write_array_begin(33, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_array, { uint(4096) }),
+            perform([](auto& iter, auto end) { return write_array_begin(4096, iter, end); }));
+}
+
+TEST_F(value_output_test, write_row_begin_embed) {
+    EXPECT_EQ(
+            bytes({ header_embed_row + 1 - 1 }),
+            perform([](auto& iter, auto end) { return write_row_begin(1, iter, end); }));
+    EXPECT_EQ(
+            bytes({ header_embed_row + 32 - 1 }),
+            perform([](auto& iter, auto end) { return write_row_begin(32, iter, end); }));
+}
+
+TEST_F(value_output_test, write_row_begin_full) {
+    EXPECT_EQ(
+            sequence(header_row, { uint(0) }),
+            perform([](auto& iter, auto end) { return write_row_begin(0, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_row, { uint(33) }),
+            perform([](auto& iter, auto end) { return write_row_begin(33, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_row, { uint(4096) }),
+            perform([](auto& iter, auto end) { return write_row_begin(4096, iter, end); }));
+}
+
+TEST_F(value_output_test, DISABLED_write_clob) {
+    FAIL() << "yet not implemented";
+}
+
+TEST_F(value_output_test, DISABLED_write_blob) {
+    FAIL() << "yet not implemented";
 }
 
 } // namespace takatori::serializer

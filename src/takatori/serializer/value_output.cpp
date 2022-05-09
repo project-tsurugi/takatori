@@ -2,6 +2,7 @@
 
 #include <array>
 #include <limits>
+#include <stdexcept>
 
 #include <cstdint>
 
@@ -9,12 +10,14 @@
 #include "details/value_io_constants.h"
 
 #include <takatori/util/assertion.h>
+#include <takatori/util/exception.h>
 
 namespace takatori::serializer {
 
 using namespace details;
 
 using util::buffer_view;
+using util::throw_exception;
 
 using byte_type = buffer_view::value_type;
 
@@ -274,8 +277,31 @@ bool write_bit(
         write_fixed8(header_bit, position, end);
         base128v::write_unsigned(bit_size, position, end);
     }
-    write_bytes(value.block_data(), value.block_size(), position, end);
+    auto rest_bits = value.size() % 8;
+    if (rest_bits == 0) {
+        // write all blocks
+        write_bytes(value.block_data(), value.block_size(), position, end);
+    } else {
+        // write blocks except the last
+        write_bytes(value.block_data(), value.block_size() - 1, position, end);
+
+        auto last = static_cast<std::uint8_t>(*--value.end());
+        write_fixed8(last & ~(0xffU << rest_bits), position, end);
+    }
     return true;
+}
+
+bool write_bit(
+        std::string_view blocks,
+        std::size_t number_of_bits,
+        buffer_view::iterator& position,
+        buffer_view::const_iterator end) {
+    if (number_of_bits > blocks.size() * 8) {
+        throw_exception(std::out_of_range("too large number of bits"));
+    }
+    util::const_bitset_view bits { blocks.data(), number_of_bits };
+    BOOST_ASSERT(bits.block_size() <= blocks.size()); // NOLINT
+    return write_bit(bits, position, end);
 }
 
 // FIXME: temporal data types

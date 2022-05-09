@@ -158,6 +158,26 @@ bool write_bit(
         util::buffer_view::const_iterator end);
 
 /**
+ * @brief puts `bit` entry onto the current position.
+ * @details This operation will advance the buffer iterator to the next entry, only if it is successfully completed.
+ * @note The returned bitset_view refers onto the input buffer.
+ *      Please escape the returned value before the buffer will be disposed.
+ * @param blocks the bit blocks
+ * @param number_of_bits the number of bits to write
+ * @param position the buffer content iterator
+ * @param end the buffer ending position
+ * @return the retrieved value
+ * @return true the operation successfully completed
+ * @return false the remaining buffer is too short to write contents
+ * @throws std::out_of_range if `number_of_bits` is too large for `blocks`
+ */
+bool write_bit(
+        std::string_view blocks,
+        std::size_t number_of_bits,
+        util::buffer_view::iterator& position,
+        util::buffer_view::const_iterator end);
+
+/**
  * @brief puts `date` entry onto the current position.
  * @details This operation will advance the buffer iterator to the next entry, only if it is successfully completed.
  * @param value the value to write
