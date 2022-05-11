@@ -155,6 +155,7 @@ public:
 
     /**
      * @brief puts `bit` entry onto the current position.
+     * @param blocks the bit blocks
      * @param number_of_bits the number of bits to write
      * @param position the buffer content iterator
      */

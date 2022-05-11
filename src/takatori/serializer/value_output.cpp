@@ -1,6 +1,5 @@
 #include <takatori/serializer/value_output.h>
 
-#include <array>
 #include <limits>
 #include <stdexcept>
 
@@ -23,14 +22,6 @@ using util::throw_exception;
 using byte_type = buffer_view::value_type;
 
 using decimal_type = ::fpdecimal::Decimal;
-
-[[nodiscard]] static bool is_little_endian() {
-    // NOTE: C++17 does not contain std::endian
-    std::array<char, sizeof(std::int32_t)> bytes {};
-    std::int32_t value = 1;
-    std::memcpy(&bytes, &value, bytes.size());
-    return bytes[0] != 0;
-}
 
 [[nodiscard]] static std::size_t buffer_remaining(
         buffer_view::const_iterator position,
@@ -182,20 +173,13 @@ bool write_decimal(
         if (buffer_remaining(position, end) < 1 + 8 + 8) {
             return false;
         }
-        auto entity = value.entity();
-
+        auto bytes = value.to_bytes();
         write_fixed8(header_decimal16, position, end);
-
-        // decFloat follows system endianness
-        if (is_little_endian()) {
-            for (std::size_t i = 0; i < sizeof(entity.bytes); ++i) { // NOLINT
-                write_fixed8(entity.bytes[16 - i - 1], position, end); // NOLINT
-            }
-        } else {
-            for (std::uint32_t word : entity.words) { // NOLINT
-                write_fixed32(word, position, end);
-            }
-        }
+        write_bytes(
+                reinterpret_cast<byte_type const*>(bytes.data()), // NOLINT
+                bytes.size(),
+                position,
+                end);
         return true;
     }
 }

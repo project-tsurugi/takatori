@@ -23,14 +23,6 @@ using byte_type = buffer_view::value_type;
 
 using decimal_type = ::fpdecimal::Decimal;
 
-[[nodiscard]] static bool is_little_endian() {
-    // NOTE: C++17 does not contain std::endian
-    std::array<char, sizeof(std::int32_t)> bytes {};
-    std::int32_t value = 1;
-    std::memcpy(&bytes, &value, bytes.size());
-    return bytes[0] != 0;
-}
-
 static void requires_entry(
         entry_type expect,
         buffer_view::const_iterator position,
@@ -242,18 +234,10 @@ decimal_type read_decimal(buffer_view::const_iterator& position, buffer_view::co
     buffer_view::const_iterator iter = position;
     ++iter;
 
-    decQuad result {};
-    if (is_little_endian()) {
-        for (std::size_t i = 0; i < 4; ++i) {
-            result.words[4 - i - 1] = read_fixed<std::uint32_t>(iter, end); // NOLINT
-        }
-    } else {
-        for (auto&& word : result.words) { // NOLINT
-            word = read_fixed<std::uint32_t>(iter, end);
-        }
-    }
+    auto bytes = read_bytes(16U, iter, end);
+    auto value = decimal_type::from_bytes(reinterpret_cast<std::uint8_t const*>(bytes.data())); // NOLINT
     position = iter;
-    return decimal_type { result };
+    return value;
 }
 
 std::string_view read_character(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
