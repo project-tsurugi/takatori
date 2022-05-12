@@ -262,20 +262,59 @@ TEST_F(value_output_test, write_bit_full) {
             perform([](auto& iter, auto end) { return write_bit(n_bit(4096), 4096, iter, end); }, 520));
 }
 
-TEST_F(value_output_test, DISABLED_write_date) {
-    FAIL() << "yet not implemented";
+TEST_F(value_output_test, write_date) {
+    EXPECT_EQ(
+            sequence(header_date, { sint(0) }),
+            perform([](auto& iter, auto end) { return write_date(datetime::date(0), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_date, { sint(+1000) }),
+            perform([](auto& iter, auto end) { return write_date(datetime::date(+1000), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_date, { sint(-1000) }),
+            perform([](auto& iter, auto end) { return write_date(datetime::date(-1000), iter, end); }));
 }
 
-TEST_F(value_output_test, DISABLED_write_time_of_day) {
-    FAIL() << "yet not implemented";
+TEST_F(value_output_test, write_time_of_day) {
+    using unit = datetime::time_of_day::time_unit;
+    EXPECT_EQ(
+            sequence(header_time_of_day, { uint(0) }),
+            perform([](auto& iter, auto end) { return write_time_of_day(datetime::time_of_day(unit(0)), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_time_of_day, { uint(1000) }),
+            perform([](auto& iter, auto end) { return write_time_of_day(datetime::time_of_day(unit(1000)), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_time_of_day, { uint(86'400'000'000'000ULL - 1ULL) }),
+            perform([](auto& iter, auto end) { return write_time_of_day(datetime::time_of_day(datetime::time_of_day::max_value), iter, end); }));
 }
 
-TEST_F(value_output_test, DISABLED_write_time_point) {
-    FAIL() << "yet not implemented";
+TEST_F(value_output_test, write_time_point) {
+    using unit = datetime::time_point::offset_type;
+    using ns = datetime::time_point::subsecond_unit;
+    EXPECT_EQ(
+            sequence(header_time_point, { sint(0), uint(0) }),
+            perform([](auto& iter, auto end) { return write_time_point(datetime::time_point(), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_time_point, { sint(1000), uint(0) }),
+            perform([](auto& iter, auto end) { return write_time_point(datetime::time_point(unit(1000)), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_time_point, { sint(-1000), uint(0) }),
+            perform([](auto& iter, auto end) { return write_time_point(datetime::time_point(unit(-1000)), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_time_point, { sint(0), uint(123456789) }),
+            perform([](auto& iter, auto end) { return write_time_point(datetime::time_point({}, ns(123456789)), iter, end); }));
 }
 
-TEST_F(value_output_test, DISABLED_write_datetime_interval) {
-    FAIL() << "yet not implemented";
+TEST_F(value_output_test, write_datetime_interval) {
+    using ns = datetime::time_interval::time_unit;
+    EXPECT_EQ(
+            sequence(header_datetime_interval, { sint(0), sint(0), sint(0), sint(0) }),
+            perform([](auto& iter, auto end) { return write_datetime_interval(datetime::datetime_interval(), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_datetime_interval, { sint(1), sint(2), sint(3), sint(0) }),
+            perform([](auto& iter, auto end) { return write_datetime_interval(datetime::date_interval(1, 2, 3), iter, end); }));
+    EXPECT_EQ(
+            sequence(header_datetime_interval, { sint(0), sint(0), sint(0), sint(100) }),
+            perform([](auto& iter, auto end) { return write_datetime_interval(datetime::time_interval(ns(100)), iter, end); }));
 }
 
 TEST_F(value_output_test, write_array_begin_embed) {

@@ -27,6 +27,11 @@ public:
     /// @brief time offset type.
     using difference_type = std::chrono::nanoseconds;
 
+    /// @brief the max value.
+    static constexpr time_unit max_value {
+        std::chrono::duration_cast<time_unit>(second_unit { 86400 }) - time_unit { 1 },
+    };
+
     /**
      * @brief creates a new instance which represents 00:00:00 of day.
      */

@@ -329,20 +329,111 @@ TEST_F(value_input_test, read_bit_full) {
     }
 }
 
-TEST_F(value_input_test, DISABLED_write_date) {
-    FAIL() << "yet not implemented";
+TEST_F(value_input_test, write_date) {
+    {
+        datetime::date input;
+        auto buf = dump([=](auto& iter, auto end) { return write_date(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_date(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::date input { +1000 };
+        auto buf = dump([=](auto& iter, auto end) { return write_date(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_date(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::date input { -1000 };
+        auto buf = dump([=](auto& iter, auto end) { return write_date(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_date(iter, end); });
+        EXPECT_EQ(result, input);
+    }
 }
 
-TEST_F(value_input_test, DISABLED_write_time_of_day) {
-    FAIL() << "yet not implemented";
+TEST_F(value_input_test, write_time_of_day) {
+    {
+        datetime::time_of_day input;
+        auto buf = dump([=](auto& iter, auto end) { return write_time_of_day(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_time_of_day(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::time_of_day input {
+                datetime::time_of_day::time_unit { 1000 },
+        };
+        auto buf = dump([=](auto& iter, auto end) { return write_time_of_day(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_time_of_day(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::time_of_day input { datetime::time_of_day::max_value };
+        auto buf = dump([=](auto& iter, auto end) { return write_time_of_day(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_time_of_day(iter, end); });
+        EXPECT_EQ(result, input);
+    }
 }
 
-TEST_F(value_input_test, DISABLED_write_time_point) {
-    FAIL() << "yet not implemented";
+TEST_F(value_input_test, write_time_point) {
+    {
+        datetime::time_point input {};
+        auto buf = dump([=](auto& iter, auto end) { return write_time_point(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_time_point(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::time_point input {
+                datetime::time_point::offset_type { 1000 },
+        };
+        auto buf = dump([=](auto& iter, auto end) { return write_time_point(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_time_point(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::time_point input {
+                datetime::time_point::offset_type { -1000 },
+        };
+        auto buf = dump([=](auto& iter, auto end) { return write_time_point(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_time_point(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::time_point input {
+            datetime::time_point::offset_type { 1000 },
+            datetime::time_point::subsecond_unit { 123456789 },
+        };
+        auto buf = dump([=](auto& iter, auto end) { return write_time_point(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_time_point(iter, end); });
+        EXPECT_EQ(result, input);
+    }
 }
 
-TEST_F(value_input_test, DISABLED_write_datetime_interval) {
-    FAIL() << "yet not implemented";
+TEST_F(value_input_test, write_datetime_interval) {
+    {
+        datetime::datetime_interval input {};
+        auto buf = dump([=](auto& iter, auto end) { return write_datetime_interval(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_datetime_interval(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::datetime_interval input {
+                { 1, 2, 3 },
+                {},
+        };
+        auto buf = dump([=](auto& iter, auto end) { return write_datetime_interval(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_datetime_interval(iter, end); });
+        EXPECT_EQ(result, input);
+    }
+    {
+        datetime::datetime_interval input {
+                {},
+                datetime::time_interval {
+                        datetime::time_interval::time_unit { 100 }
+                }
+        };
+        auto buf = dump([=](auto& iter, auto end) { return write_datetime_interval(input, iter, end); });
+        auto result = restore<decltype(input)>(buf, [](auto& iter, auto end) { return read_datetime_interval(iter, end); });
+        EXPECT_EQ(result, input);
+    }
 }
 
 TEST_F(value_input_test, read_array_begin_embed) {

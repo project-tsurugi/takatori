@@ -281,7 +281,63 @@ bool write_bit(
     return write_bit(bits, position, end);
 }
 
-// FIXME: temporal data types
+bool write_date(
+        datetime::date value,
+        util::buffer_view::iterator& position,
+        util::buffer_view::const_iterator end) {
+    if (buffer_remaining(position, end) < 1 + base128v::size_signed(value.days_since_epoch())) {
+        return false;
+    }
+    write_fixed8(header_date, position, end);
+    base128v::write_signed(value.days_since_epoch(), position, end);
+    return true;
+}
+
+bool write_time_of_day(
+        datetime::time_of_day value,
+        util::buffer_view::iterator& position,
+        util::buffer_view::const_iterator end) {
+    if (buffer_remaining(position, end) < 1 + base128v::size_unsigned(value.time_since_epoch().count())) {
+        return false;
+    }
+    write_fixed8(header_time_of_day, position, end);
+    base128v::write_unsigned(value.time_since_epoch().count(), position, end);
+    return true;
+}
+
+bool write_time_point(
+        datetime::time_point value,
+        util::buffer_view::iterator& position,
+        util::buffer_view::const_iterator end) {
+    if (buffer_remaining(position, end) < 1
+            + base128v::size_signed(value.seconds_since_epoch().count())
+            + base128v::size_unsigned(value.subsecond().count())) {
+        return false;
+    }
+    write_fixed8(header_time_point, position, end);
+    base128v::write_signed(value.seconds_since_epoch().count(), position, end);
+    base128v::write_unsigned(value.subsecond().count(), position, end);
+    return true;
+}
+
+bool write_datetime_interval(
+        datetime::datetime_interval value,
+        util::buffer_view::iterator& position,
+        util::buffer_view::const_iterator end) {
+    if (buffer_remaining(position, end) < 1
+            + base128v::size_signed(value.date().year())
+            + base128v::size_signed(value.date().month())
+            + base128v::size_signed(value.date().day())
+            + base128v::size_signed(value.time().offset().count())) {
+        return false;
+    }
+    write_fixed8(header_datetime_interval, position, end);
+    base128v::write_signed(value.date().year(), position, end);
+    base128v::write_signed(value.date().month(), position, end);
+    base128v::write_signed(value.date().day(), position, end);
+    base128v::write_signed(value.time().offset().count(), position, end);
+    return true;
+}
 
 bool write_array_begin(
         std::size_t size,

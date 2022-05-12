@@ -65,6 +65,14 @@ static std::uint64_t read_uint(buffer_view::const_iterator& position, buffer_vie
     throw_buffer_underflow();
 }
 
+static std::int32_t read_sint32(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
+    auto value = read_sint(position, end);
+    if (value < std::numeric_limits<std::int32_t>::min() || value > std::numeric_limits<std::int32_t>::max()) {
+        throw_int32_value_out_of_range(value);
+    }
+    return static_cast<std::int32_t>(value);
+}
+
 static std::uint32_t read_size(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
     auto size = read_uint(position, end);
     if (size >= limit_size) {
@@ -311,7 +319,51 @@ const_bitset_view read_bit(buffer_view::const_iterator& position, buffer_view::c
     return { result.data(), size };
 }
 
-// FIXME: impl temporal
+datetime::date read_date(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end) {
+    requires_entry(entry_type::date, position, end);
+    buffer_view::const_iterator iter = position;
+    ++iter;
+    auto offset = read_sint(iter, end);
+    position = iter;
+    return datetime::date { offset };
+}
+
+datetime::time_of_day read_time_of_day(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end) {
+    requires_entry(entry_type::time_of_day, position, end);
+    buffer_view::const_iterator iter = position;
+    ++iter;
+    auto offset = read_uint(iter, end);
+    position = iter;
+    return datetime::time_of_day { datetime::time_of_day::time_unit { offset }};
+}
+
+datetime::time_point read_time_point(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end) {
+    requires_entry(entry_type::time_point, position, end);
+    buffer_view::const_iterator iter = position;
+    ++iter;
+    auto offset = read_sint(iter, end);
+    auto adjustment = read_uint(iter, end);
+    position = iter;
+    return datetime::time_point {
+            datetime::time_point::offset_type { offset },
+            datetime::time_point::subsecond_unit { adjustment },
+    };
+}
+
+datetime::datetime_interval read_datetime_interval(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end) {
+    requires_entry(entry_type::datetime_interval, position, end);
+    buffer_view::const_iterator iter = position;
+    ++iter;
+    auto year = read_sint32(iter, end);
+    auto month = read_sint32(iter, end);
+    auto day = read_sint32(iter, end);
+    auto time = read_sint(iter, end);
+    position = iter;
+    return datetime::datetime_interval {
+            { year, month, day },
+            datetime::time_interval { datetime::time_interval::time_unit { time } },
+    };
+}
 
 std::size_t read_array_begin(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
     requires_entry(entry_type::array, position, end);

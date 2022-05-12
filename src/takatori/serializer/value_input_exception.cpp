@@ -45,16 +45,27 @@ void throw_unrecognized_entry(std::uint32_t header) {
 
 void throw_unsupported_entry(std::uint32_t header) {
     throw_exception(value_input_exception {
-            value_input_exception::reason_code::unrecognized_entry_type,
+            value_input_exception::reason_code::unsupported_entry_type,
             string_builder {}
                     << "unsupported entry type: " << header
                     << string_builder::to_string,
     });
 }
 
+void throw_int32_value_out_of_range(std::int64_t value) {
+    throw_exception(value_input_exception {
+            value_input_exception::reason_code::value_out_of_range,
+            string_builder {}
+                    << "value out of range: " << value << ", "
+                    << "must be in [" << std::numeric_limits<std::int32_t>::min() << ", "
+                    << std::numeric_limits<std::int32_t>::max() << "]"
+                    << string_builder::to_string,
+    });
+}
+
 void throw_size_out_of_range(std::uint64_t size, std::uint64_t limit) {
     throw_exception(value_input_exception {
-            value_input_exception::reason_code::unrecognized_entry_type,
+            value_input_exception::reason_code::value_out_of_range,
             string_builder {}
                     << "too large size: " << size << ", "
                     << "must be less than" << limit

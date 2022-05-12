@@ -23,7 +23,7 @@ public:
         unsupported_entry_type,
 
         /// @brief value is out of range.
-        size_out_of_range,
+        value_out_of_range,
     };
 
     /**
@@ -68,6 +68,12 @@ private:
 [[noreturn]] void throw_unsupported_entry(std::uint32_t header);
 
 /**
+ * @brief raise a new exception for extracted 32-bit signed int value is out of range.
+ * @param value the extracted value
+ */
+[[noreturn]] void throw_int32_value_out_of_range(std::int64_t value);
+
+/**
  * @brief raise a new exception for extracted size is out of range.
  * @param size the extracted size
  * @param limit the size limit
@@ -86,7 +92,7 @@ constexpr std::string_view to_string_view(value_input_exception::reason_code val
         case kind::buffer_underflow: return "buffer_underflow"sv;
         case kind::unrecognized_entry_type: return "unrecognized_entry_type"sv;
         case kind::unsupported_entry_type: return "unsupported_entry_type"sv;
-        case kind::size_out_of_range: return "size_out_of_range"sv;
+        case kind::value_out_of_range: return "value_out_of_range"sv;
     }
     std::abort();
 }
