@@ -13,7 +13,7 @@ class date_test : public ::testing::Test {};
 TEST_F(date_test, epoch) {
     date d;
     EXPECT_EQ(d.days_since_epoch(), 0);
-    EXPECT_EQ(d.year(), 1900);
+    EXPECT_EQ(d.year(), 1970);
     EXPECT_EQ(d.month(), 1);
     EXPECT_EQ(d.day(), 1);
 }
@@ -28,11 +28,12 @@ TEST_F(date_test, conversion) {
     // set calendar to epoch
     calendar->set(1900, 0, 1, 0, 0, 0);
 
+    date start { 1900, 1, 1 };
     for (std::uint32_t i = 0, n = 366 * 500; i < n; ++i) {
-        date d { i };
-        EXPECT_EQ(d.year(), calendar->get(UCAL_YEAR, status));
-        EXPECT_EQ(d.month(), calendar->get(UCAL_MONTH, status) + 1);
-        EXPECT_EQ(d.day(), calendar->get(UCAL_DATE, status));
+        auto d = start + i;
+        ASSERT_EQ(d.year(), calendar->get(UCAL_YEAR, status));
+        ASSERT_EQ(d.month(), calendar->get(UCAL_MONTH, status) + 1);
+        ASSERT_EQ(d.day(), calendar->get(UCAL_DATE, status));
         calendar->add(UCAL_DATE, 1, status);
     }
 }

@@ -35,7 +35,7 @@ public:
 
     /**
      * @brief creates a new instance from year. month, and day triple.
-     * @param year the year (1900-)
+     * @param year the year (1970-)
      * @param month the month number (1-12) of year
      * @param day the day (1-31) of month
      */
@@ -80,9 +80,7 @@ private:
  * @return true if a == b
  * @return false otherwise
  */
-inline constexpr bool operator==(date const& a, date const& b) noexcept {
-    return a.get() == b.get();
-}
+bool operator==(date const& a, date const& b) noexcept;
 
 /**
  * @brief returns whether or not the two elements are different.
@@ -91,9 +89,7 @@ inline constexpr bool operator==(date const& a, date const& b) noexcept {
  * @return true if a != b
  * @return false otherwise
  */
-inline constexpr bool operator!=(date const& a, date const& b) noexcept {
-    return !(a == b);
-}
+bool operator!=(date const& a, date const& b) noexcept;
 
 /**
  * @brief appends string representation of the given value.

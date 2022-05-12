@@ -7,13 +7,13 @@ time_point::time_point(datetime::date date, datetime::time_of_day time) noexcept
 {}
 
 time_point::time_point(
-        std::uint32_t year,
+        std::int32_t year,
         std::uint32_t month,
         std::uint32_t day,
         std::uint32_t hour,
         std::uint32_t minute,
         std::uint32_t second,
-        datetime::time_of_day::time_unit subsecond) noexcept
+        datetime::time_of_day::time_unit subsecond)
     : time_point(
         datetime::date { year, month, day },
         datetime::time_of_day { hour, minute, second, subsecond })

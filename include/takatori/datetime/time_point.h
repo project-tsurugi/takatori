@@ -12,28 +12,46 @@
 namespace takatori::datetime {
 
 /**
- * @brief represents time point since 1900-01-01 00:00:00 GMT.
- * @details This can represent about 592 years long since 1900-01-01.
+ * @brief represents time point since 1970-01-01 00:00:00 GMT.
  */
 class time_point {
 public:
-    /// @brief time unit.
-    using time_unit = std::chrono::duration<std::uint64_t, std::nano>;
+    /// @brief the second offset type.
+    using offset_type = std::chrono::duration<std::int64_t>;
+
+    /// @brief the nano-second adjustment type.
+    using subsecond_unit = std::chrono::duration<std::uint32_t, std::nano>;
 
     /// @brief time offset type.
     using difference_type = std::chrono::nanoseconds;
 
     /**
-     * @brief creates a new instance of the epoch time, which represents 1900-01-01 00:00:00 GMT.
+     * @brief creates a new instance of the epoch time, which represents 1970-01-01 00:00:00 GMT.
      */
-    constexpr time_point() = default;
+    constexpr time_point() noexcept = default;
 
     /**
      * @brief creates a new instance
-     * @param time_since_epoch elapsed time since 1900-01-01 00:00:00 GMT, ignoring leap seconds
+     * @param offset seconds since 1970-01-01 00:00:00 GMT, ignoring leap seconds
+     * @param adjustment the sub-second value
      */
-    explicit constexpr time_point(time_unit time_since_epoch) noexcept
-        : elapsed_(time_since_epoch)
+    explicit constexpr time_point(offset_type offset, difference_type adjustment = {}) noexcept :
+            seconds_offset_ {
+                offset + std::chrono::floor<offset_type>(adjustment)
+            },
+            subsecond_ {
+                std::chrono::duration_cast<std::chrono::nanoseconds>(offset - seconds_offset_) + adjustment
+            }
+    {}
+
+    /**
+     * @brief creates a new instance
+     * @param offset elapsed time since 1970-01-01 00:00:00 GMT, ignoring leap seconds
+     */
+    template<class Rep, class Period>
+    explicit constexpr time_point(std::chrono::duration<Rep, Period> offset) noexcept :
+            seconds_offset_ { std::chrono::floor<offset_type>(offset) },
+            subsecond_ { std::chrono::duration_cast<subsecond_unit>(offset - seconds_offset_) }
     {}
 
 
@@ -51,8 +69,8 @@ public:
      * @param time time system time point
      */
     template<class Clock, class Duration>
-    explicit time_point(std::chrono::time_point<Clock, Duration> time)
-        : elapsed_(from_chrono(std::chrono::time_point_cast<clock_unit>(time)))
+    explicit time_point(std::chrono::time_point<Clock, Duration> time) :
+        time_point { std::chrono::time_point_cast<clock_unit>(time).time_since_epoch() }
     {}
 
     /**
@@ -62,20 +80,30 @@ public:
     [[nodiscard]] static time_point now();
 
     /**
-     * @brief returns the elapsed time since 1900-01-01 00:00:00 GMT, ignoring leap seconds.
-     * @return the the elapsed time since the epoch
+     * @brief returns the offset since epoch (1970-01-01 00:00:00 GMT), ignoring leap seconds.
+     * @details the returned value does not contain sub-seconds value, please check nano_adjustments()
+     * @return the seconds offset since epoch
      */
-    [[nodiscard]] constexpr time_unit time_since_epoch() const noexcept {
-        return elapsed_;
+    [[nodiscard]] constexpr offset_type seconds_since_epoch() const noexcept {
+        return seconds_offset_;
+    }
+
+    /**
+     * @brief returns the number of nanoseconds, from start of the second.
+     * @return the nanosecond within second (`[0, 10^9)`)
+     */
+    [[nodiscard]] constexpr subsecond_unit subsecond() const noexcept {
+        return subsecond_;
     }
 
     /**
      * @brief returns the date of the time point (in GMT).
      * @return the date
      */
-    [[nodiscard]] constexpr datetime::date date() const noexcept {
-        using date_unit = std::chrono::duration<std::uint32_t, std::ratio<86'400>>;
-        return datetime::date(std::chrono::floor<date_unit>(elapsed_).count());
+    [[nodiscard]] datetime::date date() const {
+        using date_unit = std::chrono::duration<datetime::date::difference_type, std::ratio<86'400>>;
+        auto days = std::chrono::floor<date_unit>(seconds_offset_);
+        return datetime::date(days.count());
     }
 
     /**
@@ -83,7 +111,12 @@ public:
      * @return the time in day
      */
     [[nodiscard]] constexpr datetime::time_of_day time() const noexcept {
-        return datetime::time_of_day(std::chrono::floor<datetime::time_of_day::time_unit>(elapsed_));
+        using date_unit = std::chrono::duration<datetime::date::difference_type, std::ratio<86'400>>;
+        auto days = std::chrono::floor<date_unit>(seconds_offset_);
+        auto seconds_in_day = seconds_offset_ - std::chrono::duration_cast<offset_type>(days);
+        auto nanos_in_day = std::chrono::duration_cast<datetime::time_of_day::time_unit>(seconds_in_day)
+                + subsecond_;
+        return datetime::time_of_day(nanos_in_day);
     }
 
     /**
@@ -91,7 +124,7 @@ public:
      * @return the date and time
      * @see calendar
      */
-    [[nodiscard]] constexpr std::pair<datetime::date, datetime::time_of_day> date_time() const noexcept {
+    [[nodiscard]] std::pair<datetime::date, datetime::time_of_day> date_time() const {
         return std::make_pair(date(), time());
     }
 
@@ -110,10 +143,10 @@ public:
     constexpr time_point& operator-=(difference_type offset) noexcept;
 
 private:
-    time_unit elapsed_ {};
+    offset_type seconds_offset_ {};
+    subsecond_unit subsecond_ {};
 
     using clock_unit = std::chrono::nanoseconds;
-    static time_unit from_chrono(std::chrono::time_point<std::chrono::system_clock, clock_unit> time);
 };
 
 /**
@@ -123,7 +156,10 @@ private:
  * @return the computed time point
  */
 inline constexpr time_point operator+(time_point a, time_point::difference_type b) noexcept {
-    return time_point { a.time_since_epoch() + b };
+    return time_point {
+        a.seconds_since_epoch(),
+        std::chrono::duration_cast<std::chrono::nanoseconds>(a.subsecond()) + b,
+    };
 }
 
 /**
@@ -153,7 +189,10 @@ inline constexpr time_point operator-(time_point a, time_point::difference_type 
  * @return the difference
  */
 inline constexpr time_point::difference_type operator-(time_point a, time_point b) noexcept {
-    return a.time_since_epoch() - b.time_since_epoch();
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(
+            a.seconds_since_epoch() - b.seconds_since_epoch())
+            + std::chrono::duration_cast<std::chrono::nanoseconds>(a.subsecond())
+            - std::chrono::duration_cast<std::chrono::nanoseconds>(b.subsecond());
 }
 
 /**
@@ -164,7 +203,8 @@ inline constexpr time_point::difference_type operator-(time_point a, time_point 
  * @return false otherwise
  */
 inline constexpr bool operator==(time_point a, time_point b) noexcept {
-    return a.time_since_epoch() == b.time_since_epoch();
+    return a.seconds_since_epoch() == b.seconds_since_epoch()
+        && a.subsecond() == b.subsecond();
 }
 
 /**
@@ -204,6 +244,7 @@ template<> struct std::hash<takatori::datetime::time_point> {
      * @return the computed hash code
      */
     constexpr std::size_t operator()(takatori::datetime::time_point object) const noexcept {
-        return object.time_since_epoch().count() * 257;
+        return static_cast<std::size_t>(object.seconds_since_epoch().count()) * 257
+                + static_cast<std::size_t>(object.subsecond().count());
     }
 };

@@ -30,6 +30,14 @@ std::ostream& date::print_to(std::ostream& out) const {
     return out << *this;
 }
 
+bool operator==(date const& a, date const& b) noexcept {
+    return a.get() == b.get();
+}
+
+bool operator!=(date const& a, date const& b) noexcept {
+    return !(a == b);
+}
+
 std::ostream& operator<<(std::ostream& out, date const& value) {
     return out << value.get();
 }

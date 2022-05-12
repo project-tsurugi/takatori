@@ -45,7 +45,7 @@ public:
 
     /**
      * @brief creates a new instance from GMT date and time.
-     * @param year the year (1900-)
+     * @param year the year
      * @param month the month number (1-12) of year
      * @param day the day (1-31) of month
      * @param hour hour of day
@@ -54,13 +54,13 @@ public:
      * @param subsecond sub-second value
      */
     explicit time_point(
-            std::uint32_t year,
+            std::int32_t year,
             std::uint32_t month,
             std::uint32_t day,
             std::uint32_t hour,
             std::uint32_t minute,
             std::uint32_t second,
-            datetime::time_of_day::time_unit subsecond = {}) noexcept;
+            datetime::time_of_day::time_unit subsecond = {});
 
     /**
      * @brief creates a new instance.
@@ -69,8 +69,8 @@ public:
      * @param time time system time point
      */
     template<class Clock, class Duration>
-    explicit time_point(std::chrono::time_point<Clock, Duration> time)
-        : entity_(time)
+    explicit time_point(std::chrono::time_point<Clock, Duration> time) :
+            entity_ { time }
     {}
 
     ~time_point() override = default;

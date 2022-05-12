@@ -18,7 +18,10 @@ public:
     /// @brief time unit.
     using time_unit = std::chrono::duration<std::uint64_t, std::nano>;
 
-    /// @brief unit of subsecond field.
+    /// @brief unit of second-of-day field.
+    using second_unit = std::chrono::duration<std::uint32_t>;
+
+    /// @brief unit of nano-of-second field.
     using subsecond_unit = std::chrono::duration<std::uint32_t, std::nano>;
 
     /// @brief time offset type.
@@ -91,7 +94,15 @@ public:
     }
 
     /**
-     * @brief returns the sub-second value.
+     * @brief returns the second-of-day (`[0,86'400)`).
+     * @return
+     */
+    [[nodiscard]] constexpr second_unit second_of_day() const noexcept {
+        return std::chrono::floor<second_unit>(elapsed_);
+    }
+
+    /**
+     * @brief returns the nano-of-second (`[0,10^9)`).
      * @return the sub-second value
      */
     [[nodiscard]] constexpr subsecond_unit subsecond() const noexcept {
@@ -183,6 +194,7 @@ inline constexpr bool operator==(time_of_day a, time_of_day b) noexcept {
 inline constexpr bool operator!=(time_of_day a, time_of_day b) noexcept {
     return !(a == b);
 }
+
 /**
  * @brief appends string representation of the given value.
  * @param out the target output
