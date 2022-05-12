@@ -42,21 +42,13 @@ static void write_fixed8(
     ++position;
 }
 
-static void write_fixed32(
-        std::uint64_t value,
+template<class T>
+static void write_fixed(
+        T value,
         buffer_view::iterator& position,
         buffer_view::const_iterator end) {
-    for (std::uint64_t i = 1; i <= 4; ++i) {
-        write_fixed8(value >> (32U - i * 8U), position, end);
-    }
-}
-
-static void write_fixed64(
-        std::uint64_t value,
-        buffer_view::iterator& position,
-        buffer_view::const_iterator end) {
-    for (std::uint64_t i = 1; i <= 8; ++i) {
-        write_fixed8(value >> (64U - i * 8U), position, end);
+    for (std::uint64_t i = 1; i <= sizeof(T); ++i) {
+        write_fixed8(value >> ((sizeof(T) - i) * 8U), position, end);
     }
 }
 
@@ -135,7 +127,7 @@ bool write_float4(
     std::memcpy(&bits, &value, sizeof(bits));
 
     write_fixed8(header_float4, position, end);
-    write_fixed32(bits, position, end);
+    write_fixed<std::uint32_t>(bits, position, end);
     return true;
 }
 
@@ -150,7 +142,7 @@ bool write_float8(
     std::memcpy(&bits, &value, sizeof(bits));
 
     write_fixed8(header_float8, position, end);
-    write_fixed64(bits, position, end);
+    write_fixed<std::uint64_t>(bits, position, end);
     return true;
 }
 

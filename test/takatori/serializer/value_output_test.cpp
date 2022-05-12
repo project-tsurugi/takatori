@@ -112,6 +112,12 @@ public:
     }
 };
 
+TEST_F(value_output_test, write_end_of_contents) {
+    EXPECT_EQ(
+            bytes({ header_end_of_contents }),
+            perform([](auto& iter, auto end) { return write_end_of_contents(iter, end); }));
+}
+
 TEST_F(value_output_test, write_null) {
     EXPECT_EQ(
             bytes({ header_unknown }),

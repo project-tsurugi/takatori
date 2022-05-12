@@ -211,4 +211,40 @@ private:
     }
 };
 
+/**
+ * @brief returns whether or not two buffers have equivalent contents.
+ * @tparam U the first block type
+ * @tparam V the second block type
+ * @param left the first buffer
+ * @param right the second buffer
+ * @return `true` if both have equivalent contents
+ * @return `false` otherwise
+ */
+template<class U, class V>
+[[nodiscard]] bool operator==(basic_bitset_view<U> left, basic_bitset_view<V> right) {
+    if (left.size() != right.size()) {
+        return false;
+    }
+    for (std::size_t i = 0, n = left.size(); i < n; ++i) {
+        if (left[i] != right[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * @brief returns whether or not two buffers have different contents.
+ * @tparam U the first block type
+ * @tparam V the second block type
+ * @param left the first buffer
+ * @param right the second buffer
+ * @return `true` if both have different contents
+ * @return `false` otherwise
+ */
+template<class U, class V>
+[[nodiscard]] constexpr bool operator!=(basic_bitset_view<U> left, basic_bitset_view<V> right) noexcept {
+    return !(left == right);
+}
+
 } // namespace takatori::util

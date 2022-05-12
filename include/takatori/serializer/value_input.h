@@ -73,7 +73,7 @@ std::int64_t read_int(util::buffer_view::const_iterator& position, util::buffer_
  * @throws value_input_exception if the encoded value is not valid
  * @see peek_type()
  */
-float peek_float4(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
+float read_float4(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
 
 /**
  * @brief retrieves `float8` entry on the current position.

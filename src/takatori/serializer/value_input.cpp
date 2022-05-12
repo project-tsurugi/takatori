@@ -45,7 +45,7 @@ static std::optional<T> extract(
         std::uint32_t mask,
         T min_value) {
     auto unsigned_value = static_cast<unsigned char>(first);
-    if (header <= unsigned_value && unsigned_value <~ header + mask) {
+    if (header <= unsigned_value && unsigned_value <= header + mask) {
         return { static_cast<T>(unsigned_value - header) + min_value };
     }
     return std::nullopt;
@@ -93,9 +93,9 @@ static T read_fixed(buffer_view::const_iterator& position, buffer_view::const_it
         throw_buffer_underflow();
     }
     T result { 0 };
-    for (std::size_t i = 0; i < sizeof(T); ++i) {
+    for (std::size_t i = 1; i <= sizeof(T); ++i) {
         T value { static_cast<unsigned char>(*position) };
-        result |= value << (i * 8U);
+        result |= value << ((sizeof(T) - i) * 8U);
         ++position;
     }
     return result;
@@ -160,6 +160,7 @@ entry_type peek_type(buffer_view::const_iterator position, buffer_view::const_it
         case header_clob: return entry_type::clob;
         case header_blob: return entry_type::blob;
         case header_end_of_contents: return entry_type::end_of_contents;
+        case header_unknown: return entry_type::null;
 
         case header_decimal4:
         case header_decimal8:
@@ -172,14 +173,13 @@ entry_type peek_type(buffer_view::const_iterator position, buffer_view::const_it
 
 std::int64_t read_int(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
     requires_entry(entry_type::int_, position, end);
-    buffer_view::const_iterator iter = position;
-    auto first = *iter;
+    auto first = *position;
     if (auto value = extract(
             first,
             header_embed_positive_int,
             mask_embed_positive_int,
             min_embed_positive_int_value)) {
-        position = iter;
+        ++position;
         return *value;
     }
     if (auto value = extract(
@@ -187,23 +187,24 @@ std::int64_t read_int(buffer_view::const_iterator& position, buffer_view::const_
             header_embed_negative_int,
             mask_embed_negative_int,
             min_embed_negative_int_value)) {
-        position = iter;
+        ++position;
         return *value;
     }
 
     BOOST_ASSERT(static_cast<unsigned char>(first) == header_int); // NOLINT
+    buffer_view::const_iterator iter = position;
     ++iter;
     auto result = read_sint(iter, end);
     position = iter;
     return result;
 }
 
-float peek_float4(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
+float read_float4(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
     requires_entry(entry_type::float4, position, end);
     buffer_view::const_iterator iter = position;
     ++iter;
 
-    auto bits = read_fixed<std::uint32_t>(position, end);
+    auto bits = read_fixed<std::uint32_t>(iter, end);
     float result {};
     std::memcpy(&result, &bits, sizeof(result));
     position = iter;
@@ -215,7 +216,7 @@ double read_float8(buffer_view::const_iterator& position, buffer_view::const_ite
     buffer_view::const_iterator iter = position;
     ++iter;
 
-    auto bits = read_fixed<std::uint64_t>(position, end);
+    auto bits = read_fixed<std::uint64_t>(iter, end);
     double result {};
     std::memcpy(&result, &bits, sizeof(result));
     position = iter;
@@ -251,6 +252,7 @@ std::string_view read_character(buffer_view::const_iterator& position, buffer_vi
             mask_embed_character,
             min_embed_character_size)) {
         size = *value;
+        ++iter;
     } else {
         BOOST_ASSERT(static_cast<unsigned char>(first) == header_character); // NOLINT
         ++iter;
@@ -273,6 +275,7 @@ std::string_view read_octet(buffer_view::const_iterator& position, buffer_view::
             mask_embed_octet,
             min_embed_octet_size)) {
         size = *value;
+        ++iter;
     } else {
         BOOST_ASSERT(static_cast<unsigned char>(first) == header_octet); // NOLINT
         ++iter;
@@ -295,6 +298,7 @@ const_bitset_view read_bit(buffer_view::const_iterator& position, buffer_view::c
             mask_embed_bit,
             min_embed_bit_size)) {
         size = *value;
+        ++iter;
     } else {
         BOOST_ASSERT(static_cast<unsigned char>(first) == header_bit); // NOLINT
         ++iter;
@@ -311,17 +315,18 @@ const_bitset_view read_bit(buffer_view::const_iterator& position, buffer_view::c
 
 std::size_t read_array_begin(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
     requires_entry(entry_type::array, position, end);
-    buffer_view::const_iterator iter = position;
-    auto first = *iter;
+    auto first = *position;
     if (auto size = extract(
             first,
             header_embed_array,
             mask_embed_array,
             min_embed_array_size)) {
+        ++position;
         return *size;
     }
 
     BOOST_ASSERT(static_cast<unsigned char>(first) == header_array); // NOLINT
+    buffer_view::const_iterator iter = position;
     ++iter;
     auto size = read_size(iter, end);
     position = iter;
@@ -330,17 +335,18 @@ std::size_t read_array_begin(buffer_view::const_iterator& position, buffer_view:
 
 std::size_t read_row_begin(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
     requires_entry(entry_type::row, position, end);
-    buffer_view::const_iterator iter = position;
-    auto first = *iter;
+    auto first = *position;
     if (auto size = extract(
             first,
             header_embed_row,
             mask_embed_row,
             min_embed_row_size)) {
+        ++position;
         return *size;
     }
 
     BOOST_ASSERT(static_cast<unsigned char>(first) == header_row); // NOLINT
+    buffer_view::const_iterator iter = position;
     ++iter;
     auto size = read_size(iter, end);
     position = iter;

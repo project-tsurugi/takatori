@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+
+#include <vector>
+
 #include "value_output.h"
 
 #include <takatori/util/assertion.h>
@@ -8,19 +12,23 @@ namespace takatori::serializer {
 
 /**
  * @brief writes value entries into a backing writer.
- * @tparam T the backed writer type, should declare `T::write(char const* data, std::size_t size) -> result_type`
+ * @tparam Writer the backed writer type, should declare `T::write(char const* data, size_type size) -> result_type`
+ * @tparam Size the size type represents the number of bytes to write
  */
-template<class T>
+template<class Writer, class Size = std::uint32_t>
 class value_writer {
 public:
     /// @brief the backed writer type.
-    using writer_type = T;
+    using writer_type = Writer;
+
+    /// @brief Size the size type represents the number of bytes to write.
+    using size_type = Size;
     
-    /// @brief the result type of `T::write(char const*, std::size_t)`.
+    /// @brief the result type of `T::write(char const*, size_type)`.
     using result_type = decltype(
             std::declval<writer_type>().write(
                     std::declval<char const*>(),
-                    std::declval<std::size_t>()));
+                    std::declval<size_type>()));
 
     /**
      * @brief creates a new instance.
@@ -39,7 +47,7 @@ public:
         auto ret = ::takatori::serializer::write_end_of_contents(iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -52,7 +60,7 @@ public:
         auto ret = ::takatori::serializer::write_null(iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -65,7 +73,7 @@ public:
         auto ret = ::takatori::serializer::write_int(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -79,7 +87,7 @@ public:
         auto ret = ::takatori::serializer::write_float8(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -93,7 +101,7 @@ public:
         auto ret = ::takatori::serializer::write_float8(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -107,7 +115,7 @@ public:
         auto ret = ::takatori::serializer::write_decimal(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -121,7 +129,7 @@ public:
         auto ret = ::takatori::serializer::write_character(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -135,7 +143,7 @@ public:
         auto ret = ::takatori::serializer::write_octet(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -149,7 +157,7 @@ public:
         auto ret = ::takatori::serializer::write_bit(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -157,7 +165,6 @@ public:
      * @brief puts `bit` entry onto the current position.
      * @param blocks the bit blocks
      * @param number_of_bits the number of bits to write
-     * @param position the buffer content iterator
      */
     result_type write_bit(std::string_view blocks, std::size_t number_of_bits) {
         auto buf = buffer(blocks.size() + 16);
@@ -165,7 +172,7 @@ public:
         auto ret = ::takatori::serializer::write_bit(blocks, number_of_bits, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -179,7 +186,7 @@ public:
         auto ret = ::takatori::serializer::write_date(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -193,7 +200,7 @@ public:
         auto ret = ::takatori::serializer::write_time_of_day(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -207,7 +214,7 @@ public:
         auto ret = ::takatori::serializer::write_time_point(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -221,7 +228,7 @@ public:
         auto ret = ::takatori::serializer::write_datetime_interval(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -235,7 +242,7 @@ public:
         auto ret = ::takatori::serializer::write_array_begin(size, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
@@ -249,14 +256,14 @@ public:
         auto ret = ::takatori::serializer::write_row_begin(size, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
-        auto write_size = static_cast<std::size_t>(std::distance(buf.begin(), iter));
+        auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
         return writer_->write(buf.data(), write_size);
     }
 
     // FIXME: impl blob, clob
 
 private:
-    std::string buffer_;
+    std::vector<util::buffer_view::value_type> buffer_;
     writer_type* writer_;
 
     [[nodiscard]] util::buffer_view buffer(std::size_t reserve = 1024) {
