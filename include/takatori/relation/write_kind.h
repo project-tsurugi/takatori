@@ -16,21 +16,23 @@ namespace takatori::relation {
  * @brief represents a write operation kind.
  */
 enum class write_kind {
-    /// @brief inserts rows, or fail if any target rows are already exist
+    /// @brief inserts rows, or fail if any target rows are already exist.
     insert,
-    /// @brief update existing rows, or fail if any target rows are absent
+    /// @brief inserts rows only if individual rows are absent.
+    insert_skip,
+    /// @brief inserts rows, or overwrites even if the target rows already exist.
+    insert_overwrite,
+    /// @brief update existing rows, or fail if any target rows are absent.
     update,
-    /// @brief remove existing rows, or ignore if any target rows are absent
+    /// @brief remove existing rows, or ignore if any target rows are absent.
     delete_,
-    /// @brief inserts rows, or overwrites if any target rows already exist
-    insert_or_update,
 };
 
 /// @brief a set of write_kind.
 using write_kind_set = util::enum_set<
         write_kind,
         write_kind::insert,
-        write_kind::insert_or_update>;
+        write_kind::delete_>;
 
 /**
  * @brief returns string representation of the value.
@@ -42,9 +44,10 @@ constexpr inline std::string_view to_string_view(write_kind value) noexcept {
     using kind = write_kind;
     switch (value) {
         case kind::insert: return "insert"sv;
+        case kind::insert_skip: return "insert_skip"sv;
+        case kind::insert_overwrite: return "insert_overwrite"sv;
         case kind::update: return "update"sv;
         case kind::delete_: return "delete"sv;
-        case kind::insert_or_update: return "insert_or_update"sv;
     }
     std::abort();
 }
@@ -91,9 +94,10 @@ inline auto dispatch(Callback&& callback, write_kind tag_value, Args&&... args) 
     using kind = write_kind;
     switch (tag_value) {
         case kind::insert: return util::enum_tag_callback<kind::insert>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::insert_skip: return util::enum_tag_callback<kind::insert_skip>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::insert_overwrite: return util::enum_tag_callback<kind::insert_overwrite>(std::forward<Callback>(callback), std::forward<Args>(args)...);
         case kind::update: return util::enum_tag_callback<kind::update>(std::forward<Callback>(callback), std::forward<Args>(args)...);
         case kind::delete_: return util::enum_tag_callback<kind::delete_>(std::forward<Callback>(callback), std::forward<Args>(args)...);
-        case kind::insert_or_update: return util::enum_tag_callback<kind::insert_or_update>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

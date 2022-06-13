@@ -113,7 +113,7 @@ TEST_F(write_test, empty_columns) {
 
 TEST_F(write_test, multiple_columns) {
     write expr {
-            write_kind::insert_or_update,
+            write_kind::insert_overwrite,
             tabledesc("T"),
             {
                     { vardesc(1), vardesc(10) },
@@ -125,7 +125,7 @@ TEST_F(write_test, multiple_columns) {
             },
     };
 
-    EXPECT_EQ(expr.operator_kind(), write_kind::insert_or_update);
+    EXPECT_EQ(expr.operator_kind(), write_kind::insert_overwrite);
     EXPECT_EQ(expr.destination(), tabledesc("T"));
     ASSERT_EQ(expr.keys().size(), 1);
     EXPECT_EQ(expr.keys()[0], mapping(vardesc(1), vardesc(10)));
@@ -137,7 +137,7 @@ TEST_F(write_test, multiple_columns) {
 
 TEST_F(write_test, clone) {
     write expr {
-            write_kind::insert_or_update,
+            write_kind::insert_overwrite,
             tabledesc("T"),
             {
                     { vardesc(1), vardesc(10) },
@@ -156,7 +156,7 @@ TEST_F(write_test, clone) {
 
 TEST_F(write_test, clone_move) {
     write expr {
-            write_kind::insert_or_update,
+            write_kind::insert_overwrite,
             tabledesc("T"),
             {
                     { vardesc(1), vardesc(10) },
@@ -179,7 +179,7 @@ TEST_F(write_test, clone_move) {
 
 TEST_F(write_test, output) {
     write expr {
-            write_kind::insert_or_update,
+            write_kind::insert_overwrite,
             tabledesc("T"),
             {
                     { vardesc(1), vardesc(10) },
