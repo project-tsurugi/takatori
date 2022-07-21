@@ -267,7 +267,7 @@ private:
     writer_type* writer_;
 
     [[nodiscard]] util::buffer_view buffer(std::size_t reserve = 1024) {
-        if (reserve < buffer_.size()) {
+        if (buffer_.size() < reserve) {
             buffer_.resize(reserve);
         }
         return util::buffer_view { buffer_.data(), buffer_.size() };
