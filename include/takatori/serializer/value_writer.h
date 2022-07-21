@@ -84,7 +84,7 @@ public:
     result_type write_float4(float value) {
         auto buf = buffer();
         auto *iter = buf.begin();
-        auto ret = ::takatori::serializer::write_float8(value, iter, buf.end());
+        auto ret = ::takatori::serializer::write_float4(value, iter, buf.end());
         BOOST_ASSERT(ret); // NOLINT
 
         auto write_size = static_cast<size_type>(std::distance(buf.begin(), iter));
