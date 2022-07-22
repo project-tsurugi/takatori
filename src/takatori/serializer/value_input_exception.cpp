@@ -3,7 +3,11 @@
 #include <takatori/util/exception.h>
 #include <takatori/util/string_builder.h>
 
+#include "details/value_io_constants.h"
+
 namespace takatori::serializer {
+
+using namespace details;
 
 using ::takatori::util::string_builder;
 using ::takatori::util::throw_exception;
@@ -59,6 +63,17 @@ void throw_int32_value_out_of_range(std::int64_t value) {
                     << "value out of range: " << value << ", "
                     << "must be in [" << std::numeric_limits<std::int32_t>::min() << ", "
                     << std::numeric_limits<std::int32_t>::max() << "]"
+                    << string_builder::to_string,
+    });
+}
+
+void throw_decimal_coefficient_out_of_range(std::size_t nbytes) {
+    throw_exception(value_input_exception {
+            value_input_exception::reason_code::value_out_of_range,
+            string_builder {}
+                    << "decimal value out of range: coefficient bytes=" << nbytes << ", "
+                    << "must be <= " << (max_decimal_coefficient_size - 1) << ", "
+                    << "or = " << max_decimal_coefficient_size  << " and the first byte is 0x00 or 0xff"
                     << string_builder::to_string,
     });
 }

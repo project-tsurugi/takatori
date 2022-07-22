@@ -190,13 +190,45 @@ TEST_F(value_output_test, write_decimal_int) {
             perform([](auto& iter, auto end) { return write_decimal(std::numeric_limits<std::int64_t>::min(), iter, end); }));
 }
 
-TEST_F(value_output_test, write_decimal_full) {
+TEST_F(value_output_test, write_decimal_compact) {
     EXPECT_EQ(
-            sequence(header_decimal16, { bytes({
-                0xa2, 0x07, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x94,
-            }) }),
-            perform([](auto& iter, auto end) { return write_decimal("-3.14", iter, end); }));
+            sequence(header_decimal_compact, { sint(-2), sint(0) }),
+            perform([](auto& iter, auto end) { return write_decimal(decimal::triple { "0.00" }, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_decimal_compact, { sint(-4), sint(31415) }),
+            perform([](auto& iter, auto end) { return write_decimal(decimal::triple { "3.1415" }, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_decimal_compact, { sint(5), sint(std::numeric_limits<std::int64_t>::max()) }),
+            perform([](auto& iter, auto end) { return write_decimal(decimal::triple { std::numeric_limits<std::int64_t>::max(), 5 }, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_decimal_compact, { sint(-5), sint(std::numeric_limits<std::int64_t>::min()) }),
+            perform([](auto& iter, auto end) { return write_decimal(decimal::triple { std::numeric_limits<std::int64_t>::min(), -5 }, iter, end); }));
+}
+
+TEST_F(value_output_test, write_decimal_full) {
+    auto uimax = std::numeric_limits<std::uint64_t>::max();
+    EXPECT_EQ(
+            sequence(header_decimal, { sint(1), uint(9), bytes({ 0, 0x80, 0, 0, 0, 0, 0, 0, 0 }) }),
+            perform([](auto& iter, auto end) { return write_decimal(decimal::triple { +1, 0, 0x8000'0000'0000'0000ULL, 1 }, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_decimal, { sint(-1), uint(9), bytes({ 0xff, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }) }),
+            perform([](auto& iter, auto end) { return write_decimal(decimal::triple { -1, 0, 0x8000'0000'0000'0001ULL, -1 }, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_decimal, { sint(1), uint(17), bytes({
+                    0,
+                    0xff, 0xff, 0xff, 0xff,
+                    0xff, 0xff, 0xff, 0xff,
+                    0xff, 0xff, 0xff, 0xff,
+                    0xff, 0xff, 0xff, 0xff, }) }),
+            perform([=](auto& iter, auto end) { return write_decimal(decimal::triple { +1, uimax, uimax, 1, }, iter, end); }));
+    EXPECT_EQ(
+            sequence(header_decimal, { sint(-1), uint(17), bytes({
+                    0xff,
+                    0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x01, }) }),
+            perform([=](auto& iter, auto end) { return write_decimal(decimal::triple { -1, uimax, uimax, -1, }, iter, end); }));
 }
 
 TEST_F(value_output_test, write_character_embed) {

@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <stdexcept>
+#include <tuple>
 
 #include <cstdint>
 
@@ -20,8 +21,6 @@ using util::const_bitset_view;
 using util::throw_exception;
 
 using byte_type = buffer_view::value_type;
-
-using decimal_type = ::fpdecimal::Decimal;
 
 [[nodiscard]] static std::size_t buffer_remaining(
         buffer_view::const_iterator position,
@@ -148,34 +147,125 @@ bool write_float8(
     return true;
 }
 
-bool write_decimal(
-        decimal_type value,
-        buffer_view::iterator& position,
-        buffer_view::const_iterator end) {
-    if (value.exponent() == 0
-            && std::numeric_limits<std::int64_t>::min() <= value
-            && value <= std::numeric_limits<std::int64_t>::max()) {
-        // write as int
-        auto guard = decimal_type::escape_status();
-        if (auto int_value = value.as<std::int64_t>()) {
-            return write_int(int_value.value_or(0), position, end);
-        }
-        // fall-through if conversion to long is failed
+static bool has_small_coefficient(decimal::triple value) {
+    if (value.coefficient_high() != 0) {
+        return false;
     }
-    {
-        // write as normal decimal
-        if (buffer_remaining(position, end) < 1 + 8 + 8) {
-            return false;
-        }
-        auto bytes = value.to_bytes();
-        write_fixed8(header_decimal16, position, end);
-        write_bytes(
-                reinterpret_cast<byte_type const*>(bytes.data()), // NOLINT
-                bytes.size(),
-                position,
-                end);
+    if (value.coefficient_low() <= static_cast<std::uint64_t>(std::numeric_limits<std::int64_t>::max())) {
         return true;
     }
+    if (value.coefficient_low() == static_cast<std::uint64_t>(std::numeric_limits<std::int64_t>::min())
+            && value.sign() < 0) {
+        return true;
+    }
+    return false;
+}
+
+static std::tuple<std::uint64_t, std::uint64_t, std::size_t> make_signed_coefficient_full(decimal::triple value) {
+    BOOST_ASSERT(!has_small_coefficient(value)); // NOLINT
+    std::uint64_t c_hi = value.coefficient_high();
+    std::uint64_t c_lo = value.coefficient_low();
+
+    if (value.sign() >= 0) {
+        for (std::size_t offset = 0; offset < sizeof(std::uint64_t); ++offset) {
+            std::uint64_t octet = (c_hi >> ((sizeof(std::uint64_t) - offset - 1U) * 8U)) & 0xffU;
+            if (octet != 0) {
+                std::size_t size { sizeof(std::uint64_t) * 2 - offset };
+                if ((octet & 0x80U) != 0) {
+                    ++size;
+                }
+                return { c_hi, c_lo, size };
+            }
+        }
+        return { c_hi, c_lo, sizeof(std::uint64_t) + 1 };
+    }
+
+    // for negative numbers
+
+    if (value.sign() < 0) {
+        c_lo = ~c_lo + 1;
+        c_hi = ~c_hi;
+        if (c_lo == 0) {
+            c_hi += 1; // carry up
+        }
+    }
+
+    for (std::size_t offset = 0; offset < sizeof(std::uint64_t); ++offset) {
+        std::uint64_t octet = (c_hi >> ((sizeof(std::uint64_t) - offset - 1U) * 8U)) & 0xffU;
+        if (octet != 0xffU) {
+            std::size_t size { sizeof(std::uint64_t) * 2 - offset };
+            if ((octet & 0x80U) == 0) {
+                ++size;
+            }
+            return { c_hi, c_lo, size };
+        }
+    }
+    return { c_hi, c_lo, sizeof(std::uint64_t) + 1 };
+}
+
+bool write_decimal(
+        decimal::triple value,
+        buffer_view::iterator& position,
+        buffer_view::const_iterator end) {
+    // small coefficient
+    if (has_small_coefficient(value)) {
+        auto coefficient = static_cast<std::int64_t>(value.coefficient_low());
+        if (value.sign() < 0) {
+            coefficient = -coefficient;
+        }
+
+        // just write as int if exponent is just 0
+        if (value.exponent() == 0) {
+            return write_int(coefficient, position, end);
+        }
+
+        // write compact decimal
+        if (buffer_remaining(position, end) < 1
+                + base128v::size_signed(value.exponent())
+                + base128v::size_signed(coefficient)) {
+            return false;
+        }
+        write_fixed8(header_decimal_compact, position, end);
+        base128v::write_signed(value.exponent(), position, end);
+        base128v::write_signed(coefficient, position, end);
+        return true;
+    }
+
+    // for large coefficient
+    auto [c_hi, c_lo, c_size] = make_signed_coefficient_full(value);
+    BOOST_ASSERT(c_size > sizeof(std::uint64_t)); // NOLINT
+    BOOST_ASSERT(c_size <= sizeof(std::uint64_t) * 2 + 1); // NOLINT
+
+    if (buffer_remaining(position, end) < 1
+            + base128v::size_signed(value.exponent())
+            + base128v::size_unsigned(c_size)
+            + c_size) {
+        return false;
+    }
+
+    write_fixed8(header_decimal, position, end);
+    base128v::write_signed(value.exponent(), position, end);
+    base128v::write_unsigned(c_size, position, end);
+
+    if (c_size > sizeof(std::uint64_t) * 2) {
+        // write sign bit
+        if (value.sign() >= 0) {
+            write_fixed8(0, position, end);
+        } else {
+            write_fixed8(0xffU, position, end);
+        }
+        --c_size;
+    }
+
+    // write octets of coefficient
+    for (std::size_t offset = 0; offset < sizeof(std::uint64_t); ++offset) {
+        *(position + c_size - offset - 1) = static_cast<char>(c_lo >> (offset * 8U));
+    }
+    for (std::size_t offset = 0; offset < c_size - sizeof(std::uint64_t); ++offset) {
+        *(position + c_size - offset - sizeof(std::uint64_t) - 1) = static_cast<char>(c_hi >> (offset * 8U));
+    }
+    position += c_size;
+    return true;
 }
 
 bool write_character(

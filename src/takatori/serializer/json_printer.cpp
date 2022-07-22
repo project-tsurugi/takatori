@@ -268,6 +268,10 @@ void json_printer::number(fpdecimal::Decimal value) {
     impl_->raw(value);
 }
 
+void json_printer::number(decimal::triple value) {
+    impl_->raw(value);
+}
+
 void json_printer::boolean(bool value) {
     impl_->boolean(value);
 }

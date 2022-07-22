@@ -48,6 +48,9 @@ add_test_executable(takatori/value/bit_value_test.cpp)
 add_test_executable(takatori/value/extension_value_test.cpp)
 add_test_executable(takatori/value/value_dispatch_test.cpp)
 
+# decimal
+add_test_executable(takatori/decimal/triple_test.cpp)
+
 # datetime
 add_test_executable(takatori/datetime/date_test.cpp)
 add_test_executable(takatori/datetime/date_interval_test.cpp)

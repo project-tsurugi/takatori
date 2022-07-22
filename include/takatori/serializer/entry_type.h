@@ -29,7 +29,7 @@ enum class entry_type {
     /// @brief fixed 64-bit floating point number.
     float8,
 
-    /// @brief fixed 128-bit floating point decimal.
+    /// @brief decimal number.
     decimal,
 
     /// @brief variable length character sequence.

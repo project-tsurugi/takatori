@@ -29,6 +29,9 @@ add_library(takatori
     takatori/value/datetime_interval.cpp
     takatori/value/extension.cpp
 
+    # decimal
+    takatori/decimal/triple.cpp
+
     # datetime
     takatori/datetime/date.cpp
     takatori/datetime/time_of_day.cpp
@@ -184,6 +187,7 @@ target_include_directories(takatori
 
 target_link_libraries(takatori
     PUBLIC takatori-api
+    PUBLIC mpdecpp
     PUBLIC fpdecimal
     PUBLIC Boost::boost
     PRIVATE ICU::uc

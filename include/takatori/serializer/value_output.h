@@ -6,7 +6,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-#include <fpdecimal/decimal.h>
+#include <takatori/decimal/triple.h>
 
 #include <takatori/datetime/date.h>
 #include <takatori/datetime/time_of_day.h>
@@ -99,7 +99,7 @@ bool write_float8(
  * @return false the remaining buffer is too short to write contents
  */
 bool write_decimal(
-        ::fpdecimal::Decimal value,
+        decimal::triple value,
         util::buffer_view::iterator& position,
         util::buffer_view::const_iterator end);
 

@@ -1,5 +1,6 @@
 #include <takatori/serializer/value_input.h>
 
+#include <algorithm>
 #include <optional>
 #include <stdexcept>
 
@@ -20,8 +21,6 @@ using util::const_buffer_view;
 using util::const_bitset_view;
 
 using byte_type = buffer_view::value_type;
-
-using decimal_type = ::fpdecimal::Decimal;
 
 static void requires_entry(
         entry_type expect,
@@ -155,7 +154,8 @@ entry_type peek_type(buffer_view::const_iterator position, buffer_view::const_it
         case header_int: return entry_type::int_;
         case header_float4: return entry_type::float4;
         case header_float8: return entry_type::float8;
-        case header_decimal16: return entry_type::decimal;
+        case header_decimal_compact: return entry_type::decimal;
+        case header_decimal: return entry_type::decimal;
         case header_character: return entry_type::character;
         case header_octet: return entry_type::octet;
         case header_bit: return entry_type::bit;
@@ -169,10 +169,6 @@ entry_type peek_type(buffer_view::const_iterator position, buffer_view::const_it
         case header_blob: return entry_type::blob;
         case header_end_of_contents: return entry_type::end_of_contents;
         case header_unknown: return entry_type::null;
-
-        case header_decimal4:
-        case header_decimal8:
-            throw_unsupported_entry(static_cast<unsigned char>(head));
 
         default:
             throw_unrecognized_entry(static_cast<unsigned char>(head));
@@ -231,22 +227,117 @@ double read_float8(buffer_view::const_iterator& position, buffer_view::const_ite
     return result;
 }
 
-decimal_type read_decimal(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
+const_buffer_view read_decimal_coefficient(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
+    auto size = read_uint(position, end);
+    if (size == 0 || size > max_decimal_coefficient_size) {
+        throw_decimal_coefficient_out_of_range(size);
+    }
+    auto bytes = read_bytes(size, position, end);
+    if (size != max_decimal_coefficient_size) {
+        return bytes;
+    }
+
+    auto first = static_cast<std::uint8_t>(bytes[0]);
+    // positive is OK because coefficient is [0, 2^128)
+    if (first == 0) {
+        return bytes;
+    }
+
+    if (first == 0xffU) {
+        // check negative value to avoid -2^128 (0xff 0x00.. 0x00)
+        auto const* found = std::find_if(
+                bytes.begin() + 1,
+                bytes.end(),
+                [](auto c) { return c != '\0'; });
+        if (found != bytes.end()) {
+            return bytes;
+        }
+    }
+
+    throw_decimal_coefficient_out_of_range(size);
+}
+
+decimal::triple read_decimal(buffer_view::const_iterator& position, buffer_view::const_iterator end) {
     // int encoded
     if (peek_type(position, end) == entry_type::int_) {
         auto value = read_int(position, end);
-        return decimal_type { value };
+        return decimal::triple { value, 0 };
     }
 
     // decimal encoded
     requires_entry(entry_type::decimal, position, end);
+
     buffer_view::const_iterator iter = position;
+    auto first = static_cast<unsigned char>(*iter);
     ++iter;
 
-    auto bytes = read_bytes(16U, iter, end);
-    auto value = decimal_type::from_bytes(reinterpret_cast<std::uint8_t const*>(bytes.data())); // NOLINT
+    // compact decimal value
+    if (first == header_decimal_compact) {
+        auto exponent = read_sint32(iter, end);
+        auto coefficient = read_sint(iter, end);
+        position = iter;
+        return { coefficient, exponent };
+    }
+
+    // full decimal value
+    BOOST_ASSERT(first == header_decimal); // NOLINT
+
+    auto exponent = read_sint32(iter, end);
+    auto coefficient = read_decimal_coefficient(iter, end);
+
+    // extract lower 8-octets of coefficient
+    std::uint64_t c_lo {};
+    std::uint64_t shift {};
+    for (
+            std::size_t offset = 0;
+            offset < coefficient.size() && offset < sizeof(std::uint64_t);
+            ++offset) {
+        auto pos = coefficient.size() - offset - 1;
+        std::uint64_t octet { static_cast<std::uint8_t>(coefficient[pos]) };
+        c_lo |= octet << shift;
+        shift += 8;
+    }
+
+    // extract upper 8-octets of coefficient
+    std::uint64_t c_hi {};
+    shift = 0;
+    for (
+            std::size_t offset = sizeof(std::uint64_t);
+            offset < coefficient.size() && offset < sizeof(std::uint64_t) * 2;
+            ++offset) {
+        auto pos = coefficient.size() - offset - 1;
+        std::uint64_t octet { static_cast<std::uint8_t>(coefficient[pos]) };
+        c_hi |= octet << shift;
+        shift += 8;
+    }
+
+    bool negative = (static_cast<std::uint8_t>(coefficient[0]) & 0x80U) != 0;
+
+    if (negative) {
+        // sign extension
+        if (coefficient.size() < sizeof(std::uint64_t) * 2) {
+            BOOST_ASSERT(coefficient.size() >= sizeof(std::uint64_t)); // NOLINT
+            auto mask = std::numeric_limits<std::uint64_t>::max(); // 0xfff.....
+            std::size_t rest = (coefficient.size() - sizeof(std::uint64_t)) * 8U;
+            c_hi |= mask << rest;
+        }
+
+        c_lo = ~c_lo + 1;
+        c_hi = ~c_hi;
+        if (c_lo == 0) {
+            c_hi += 1; // carry up
+        }
+        // if negative, coefficient must not be zero
+        BOOST_ASSERT(c_lo != 0 || c_hi != 0); // NOLINT
+    }
+
     position = iter;
-    return value;
+    return decimal::triple {
+        negative ? -1 : +1,
+        c_hi,
+        c_lo,
+        exponent,
+    };
 }
 
 std::string_view read_character(buffer_view::const_iterator& position, buffer_view::const_iterator end) {

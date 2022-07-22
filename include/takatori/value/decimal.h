@@ -1,21 +1,18 @@
 #pragma once
 
+#include <functional>
 #include <ostream>
 #include <string_view>
 
 #include <cstdint>
 
-#include <fpdecimal/decimal.h>
-
 #include "value_kind.h"
 #include "simple_value.h"
 
+#include <takatori/decimal/triple.h>
 #include <takatori/util/meta_type.h>
 
 namespace takatori::value {
-
-/// @brief decimal value type.
-using decimal_t = fpdecimal::Decimal;
 
 /**
  * @brief represents decimal value as polymorphic value model.
@@ -26,16 +23,23 @@ public:
     static constexpr inline value_kind tag = value_kind::decimal;
 
     /// @brief the entity type
-    using entity_type = decimal_t;
+    using entity_type = ::takatori::decimal::triple;
 
     /// @brief the view type
-    using view_type = decimal_t;
+    using view_type = entity_type;
 
     /**
      * @brief creates a new instance.
      * @param value the decimal value
      */
     explicit decimal(entity_type value) noexcept;
+
+    /**
+     * @brief parses C-style string and then creates a new decimal instance.
+     * @param text the source text
+     * @throws std::invalid_argument if text is malformed
+     */
+    decimal(char const* text); // NOLINT
 
     ~decimal() override = default;
     decimal(decimal const& other) = delete;

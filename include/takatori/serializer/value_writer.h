@@ -109,7 +109,7 @@ public:
      * @brief puts `decimal` entry onto the current position.
      * @param value the value to write
      */
-    result_type write_decimal(::fpdecimal::Decimal value) {
+    result_type write_decimal(decimal::triple value) {
         auto buf = buffer();
         auto *iter = buf.begin();
         auto ret = ::takatori::serializer::write_decimal(value, iter, buf.end());

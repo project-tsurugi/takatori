@@ -9,6 +9,8 @@
 
 #include <fpdecimal/decimal.h>
 
+#include <takatori/decimal/triple.h>
+
 namespace takatori::serializer {
 
 /**
@@ -66,6 +68,9 @@ public:
 
     /// @copydoc integer()
     virtual void number(fpdecimal::Decimal value) = 0;
+
+    /// @copydoc integer()
+    virtual void number(decimal::triple value) = 0;
 
     /**
      * @copydoc integer()

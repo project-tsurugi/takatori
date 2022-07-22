@@ -28,13 +28,13 @@ static constexpr std::uint32_t header_float4 = 0xeaU;
 
 static constexpr std::uint32_t header_float8 = 0xebU;
 
-static constexpr std::uint32_t header_reserved_ec = 0xecU;
+static constexpr std::uint32_t header_decimal_compact = 0xecU;
 
-static constexpr std::uint32_t header_decimal4 = 0xedU;
+static constexpr std::uint32_t header_decimal = 0xedU;
 
-static constexpr std::uint32_t header_decimal8 = 0xeeU;
+static constexpr std::uint32_t header_reserved_ee = 0xeeU;
 
-static constexpr std::uint32_t header_decimal16 = 0xefU;
+static constexpr std::uint32_t header_reserved_ef = 0xefU;
 
 static constexpr std::uint32_t header_character = 0xf0U;
 
@@ -120,5 +120,8 @@ static constexpr std::uint32_t min_embed_array_size = 0x01;
 static constexpr std::uint32_t max_embed_array_size = mask_embed_array + min_embed_array_size;
 
 static constexpr std::uint32_t limit_size = static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max()) + 1UL;
+
+
+static constexpr std::uint64_t max_decimal_coefficient_size = sizeof(std::uint64_t) * 2 + 1;
 
 } // namespace takatori::serializer::details

@@ -6,8 +6,12 @@
 
 namespace takatori::value {
 
-decimal::decimal(entity_type value) noexcept
-    : entity_(value)
+decimal::decimal(entity_type value) noexcept :
+    entity_ { value }
+{}
+
+decimal::decimal(char const* text) :
+    entity_ { text }
 {}
 
 value_kind decimal::kind() const noexcept {
@@ -35,12 +39,7 @@ bool decimal::equals(data const& other) const noexcept {
 }
 
 std::size_t decimal::hash() const noexcept {
-    auto&& d = entity_.entity();
-    std::string_view p {
-            reinterpret_cast<std::string_view::const_pointer>(&d), // NOLINT
-            sizeof(d),
-    };
-    return std::hash<std::string_view>{}(p);
+    return std::hash<entity_type> {}(get());
 }
 
 std::ostream& decimal::print_to(std::ostream& out) const {
@@ -48,9 +47,7 @@ std::ostream& decimal::print_to(std::ostream& out) const {
 }
 
 bool operator==(decimal const& a, decimal const& b) noexcept {
-    auto&& d1 = a.get().entity();
-    auto&& d2 = b.get().entity();
-    return std::memcmp(&d1, &d2, sizeof(decltype(d1))) == 0;
+    return a.get() == b.get();
 }
 
 bool operator!=(decimal const& a, decimal const& b) noexcept {

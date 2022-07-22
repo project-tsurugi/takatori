@@ -6,14 +6,19 @@
 
 namespace takatori::value {
 
-class decimal_value_test : public ::testing::Test {};
+class decimal_value_test : public ::testing::Test {
+public:
+    decimal::entity_type parse(std::string const& value) {
+        return static_cast<decimal::entity_type>(::decimal::Decimal(value));
+    }
+};
 
 static_assert(decimal::tag == value_kind::decimal);
 static_assert(std::is_same_v<type_of_t<decimal::tag>, decimal>);
 
 TEST_F(decimal_value_test, simple) {
     decimal v { "3.141592" };
-    EXPECT_EQ(v.get(), "3.141592");
+    EXPECT_EQ(v.get(), decimal::entity_type { "3.141592" });
 }
 
 TEST_F(decimal_value_test, hash) {
@@ -23,17 +28,8 @@ TEST_F(decimal_value_test, hash) {
 
     std::hash<decimal> h {};
     EXPECT_EQ(
-            h(decimal(decimal_t::not_a_number())),
-            h(decimal(decimal_t::not_a_number())));
-    EXPECT_EQ(
-            h(decimal(decimal_t::infinity())),
-            h(decimal(decimal_t::infinity())));
-    EXPECT_EQ(
-            h(decimal(-decimal_t::infinity())),
-            h(decimal(-decimal_t::infinity())));
-    EXPECT_NE(
-            h(decimal(+decimal_t::infinity())),
-            h(decimal(-decimal_t::infinity())));
+            h(decimal("3.14")),
+            h(decimal("3.14")));
     EXPECT_NE(
             h(decimal("0.1")),
             h(decimal("0.10")));

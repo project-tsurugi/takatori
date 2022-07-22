@@ -211,7 +211,7 @@ TEST_F(value_input_test, read_float8) {
 }
 
 TEST_F(value_input_test, read_decimal_int) {
-    using decimal = ::fpdecimal::Decimal;
+    using decimal = decimal::triple;
     {
         auto buf = dump([](auto& iter, auto end) { return write_int(0, iter, end); });
         auto result = restore<decimal>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
@@ -229,11 +229,58 @@ TEST_F(value_input_test, read_decimal_int) {
     }
 }
 
+TEST_F(value_input_test, read_decimal_compact) {
+    {
+        decimal::triple value { 0, -2 };
+        auto buf = dump([=](auto& iter, auto end) { return write_decimal(value, iter, end); });
+        auto result = restore<decimal::triple>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
+        EXPECT_EQ(result, value);
+    }
+    {
+        decimal::triple value { 31415, -4 };
+        auto buf = dump([=](auto& iter, auto end) { return write_decimal(value, iter, end); });
+        auto result = restore<decimal::triple>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
+        EXPECT_EQ(result, value);
+    }
+    {
+        decimal::triple value { std::numeric_limits<std::int64_t>::max(), 5 };
+        auto buf = dump([=](auto& iter, auto end) { return write_decimal(value, iter, end); });
+        auto result = restore<decimal::triple>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
+        EXPECT_EQ(result, value);
+    }
+    {
+        decimal::triple value { std::numeric_limits<std::int64_t>::min(), -5 };
+        auto buf = dump([=](auto& iter, auto end) { return write_decimal(value, iter, end); });
+        auto result = restore<decimal::triple>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
+        EXPECT_EQ(result, value);
+    }
+}
+
 TEST_F(value_input_test, read_decimal_full) {
-    using decimal = ::fpdecimal::Decimal;
-    auto buf = dump([](auto& iter, auto end) { return write_decimal("-3.14", iter, end); });
-    auto result = restore<decimal>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
-    EXPECT_EQ(result, "-3.14");
+    {
+        decimal::triple value { +1, 0, 0x8000'0000'0000'0000ULL, 1 };
+        auto buf = dump([=](auto& iter, auto end) { return write_decimal(value, iter, end); });
+        auto result = restore<decimal::triple>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
+        EXPECT_EQ(result, value);
+    }
+    {
+        decimal::triple value { -1, 0, 0x8000'0000'0000'0001ULL, -1 };
+        auto buf = dump([=](auto& iter, auto end) { return write_decimal(value, iter, end); });
+        auto result = restore<decimal::triple>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
+        EXPECT_EQ(result, value);
+    }
+    {
+        decimal::triple value { +1, std::numeric_limits<std::uint64_t>::max(), std::numeric_limits<std::uint64_t>::max(), +1 };
+        auto buf = dump([=](auto& iter, auto end) { return write_decimal(value, iter, end); });
+        auto result = restore<decimal::triple>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
+        EXPECT_EQ(result, value);
+    }
+    {
+        decimal::triple value { -1, std::numeric_limits<std::uint64_t>::max(), std::numeric_limits<std::uint64_t>::max(), -1 };
+        auto buf = dump([=](auto& iter, auto end) { return write_decimal(value, iter, end); });
+        auto result = restore<decimal::triple>(buf, [](auto& iter, auto end) { return read_decimal(iter, end); });
+        EXPECT_EQ(result, value);
+    }
 }
 
 TEST_F(value_input_test, read_character_embed) {

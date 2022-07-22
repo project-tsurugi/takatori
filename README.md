@@ -25,16 +25,17 @@ optional packages:
 * `graphviz`
 * `clang-tidy-8`
 
-### Install sub-modules
+### Install dependent modules
 
-#### fpdecimal
+#### mpdecimal++ (`>= 2.5.1`)
 
 ```sh
-cd third_party/fpdecimal
-mkdir -p build
-cd build
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Release [-DCMAKE_INSTALL_PREFIX=/path/to/install] -DBUILD_TESTS=OFF -DBUILD_DOCUMENTS=OFF ..
-cmake --build . --target install --clean-first
+curl https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-2.5.1.tar.gz | tar zxv
+
+cd mpdecimal-2.5.1
+./configure --prefix=/path/to/install
+make -j4
+make install # or sudo make install
 ```
 
 ## How to build

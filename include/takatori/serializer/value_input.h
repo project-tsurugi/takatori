@@ -4,7 +4,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-#include <fpdecimal/decimal.h>
+#include <takatori/decimal/triple.h>
 
 #include <takatori/datetime/date.h>
 #include <takatori/datetime/time_of_day.h>
@@ -98,7 +98,7 @@ double read_float8(util::buffer_view::const_iterator& position, util::buffer_vie
  * @throws value_input_exception if the encoded value is not valid
  * @see peek_type()
  */
-::fpdecimal::Decimal read_decimal(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
+decimal::triple read_decimal(util::buffer_view::const_iterator& position, util::buffer_view::const_iterator end);
 
 /**
  * @brief retrieves `character` entry on the current position.

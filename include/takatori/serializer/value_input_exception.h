@@ -74,6 +74,12 @@ private:
 [[noreturn]] void throw_int32_value_out_of_range(std::int64_t value);
 
 /**
+ * @brief raise a new exception for extracted decimal value is out of range.
+ * @param nbytes the number of octets
+ */
+[[noreturn]] void throw_decimal_coefficient_out_of_range(std::size_t nbytes);
+
+/**
  * @brief raise a new exception for extracted size is out of range.
  * @param size the extracted size
  * @param limit the size limit
