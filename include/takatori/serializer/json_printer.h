@@ -29,7 +29,6 @@ public:
     void integer(std::int64_t value) override;
     void unsigned_integer(std::uint64_t value) override;
     void binary_float(double value) override;
-    void number(fpdecimal::Decimal value) override;
     void number(decimal::triple value) override;
     void boolean(bool value) override;
     void pointer(void const* value) override;

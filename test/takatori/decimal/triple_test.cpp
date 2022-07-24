@@ -25,7 +25,7 @@ TEST_F(triple_test, simple) {
 }
 
 TEST_F(triple_test, output) {
-    triple v { "3.1415" };
+    triple v { +31415, -4 };
     std::cout << v << std::endl;
 }
 

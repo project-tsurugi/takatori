@@ -264,10 +264,6 @@ void json_printer::binary_float(double value) {
     impl_->raw(value);
 }
 
-void json_printer::number(fpdecimal::Decimal value) {
-    impl_->raw(value);
-}
-
 void json_printer::number(decimal::triple value) {
     impl_->raw(value);
 }

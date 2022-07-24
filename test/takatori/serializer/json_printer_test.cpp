@@ -32,7 +32,7 @@ TEST_F(json_printer_test, binary_float) {
 
 TEST_F(json_printer_test, number) {
     json_printer printer { buf };
-    printer.number("1.25");
+    printer.number(decimal::triple { "1.25" });
     EXPECT_EQ(buf.str(), "1.25");
 }
 

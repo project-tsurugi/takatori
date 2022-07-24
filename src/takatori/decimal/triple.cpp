@@ -35,7 +35,7 @@ triple::triple(::decimal::Decimal const& value) :
 triple::operator mpd_uint128_triple_t() const noexcept {
     return mpd_uint128_triple_t {
         MPD_TRIPLE_NORMAL,
-        sign_ >= 0 ? std::uint8_t { 1 } : std::uint8_t { 0 },
+        sign_ >= 0 ? std::uint8_t { 0 } : std::uint8_t { 1 },
         coefficient_high_,
         coefficient_low_,
         exponent_,

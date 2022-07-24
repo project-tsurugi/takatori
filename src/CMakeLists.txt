@@ -188,7 +188,6 @@ target_include_directories(takatori
 target_link_libraries(takatori
     PUBLIC takatori-api
     PUBLIC mpdecpp
-    PUBLIC fpdecimal
     PUBLIC Boost::boost
     PRIVATE ICU::uc
     PRIVATE ICU::data
