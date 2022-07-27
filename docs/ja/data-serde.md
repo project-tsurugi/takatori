@@ -38,10 +38,10 @@
 | `0xe9` | `int` | 整数 (`[-2^63, +2^63-1])`)
 | `0xea` | `float4` | binary32
 | `0xeb` | `float8` | binary64
-| `0xec` | _reserved_
-| `0xed` | _reserved_ | decimal32 | 未対応
-| `0xee` | _reserved_ | decimal64 | 未対応
-| `0xef` | `decimal` | decimal128
+| `0xec` | `decimal` | 10進数 (係数部が `[-2^63,+2^63)`)
+| `0xed` | `decimal` | 10進数
+| `0xee` | _reserved_ 
+| `0xef` | _reserved_
 | `0xf0` | `character` | UTF-8 文字列
 | `0xf1` | `octet` | オクテット列
 | `0xf2` | `bit` | ビット列
@@ -88,10 +88,10 @@
 | `0xe9` | `int` | `#e9, v=sint` | `v` の数値
 | `0xea` | `float4` | `#ea, s=b(4)` | `s` からなる binary32
 | `0xeb` | `float8` | `#eb, s=b(8)` | `s` からなる binary64
-| `0xec` | _reserved_ | `#ec`
-| `0xed` | _reserved_ | `#ed`
+| `0xec` | `decimal` | `#ec, e=sint, v=sint` | `v * 10^e`
+| `0xed` | `decimal` | `#ed, e=sint, n=uint, v=b(n)` | v を big-endian の多倍長符号付き整数とみなして `v * 10^e`
 | `0xee` | _reserved_ | `#ee`
-| `0xef` | `decimal` | `#ef, s=b(16)` | `s` からなる decimal128-DPD
+| `0xef` | _reserved_ | `#ef`
 | `0xf0` | `character` | `#f0, n=uint, s=b(n)` | `s` からなる UTF-8 文字列
 | `0xf1` | `octet` | `#f1, n=uint, s=b(n)` | `s` からなるオクテット列
 | `0xf2` | `bit` | `#f2, n=uint, s=d(n)` | `s` からなるビット列
@@ -180,13 +180,5 @@
 
 ## メモ
 
-* decimal library
-  * どちらを使うか
-    * Firebird SQL
-      * https://github.com/FirebirdSQL/decimal-java
-      * decimal 32, 64, 128 とあるが、からなず `BigDecimal` を生成する
-    * BSON
-      * https://bsonspec.org/
-      * Decimal 128 しかないが軽量
-      * -> DPD に対応しておらず、 BID のみだったのでとりあえず除外
-        * C++ 側のライブラリによってはこちらを利用する
+* decimal
+  * `0xed` の `v` は、 `new BigInteger(byte[])`, `BigInteger.toByteArray()` と互換
