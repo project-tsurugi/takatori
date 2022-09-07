@@ -508,7 +508,7 @@ notes:
 ただし、「左のデータ型と上のデータ型を二項文字列昇格する場合に、左のデータ型がどのデータ型になるか」を表している。
 
 |   | `character(m)` | `character varying(m)` | `unknown` |
-|:-:|:-:|:-:|:-:|:-:|
+|:-:|:-:|:-:|:-:|
 | `character(n)` | **`character varying(n')`** | `character varying(n')` | `character varying(n)` |
 | `character varying(n)` | `character varying(n')` | `character varying(n')` | `character varying(n)` |
 | `unknown` | `character varying(0)` | `character varying(0)` | `character varying(0)` |
@@ -668,7 +668,7 @@ notes:
 代入変換が可能な型の組み合わせは以下のとおりである。
 
 | from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `octet` | `octet varying` | `date` | `time_of_day` | `time_point` | `datetime_interval` | `array` | `record` |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |           `boolean` | v | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 |              `int1` | - | v | v | v | v | D | v | v | - | - | - | - | - | - | - | - | - | - | - | - |
 |              `int2` | - | D | v | v | v | D | v | v | - | - | - | - | - | - | - | - | - | - | - | - |
@@ -790,7 +790,7 @@ notes:
 キャスト変換が可能な型の組み合わせは以下のとおりである。
 
 | from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `octet` | `octet varying` | `date` | `time_of_day` | `time_point` | `datetime_interval` | `array` | `record` |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |           `boolean` | v | - | - | - | - | - | - | - | v | v | - | - | - | - | - | - | - | - | - | - |
 |              `int1` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - | - | - |
 |              `int2` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - | - | - |
@@ -830,7 +830,7 @@ notes:
 拡大変換が可能な型の組み合わせは以下のとおりである。
 
 | from \ to | `boolean` | `int1` | `int2` | `int4` | `int8` | `decimal` | `float4` | `float8` | `character` | `character varying` | `bit` | `bit varying` | `octet` | `octet varying` | `date` | `time_of_day` | `time_point` | `datetime_interval` | `array` | `record` |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |           `boolean` | v | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 |              `int1` | - | v | v | v | v | 1 | v | v | - | - | - | - | - | - | - | - | - | - | - | - |
 |              `int2` | - | - | v | v | v | 1 | v | v | - | - | - | - | - | - | - | - | - | - | - | - |
