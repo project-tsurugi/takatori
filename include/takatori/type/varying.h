@@ -44,6 +44,28 @@ private:
 constexpr inline varying_t varying { true };
 
 /**
+ * @brief returns whether or not the both are equivalent.
+ * @param left the first element
+ * @param right the second element
+ * @return true if the both are equivalent
+ * @return false otherwise
+ */
+[[nodiscard]] constexpr bool operator==(varying_t left, varying_t right) {
+    return static_cast<bool>(left) == static_cast<bool>(right);
+}
+
+/**
+ * @brief returns whether or not the both are different.
+ * @param left the first element
+ * @param right the second element
+ * @return true if the both are different
+ * @return false otherwise
+ */
+[[nodiscard]] constexpr bool operator!=(varying_t left, varying_t right) {
+    return !(left == right);
+}
+
+/**
  * @brief appends string representation of varying_t.
  * @param out the target output
  * @param value the value
