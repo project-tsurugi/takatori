@@ -48,7 +48,7 @@ bool decimal::equals(data const& other) const noexcept {
 
 std::size_t
 decimal::hash() const noexcept {
-    constexpr std::size_t flexible = static_cast<std::size_t>(-1);
+    constexpr auto flexible = static_cast<std::size_t>(-1);
     return static_cast<std::size_t>(precision_.value_or(flexible)) * 31
         + static_cast<std::size_t>(scale_.value_or(flexible));
 }
