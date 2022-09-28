@@ -13,8 +13,8 @@ static_assert(std::is_same_v<type_of_t<decimal::tag>, decimal>);
 
 TEST_F(decimal_type_test, simple) {
     decimal t;
-    EXPECT_EQ(t.precision().value_or(9999), 9999);
-    EXPECT_EQ(t.scale(), 0);
+    EXPECT_EQ(t.precision(), std::nullopt);
+    EXPECT_EQ(t.scale(), std::nullopt);
 }
 
 TEST_F(decimal_type_test, parameters) {
@@ -52,6 +52,11 @@ TEST_F(decimal_type_test, clone_move) {
 
 TEST_F(decimal_type_test, output) {
     decimal t { 30, 10 };
+    std::cout << t << std::endl;
+}
+
+TEST_F(decimal_type_test, output_flexible) {
+    decimal t {};
     std::cout << t << std::endl;
 }
 

@@ -46,7 +46,7 @@ bool character::equals(data const& other) const noexcept {
 
 std::size_t
 character::hash() const noexcept {
-    return (varying_ ? 0 : 1) * 31
+    return (varying_ ? 0ULL : 1ULL) * 31ULL
            + static_cast<std::size_t>(length_.value_or(-1));
 }
 

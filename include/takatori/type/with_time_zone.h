@@ -5,14 +5,14 @@
 namespace takatori::type {
 
 /**
- * @brief represents the data type has "varying" attribute.
+ * @brief represents the data type has "with_time_zone" attribute.
  */
-class varying_t {
+class with_time_zone_t {
 public:
     /**
      * @brief creates a new instance.
      */
-    constexpr explicit varying_t(bool enabled) noexcept : enabled_(enabled) {}
+    constexpr explicit with_time_zone_t(bool enabled) noexcept : enabled_ { enabled } {}
 
     /**
      * @brief returns whether or not this attribute is enabled.
@@ -27,8 +27,8 @@ public:
      * @brief flips enable/disable this attribute.
      * @return the flipped attribute
      */
-    constexpr varying_t operator~() const noexcept {
-        return varying_t { !enabled() };
+    constexpr with_time_zone_t operator~() const noexcept {
+        return with_time_zone_t { !enabled() };
     }
 
     /// @copydoc enabled()
@@ -40,20 +40,20 @@ private:
     bool enabled_ { true };
 };
 
-/// @copydoc varying_t
-constexpr inline varying_t varying { true };
+/// @copydoc with_time_zone_t
+constexpr inline with_time_zone_t with_time_zone { true };
 
 /**
- * @brief appends string representation of varying_t.
+ * @brief appends string representation of with_time_zone_t.
  * @param out the target output
  * @param value the value
  * @return the output
  */
-inline std::ostream& operator<<(std::ostream& out, varying_t value) {
+inline std::ostream& operator<<(std::ostream& out, with_time_zone_t value) {
     if (value) {
-        return out << "varying";
+        return out << "with_time_zone";
     }
-    return out << "not varying";
+    return out << "without_time_zone";
 }
 
 } // namespace takatori::type

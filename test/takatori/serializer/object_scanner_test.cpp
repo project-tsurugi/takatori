@@ -281,7 +281,7 @@ TEST_F(object_scanner_test, type_time_of_day) {
 }
 
 TEST_F(object_scanner_test, type_time_point) {
-    print(type::time_point { datetime::time_zone::UTC });
+    print(type::time_point { type::with_time_zone });
 }
 
 TEST_F(object_scanner_test, type_datetime_interval) {

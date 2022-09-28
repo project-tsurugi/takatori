@@ -4,8 +4,7 @@
 
 #include "type_kind.h"
 #include "data.h"
-
-#include <takatori/datetime/time_zone.h>
+#include "with_time_zone.h"
 
 #include <takatori/util/meta_type.h>
 
@@ -20,10 +19,17 @@ public:
     static constexpr inline type_kind tag = type_kind::time_of_day;
 
     /**
-     * @brief creates a new instance.
-     * @param time_zone an optional time zone information
+     * @brief creates a new instance which does not consider time zone offset.
      */
-    explicit time_of_day(std::optional<datetime::time_zone> time_zone = {}) noexcept;
+    constexpr time_of_day() noexcept = default;
+
+    /**
+     * @brief creates a new instance.
+     * @param with_time_zone whether or not this considers time zone offset
+     */
+    explicit constexpr time_of_day(with_time_zone_t with_time_zone) noexcept :
+        with_time_zone_ { with_time_zone }
+    {}
 
     ~time_of_day() override = default;
     time_of_day(time_of_day const& other) = delete;
@@ -36,11 +42,13 @@ public:
     [[nodiscard]] time_of_day* clone() && override;
 
     /**
-     * @brief returns time zone information.
-     * @return time zone information if this object represents the zoned time
-     * @return empty if this object does not have time zone information
+     * @brief returns whether or not this type considers time zone offset.
+     * @return true if this considers time zone offset
+     * @return false otherwise
      */
-    [[nodiscard]] std::optional<datetime::time_zone> const& time_zone() const noexcept;
+    [[nodiscard]] constexpr bool with_time_zone() const noexcept {
+        return with_time_zone_;
+    }
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -74,7 +82,7 @@ protected:
     std::ostream& print_to(std::ostream& out) const override;
 
 private:
-    std::optional<datetime::time_zone> time_zone_;
+    bool with_time_zone_ { false };
 };
 
 template<> struct type_of<time_of_day::tag> : util::meta_type<time_of_day> {};

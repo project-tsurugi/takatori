@@ -28,11 +28,17 @@ bool operator!=(decimal const& a, decimal const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, decimal const& value) {
     out << "decimal(";
     if (value.precision_) {
-        out << value.precision_.value();
+        out << *value.precision_;
     } else {
         out << "*";
     }
-    out << ", " << value.scale_ << ")";
+    out << ", ";
+    if (value.scale_) {
+        out << *value.scale_;
+    } else {
+        out << "*";
+    }
+    out << ")";
     return out;
 }
 
@@ -42,8 +48,9 @@ bool decimal::equals(data const& other) const noexcept {
 
 std::size_t
 decimal::hash() const noexcept {
-    return static_cast<std::size_t>(precision_.value_or(0)) * 31
-        + static_cast<std::size_t>(scale_);
+    constexpr std::size_t flexible = static_cast<std::size_t>(-1);
+    return static_cast<std::size_t>(precision_.value_or(flexible)) * 31
+        + static_cast<std::size_t>(scale_.value_or(flexible));
 }
 
 std::ostream& decimal::print_to(std::ostream& out) const {

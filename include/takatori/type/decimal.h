@@ -25,11 +25,12 @@ public:
      * @param precision the max number of decimal digits in integral and fractional part,
      *                  or empty for flexible size decimals
      * @param scale the number of decimal digits in fractional part,
-     *              which must be less than or equal to precision if it is defined
+     *              which must be less than or equal to precision if it is defined,
+     *              or empty for floating point numbers
      */
-    explicit constexpr decimal(std::optional<size_type> precision = {}, size_type scale = 0) noexcept
-        : precision_(precision)
-        , scale_(scale)
+    explicit constexpr decimal(std::optional<size_type> precision = {}, std::optional<size_type> scale = {}) noexcept :
+        precision_ { precision },
+        scale_ { scale }
     {}
 
     ~decimal() override = default;
@@ -55,7 +56,7 @@ public:
      * @brief returns the number of digits in the fractional part.
      * @return the number of digits in the fractional part
      */
-    [[nodiscard]] constexpr size_type scale() const noexcept {
+    [[nodiscard]] constexpr std::optional<size_type> scale() const noexcept {
         return scale_;
     }
 
@@ -92,7 +93,7 @@ protected:
 
 private:
     std::optional<size_type> precision_;
-    size_type scale_;
+    std::optional<size_type> scale_;
 };
 
 /**

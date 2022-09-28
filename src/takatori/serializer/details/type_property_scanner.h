@@ -45,8 +45,6 @@ public:
 private:
     object_scanner const& scanner_;
     object_acceptor& acceptor_;
-
-    void scan(datetime::time_zone const& tz);
 };
 
 } // namespace takatori::serializer::details

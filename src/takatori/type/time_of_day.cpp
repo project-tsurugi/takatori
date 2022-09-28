@@ -4,28 +4,20 @@
 
 namespace takatori::type {
 
-time_of_day::time_of_day(std::optional<datetime::time_zone> time_zone) noexcept
-    : time_zone_(std::move(time_zone))
-{}
-
 type_kind time_of_day::kind() const noexcept {
     return tag;
 }
 
 time_of_day* time_of_day::clone() const& {
-     return new time_of_day(time_zone_); // NOLINT
+     return new time_of_day(with_time_zone_t { with_time_zone_ }); // NOLINT
 }
 
 time_of_day* time_of_day::clone() && {
-     return new time_of_day(std::move(time_zone_)); // NOLINT
-}
-
-std::optional<datetime::time_zone> const& time_of_day::time_zone() const noexcept {
-    return time_zone_;
+    return new time_of_day(with_time_zone_t { with_time_zone_ }); // NOLINT
 }
 
 bool operator==(time_of_day const& a, time_of_day const& b) noexcept {
-    return a.time_zone_ == b.time_zone_;
+    return a.with_time_zone_ == b.with_time_zone_;
 }
 
 bool operator!=(time_of_day const& a, time_of_day const& b) noexcept {
@@ -33,14 +25,7 @@ bool operator!=(time_of_day const& a, time_of_day const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, time_of_day const& value) {
-    out << "time_of_day(";
-    if (value.time_zone_) {
-        out << "time_zone=" << value.time_zone_.value();
-    } else {
-        out << "time_zone=N/A";
-    }
-    out << ")";
-    return out;
+    return out << "time_of_day(" << with_time_zone_t { value.with_time_zone_ } << ")";
 }
 
 bool time_of_day::equals(data const& other) const noexcept {
@@ -49,7 +34,7 @@ bool time_of_day::equals(data const& other) const noexcept {
 
 std::size_t
 time_of_day::hash() const noexcept {
-    return std::hash<decltype(time_zone_)>{}(time_zone_);
+    return with_time_zone_ ? 1 : 0;
 }
 
 std::ostream& time_of_day::print_to(std::ostream& out) const {
