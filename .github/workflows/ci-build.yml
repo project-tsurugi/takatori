@@ -15,9 +15,13 @@ jobs:
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GHCR_PAT }}
+      volumes:
+        - ${{ vars.ccache_dir }}:${{ vars.ccache_dir }}
     defaults:
       run:
         shell: bash
+    env:
+      CCACHE_DIR: ${{ vars.ccache_dir }}
 
     steps:
       - id: Checkout
@@ -42,7 +46,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/.local -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/.local ..
+          cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER_LAUNCHER=${{ vars.compiler_launcher }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/.local -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/.local ..
           cmake --build . --target all --clean-first -- -j8
 
       - id: CTest
