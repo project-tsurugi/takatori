@@ -13,6 +13,8 @@
 #include "ownership_reference.h"
 #include "reference_iterator.h"
 
+#include <takatori/workaround/gcc11.h>
+
 namespace takatori::util {
 
 /// @cond IMPL_DEFS
@@ -174,7 +176,7 @@ public:
      */
     template<
             class Iter,
-            class = std::enable_if_t<std::is_convertible_v<typename std::iterator_traits<Iter>::reference, const_reference>>>
+            class = workaround::gcc11::enable_if_t<std::is_convertible_v<typename std::iterator_traits<Iter>::reference, const_reference>>>
     reference_vector(Iter first, Iter last)
     {
         assign(first, last);
@@ -346,7 +348,7 @@ public:
      * @param last the ending position (exclusive)
      */
     template<class Iter>
-    std::enable_if_t<std::is_convertible_v<typename std::iterator_traits<Iter>::reference, const_reference>>
+    workaround::gcc11::enable_if_t<std::is_convertible_v<typename std::iterator_traits<Iter>::reference, const_reference>>
     assign(Iter first, Iter last) {
         clear();
         insert(begin(), first, last);
@@ -450,7 +452,7 @@ public:
      * @return the position where the first element inserted
      */
     template<class Iter>
-    std::enable_if_t<std::is_convertible_v<typename std::iterator_traits<Iter>::reference, const_reference>, iterator>
+    workaround::gcc11::enable_if_t<std::is_convertible_v<typename std::iterator_traits<Iter>::reference, const_reference>, iterator>
     insert(const_iterator position, Iter first, Iter last) {
         auto&& es = storage_.elements_;
         auto index = to_internal(position) - es.begin();
