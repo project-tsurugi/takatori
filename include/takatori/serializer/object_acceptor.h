@@ -48,6 +48,32 @@ public:
     virtual ~object_acceptor() = default;
 
     /**
+     * @brief creates a new instance.
+     * @param other the copy source
+     */
+    object_acceptor(object_acceptor const& other) = default;
+
+    /**
+     * @brief assigns the given object into this.
+     * @param other the copy source
+     * @return this
+     */
+    object_acceptor& operator=(object_acceptor const& other) = default;
+
+    /**
+     * @brief creates a new instance.
+     * @param other the move source
+     */
+    object_acceptor(object_acceptor&& other) noexcept = default;
+
+    /**
+     * @brief assigns the given object into this.
+     * @param other the move source
+     * @return this
+     */
+    object_acceptor& operator=(object_acceptor&& other) noexcept = default;
+
+    /**
      * @brief accepts a printable value.
      * @details This converts the given value into its string representation, and pass it into string_value().
      * @tparam T the value type
