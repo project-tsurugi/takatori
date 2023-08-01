@@ -46,7 +46,7 @@ bool octet::equals(data const& other) const noexcept {
 
 std::size_t
 octet::hash() const noexcept {
-    return (varying_ ? 0 : 1) * 31
+    return (varying_ ? 0UL : 1UL) * 31UL
            + static_cast<std::size_t>(length_.value_or(-1));
 }
 
