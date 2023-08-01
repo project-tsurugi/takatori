@@ -2,7 +2,6 @@
 
 #include <functional>
 #include <ostream>
-#include <ostream>
 #include <memory>
 #include <utility>
 
