@@ -120,7 +120,7 @@ protected:
     /**
      * @brief destroys this instance.
      */
-    ~object_acceptor() = default;
+    virtual ~object_acceptor() = default;
 
     /**
      * @brief creates a new instance.

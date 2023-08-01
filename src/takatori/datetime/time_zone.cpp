@@ -26,17 +26,17 @@ static std::shared_ptr<time_zone::impl> from_offset(std::chrono::minutes offset,
     auto minute_part = abs_offset - hour_part;
 
     std::array<char, 64> buffer; // NOLINT
-    std::snprintf(&buffer[0], buffer.size(), // NOLINT
+    std::snprintf(buffer.data(), buffer.size(), // NOLINT
                   "GMT%c%02d:%02d",
                   (offset.count() < 0 ? '-' : '+'),
                   static_cast<int>(hour_part.count()),
                   static_cast<int>(minute_part.count()));
 
-    std::unique_ptr<impl::entity_type> entity { impl::entity_type::createTimeZone(&buffer[0]) };
-    if ((*entity == impl::entity_type::getUnknown()) != 0) {
+    std::unique_ptr<impl::entity_type> entity { impl::entity_type::createTimeZone(buffer.data()) };
+    if (*entity == impl::entity_type::getUnknown()) {
         return {};
     }
-    return std::make_shared<impl>(&buffer[0], std::move(entity));
+    return std::make_shared<impl>(buffer.data(), std::move(entity));
 }
 
 static std::shared_ptr<time_zone::impl> from_symbol(std::string_view symbol, bool or_throw) {
@@ -51,7 +51,7 @@ static std::shared_ptr<time_zone::impl> from_symbol(std::string_view symbol, boo
     }
     icu::UnicodeString string { symbol.data(), static_cast<std::int32_t>(symbol.size()) };
     std::unique_ptr<impl::entity_type> entity { impl::entity_type::createTimeZone(string) };
-    if ((*entity == impl::entity_type::getUnknown()) != 0) {
+    if (*entity == impl::entity_type::getUnknown()) {
         if (or_throw) throw_exception(std::invalid_argument(std::string("unknown time zone symbol: ") += symbol));
         return {};
     }
