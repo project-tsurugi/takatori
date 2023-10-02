@@ -29,6 +29,8 @@ optional packages:
 
 #### mpdecimal++ (`>= 2.5.1`)
 
+NOTE: in Ubuntu 22.04, `libmpdec-dev` package is available.
+
 ```sh
 curl https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-2.5.1.tar.gz | tar zxv
 
