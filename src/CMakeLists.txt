@@ -223,11 +223,6 @@ if (USE_BOOST_MEMORY_RESOURCE)
     target_compile_definitions(takatori PUBLIC USE_BOOST_MEMORY_RESOURCE)
 endif (USE_BOOST_MEMORY_RESOURCE)
 
-set_target_properties(takatori
-    PROPERTIES
-        SOVERSION ${PROJECT_VERSION}
-)
-
 # Add INSTALL_RPATH from CMAKE_INSTALL_PREFIX and CMAKE_PREFIX_PATH
 # The default behavior of CMake omits RUNPATH if it is already in CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES.
 if (FORCE_INSTALL_RPATH)
