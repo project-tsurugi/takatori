@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(takatori-project
-    VERSION 0.1.0
+    VERSION 1.0.0
     DESCRIPTION "Takatori - A generic SQL intermediate representation"
     LANGUAGES C CXX)
 
