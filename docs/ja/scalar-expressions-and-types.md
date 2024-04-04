@@ -799,8 +799,8 @@ notes:
 |           `decimal` | - | v | v | v | v | v | v | v | v | v | - | - | - | - | - | - | - | - | - | - |
 |            `float4` | - | D | D | D | D | D | v | v | v | v | - | - | - | - | - | - | - | - | - | - |
 |            `float8` | - | D | D | D | D | D | v | v | v | v | - | - | - | - | - | - | - | - | - | - |
-|         `character` | D | D | D | D | D | D | D | D | v | D | D | D | D | D | D | D | D | D | D | D |
-| `character varying` | D | D | D | D | D | D | D | D | D | v | D | D | D | D | D | D | D | D | D | D |
+|         `character` | D | D | D | D | D | D | D | D | v | v | D | D | D | D | D | D | D | D | D | D |
+| `character varying` | D | D | D | D | D | D | D | D | v | v | D | D | D | D | D | D | D | D | D | D |
 |               `bit` | - | - | - | - | - | - | - | - | v | v | v | - | - | - | - | - | - | - | - | - |
 |       `bit varying` | - | - | - | - | - | - | - | - | v | v | - | v | - | - | - | - | - | - | - | - |
 |             `octet` | - | - | - | - | - | - | - | - | v | v | - | - | v | - | - | - | - | - | - | - |
