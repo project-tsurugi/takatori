@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "date_interval.h"
 #include "time_interval.h"
 #include "datetime_interval.h"

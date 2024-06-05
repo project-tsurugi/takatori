@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cstdint>
 #include <utility>
 
 #include <boost/container/small_vector.hpp>
