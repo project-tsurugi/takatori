@@ -93,7 +93,7 @@ TEST_F(optional_reference_test, empty) {
     optional_ptr<std::string> ref;
     ASSERT_FALSE(ref);
     EXPECT_THROW(*ref, std::bad_optional_access);
-    EXPECT_THROW(ref->data(), std::bad_optional_access);
+    EXPECT_THROW((void) ref->data(), std::bad_optional_access);
     EXPECT_EQ(ref.begin(), ref.end());
 }
 
@@ -102,7 +102,7 @@ TEST_F(optional_reference_test, nullptr) {
     optional_ptr<std::string> ref {ptr };
     ASSERT_FALSE(ref);
     EXPECT_THROW(*ref, std::bad_optional_access);
-    EXPECT_THROW(ref->data(), std::bad_optional_access);
+    EXPECT_THROW((void) ref->data(), std::bad_optional_access);
     EXPECT_EQ(ref.begin(), ref.end());
 }
 
