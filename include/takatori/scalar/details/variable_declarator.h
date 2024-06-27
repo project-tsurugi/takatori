@@ -203,7 +203,7 @@ public:
      * @return the bound expression
      */
     [[nodiscard]] util::ownership_reference<expression> ownership_value() {
-        return tree::ownership_element_fragment(parent_, variable_);
+        return tree::ownership_element_fragment(parent_, value_);
     }
 
 private:

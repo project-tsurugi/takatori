@@ -69,6 +69,23 @@ TEST_F(let_test, multiple) {
     EXPECT_EQ(expr.body().parent_expression().get(), &expr);
 }
 
+TEST_F(let_test, ownership) {
+    let expr {
+            let::declarator { vardesc(1), constant(2) },
+            varref(1),
+    };
+
+    ASSERT_EQ(expr.variables().size(), 1);
+    auto ownership = expr.variables()[0].ownership_value();
+    auto&& origin = ownership.get();
+
+    EXPECT_EQ(origin, constant(2));
+    ownership.set(std::make_unique<immediate>(util::clone_tag, constant(100)));
+
+    ASSERT_EQ(expr.variables().size(), 1);
+    EXPECT_EQ(expr.variables()[0], (let::declarator { vardesc(1), constant(100) }));
+}
+
 TEST_F(let_test, clone) {
     let expr {
             {
