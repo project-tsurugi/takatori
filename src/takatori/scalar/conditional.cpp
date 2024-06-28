@@ -67,6 +67,10 @@ conditional& conditional::default_expression(std::unique_ptr<expression> default
     return tree::assign_element(*this, default_expression_, std::move(default_expression));
 }
 
+util::ownership_reference<expression> conditional::ownership_default_expression() {
+    return tree::ownership_element(*this, default_expression_);
+}
+
 std::unique_ptr<expression> conditional::release_default_expression() noexcept {
     return tree::release_element(std::move(default_expression_));
 }

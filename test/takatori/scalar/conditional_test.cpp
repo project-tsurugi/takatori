@@ -91,6 +91,41 @@ TEST_F(conditional_test, multiple_alternatives) {
     EXPECT_FALSE(expr.default_expression());
 }
 
+TEST_F(conditional_test, alternatives_ownership) {
+    conditional expr {
+            {
+                    conditional::alternative { constant(1), constant(2) },
+            },
+    };
+    ASSERT_EQ(expr.alternatives().size(), 1);
+
+    auto&& element = expr.alternatives()[0];
+
+    auto oc = element.ownership_condition();
+    auto ob = element.ownership_body();
+    EXPECT_EQ(oc.get(), constant(1));
+    EXPECT_EQ(ob.get(), constant(2));
+
+    oc.set(util::clone_unique(constant(100)));
+    ob.set(util::clone_unique(constant(200)));
+    EXPECT_EQ(oc.get(), constant(100));
+    EXPECT_EQ(ob.get(), constant(200));
+}
+
+TEST_F(conditional_test, default_expression_ownership) {
+    conditional expr {
+            {
+                    conditional::alternative { constant(1), constant(2) },
+            },
+            constant(3),
+    };
+    auto ownership = expr.ownership_default_expression();
+    EXPECT_EQ(ownership.get(), constant(3));
+
+    ownership.set(util::clone_unique(constant(100)));
+    EXPECT_EQ(ownership.get(), constant(100));
+}
+
 TEST_F(conditional_test, clone) {
     conditional expr {
             {
