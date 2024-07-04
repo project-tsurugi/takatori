@@ -74,7 +74,7 @@ immediate& immediate::type(std::shared_ptr<type::data const> type) noexcept {
 
 bool operator==(immediate const& a, immediate const& b) noexcept {
     return a.optional_value() == b.optional_value()
-        && b.optional_type() == b.optional_type();
+        && a.optional_type() == b.optional_type();
 }
 
 bool operator!=(immediate const& a, immediate const& b) noexcept {
