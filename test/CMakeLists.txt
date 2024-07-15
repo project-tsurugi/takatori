@@ -59,6 +59,10 @@ add_test_executable(takatori/datetime/time_interval_test.cpp)
 add_test_executable(takatori/datetime/datetime_interval_test.cpp)
 add_test_executable(takatori/datetime/time_point_test.cpp)
 add_test_executable(takatori/datetime/time_zone_test.cpp)
+add_test_executable(takatori/datetime/datetime_conversion_test.cpp)
+
+# datetime parser
+add_test_executable(takatori/datetime/parser/datetime_parser_test.cpp)
 
 # descriptors
 add_test_executable(takatori/descriptor/descriptor_element_test.cpp)
@@ -168,6 +172,7 @@ add_test_executable(takatori/util/basic_bitset_view_test.cpp)
 add_test_executable(takatori/util/clonable_test.cpp)
 add_test_executable(takatori/util/clonable_ptr_test.cpp)
 add_test_executable(takatori/util/downcast_test.cpp)
+add_test_executable(takatori/util/either_test.cpp)
 add_test_executable(takatori/util/enum_set_test.cpp)
 add_test_executable(takatori/util/exception_test.cpp)
 add_test_executable(takatori/util/fail_test.cpp)

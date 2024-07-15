@@ -1,3 +1,37 @@
+set(FLEX_FLAGS_DEBUG "-d")
+set(FLEX_FLAGS_RELEASE "-Cfe")
+set(FLEX_FLAGS_RELWITHDEBINFO "-Cfe")
+set(FLEX_FLAGS_MINSIZEREL "-Ce")
+
+set(BISON_FLAGS_DEBUG "-Dparse.assert -Dparse.trace")
+set(BISON_FLAGS_RELEASE "")
+set(BISON_FLAGS_RELWITHDEBINFO "")
+set(BISON_FLAGS_MINSIZEREL "")
+
+string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
+set(FLEX_FLAGS "${FLEX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
+set(BISON_FLAGS "-Wall -Werror -Wno-error=conflicts-sr -ra ${BISON_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
+
+FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/takatori/datetime/parser)
+
+FLEX_TARGET(datetime_scanner
+    takatori/datetime/parser/scanner.ll
+    ${CMAKE_CURRENT_BINARY_DIR}/takatori/datetime/parser/scanner_generated.cpp
+    COMPILE_FLAGS "${FLEX_FLAGS}"
+)
+
+BISON_TARGET(datetime_parser
+    takatori/datetime/parser/parser.yy
+    ${CMAKE_CURRENT_BINARY_DIR}/takatori/datetime/parser/parser_generated.cpp
+    COMPILE_FLAGS "${BISON_FLAGS}"
+    VERBOSE REPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/takatori/datetime/parser/parser_report.log
+)
+
+ADD_FLEX_BISON_DEPENDENCY(
+    datetime_scanner
+    datetime_parser
+)
+
 add_library(takatori
 
     # name
@@ -41,7 +75,16 @@ add_library(takatori
     takatori/datetime/datetime_interval.cpp
     takatori/datetime/time_zone.cpp
     takatori/datetime/time_zone_impl.cpp
+    takatori/datetime/conversion.cpp
     takatori/datetime/printing.cpp
+
+    # datetime parser
+    takatori/datetime/parser/region.cpp
+    takatori/datetime/parser/driver.cpp
+    takatori/datetime/parser/scanner.cpp
+    takatori/datetime/parser/parser.cpp
+    ${FLEX_datetime_scanner_OUTPUTS}
+    ${BISON_datetime_parser_OUTPUTS}
 
     # scalar
     takatori/scalar/expression.cpp
@@ -182,7 +225,9 @@ add_library(takatori
 )
 
 target_include_directories(takatori
-    PRIVATE .
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
+    PRIVATE ${FLEX_INCLUDE_DIRS}
 )
 
 target_link_libraries(takatori

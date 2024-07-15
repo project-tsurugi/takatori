@@ -16,7 +16,7 @@ git submodule update --init --recursive
 ```dockerfile
 FROM ubuntu:22.04
 
-RUN apt update -y && apt install -y git build-essential cmake ninja-build libboost-container-dev libboost-stacktrace-dev libicu-dev
+RUN apt update -y && apt install -y git build-essential cmake ninja-build libboost-container-dev libboost-stacktrace-dev libicu-dev flex bison
 ```
 
 optional packages:
@@ -39,6 +39,25 @@ cd mpdecimal-2.5.1
 make -j4
 make install # or sudo make install
 ```
+
+#### GNU Bison `>= 3.6`
+
+This project requires GNU Bison `>= 3.6`.
+Please run `bison --version` and check the printed version.
+
+```sh
+# install packages to build bison
+sudo apt update -y
+sudo apt install -y curl m4
+
+curl http://ftp.jaist.ac.jp/pub/GNU/bison/bison-3.6.4.tar.gz | tar zxv
+cd bison-3.6.4
+./configure --prefix=/path/to/install
+make -j4
+make install # or sudo make install
+```
+
+If you install the above to a non-standard path, please specify `-DCMAKE_PREFIX_PATH=</path/to/install>` to cmake.
 
 ## How to build
 

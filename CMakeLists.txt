@@ -18,6 +18,8 @@ option(ENABLE_COVERAGE "enable coverage on debug build" OFF)
 include(GNUInstallDirs)
 
 find_package(mpdecpp REQUIRED)
+find_package(FLEX REQUIRED)
+find_package(BISON 3.6 REQUIRED)
 
 find_package(ICU 60
     COMPONENTS
