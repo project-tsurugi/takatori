@@ -12,7 +12,10 @@
 namespace takatori::datetime {
 
 /**
- * @brief represents time point since 1970-01-01 00:00:00 GMT.
+ * @brief represents time point since the "epoch" as 1970-01-01 00:00:00.
+ * @details This epoch depends on the kind of time which the object represents.
+ *      For example, if the object represents a local time, the epoch is 1970-01-01 00:00:00 of its local time.
+ *      Otherwise, if the object represents a zoned time, the epoch is 1970-01-01 00:00:00 of the **GMT**.
  */
 class time_point {
 public:
@@ -26,13 +29,13 @@ public:
     using difference_type = std::chrono::nanoseconds;
 
     /**
-     * @brief creates a new instance of the epoch time, which represents 1970-01-01 00:00:00 GMT.
+     * @brief creates a new instance of the epoch time, which represents 1970-01-01 00:00:00.
      */
     constexpr time_point() noexcept = default;
 
     /**
      * @brief creates a new instance
-     * @param offset seconds since 1970-01-01 00:00:00 GMT, ignoring leap seconds
+     * @param offset seconds since 1970-01-01 00:00:00, ignoring leap seconds
      * @param adjustment the sub-second value
      */
     explicit constexpr time_point(offset_type offset, difference_type adjustment = {}) noexcept :
@@ -46,7 +49,7 @@ public:
 
     /**
      * @brief creates a new instance
-     * @param offset elapsed time since 1970-01-01 00:00:00 GMT, ignoring leap seconds
+     * @param offset elapsed time since 1970-01-01 00:00:00, ignoring leap seconds
      */
     template<class Rep, class Period>
     explicit constexpr time_point(std::chrono::duration<Rep, Period> offset) noexcept :
@@ -57,8 +60,8 @@ public:
 
     /**
      * @brief creates a new instance from date and time.
-     * @param date date in GMT
-     * @param time time of the date
+     * @param date date
+     * @param time time of the day
      */
     explicit time_point(datetime::date date, datetime::time_of_day time = {}) noexcept;
 
@@ -80,7 +83,7 @@ public:
     [[nodiscard]] static time_point now();
 
     /**
-     * @brief returns the offset since epoch (1970-01-01 00:00:00 GMT), ignoring leap seconds.
+     * @brief returns the offset since epoch (1970-01-01 00:00:00), ignoring leap seconds.
      * @details the returned value does not contain sub-seconds value, please check nano_adjustments()
      * @return the seconds offset since epoch
      */
@@ -97,7 +100,7 @@ public:
     }
 
     /**
-     * @brief returns the date of the time point (in GMT).
+     * @brief returns the date of the time point.
      * @return the date
      */
     [[nodiscard]] datetime::date date() const {
@@ -107,7 +110,7 @@ public:
     }
 
     /**
-     * @brief returns the time in day of the time point (in GMT).
+     * @brief returns the time in day of the time point.
      * @return the time in day
      */
     [[nodiscard]] constexpr datetime::time_of_day time() const noexcept {
@@ -120,7 +123,7 @@ public:
     }
 
     /**
-     * @brief returns a pair of date and time of the time point (in GMT).
+     * @brief returns a pair of date and time of the time point.
      * @return the date and time
      * @see calendar
      */
