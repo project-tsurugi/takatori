@@ -37,6 +37,7 @@ TEST_F(write_test, simple) {
     EXPECT_EQ(expr.keys()[0], mapping(vardesc(1), vardesc(10)));
     ASSERT_EQ(expr.columns().size(), 1);
     EXPECT_EQ(expr.columns()[0], mapping(vardesc(6), vardesc(60)));
+    ASSERT_EQ(expr.default_columns().size(), 0);
 
     EXPECT_EQ(&expr.input().owner(), &expr);
 
@@ -135,6 +136,29 @@ TEST_F(write_test, multiple_columns) {
     EXPECT_EQ(expr.columns()[2], mapping(vardesc(8), vardesc(80)));
 }
 
+TEST_F(write_test, default_columns) {
+    write expr {
+            write_kind::update,
+            tabledesc("T"),
+            {},
+            {},
+            {
+                    vardesc(10),
+                    vardesc(20),
+                    vardesc(30),
+            },
+    };
+
+    EXPECT_EQ(expr.operator_kind(), write_kind::update);
+    EXPECT_EQ(expr.destination(), tabledesc("T"));
+    ASSERT_EQ(expr.keys().size(), 0);
+    ASSERT_EQ(expr.columns().size(), 0);
+    ASSERT_EQ(expr.default_columns().size(), 3);
+    EXPECT_EQ(expr.default_columns()[0], vardesc(10));
+    EXPECT_EQ(expr.default_columns()[1], vardesc(20));
+    EXPECT_EQ(expr.default_columns()[2], vardesc(30));
+}
+
 TEST_F(write_test, clone) {
     write expr {
             write_kind::insert_overwrite,
@@ -146,6 +170,9 @@ TEST_F(write_test, clone) {
                     { vardesc(6), vardesc(60) },
                     { vardesc(7), vardesc(70) },
                     { vardesc(8), vardesc(80) },
+            },
+            {
+                    vardesc(90),
             },
     };
 
@@ -165,6 +192,9 @@ TEST_F(write_test, clone_move) {
                     { vardesc(6), vardesc(60) },
                     { vardesc(7), vardesc(70) },
                     { vardesc(8), vardesc(80) },
+            },
+            {
+                    vardesc(90),
             },
     };
 
@@ -188,6 +218,9 @@ TEST_F(write_test, output) {
                     { vardesc(6), vardesc(60) },
                     { vardesc(7), vardesc(70) },
                     { vardesc(8), vardesc(80) },
+            },
+            {
+                    vardesc(90),
             },
     };
 

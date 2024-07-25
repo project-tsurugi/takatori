@@ -10,41 +10,50 @@ write::write(
         operator_kind_type operator_kind,
         descriptor::relation destination,
         std::vector<key> keys,
-        std::vector<column> columns) noexcept
-    : input_(*this, 0)
-    , operator_kind_(operator_kind)
-    , destination_(std::move(destination))
-    , keys_(std::move(keys))
-    , columns_(std::move(columns))
+        std::vector<column> columns,
+        std::vector<default_column> default_columns) noexcept :
+    input_ { *this, 0 },
+    operator_kind_ { operator_kind },
+    destination_ { std::move(destination) },
+    keys_ { std::move(keys) },
+    columns_ { std::move(columns) },
+    default_columns_ { std::move(default_columns) }
 {}
 
 write::write(
         operator_kind_type operator_kind,
         descriptor::relation destination,
         std::initializer_list<key> keys,
-        std::initializer_list<column> columns)
-    : write(
+        std::initializer_list<column> columns,
+        std::initializer_list<default_column> default_columns) :
+    write {
             operator_kind,
             std::move(destination),
             { keys.begin(), keys.end() },
-            { columns.begin(), columns.end() })
+            { columns.begin(), columns.end() },
+            { default_columns.begin(), default_columns.end() },
+    }
 {}
 
 
-write::write(util::clone_tag_t, write const& other)
-    : write(
+write::write(util::clone_tag_t, write const& other) :
+    write {
             other.operator_kind_,
             other.destination_,
-            { other.keys_ },
-            { other.columns_ })
+            other.keys_,
+            other.columns_,
+            other.default_columns_
+    }
 {}
 
-write::write(util::clone_tag_t, write&& other)
-    : write(
+write::write(util::clone_tag_t, write&& other) :
+    write {
             other.operator_kind_,
             std::move(other.destination_),
-            { std::move(other.keys_) },
-            { std::move(other.columns_) })
+            std::move(other.keys_),
+            std::move(other.columns_),
+            std::move(other.default_columns_)
+    }
 {}
 
 expression_kind write::kind() const noexcept {
@@ -117,11 +126,20 @@ std::vector<write::column> const& write::columns() const noexcept {
     return columns_;
 }
 
+std::vector<write::default_column>& write::default_columns() noexcept {
+    return default_columns_;
+}
+
+std::vector<write::default_column> const& write::default_columns() const noexcept {
+    return default_columns_;
+}
+
 bool operator==(write const& a, write const& b) noexcept {
     return a.operator_kind() == b.operator_kind()
         && a.destination() == b.destination()
         && a.keys() == b.keys()
-        && a.columns() == b.columns();
+        && a.columns() == b.columns()
+        && a.default_columns() == b.default_columns();
 }
 
 bool operator!=(write const& a, write const& b) noexcept {
@@ -133,7 +151,8 @@ std::ostream& operator<<(std::ostream& out, write const& value) {
                << "operator_kind=" << value.operator_kind() << ", "
                << "destination=" << value.destination() << ", "
                << "keys=" << util::print_support { value.keys() } << ", "
-               << "columns=" << util::print_support { value.columns() } << ")";
+               << "columns=" << util::print_support { value.columns() } << ", "
+               << "default_columns=" << util::print_support { value.default_columns() } << ")";
 }
 
 bool write::equals(expression const& other) const noexcept {

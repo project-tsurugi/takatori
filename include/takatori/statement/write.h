@@ -32,6 +32,9 @@ public:
     /// @brief tuple of each column value.
     using tuple = details::write_tuple;
 
+    /// @brief column on the destination table.
+    using default_column = descriptor::variable;
+
     /// @brief the kind of this statement.
     static constexpr inline statement_kind tag = statement_kind::write;
 
@@ -41,12 +44,14 @@ public:
      * @param destination the target external relation, must represent an index to distinguish individual entries
      * @param columns the destination columns
      * @param tuples the each row data; must be ordered by `columns`
+     * @param default_columns list of the columns to set each default value
      */
     explicit write(
             operator_kind_type operator_kind,
             descriptor::relation destination,
             std::vector<column> columns,
-            std::vector<tuple> tuples) noexcept;
+            std::vector<tuple> tuples,
+            std::vector<default_column> default_columns = {}) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -54,12 +59,14 @@ public:
      * @param destination the target external relation, must represent an index to distinguish individual entries
      * @param columns the destination columns
      * @param tuples the each row data; must be ordered by `columns`
+     * @param default_columns list of the columns to set each default value
      */
     explicit write(
             operator_kind_type operator_kind,
             descriptor::relation destination,
             std::initializer_list<column> columns,
-            std::initializer_list<std::initializer_list<util::rvalue_reference_wrapper<scalar::expression>>> tuples);
+            std::initializer_list<std::initializer_list<util::rvalue_reference_wrapper<scalar::expression>>> tuples,
+            std::initializer_list<default_column> default_columns = {});
 
     /**
      * @brief creates a new object.
@@ -120,6 +127,17 @@ public:
     [[nodiscard]] tree::tree_fragment_vector<tuple> const& tuples() const noexcept;
 
     /**
+     * @brief returns the columns that should be written each default value.
+     * @return the columns that should be written each default value.
+     * @note this only includes the columns explicitly specified to be set to default values (e.g., specified `DEFAULT`).
+     * @note this may include columns that marked as "read-only."
+     */
+    [[nodiscard]] std::vector<default_column>& default_columns() noexcept;
+
+    /// @copydoc default_columns()
+    [[nodiscard]] std::vector<default_column> const& default_columns() const noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @param a the first element
      * @param b the second element
@@ -154,6 +172,7 @@ private:
     descriptor::relation destination_;
     std::vector<column> columns_;
     tree::tree_fragment_vector<tuple> tuples_;
+    std::vector<default_column> default_columns_;
 };
 
 } // namespace takatori::statement

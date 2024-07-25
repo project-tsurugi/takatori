@@ -54,6 +54,7 @@ TEST_F(write_statement_test, simple) {
             EXPECT_EQ(e.parent_element(), std::addressof(stmt));
         }
     }
+    ASSERT_EQ(stmt.default_columns().size(), 0);
 }
 
 TEST_F(write_statement_test, multi_tuples) {
@@ -117,6 +118,34 @@ TEST_F(write_statement_test, multi_tuples) {
     }
 }
 
+TEST_F(write_statement_test, default_columns) {
+    write stmt {
+            write_kind::insert,
+            tabledesc("T0"),
+            {
+            },
+            {
+                    {},
+                    {},
+                    {},
+            },
+            {
+                    columndesc("C0"),
+                    columndesc("C1"),
+                    columndesc("C2"),
+            },
+    };
+
+    ASSERT_EQ(stmt.tuples().size(), 3);
+    ASSERT_EQ(stmt.tuples()[0].elements().size(), 0);
+    ASSERT_EQ(stmt.tuples()[1].elements().size(), 0);
+    ASSERT_EQ(stmt.tuples()[2].elements().size(), 0);
+    ASSERT_EQ(stmt.default_columns().size(), 3);
+    EXPECT_EQ(stmt.default_columns()[0], columndesc("C0"));
+    EXPECT_EQ(stmt.default_columns()[1], columndesc("C1"));
+    EXPECT_EQ(stmt.default_columns()[2], columndesc("C2"));
+}
+
 TEST_F(write_statement_test, clone) {
     write stmt {
             write_kind::insert,
@@ -134,6 +163,9 @@ TEST_F(write_statement_test, clone) {
                             constant(20),
                             constant(21),
                     },
+            },
+            {
+                    columndesc("C2"),
             },
     };
 
@@ -159,6 +191,9 @@ TEST_F(write_statement_test, clone_move) {
                             constant(20),
                             constant(21),
                     },
+            },
+            {
+                    columndesc("C2"),
             },
     };
 
@@ -188,6 +223,9 @@ TEST_F(write_statement_test, output) {
                             constant(20),
                             constant(21),
                     },
+            },
+            {
+                    columndesc("C2"),
             },
     };
 

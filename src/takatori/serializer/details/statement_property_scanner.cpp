@@ -33,6 +33,10 @@ void statement_property_scanner::operator()(statement::write const& element) {
     acceptor_.property_begin("tuples"sv);
     accept_foreach(element.tuples());
     acceptor_.property_end();
+
+    acceptor_.property_begin("default_columns"sv);
+    accept_foreach(element.default_columns());
+    acceptor_.property_end();
 }
 
 void statement_property_scanner::operator()(statement::create_table const& element) {

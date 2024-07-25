@@ -11,23 +11,28 @@ write::write(
         operator_kind_type operator_kind,
         descriptor::relation destination,
         std::vector<column> columns,
-        std::vector<tuple> tuples) noexcept
-    : operator_kind_(operator_kind)
-    , destination_(std::move(destination))
-    , columns_(std::move(columns))
-    , tuples_(*this, std::move(tuples))
+        std::vector<tuple> tuples,
+        std::vector<default_column> default_columns) noexcept :
+    operator_kind_ { operator_kind },
+    destination_ { std::move(destination) },
+    columns_ { std::move(columns) },
+    tuples_ { *this, std::move(tuples) },
+    default_columns_ { std::move(default_columns) }
 {}
 
 write::write(
         operator_kind_type operator_kind,
         descriptor::relation destination,
         std::initializer_list<column> columns,
-        std::initializer_list<std::initializer_list<util::rvalue_reference_wrapper<scalar::expression>>> tuples)
-    : write(
+        std::initializer_list<std::initializer_list<util::rvalue_reference_wrapper<scalar::expression>>> tuples,
+        std::initializer_list<default_column> default_columns) :
+    write {
             operator_kind,
             std::move(destination),
             { columns.begin(), columns.end() },
-            {})
+            {},
+            { default_columns.begin(), default_columns.end() }
+    }
 {
     tuples_.reserve(tuples.size());
     for (auto&& tuple : tuples) {
@@ -35,20 +40,24 @@ write::write(
     }
 }
 
-write::write(util::clone_tag_t, write const& other) noexcept
-    : write(
+write::write(util::clone_tag_t, write const& other) noexcept :
+    write {
             other.operator_kind_,
             other.destination_,
-            { other.columns_ },
-            tree::forward(other.tuples_))
+            other.columns_,
+            tree::forward(other.tuples_),
+            other.default_columns_,
+    }
 {}
 
-write::write(util::clone_tag_t, write&& other) noexcept
-    : write(
+write::write(util::clone_tag_t, write&& other) noexcept :
+    write {
             other.operator_kind_,
             std::move(other.destination_),
-            { std::move(other.columns_) },
-            tree::forward(std::move(other.tuples_)))
+            std::move(other.columns_),
+            tree::forward(std::move(other.tuples_)),
+            std::move(other.default_columns_),
+    }
 {}
 
 statement_kind write::kind() const noexcept {
@@ -96,11 +105,20 @@ tree::tree_fragment_vector<write::tuple> const& write::tuples() const noexcept {
     return tuples_;
 }
 
+std::vector<write::default_column>& write::default_columns() noexcept {
+    return default_columns_;
+}
+
+std::vector<write::default_column> const& write::default_columns() const noexcept {
+    return default_columns_;
+}
+
 bool operator==(write const& a, write const& b) noexcept {
     return a.operator_kind() == b.operator_kind()
             && a.destination() == b.destination()
             && a.columns() == b.columns()
-            && a.tuples() == b.tuples();
+            && a.tuples() == b.tuples()
+            && a.default_columns() == b.default_columns();
 }
 
 bool operator!=(write const& a, write const& b) noexcept {
@@ -112,7 +130,8 @@ std::ostream& operator<<(std::ostream& out, write const& value) {
             << "operator_kind=" << value.operator_kind() << ", "
             << "destination=" << value.destination() << ", "
             << "columns=" << util::print_support { value.columns() } << ", "
-            << "tuples=" << value.tuples() << ")";
+            << "tuples=" << value.tuples() << ", "
+            << "default_columns=" << util::print_support { value.default_columns() } << ")";
 }
 
 bool write::equals(statement const& other) const noexcept {

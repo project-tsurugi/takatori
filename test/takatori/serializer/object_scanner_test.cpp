@@ -556,6 +556,10 @@ TEST_F(object_scanner_test, relation_write) {
                     { vardesc(3), vardesc(4) },
                     { vardesc(5), vardesc(6) },
             },
+            {
+                    vardesc(7),
+                    vardesc(8),
+            },
     });
 }
 
@@ -928,6 +932,9 @@ TEST_F(object_scanner_test, statement_write) {
                             scalar::variable_reference { vardesc(0) },
                             scalar::variable_reference { vardesc(1) },
                     },
+            },
+            {
+                    columndesc("C2"),
             },
     });
 }

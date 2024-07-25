@@ -145,6 +145,10 @@ void relation_expression_property_scanner::operator()(relation::write const& ele
     acceptor_.property_begin("columns"sv);
     accept_foreach(element.columns());
     acceptor_.property_end();
+
+    acceptor_.property_begin("default_columns"sv);
+    accept_foreach(element.default_columns());
+    acceptor_.property_end();
 }
 
 void relation_expression_property_scanner::operator()(relation::values const& element) {
