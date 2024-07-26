@@ -27,6 +27,12 @@ public:
     /// @brief time offset type.
     using difference_type = std::chrono::nanoseconds;
 
+    /// @brief signed time unit for calculation
+    using signed_time_unit = std::chrono::duration<std::int64_t, std::nano>;
+
+    /// @brief the max value.
+    static constexpr std::uint64_t day = 86'400 * static_cast<std::uint64_t>(time_unit::period::den);
+
     /// @brief the max value.
     static constexpr time_unit max_value {
         std::chrono::duration_cast<time_unit>(second_unit { 86400 }) - time_unit { 1 },
@@ -133,7 +139,6 @@ private:
     time_unit elapsed_ {};
 
     static constexpr time_unit normalize(time_unit time) noexcept {
-        constexpr std::uint64_t day = 86'400 * static_cast<std::uint64_t>(time_unit::period::den);
         return time_unit(time.count() % day);
     }
 };
@@ -145,7 +150,9 @@ private:
  * @return the computed time
  */
 inline constexpr time_of_day operator+(time_of_day a, time_of_day::difference_type b) noexcept {
-    return time_of_day { a.time_since_epoch() + b };
+    constexpr auto s = std::chrono::nanoseconds{time_of_day::day};
+    auto d = b.count() < 0 ? (-b / s * s + s + b) : b ;
+    return time_of_day { std::chrono::duration_cast<time_of_day::signed_time_unit>(a.time_since_epoch()) + d };
 }
 
 /**
@@ -175,7 +182,11 @@ inline constexpr time_of_day operator-(time_of_day a, time_of_day::difference_ty
  * @return the difference
  */
 inline constexpr time_of_day::difference_type operator-(time_of_day a, time_of_day b) noexcept {
-    return a.time_since_epoch() - b.time_since_epoch();
+    constexpr auto s = std::chrono::nanoseconds{time_of_day::day};
+    auto diff = std::chrono::duration_cast<time_of_day::signed_time_unit>(a.time_since_epoch()) -
+           std::chrono::duration_cast<time_of_day::signed_time_unit>(b.time_since_epoch());
+    auto d = diff.count() < 0 ? (-diff / s * s + s + diff) : diff ;
+    return d;
 }
 
 /**
