@@ -27,10 +27,13 @@ public:
     /// @brief time offset type.
     using difference_type = std::chrono::nanoseconds;
 
-    /// @brief the max value.
-    static constexpr time_unit max_value {
-        std::chrono::duration_cast<time_unit>(second_unit { 86400 }) - time_unit { 1 },
+    /// @brief the modulo of the day in the time unit.
+    static constexpr time_unit modulo {
+        std::chrono::duration_cast<time_unit>(second_unit { 86'400 } ),
     };
+
+    /// @brief the max value.
+    static constexpr time_unit max_value { modulo - time_unit { 1 }, };
 
     /**
      * @brief creates a new instance which represents 00:00:00 of day.
@@ -56,11 +59,13 @@ public:
             std::uint32_t hour,
             std::uint32_t minute,
             std::uint32_t second,
-            time_unit subsecond = time_unit::zero()) noexcept
-        : elapsed_(std::chrono::duration<std::uint64_t, std::chrono::hours::period>(hour)
-                + std::chrono::duration<std::uint64_t, std::chrono::minutes::period>(minute)
-                + std::chrono::duration<std::uint64_t, std::chrono::seconds::period>(second)
-                + subsecond)
+            time_unit subsecond = time_unit::zero()) noexcept:
+        time_of_day {
+                std::chrono::duration<std::uint64_t, std::chrono::hours::period>(hour)
+                        + std::chrono::duration<std::uint64_t, std::chrono::minutes::period>(minute)
+                        + std::chrono::duration<std::uint64_t, std::chrono::seconds::period>(second)
+                        + subsecond
+        }
     {}
 
     /**
@@ -145,7 +150,10 @@ private:
  * @return the computed time
  */
 inline constexpr time_of_day operator+(time_of_day a, time_of_day::difference_type b) noexcept {
-    return time_of_day { a.time_since_epoch() + b };
+    constexpr auto signed_modulo = std::chrono::duration_cast<time_of_day::difference_type>(time_of_day::modulo);
+    auto b_normalized = std::chrono::duration_cast<time_of_day::time_unit>(signed_modulo + b % signed_modulo);
+    auto r_normalized = (a.time_since_epoch() + b_normalized) % time_of_day::modulo;
+    return time_of_day { r_normalized };
 }
 
 /**
@@ -175,7 +183,9 @@ inline constexpr time_of_day operator-(time_of_day a, time_of_day::difference_ty
  * @return the difference
  */
 inline constexpr time_of_day::difference_type operator-(time_of_day a, time_of_day b) noexcept {
-    return a.time_since_epoch() - b.time_since_epoch();
+    auto sa = std::chrono::duration_cast<time_of_day::difference_type>(a.time_since_epoch());
+    auto sb = std::chrono::duration_cast<time_of_day::difference_type>(b.time_since_epoch());
+    return sa - sb;
 }
 
 /**
