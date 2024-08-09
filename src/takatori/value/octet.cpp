@@ -63,4 +63,50 @@ std::ostream& operator<<(std::ostream& out, octet const& value) {
     return out << ")";
 }
 
+util::either<std::string, std::size_t> parse_octet(std::string_view literal, std::string& buffer) {
+    using std::string_literals::operator""s;
+    std::size_t hex_digit_count = 0;
+    for (auto c : literal) {
+        if (c == ' ') {
+            continue;
+        }
+        if (('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f')) {
+            ++hex_digit_count;
+            continue;
+        }
+        return "invalid character in octet string"s;
+    }
+    if (hex_digit_count % 2 != 0) {
+        return "unexpected end of octet string (odd hex digits)"s;
+    }
+    std::size_t octet_count = hex_digit_count / 2;
+
+    std::size_t offset { buffer.size() };
+    buffer.resize(offset + octet_count);
+    std::uint8_t octet {};
+    bool high = true;
+    for (auto c : literal) {
+        if (c == ' ') {
+            continue;
+        }
+        if ('0' <= c && c <= '9') {
+            octet |= static_cast<std::uint8_t>(c - '0');
+        } else if ('A' <= c && c <= 'F') {
+            octet |= static_cast<std::uint8_t>(c - 'A' + 10);
+        } else if ('a' <= c && c <= 'f') {
+            octet |= static_cast<std::uint8_t>(c - 'a' + 10);
+        }
+        if (high) {
+            high = false;
+            octet = static_cast<std::uint8_t>(octet << 4U);
+            continue;
+        }
+        high = true;
+        buffer[offset] = static_cast<std::string::value_type>(octet);
+        octet = 0U;
+        ++offset;
+    }
+    return octet_count;
+}
+
 } // namespace takatori::value

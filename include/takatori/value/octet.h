@@ -7,6 +7,7 @@
 #include "value_kind.h"
 #include "simple_value.h"
 
+#include <takatori/util/either.h>
 #include <takatori/util/meta_type.h>
 
 namespace takatori::value {
@@ -92,6 +93,16 @@ bool operator!=(octet const& a, octet const& b) noexcept;
  * @return the output
  */
 std::ostream& operator<<(std::ostream& out, octet const& value);
+
+/**
+ * @brief parses the given literal as an octet string.
+ * @details The input literal must be a sequence of __octet values__, that is consists of two hexadecimal digits.
+ * @param literal the source literal
+ * @param buffer the buffer to store the parsed octet in its tail
+ * @return the number of parsed octets
+ * @return an error message if the conversion was failed
+ */
+[[nodiscard]] util::either<std::string, std::size_t> parse_octet(std::string_view literal, std::string& buffer);
 
 /**
  * @brief type_of for octet.
