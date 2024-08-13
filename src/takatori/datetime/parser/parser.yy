@@ -138,7 +138,13 @@ time
 offset
     : sign[s] INTEGER[h]
         {
-            $$ = offset_type { $s, $h, 0 };
+            auto sign = $s;
+            auto field = $h;
+            if (field > 100) {
+                $$ = offset_type { sign, field / 100, field % 100 };
+            } else {
+                $$ = offset_type { sign, field, 0 };
+            }
         }
     | sign[s] INTEGER[h] ":" INTEGER[m]
         {

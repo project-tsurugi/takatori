@@ -267,4 +267,18 @@ TEST_F(datetime_parser_test, offset_hour) {
     EXPECT_EQ(info.offset->minute, 0);
 }
 
+TEST_F(datetime_parser_test, offset_without_colon) {
+    auto r = parse("+0102");
+    ASSERT_TRUE(r.has_value()) << error(r);
+    auto&& info = r.value();
+
+    EXPECT_FALSE(info.date);
+    EXPECT_FALSE(info.time);
+
+    ASSERT_TRUE(info.offset);
+    EXPECT_TRUE(info.offset->plus);
+    EXPECT_EQ(info.offset->hour, 1);
+    EXPECT_EQ(info.offset->minute, 2);
+}
+
 } // namespace takatori::datetime::parser
