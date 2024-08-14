@@ -194,7 +194,7 @@ public:
      * @return this
      */
     variable_declarator& value(std::unique_ptr<expression> value) noexcept {
-        tree::assign_element_fragment(parent_, variable_, std::move(value));
+        tree::assign_element_fragment(parent_, value_, std::move(value));
         return *this;
     }
 
