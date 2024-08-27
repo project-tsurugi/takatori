@@ -96,6 +96,29 @@ bool operator!=(character const& a, character const& b) noexcept;
 std::ostream& operator<<(std::ostream& out, character const& value);
 
 /**
+ * @brief truncates the given UTF-8 encoded string to the specified size in bytes.
+ * @details
+ *      This function ensures that the returned string is a well-formed UTF-8 sequence
+ *      only if the input string is also well-formed. It truncates the input string
+ *      such that the byte size does not exceed the specified limit, without splitting
+ *      multi-byte UTF-8 characters.
+ *
+ *      If the input is not a well-formed UTF-8 string, the function will truncate it
+ *      to a length up to the specified size (may be up to 3 bytes smaller).
+ *
+ *      This function does not modify the original string and returns a view into the
+ *      truncated portion.
+ *
+ *      If the input string is shorter than the specified size, the function returns
+ *      just the original string.
+ *
+ * @param str the input UTF-8 encoded string.
+ * @param size the maximum size in bytes.
+ * @return a view of the truncated string, which will be no larger than the specified size.
+ */
+std::string_view truncate_utf8(std::string_view str, std::size_t size);
+
+/**
  * @brief type_of for character.
  */
 template<> struct type_of<character::tag> : util::meta_type<character> {};

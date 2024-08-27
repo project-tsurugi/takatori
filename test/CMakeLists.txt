@@ -47,6 +47,7 @@ add_test_executable(takatori/value/octet_value_test.cpp)
 add_test_executable(takatori/value/bit_value_test.cpp)
 add_test_executable(takatori/value/extension_value_test.cpp)
 add_test_executable(takatori/value/value_dispatch_test.cpp)
+add_test_executable(takatori/value/truncate_utf8_test.cpp)
 
 # decimal
 add_test_executable(takatori/decimal/triple_test.cpp)
