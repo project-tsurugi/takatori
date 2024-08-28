@@ -466,19 +466,26 @@ notes:
 
 |   | `int1` | `int2` | `int4` | `int8` | `decimal` |  `float4` | `float8` | `unknown` |
 |--:|--:|--:|--:|--:|--:|--:|--:|--:|
-| `int1` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal(3)` | `float4` | `float8` | **`int4`** |
-| `int2` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal(5)` | `float4` | `float8` | **`int4`** |
-| `int4` | `int4` | `int4` | `int4` | `int8` | `decimal(10)` | `float8` | `float8` | `int4` |
-| `int8` | `int8` | `int8` | `int8` | `int8` | `decimal(19)` | `float8` | `float8` | `int8` |
-| `decimal(*,*)` | `decimal(*,*)` | `decimal(*,*)` | `decimal(*,*)` | `decimal(*,*)` | `decimal(*,*)` | `float8`| `float8` | `decimal(p,s)` |
-| `float4` | `float4` | `float4` | `float8` | `float8` | `float8` | `float8` | `float8` | `float4` |
+| `int1` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal` | `float8` | `float8` | **`int4`** |
+| `int2` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal` | `float8` | `float8` | **`int4`** |
+| `int4` | `int4` | `int4` | `int4` | `int8` | `decimal` | `float8` | `float8` | `int4` |
+| `int8` | `int8` | `int8` | `int8` | `int8` | `decimal` | `float8` | `float8` | `int8` |
+| `decimal` | `decimal` | `decimal` | `decimal` | `decimal` | `decimal` | `float8`| `float8` | `decimal` |
+| `float4` | `float8` | `float8` | `float8` | `float8` | `float8` | `float4` | `float8` | `float4` |
 | `float8` | `float8` | `float8` | `float8` | `float8` | `float8` | `float8` | `float8` | `float8` |
-| `unknown` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal(0, 0)` |  `float4` | `float8` | **`int4`** |
+| `unknown` | **`int4`** | **`int4`** | `int4` | `int8` | `decimal` |  `float4` | `float8` | **`int4`** |
 
 ----
 notes:
 
-* decimal の精度等の情報は、計算の過程で無視される
+* `decimal` と `decimal` 以外の型計算は、以下のように行う
+  * いずれかが `unknown` の場合、もう片方の型をそのまま返す
+  * そうでなく、いずれかの型が `int{1,2,4}` の場合、当該型を `decimal(10)` に昇格したうえで再度計算を行う
+  * そうでなく、いずれかの型が `int8` の場合、当該型を `decimal(19)` に昇格したうえで再度計算を行う
+  * そうでなく、いずれかの型が `float4`, `float8` の場合、 `float8` に変換する
+* `a=decimal(p,s)`, `b=decimal(q,t)` の型計算は以下のように行う
+  * スケールが異なる場合、結果は `decimal(*,*)` とする
+  * スケールが同一の場合、結果は `decimal(max(p,q),s)` とする
 * tiny/small int に対する二項演算は存在しない
 
 ### 単項文字列昇格
@@ -507,15 +514,13 @@ notes:
 それぞれの項のデータ型に対する、型変換後のデータ型は以下のとおりである。
 ただし、「左のデータ型と上のデータ型を二項文字列昇格する場合に、左のデータ型がどのデータ型になるか」を表している。
 
-|   | `character(m)` | `character varying(m)` | `unknown` |
+|   | `character` | `character varying` | `unknown` |
 |:-:|:-:|:-:|:-:|
-| `character(n)` | **`character varying(n')`** | `character varying(n')` | `character varying(n)` |
-| `character varying(n)` | `character varying(n')` | `character varying(n')` | `character varying(n)` |
-| `unknown` | `character varying(0)` | `character varying(0)` | `character varying(0)` |
+| `character` | **`character varying`** | `character varying` | `character varying` |
+| `character varying` | `character varying` | `character varying` | `character varying` |
+| `unknown` | `character varying` | `character varying` | `character varying(0)` |
 
-また、二項で文字列のエンコーディング方式が同じである場合、元のエンコーディングを利用する。
-そうでなく、エンコーディングが異なる場合、エンコーディングを強制的に `UTF-8` に設定する。
-上記の `n'` はエンコーディングが変化した際に、元のエンコーディングにおける `n` と「同じ文字数」の値を表す。
+昇格結果のサイズは、両者が同一であれば元のサイズを利用し、それ以外では `*` となる。
 
 ### 単項ビット列昇格
 
@@ -561,11 +566,11 @@ notes:
 それぞれの項のデータ型に対する、型変換後のデータ型は以下のとおりである。
 ただし、「左のデータ型と上のデータ型を二項オクテット列昇格する場合に、左のデータ型がどのデータ型になるか」を表している。
 
-|   | `octet(m)` | `octet varying(m)` | `unknown` |
+|   | `octet` | `octet varying` | `unknown` |
 |:-:|:-:|:-:|:-:|
-| `octet(n)` | **`octet varying(n)`** | `octet varying(n)` | `octet varying(n)` |
-| `octet varying(n)` | `octet varying(n)` | `octet varying(n)` | `octet varying(n)` |
-| `unknown` | `octet varying(0)` | `octet varying(0)` | `octet varying(0)` |
+| `octet` | **`octet varying`** | `octet varying` | `octet varying` |
+| `octet varying` | `octet varying` | `octet varying` | `octet varying` |
+| `unknown` | `octet varying` | `octet varying` | `octet varying(0)` |
 
 ### 単項時間昇格
 
@@ -590,19 +595,15 @@ notes:
 それぞれの項のデータ型に対する、型変換後のデータ型は以下のとおりである。
 ただし、「左のデータ型と上のデータ型を二項時間昇格する場合に、左のデータ型がどのデータ型になるか」を表している。
 
-|   | `date` | `time_of_day(z')` | `time_point(z')` | `unknown` |
+|   | `date` | `time_of_day` | `time_point` | `unknown` |
 |:-:|:-:|:-:|:-:|:-:|
-| `date` | `date` | `time_point(z')` | `time_point(z')` | `date` |
-| `time_of_day(z)` | `time_point(z)` | `time_of_day(z'')` | `time_point(z'')` | `time_of_day(z)` |
-| `time_point(z)` | `time_point(z)` | `time_point(z'')` | `time_point(z'')` | `time_point(z)` |
-| `unknown` | `date` | `time_of_day(z')` | `time_point(z')` | **`time_point()`** |
+| `date` | `date` | `time_point` | `time_point` | `date` |
+| `time_of_day` | `time_point` | `time_of_day` | `time_point` | `time_of_day` |
+| `time_point` | `time_point` | `time_point` | `time_point` | `time_point` |
+| `unknown` | `date` | `time_of_day` | `time_point` | **`time_point`** |
 
-なお、タイムゾーンを表す `z''` は次のように計算する。
-
-* `z`, `z'` のいずれもタイムゾーンを利用しない - `z''` はタイムゾーンを利用しない
-* `z`, `z'` のいずれかがタイムゾーンを利用する - `z''` はタイムゾーンを利用する
-  * タイムゾーンを利用しない値 (ローカルタイム) は、ローカルタイムをシステムのタイムゾーンが付与された時間とみなした値に変換する
-    * 例: システムのタイムゾーン `+9:00` である場合、ローカルタイム `2001-01-01 00:00:00` は `2001-01-01 00:00:00+9:00` に変換される
+各項でタイムゾーンの有無 (`WITH/WITHOUT TIME ZONE`) が異なる場合、結果はタイムゾーンありとする。
+そうでなく、タイムゾーンの有無が同一の場合、タイムゾーンの有無をそのまま引き継ぐ。
 
 ### 単項時間間隔昇格
 
@@ -679,7 +680,6 @@ note:
   * `t{i-1}'`, `t{i}` がいずれも文字列型分類の場合、 `t{i-1}'`, `t{i}` に二項文字列昇格を適用した型を `t{i}'` とする
   * `t{i-1}'`, `t{i}` がいずれもビット列型分類の場合、 `t{i-1}'`, `t{i}` に二項ビット列昇格を適用した型を `t{i}'` とする
   * `t{i-1}'`, `t{i}` がいずれもオクテット列型分類の場合、 `t{i-1}'`, `t{i}` に二項オクテット列昇格を適用した型を `t{i}'` とする
-  * `t{i-1}'`, `t{i}` がいずれも時間型分類の場合、 `t{i-1}'`, `t{i}` に二項時間昇格を適用した型を `t{i}'` とする
   * `t{i-1}'`, `t{i}` がいずれも時間間隔型分類の場合、 `t{i-1}'`, `t{i}` に二項時間間隔昇格を適用した型を `t{i}'` とする
   * 上記以外で、 `t{i-1}` と `t{i}` が同一の型である場合、 `t{i}` に恒等変換を適用した結果を `t{i}'` とする
   * それ以外の場合、型変換に失敗する
@@ -690,6 +690,7 @@ note:
 notes:
 
 * 単に単項・二項昇格で畳み込むだけ
+* 一時的に、時間型分類の取り扱いを厳密にし、同一型のみ単一化を可能にしている
 
 ### 代入変換
 
