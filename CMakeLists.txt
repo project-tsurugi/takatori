@@ -36,9 +36,10 @@ find_package(ICU 60
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
+set(boost_stacktrace_component stacktrace_backtrace)
 find_package(Boost 1.65
     COMPONENTS container
-    COMPONENTS stacktrace_backtrace
+    COMPONENTS ${boost_stacktrace_component}
     REQUIRED)
 
 find_package(Doxygen
