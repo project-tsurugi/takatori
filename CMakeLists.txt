@@ -36,11 +36,18 @@ find_package(ICU 60
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-set(boost_stacktrace_component stacktrace_backtrace)
 find_package(Boost 1.65
     COMPONENTS container
-    COMPONENTS ${boost_stacktrace_component}
+    OPTIONAL_COMPONENTS stacktrace_backtrace stacktrace_basic
     REQUIRED)
+if(Boost_STACKTRACE_BACKTRACE_FOUND
+   AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+    set(boost_stacktrace_component stacktrace_backtrace)
+elseif(Boost_STACKTRACE_BASIC_FOUND)
+    set(boost_stacktrace_component stacktrace_basic)
+else()
+    message(FATAL_ERROR "No usable Boost stacktrace component")
+endif()
 
 find_package(Doxygen
     OPTIONAL_COMPONENTS dot)

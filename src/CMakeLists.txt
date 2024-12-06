@@ -245,7 +245,7 @@ target_compile_definitions(takatori
     PUBLIC BOOST_ENABLE_ASSERT_DEBUG_HANDLER
 )
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if (boost_stacktrace_component STREQUAL "stacktrace_backtrace")
     target_link_libraries(takatori
         PUBLIC Boost::stacktrace_backtrace
         PUBLIC ${CMAKE_DL_LIBS}
@@ -254,9 +254,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         PUBLIC BOOST_STACKTRACE_USE_BACKTRACE
     )
 else()
-    # FIXME: more compilers
     target_link_libraries(takatori
-        PUBLIC Boost::stacktrace_noop
+        PUBLIC Boost::stacktrace_basic
+        PUBLIC ${CMAKE_DL_LIBS}
     )
 endif()
 
