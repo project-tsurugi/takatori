@@ -48,6 +48,12 @@ enum class type_kind {
     /// @brief date-time interval type.
     datetime_interval,
 
+    // large objects
+    /// @brief binary large object type.
+    blob,
+    /// @brief character large object type.
+    clob,
+
     // complex types
 
     /// @brief array type.
@@ -116,6 +122,8 @@ constexpr inline std::string_view to_string_view(type_kind value) noexcept {
         case kind::time_of_day: return "time_of_day"sv;
         case kind::time_point: return "time_point"sv;
         case kind::datetime_interval: return "datetime_interval"sv;
+        case kind::blob: return "blob"sv;
+        case kind::clob: return "clob"sv;
         case kind::array: return "array"sv;
         case kind::record: return "record"sv;
         case kind::unknown: return "unknown"sv;

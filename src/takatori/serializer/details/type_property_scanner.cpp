@@ -6,9 +6,11 @@ namespace takatori::serializer::details {
 
 using namespace std::string_view_literals;
 
-type_property_scanner::type_property_scanner(object_scanner const& scanner, object_acceptor& acceptor) noexcept
-    : scanner_(scanner)
-    , acceptor_(acceptor)
+type_property_scanner::type_property_scanner(
+        object_scanner const& scanner,
+        object_acceptor& acceptor) noexcept :
+    scanner_ { scanner },
+    acceptor_ { acceptor }
 {}
 
 void type_property_scanner::operator()(type::boolean const&) {}
@@ -90,6 +92,10 @@ void type_property_scanner::operator()(type::time_point const& element) {
 }
 
 void type_property_scanner::operator()(type::datetime_interval const&) {}
+
+void type_property_scanner::operator()(type::blob const&) {}
+
+void type_property_scanner::operator()(type::clob const&) {}
 
 void type_property_scanner::operator()(type::unknown const&) {}
 

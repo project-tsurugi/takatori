@@ -25,6 +25,7 @@
 #include <takatori/type/time_of_day.h>
 #include <takatori/type/time_point.h>
 #include <takatori/type/datetime_interval.h>
+#include <takatori/type/lob.h>
 #include <takatori/type/row_id.h>
 #include <takatori/type/declared.h>
 #include <takatori/type/extension.h>
@@ -286,6 +287,14 @@ TEST_F(object_scanner_test, type_time_point) {
 
 TEST_F(object_scanner_test, type_datetime_interval) {
     print(type::datetime_interval {});
+}
+
+TEST_F(object_scanner_test, type_blob) {
+    print(type::blob {});
+}
+
+TEST_F(object_scanner_test, type_clob) {
+    print(type::clob {});
 }
 
 TEST_F(object_scanner_test, type_unknown) {

@@ -16,6 +16,7 @@
 #include "time_of_day.h"
 #include "time_point.h"
 #include "datetime_interval.h"
+#include "lob.h"
 // #include "array.h"
 // #include "record.h"
 // #include "row_reference.h"
@@ -58,6 +59,8 @@ inline auto dispatch(Callback&& callback, data const& object, Args&&... args) {
         case time_of_day::tag: return util::polymorphic_callback<time_of_day>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case time_point::tag: return util::polymorphic_callback<time_point>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case datetime_interval::tag: return util::polymorphic_callback<datetime_interval>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case blob::tag: return util::polymorphic_callback<blob>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
+        case clob::tag: return util::polymorphic_callback<clob>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 //        case array::tag: return util::polymorphic_callback<array>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
 //        case record::tag: return util::polymorphic_callback<record>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);
         case unknown::tag: return util::polymorphic_callback<unknown>(std::forward<Callback>(callback), object, std::forward<Args>(args)...);

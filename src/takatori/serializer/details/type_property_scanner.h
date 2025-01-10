@@ -9,6 +9,7 @@
 #include <takatori/type/time_of_day.h>
 #include <takatori/type/time_point.h>
 #include <takatori/type/datetime_interval.h>
+#include <takatori/type/lob.h>
 #include <takatori/type/row_id.h>
 #include <takatori/type/declared.h>
 #include <takatori/type/extension.h>
@@ -37,6 +38,8 @@ public:
     void operator()(type::time_of_day const& element);
     void operator()(type::time_point const& element);
     void operator()(type::datetime_interval const& element);
+    void operator()(type::blob const& element);
+    void operator()(type::clob const& element);
     void operator()(type::unknown const& element);
     void operator()(type::row_id const& element);
     void operator()(type::declared const& element);
