@@ -7,10 +7,11 @@ namespace takatori::util {
 
 void fail(std::string_view message) noexcept {
     if (!message.empty()) {
-        std::cerr << message << std::endl;
+        std::cerr << message << '\n';
     }
     std::cerr << ::boost::stacktrace::stacktrace {}
-              << std::endl;
+              << '\n'
+              << std::flush;
     std::abort();
 }
 

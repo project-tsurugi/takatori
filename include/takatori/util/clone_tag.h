@@ -26,6 +26,6 @@ using is_clone_constructible = std::is_constructible<T, clone_tag_t, T const&>;
 
 /// @copydoc is_clone_constructible
 template<class T>
-static constexpr bool is_clone_constructible_v = is_clone_constructible<T>::value;
+static constexpr bool is_clone_constructible_v = is_clone_constructible<T>::value; // NOLINT(modernize-type-traits)
 
 } // namespace takatori::util

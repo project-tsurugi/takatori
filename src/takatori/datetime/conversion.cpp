@@ -88,7 +88,7 @@ conversion_result<date_info> parse_date(std::string_view contents) {
     if (info.offset) {
         return "invalid zone offset field is present"s;
     }
-    return *info.date;
+    return *info.date; // NOLINT(bugprone-unchecked-optional-access) - checked in require_date()
 }
 
 conversion_result<time_info> parse_time(std::string_view contents) {
@@ -107,7 +107,7 @@ conversion_result<time_info> parse_time(std::string_view contents) {
     if (info.offset) {
         return "invalid zone offset field is present"s;
     }
-    return *info.time;
+    return *info.time; // NOLINT(bugprone-unchecked-optional-access) - checked in require_time()
 }
 
 conversion_result<datetime_info> parse_datetime(std::string_view contents) {
@@ -133,7 +133,7 @@ conversion_result<datetime_info> parse_datetime(std::string_view contents) {
             return std::move(*error);
         }
     }
-    return datetime_info { *info.date, *info.time, info.offset };
+    return datetime_info { *info.date, *info.time, info.offset }; // NOLINT(bugprone-unchecked-optional-access) - checked in require_date()
 }
 
 conversion_result<zone_offset_info> parse_zone_offset(std::string_view contents) {
@@ -152,7 +152,7 @@ conversion_result<zone_offset_info> parse_zone_offset(std::string_view contents)
     if (auto&& error = require_offset(info.offset)) {
         return std::move(*error);
     }
-    return *info.offset;
+    return *info.offset; // NOLINT(bugprone-unchecked-optional-access) - checked in require_offset()
 }
 
 } // namespace takatori::datetime

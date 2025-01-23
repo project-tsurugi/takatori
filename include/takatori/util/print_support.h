@@ -25,7 +25,7 @@ using is_printable = std::is_convertible<detect_t<impl::print_t, T>, std::ostrea
 
 /// @copydoc is_printable
 template<class T>
-inline constexpr bool is_printable_v = is_printable<T>::value;
+inline constexpr bool is_printable_v = is_printable<T>::value; // NOLINT(modernize-type-traits)
 
 /**
  * @brief printing support for no-printable objects.

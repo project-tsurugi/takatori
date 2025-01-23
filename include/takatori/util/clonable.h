@@ -30,7 +30,7 @@ template<class T> using is_clonable = std::is_convertible<
 
 /// @copydoc is_clonable
 template<class T>
-constexpr inline bool is_clonable_v = is_clonable<T>::value;
+constexpr inline bool is_clonable_v = is_clonable<T>::value; // NOLINT(modernize-type-traits)
 
 /**
  * @brief returns a clone of the given object.

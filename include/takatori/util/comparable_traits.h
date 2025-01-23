@@ -40,7 +40,7 @@ using is_equal_comparable = std::is_convertible<detect_t<impl::equal_t, A, B>, b
 
 /// @copydoc is_equal_comparable
 template<class A, class B>
-constexpr inline bool is_equal_comparable_v = is_equal_comparable<A, B>::value;
+constexpr inline bool is_equal_comparable_v = is_equal_comparable<A, B>::value; // NOLINT(modernize-type-traits)
 
 /**
  * @brief provides whether or not "!=" operator exists between the given types.
@@ -52,7 +52,7 @@ using is_not_equal_comparable = std::is_convertible<detect_t<impl::not_equal_t, 
 
 /// @copydoc is_not_equal_comparable
 template<class A, class B>
-constexpr inline bool is_not_equal_comparable_v = is_not_equal_comparable<A, B>::value;
+constexpr inline bool is_not_equal_comparable_v = is_not_equal_comparable<A, B>::value; // NOLINT(modernize-type-traits)
 
 /**
  * @brief provides whether or not "<" operator exists between the given types.
@@ -64,7 +64,7 @@ using is_less_comparable = std::is_convertible<detect_t<impl::less_t, A, B>, boo
 
 /// @copydoc is_less_comparable
 template<class A, class B>
-constexpr inline bool is_less_comparable_v = is_less_comparable<A, B>::value;
+constexpr inline bool is_less_comparable_v = is_less_comparable<A, B>::value; // NOLINT(modernize-type-traits)
 
 /**
  * @brief provides whether or not ">" operator exists between the given types.
@@ -76,7 +76,7 @@ using is_greater_comparable = std::is_convertible<detect_t<impl::greater_t, A, B
 
 /// @copydoc is_greater_comparable
 template<class A, class B>
-constexpr inline bool is_greater_comparable_v = is_greater_comparable<A, B>::value;
+constexpr inline bool is_greater_comparable_v = is_greater_comparable<A, B>::value; // NOLINT(modernize-type-traits)
 
 /**
  * @brief provides whether or not "<=" operator exists between the given types.
@@ -88,7 +88,7 @@ using is_less_equal_comparable = std::is_convertible<detect_t<impl::less_equal_t
 
 /// @copydoc is_less_equal_comparable
 template<class A, class B>
-constexpr inline bool is_less_equal_comparable_v = is_less_equal_comparable<A, B>::value;
+constexpr inline bool is_less_equal_comparable_v = is_less_equal_comparable<A, B>::value; // NOLINT(modernize-type-traits)
 
 /**
  * @brief provides whether or not "<=" operator exists between the given types.
@@ -100,6 +100,6 @@ using is_greater_equal_comparable = std::is_convertible<detect_t<impl::greater_e
 
 /// @copydoc is_greater_equal_comparable
 template<class A, class B>
-constexpr inline bool is_greater_equal_comparable_v = is_greater_equal_comparable<A, B>::value;
+constexpr inline bool is_greater_equal_comparable_v = is_greater_equal_comparable<A, B>::value; // NOLINT(modernize-type-traits)
 
 } // namespace takatori::util

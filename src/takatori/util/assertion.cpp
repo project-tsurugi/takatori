@@ -15,9 +15,10 @@ namespace boost {
     if (msg != nullptr) {
         std::cerr << " : " << msg;
     }
-    std::cerr << std::endl
+    std::cerr << '\n'
               << trace
-              << std::endl;
+              << '\n'
+              << std::flush;
     std::abort();
 }
 
