@@ -78,7 +78,7 @@ add_library(takatori-api INTERFACE)
 target_include_directories(takatori-api
     INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${export_name}>
+        $<INSTALL_INTERFACE:include/${export_name}>
 )
 
 add_subdirectory(src)
@@ -96,19 +96,19 @@ install(
     EXPORT
         ${export_name}
     LIBRARY
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        DESTINATION lib
         COMPONENT Runtime
     ARCHIVE
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/${export_name}
+        DESTINATION lib/${export_name}
         COMPONENT Development
     RUNTIME
-        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        DESTINATION bin
         COMPONENT Runtime
 )
 
 install(
     DIRECTORY include/
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${export_name}"
+    DESTINATION "include/${export_name}"
     COMPONENT Development
     FILES_MATCHING PATTERN "*.h"
 )
@@ -129,12 +129,12 @@ install(
         ${CMAKE_CURRENT_BINARY_DIR}/${package_name}-config.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/${package_name}-config-version.cmake
     DESTINATION
-        ${CMAKE_INSTALL_LIBDIR}/cmake/${package_name}
+        lib/cmake/${package_name}
 )
 
 install(
     EXPORT ${package_name}
     FILE ${package_name}-targets.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${package_name}
+    DESTINATION lib/cmake/${package_name}
     EXPORT_LINK_INTERFACE_LIBRARIES
 )
