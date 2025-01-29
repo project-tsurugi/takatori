@@ -271,7 +271,7 @@ endif (USE_BOOST_MEMORY_RESOURCE)
 
 set_target_properties(takatori
     PROPERTIES
-        INSTALL_RPATH "\$ORIGIN/../lib"
+        INSTALL_RPATH "\$ORIGIN"
 )
 
 install(
