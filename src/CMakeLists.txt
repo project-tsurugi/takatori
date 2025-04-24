@@ -32,6 +32,12 @@ ADD_FLEX_BISON_DEPENDENCY(
     datetime_parser
 )
 
+set_source_files_properties(
+    ${BISON_datetime_parser_OUTPUTS}
+    PROPERTIES
+    COMPILE_OPTIONS -Wno-unused-but-set-variable
+)
+
 add_library(takatori
 
     # name
