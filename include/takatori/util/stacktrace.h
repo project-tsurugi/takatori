@@ -3,7 +3,7 @@
 // FIXME: move to common core module
 
 #if defined(BOOST_STACKTRACE_USE_BACKTRACE) \
-        && !defined(DBOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE) \
+        && !defined(BOOST_STACKTRACE_BACKTRACE_INCLUDE_FILE) \
         && !__has_include(<backtrace.h>)
 
 // NOTE: clang-tidy cannot detect <backtrace.h>
