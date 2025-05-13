@@ -48,6 +48,12 @@ TEST_F(json_printer_test, string_escape) {
     EXPECT_EQ(buf.str(), "\"\\r\\n\\t\\\"\\\\\"");
 }
 
+TEST_F(json_printer_test, string_multibyte) {
+    json_printer printer { buf };
+    printer.string("\u{3042}");
+    EXPECT_EQ(buf.str(), "\"\u{3042}\"");
+}
+
 TEST_F(json_printer_test, boolean) {
     json_printer printer { buf };
     printer.boolean(true);

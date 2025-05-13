@@ -228,13 +228,13 @@ private:
                 case '\\': out_ << "\\\\"; break;
                 case '"': out_ << "\\\""; break;
                 default: {
-                    if (c < 0x20) {
+                    if (0x00 <= c && c < 0x20) {
                         util::instant_fill filler { out_, '0' };
                         out_ << "\\x"
                              << std::hex << std::setw(2) << static_cast<unsigned char>(c)
                              << std::dec;
                     } else {
-                        out_ << c; break;
+                        out_.put(c);
                     }
                     break;
                 }
