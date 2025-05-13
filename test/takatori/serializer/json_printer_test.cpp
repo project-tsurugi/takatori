@@ -50,8 +50,8 @@ TEST_F(json_printer_test, string_escape) {
 
 TEST_F(json_printer_test, string_multibyte) {
     json_printer printer { buf };
-    printer.string("\u{3042}");
-    EXPECT_EQ(buf.str(), "\"\u{3042}\"");
+    printer.string("\u3042");
+    EXPECT_EQ(buf.str(), "\"\u3042\"");
 }
 
 TEST_F(json_printer_test, boolean) {
