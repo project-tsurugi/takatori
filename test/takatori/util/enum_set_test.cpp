@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+
 namespace takatori::util {
 
 class enum_set_test : public ::testing::Test {};
