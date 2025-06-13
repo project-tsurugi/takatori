@@ -231,7 +231,7 @@ private:
                 default: {
                     if (uc < 0x20 || uc > 0xf7) {
                         util::instant_fill filler { out_, '0' };
-                        out_ << "\\x"
+                        out_ << "\\\\x"
                              << std::hex << std::setw(2) << static_cast<unsigned int>(uc)
                              << std::dec;
                     } else {
