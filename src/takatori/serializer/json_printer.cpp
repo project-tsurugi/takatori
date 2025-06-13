@@ -221,6 +221,7 @@ private:
     void print_string(std::string_view value) {
         out_ << '"';
         for (auto c : value) {
+            auto uc = static_cast<unsigned char>(c);
             switch (c) {
                 case '\n': out_ << "\\n"; break;
                 case '\r': out_ << "\\r"; break;
@@ -228,10 +229,10 @@ private:
                 case '\\': out_ << "\\\\"; break;
                 case '"': out_ << "\\\""; break;
                 default: {
-                    if (0x00 <= c && c < 0x20) {
+                    if (uc < 0x20 || uc > 0xf7) {
                         util::instant_fill filler { out_, '0' };
                         out_ << "\\x"
-                             << std::hex << std::setw(2) << static_cast<unsigned char>(c)
+                             << std::hex << std::setw(2) << static_cast<unsigned int>(uc)
                              << std::dec;
                     } else {
                         out_.put(c);
