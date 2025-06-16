@@ -199,7 +199,7 @@ public:
     template<
             class U,
             class = std::enable_if_t<
-                    std::is_convertible_v<U, const_reference>>>
+                    std::is_convertible_v<U, const_reference>>> // NOLINT(modernize-type-traits)
     U& insert(U&& element) {
         static_assert(util::is_clonable_v<element_type>);
         auto* entry = insert_element(util::clone_unique(std::forward<U>(element)));

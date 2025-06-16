@@ -39,7 +39,7 @@ void simple_value_scanner::operator()(value::character const& element) {
 }
 
 void simple_value_scanner::operator()(value::octet const& element) {
-    thread_local std::string buffer {};
+    thread_local std::string buffer {}; // NOLINT(misc-use-internal-linkage)
     static constexpr std::array<char, 16> hex {
             '0', '1', '2', '3',
             '4', '5', '6', '7',

@@ -19,7 +19,7 @@ bit::bit(std::string_view bits) {
         } else if (c == '1') {
             entity_.push_back(true);
         } else {
-            throw_exception(std::invalid_argument(bits.data()));
+            throw_exception(std::invalid_argument(std::string { bits }));
         }
     }
 }

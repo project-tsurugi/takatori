@@ -162,7 +162,7 @@ public:
      */
     template<
             class U,
-            class = std::enable_if_t<std::is_convertible_v<typename std::initializer_list<U>::reference, const_reference>>>
+            class = std::enable_if_t<std::is_convertible_v<typename std::initializer_list<U>::reference, const_reference>>> // NOLINT(modernize-type-traits)
     reference_vector(std::initializer_list<U> list)
     {
         assign(list);
