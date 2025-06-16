@@ -36,7 +36,7 @@ public:
      */
     template<
             class StringViewLike,
-            class = std::enable_if_t<std::is_constructible_v<token_type, StringViewLike>, StringViewLike>>
+            class = std::enable_if_t<std::is_constructible_v<token_type, StringViewLike>, StringViewLike>> // NOLINT(*-avoid-c-arrays)
     identifier(StringViewLike const& token) : // NOLINT
         token_ { token }
     {}

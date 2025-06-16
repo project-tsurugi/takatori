@@ -19,7 +19,7 @@ using ::takatori::util::clone_unique;
 using ::takatori::util::unsafe_downcast;
 
 template<class T, class Mapping>
-void repair_upstreams(Mapping const& mapping, step const& from, step& to) {
+static void repair_upstreams(Mapping const& mapping, step const& from, step& to) {
     BOOST_ASSERT(from.kind() == to.kind()); // NOLINT
     auto&& from_t = unsafe_downcast<T>(from);
     auto&& to_t = unsafe_downcast<T>(to);
