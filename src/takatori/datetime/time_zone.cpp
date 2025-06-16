@@ -33,7 +33,7 @@ static std::shared_ptr<time_zone::impl> from_offset(std::chrono::minutes offset,
                   static_cast<int>(minute_part.count()));
 
     std::unique_ptr<impl::entity_type> entity { impl::entity_type::createTimeZone(buffer.data()) };
-    if (*entity == impl::entity_type::getUnknown()) {
+    if (*entity == impl::entity_type::getUnknown()) { // NOLINT(readability-implicit-bool-conversion) -- for ICU <= 69
         return {};
     }
     return std::make_shared<impl>(buffer.data(), std::move(entity));
@@ -51,7 +51,7 @@ static std::shared_ptr<time_zone::impl> from_symbol(std::string_view symbol, boo
     }
     icu::UnicodeString string { symbol.data(), static_cast<std::int32_t>(symbol.size()) };
     std::unique_ptr<impl::entity_type> entity { impl::entity_type::createTimeZone(string) };
-    if (*entity == impl::entity_type::getUnknown()) {
+    if (*entity == impl::entity_type::getUnknown()) { // NOLINT(readability-implicit-bool-conversion) -- for ICU <= 69
         if (or_throw) throw_exception(std::invalid_argument(std::string("unknown time zone symbol: ") += symbol));
         return {};
     }
