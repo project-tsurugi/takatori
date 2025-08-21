@@ -6,6 +6,8 @@
 #include <takatori/statement/drop_table.h>
 #include <takatori/statement/create_index.h>
 #include <takatori/statement/drop_index.h>
+#include <takatori/statement/grant_table.h>
+#include <takatori/statement/revoke_table.h>
 #include <takatori/statement/empty.h>
 #include <takatori/statement/extension.h>
 
@@ -24,6 +26,8 @@ public:
     void operator()(statement::drop_table const& element);
     void operator()(statement::create_index const& element);
     void operator()(statement::drop_index const& element);
+    void operator()(statement::grant_table const& element);
+    void operator()(statement::revoke_table const& element);
     void operator()(statement::empty const& element);
     void operator()(statement::extension const& element);
 
@@ -44,6 +48,12 @@ private:
     void accept_foreach(Sequence&& sequence);
 
     void accept(statement::details::write_tuple const& element);
+
+    void accept(statement::details::table_privilege_element const& element);
+
+    void accept(statement::details::table_authorization_entry const& element);
+
+    void accept(statement::details::table_privilege_action const& element);
 };
 
 } // namespace takatori::serializer::details

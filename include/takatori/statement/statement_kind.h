@@ -36,6 +36,12 @@ enum class statement_kind {
     /// @brief remove existing index.
     drop_index,
 
+    /// @brief grant table access privileges.
+    grant_table,
+
+    /// @brief revoke table access privileges.
+    revoke_table,
+
     // special statements
     /// @brief does nothing.
     empty,
@@ -65,6 +71,8 @@ constexpr inline std::string_view to_string_view(statement_kind value) noexcept 
         case kind::drop_table: return "drop_table"sv;
         case kind::create_index: return "create_index"sv;
         case kind::drop_index: return "drop_index"sv;
+        case kind::grant_table: return "grant_table"sv;
+        case kind::revoke_table: return "revoke_table"sv;
         case kind::empty: return "empty"sv;
         case kind::extension: return "extension"sv;
     }

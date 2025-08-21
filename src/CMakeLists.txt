@@ -198,9 +198,14 @@ add_library(takatori
     takatori/statement/create_index.cpp
     takatori/statement/drop_table.cpp
     takatori/statement/drop_index.cpp
+    takatori/statement/grant_table.cpp
+    takatori/statement/revoke_table.cpp
     takatori/statement/empty.cpp
     takatori/statement/extension.cpp
     takatori/statement/details/write_tuple.cpp
+    takatori/statement/details/table_privilege_action.cpp
+    takatori/statement/details/table_authorization_entry.cpp
+    takatori/statement/details/table_privilege_element.cpp
 
     # document
     takatori/document/basic_document.cpp

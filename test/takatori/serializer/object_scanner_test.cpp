@@ -88,6 +88,8 @@
 #include <takatori/statement/drop_table.h>
 #include <takatori/statement/create_index.h>
 #include <takatori/statement/drop_index.h>
+#include <takatori/statement/grant_table.h>
+#include <takatori/statement/revoke_table.h>
 #include <takatori/statement/empty.h>
 #include <takatori/statement/extension.h>
 
@@ -972,6 +974,44 @@ TEST_F(object_scanner_test, drop_index) {
     print(statement::drop_index {
             schemadesc("S"),
             tabledesc("T0"),
+    });
+}
+
+TEST_F(object_scanner_test, grant_table) {
+    print(statement::grant_table {
+            {
+                    storagedesc("S"),
+                    {
+                            statement::table_action_kind::select,
+                    },
+                    {
+                            {
+                                    "admin",
+                                    {
+                                            statement::table_action_kind::control,
+                                    },
+                            }
+                    },
+            },
+    });
+}
+
+TEST_F(object_scanner_test, revoke_table) {
+    print(statement::revoke_table {
+            {
+                    storagedesc("S"),
+                    {
+                            statement::table_action_kind::select,
+                    },
+                    {
+                            {
+                                    "admin",
+                                    {
+                                            statement::table_action_kind::control,
+                                    },
+                            }
+                    },
+            },
     });
 }
 

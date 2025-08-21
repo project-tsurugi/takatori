@@ -83,6 +83,18 @@ void statement_property_scanner::operator()(statement::drop_index const& element
     acceptor_.property_end();
 }
 
+void statement_property_scanner::operator()(statement::grant_table const& element) {
+    acceptor_.property_begin("schema"sv);
+    accept_foreach(element.elements());
+    acceptor_.property_end();
+}
+
+void statement_property_scanner::operator()(statement::revoke_table const& element) {
+    acceptor_.property_begin("schema"sv);
+    accept_foreach(element.elements());
+    acceptor_.property_end();
+}
+
 void statement_property_scanner::operator()(statement::empty const& element) {
     (void) element;
 }
@@ -127,6 +139,48 @@ void statement_property_scanner::accept_foreach(Sequence&& sequence) {
 
 void statement_property_scanner::accept(statement::details::write_tuple const& element) {
     accept_foreach(element.elements());
+}
+
+void statement_property_scanner::accept(statement::details::table_privilege_element const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("table"sv);
+    scanner_(element.table(), acceptor_);
+    acceptor_.property_end();
+
+    acceptor_.property_begin("default_privileges"sv);
+    accept_foreach(element.default_privileges());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("authorization_entries"sv);
+    accept_foreach(element.authorization_entries());
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
+}
+
+void statement_property_scanner::accept(statement::details::table_authorization_entry const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("authorization_identifier"sv);
+    acceptor_.string(element.authorization_identifier());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("privileges"sv);
+    accept_foreach(element.privileges());
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
+}
+
+void statement_property_scanner::accept(statement::details::table_privilege_action const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("action_kind"sv);
+    accept(element.action_kind());
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
 }
 
 } // namespace takatori::serializer::details
