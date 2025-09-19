@@ -986,7 +986,28 @@ TEST_F(object_scanner_test, grant_table) {
                     },
                     {
                             {
+                                    statement::authorization_user_kind::specified,
                                     "admin",
+                                    {
+                                            statement::table_action_kind::control,
+                                    },
+                            }
+                    },
+            },
+    });
+}
+
+TEST_F(object_scanner_test, grant_table_all_users) {
+    print(statement::grant_table {
+            {
+                    storagedesc("S"),
+                    {
+                            statement::table_action_kind::select,
+                    },
+                    {
+                            {
+                                    statement::authorization_user_kind::all_users,
+                                    {},
                                     {
                                             statement::table_action_kind::control,
                                     },
@@ -1005,7 +1026,28 @@ TEST_F(object_scanner_test, revoke_table) {
                     },
                     {
                             {
+                                    statement::authorization_user_kind::specified,
                                     "admin",
+                                    {
+                                            statement::table_action_kind::control,
+                                    },
+                            }
+                    },
+            },
+    });
+}
+
+TEST_F(object_scanner_test, revoke_table_current_user) {
+    print(statement::revoke_table {
+            {
+                    storagedesc("S"),
+                    {
+                            statement::table_action_kind::select,
+                    },
+                    {
+                            {
+                                    statement::authorization_user_kind::current_user,
+                                    {},
                                     {
                                             statement::table_action_kind::control,
                                     },

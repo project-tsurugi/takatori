@@ -162,8 +162,14 @@ void statement_property_scanner::accept(statement::details::table_privilege_elem
 void statement_property_scanner::accept(statement::details::table_authorization_entry const& element) {
     acceptor_.struct_begin();
 
+    acceptor_.property_begin("user_kind"sv);
+    accept(element.user_kind());
+    acceptor_.property_end();
+
     acceptor_.property_begin("authorization_identifier"sv);
-    acceptor_.string(element.authorization_identifier());
+    if (element.user_kind() == statement::authorization_user_kind::specified) {
+        acceptor_.string(element.authorization_identifier());
+    }
     acceptor_.property_end();
 
     acceptor_.property_begin("privileges"sv);

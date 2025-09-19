@@ -7,6 +7,7 @@
 #include <takatori/util/clone_tag.h>
 
 #include "table_privilege_action.h"
+#include "../authorization_user_kind.h"
 
 namespace takatori::statement::details {
 
@@ -15,15 +16,22 @@ namespace takatori::statement::details {
  */
 class table_authorization_entry {
 public:
+    /// @brief the user kind type.
+    using user_kind_type = authorization_user_kind;
+
     /// @brief the identifier type.
     using identifier_type = std::string;
 
     /**
      * @brief creates a new instance.
+     * @param user_kind the kind of target
      * @param authorization_identifier the identifier associated with this entry
+     *      only if user_kind is authorization_user_kind::specified,
+     *      otherwise empty string
      * @param privileges the list of privileges
      */
     table_authorization_entry(
+            user_kind_type user_kind,
             identifier_type authorization_identifier,
             std::vector<table_privilege_action> privileges) noexcept;
 
@@ -40,9 +48,19 @@ public:
     explicit table_authorization_entry(util::clone_tag_t, table_authorization_entry&& other);
 
     /**
+     * @brief returns the authorization target kind.
+     * @return return target kind
+     */
+    [[nodiscard]] user_kind_type& user_kind() noexcept;
+
+    /// @copydoc user_kind()
+    [[nodiscard]] user_kind_type const& user_kind() const noexcept;
+
+    /**
      * @brief returns the identifier associated with this entry.
      * @details This may be a username, role name, or any other identifier
-     * @return the authorization identifier
+     * @return the authorization identifier if user_kind is authorization_user_kind::specified
+     * @return empty if user_kind is not authorization_user_kind::specified
      */
     [[nodiscard]] identifier_type& authorization_identifier() noexcept;
 
@@ -59,6 +77,7 @@ public:
     [[nodiscard]] std::vector<table_privilege_action> const& privileges() const noexcept;
 
 private:
+    user_kind_type user_kind_;
     identifier_type authorization_identifier_;
     std::vector<table_privilege_action> privileges_;
 };
