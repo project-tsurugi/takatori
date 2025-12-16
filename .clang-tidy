@@ -42,6 +42,7 @@ misc-*,\
 -misc-unused-parameters,\
 -misc-use-anonymous-namespace,\
 modernize-*,\
+-modernize-type-traits,\
 -modernize-use-trailing-return-type,\
 performance-*,\
 -performance-enum-size,\
