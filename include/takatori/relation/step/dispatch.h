@@ -9,6 +9,7 @@
 #include "../scan.h"
 #include "../join_find.h"
 #include "../join_scan.h"
+#include "../apply.h"
 #include "../project.h"
 #include "../filter.h"
 #include "../buffer.h"
@@ -53,6 +54,7 @@ inline auto dispatch_expression(Callback&& callback, E&& object, Args&&... args)
         case scan::tag: return util::polymorphic_callback<scan>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case join_find::tag: return util::polymorphic_callback<join_find>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case join_scan::tag: return util::polymorphic_callback<join_scan>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
+        case apply::tag: return util::polymorphic_callback<apply>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case project::tag: return util::polymorphic_callback<project>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case filter::tag: return util::polymorphic_callback<filter>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case buffer::tag: return util::polymorphic_callback<buffer>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);

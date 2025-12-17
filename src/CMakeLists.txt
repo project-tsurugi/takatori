@@ -131,6 +131,7 @@ add_library(takatori
     takatori/relation/intermediate/join.cpp
     takatori/relation/join_find.cpp
     takatori/relation/join_scan.cpp
+    takatori/relation/apply.cpp
 
     # relation - tuple by tuple operations
     takatori/relation/project.cpp

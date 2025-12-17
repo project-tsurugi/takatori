@@ -4,6 +4,7 @@
 #include <takatori/relation/scan.h>
 #include <takatori/relation/join_find.h>
 #include <takatori/relation/join_scan.h>
+#include <takatori/relation/apply.h>
 #include <takatori/relation/project.h>
 #include <takatori/relation/filter.h>
 #include <takatori/relation/buffer.h>
@@ -44,6 +45,7 @@ public:
     void operator()(relation::scan const& element);
     void operator()(relation::join_find const& element);
     void operator()(relation::join_scan const& element);
+    void operator()(relation::apply const& element);
     void operator()(relation::project const& element);
     void operator()(relation::filter const& element);
     void operator()(relation::buffer const& element);

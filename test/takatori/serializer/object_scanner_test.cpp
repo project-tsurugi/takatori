@@ -29,7 +29,6 @@
 #include <takatori/type/row_id.h>
 #include <takatori/type/table.h>
 #include <takatori/type/declared.h>
-#include <takatori/type/extension.h>
 
 #include <takatori/scalar/immediate.h>
 #include <takatori/scalar/variable_reference.h>
@@ -42,12 +41,12 @@
 #include <takatori/scalar/coalesce.h>
 #include <takatori/scalar/let.h>
 #include <takatori/scalar/function_call.h>
-#include <takatori/scalar/extension.h>
 
 #include <takatori/relation/find.h>
 #include <takatori/relation/scan.h>
 #include <takatori/relation/join_find.h>
 #include <takatori/relation/join_scan.h>
+#include <takatori/relation/apply.h>
 #include <takatori/relation/project.h>
 #include <takatori/relation/filter.h>
 #include <takatori/relation/buffer.h>
@@ -526,6 +525,22 @@ TEST_F(object_scanner_test, relation_join_scan) {
                     relation::endpoint_kind::prefixed_exclusive,
             },
             const_boolean(),
+    });
+}
+
+TEST_F(object_scanner_test, relation_apply) {
+    print(relation::apply {
+            funcdesc(2),
+            {
+                    scalar::variable_reference { vardesc(1) },
+                    scalar::variable_reference { vardesc(2) },
+                    scalar::variable_reference { vardesc(3) },
+            },
+            {
+                    vardesc(4),
+                    vardesc(5),
+                    vardesc(6),
+            },
     });
 }
 

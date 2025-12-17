@@ -97,6 +97,24 @@ void relation_expression_property_scanner::operator()(relation::join_scan const&
     acceptor_.property_end();
 }
 
+void relation_expression_property_scanner::operator()(relation::apply const& element) {
+    acceptor_.property_begin("operator_kind"sv);
+    accept(element.operator_kind());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("function"sv);
+    accept(element.function());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("arguments"sv);
+    accept_foreach(element.arguments());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("columns"sv);
+    accept_foreach(element.columns());
+    acceptor_.property_end();
+}
+
 void relation_expression_property_scanner::operator()(relation::project const& element) {
     acceptor_.property_begin("columns"sv);
     accept_foreach(element.columns());

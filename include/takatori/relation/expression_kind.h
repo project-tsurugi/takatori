@@ -28,6 +28,8 @@ enum class expression_kind {
     join_find,
     /// @brief join input with rows in storage.
     join_scan,
+    /// @brief applies a table-valued function and correlated join with its result.
+    apply,
 
     // tuple by tuple operations
     /// @brief adds columns into relation.
@@ -122,6 +124,7 @@ constexpr inline std::string_view to_string_view(expression_kind value) noexcept
         case kind::join_relation: return "join_relation"sv;
         case kind::join_find: return "join_find"sv;
         case kind::join_scan: return "join_scan"sv;
+        case kind::apply: return "apply"sv;
         case kind::project: return "project"sv;
         case kind::filter: return "filter"sv;
         case kind::buffer: return "buffer"sv;
@@ -174,6 +177,7 @@ inline constexpr bool is_available_in_intermediate_plan(expression_kind value) {
         case kind::join_relation:
         case kind::join_find:
         case kind::join_scan:
+        case kind::apply:
         case kind::project:
         case kind::filter:
         case kind::buffer:
@@ -221,6 +225,7 @@ inline constexpr bool is_available_in_step_plan(expression_kind value) {
         case kind::scan:
         case kind::join_find:
         case kind::join_scan:
+        case kind::apply:
         case kind::project:
         case kind::filter:
         case kind::buffer:
