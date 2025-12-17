@@ -11,6 +11,7 @@
 #include <takatori/type/datetime_interval.h>
 #include <takatori/type/lob.h>
 #include <takatori/type/row_id.h>
+#include <takatori/type/table.h>
 #include <takatori/type/declared.h>
 #include <takatori/type/extension.h>
 
@@ -42,6 +43,7 @@ public:
     void operator()(type::clob const& element);
     void operator()(type::unknown const& element);
     void operator()(type::row_id const& element);
+    void operator()(type::table const& element);
     void operator()(type::declared const& element);
     void operator()(type::extension const& element);
 

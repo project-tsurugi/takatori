@@ -53,6 +53,8 @@ add_library(takatori
     takatori/type/time_of_day.cpp
     takatori/type/time_point.cpp
     takatori/type/row_id.cpp
+    takatori/type/table.cpp
+    takatori/type/details/table_column.cpp
     takatori/type/declared.cpp
     takatori/type/extension.cpp
 

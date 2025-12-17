@@ -27,6 +27,7 @@
 #include <takatori/type/datetime_interval.h>
 #include <takatori/type/lob.h>
 #include <takatori/type/row_id.h>
+#include <takatori/type/table.h>
 #include <takatori/type/declared.h>
 #include <takatori/type/extension.h>
 
@@ -305,6 +306,14 @@ TEST_F(object_scanner_test, type_unknown) {
 
 TEST_F(object_scanner_test, type_row_id) {
     print(type::row_id { 72 });
+}
+
+TEST_F(object_scanner_test, type_table) {
+    print(type::table {
+            { "id", type::int4 {} },
+            { "score", type::decimal { 3, 1 } },
+            { "name", type::character { type::varying, 32 } },
+    });
 }
 
 TEST_F(object_scanner_test, type_declared) {

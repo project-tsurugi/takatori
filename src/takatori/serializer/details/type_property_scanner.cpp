@@ -105,6 +105,26 @@ void type_property_scanner::operator()(type::row_id const& element) {
     acceptor_.property_end();
 }
 
+void type_property_scanner::operator()(type::table const& element) {
+    acceptor_.property_begin("columns"sv);
+    acceptor_.array_begin();
+    for (auto&& column : element.columns()) {
+        acceptor_.struct_begin();
+
+        acceptor_.property_begin("name"sv);
+        acceptor_.string(column.name());
+        acceptor_.property_end();
+
+        acceptor_.property_begin("type"sv);
+        scanner_(column.type(), acceptor_);
+        acceptor_.property_end();
+
+        acceptor_.struct_end();
+    }
+    acceptor_.array_end();
+    acceptor_.property_end();
+}
+
 void type_property_scanner::operator()(type::declared const& element) {
     acceptor_.property_begin("binding"sv);
     scanner_(element.binding(), acceptor_);
