@@ -6,6 +6,7 @@
 #include "expression.h"
 #include "expression_kind.h"
 #include "apply_kind.h"
+#include "details/apply_column.h"
 
 #include <takatori/descriptor/function.h>
 #include <takatori/descriptor/variable.h>
@@ -31,6 +32,9 @@ public:
 
     /// @brief the apply operator kind type.
     using operator_kind_type = apply_kind;
+    
+    /// @brief the output column type.
+    using column_type = details::apply_column;
 
     /**
      * @brief creates a new instance.
@@ -44,7 +48,7 @@ public:
             operator_kind_type operator_kind,
             descriptor::function function,
             util::reference_vector<scalar::expression> arguments,
-            std::vector<descriptor::variable> columns) noexcept;
+            std::vector<column_type> columns) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -58,7 +62,7 @@ public:
     apply(
             descriptor::function function,
             util::rvalue_initializer_list<scalar::expression> arguments,
-            std::initializer_list<descriptor::variable> columns,
+            std::initializer_list<column_type> columns,
             operator_kind_type operator_kind = operator_kind_type::cross);
 
     /**
@@ -136,10 +140,10 @@ public:
      * @details each column position corresponds to the output columns of the function resulting table.
      * @return the output columns definition.
      */
-    [[nodiscard]] std::vector<descriptor::variable>& columns() noexcept;
+    [[nodiscard]] std::vector<column_type>& columns() noexcept;
 
     /// @copydoc columns()
-    [[nodiscard]] std::vector<descriptor::variable> const& columns() const noexcept;
+    [[nodiscard]] std::vector<column_type> const& columns() const noexcept;
 
     /**
      * @brief returns whether the two elements are equivalent.
@@ -177,7 +181,7 @@ private:
     operator_kind_type operator_kind_;
     descriptor::function function_;
     tree::tree_element_vector<scalar::expression> arguments_;
-    std::vector<descriptor::variable> columns_;
+    std::vector<column_type> columns_;
 };
 
 /**

@@ -537,9 +537,9 @@ TEST_F(object_scanner_test, relation_apply) {
                     scalar::variable_reference { vardesc(3) },
             },
             {
-                    vardesc(4),
-                    vardesc(5),
-                    vardesc(6),
+                    { 0, vardesc(4), },
+                    { 1, vardesc(4), },
+                    { 2, vardesc(4), },
             },
     });
 }

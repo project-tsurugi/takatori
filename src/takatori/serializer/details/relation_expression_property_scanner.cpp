@@ -351,6 +351,20 @@ void relation_expression_property_scanner::accept_foreach(Sequence&& sequence) {
     acceptor_.array_end();
 }
 
+void relation_expression_property_scanner::accept(relation::details::apply_column const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("position"sv);
+    acceptor_.unsigned_integer(element.position());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("variable"sv);
+    accept(element.variable());
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
+}
+
 void relation_expression_property_scanner::accept(relation::details::mapping_element const& element) {
     acceptor_.struct_begin();
 

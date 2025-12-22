@@ -84,6 +84,8 @@ private:
     template<class Sequence>
     void accept_foreach(Sequence&& sequence);
 
+    void accept(relation::details::apply_column const& element);
+
     void accept(relation::details::mapping_element const& element);
 
     template<class T>

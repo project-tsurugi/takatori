@@ -172,6 +172,7 @@ add_library(takatori
     takatori/relation/step/offer.cpp
 
     # relation - details
+    takatori/relation/details/apply_column.cpp
     takatori/relation/details/mapping_element.cpp
     takatori/relation/details/emit_element.cpp
     takatori/relation/details/sort_key_element.cpp

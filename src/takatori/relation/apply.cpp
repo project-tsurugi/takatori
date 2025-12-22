@@ -11,7 +11,7 @@ apply::apply(
         operator_kind_type operator_kind,
         descriptor::function function,
         util::reference_vector<scalar::expression> arguments,
-        std::vector<descriptor::variable> columns) noexcept:
+        std::vector<column_type> columns) noexcept:
     input_ { *this, 0 },
     output_ { *this, 0 },
     operator_kind_ { operator_kind },
@@ -23,7 +23,7 @@ apply::apply(
 apply::apply(
         descriptor::function function,
         util::rvalue_initializer_list<scalar::expression> arguments,
-        std::initializer_list<descriptor::variable> columns,
+        std::initializer_list<column_type> columns,
         operator_kind_type operator_kind):
     apply {
             operator_kind,
@@ -120,11 +120,11 @@ tree::tree_element_vector<scalar::expression> const& apply::arguments() const no
     return arguments_;
 }
 
-std::vector<descriptor::variable>& apply::columns() noexcept {
+std::vector<apply::column_type>& apply::columns() noexcept {
     return columns_;
 }
 
-std::vector<descriptor::variable> const& apply::columns() const noexcept {
+std::vector<apply::column_type> const& apply::columns() const noexcept {
     return columns_;
 }
 
