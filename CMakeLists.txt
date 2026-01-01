@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
+if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
+endif()
+
 project(takatori-project
     VERSION 1.0.0
     DESCRIPTION "Takatori - A generic SQL intermediate representation"
