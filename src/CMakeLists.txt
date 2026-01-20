@@ -33,9 +33,11 @@ ADD_FLEX_BISON_DEPENDENCY(
 )
 
 set_source_files_properties(
+    ${FLEX_datetime_scanner_OUTPUTS}
     ${BISON_datetime_parser_OUTPUTS}
     PROPERTIES
     COMPILE_OPTIONS -Wno-unused-but-set-variable
+    SKIP_LINTING ON
 )
 
 add_library(takatori
