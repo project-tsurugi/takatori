@@ -412,13 +412,13 @@ join{left-semi}
   ->
   union{id}(filter{P1}(U), filter{P2}(U))
 
-       U
-       +
-      / \
- filter  filter
-   {P1}  {P2}
-      \  /
-   union{id}
+        U
+        +
+       / \
+  filter  filter
+    {P1}  {P2}
+       \  /
+    union{id}
   ```
 
   * TBD: `NOT (...)`
