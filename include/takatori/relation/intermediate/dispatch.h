@@ -28,6 +28,8 @@
 #include "difference.h"
 #include "escape.h"
 
+#include "extension.h"
+
 #include <takatori/util/callback.h>
 #include <takatori/util/exception.h>
 #include <takatori/util/string_builder.h>
@@ -72,7 +74,8 @@ inline auto dispatch_expression(Callback&& callback, E&& object, Args&&... args)
         case difference::tag: return util::polymorphic_callback<difference>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
         case escape::tag: return util::polymorphic_callback<escape>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
 
-        // FIXME: extension
+        case extension::tag: return util::polymorphic_callback<extension>(std::forward<Callback>(callback), std::forward<E>(object), std::forward<Args>(args)...);
+
         default: break;
     }
     invalid_expression(object);

@@ -157,6 +157,7 @@ add_library(takatori
     takatori/relation/graph.cpp
     takatori/relation/values.cpp
     takatori/relation/intermediate/escape.cpp
+    takatori/relation/intermediate/extension.cpp
 
     # relation - dealing with group relations
     takatori/relation/step/join.cpp

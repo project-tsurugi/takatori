@@ -91,12 +91,12 @@
 #include <takatori/statement/grant_table.h>
 #include <takatori/statement/revoke_table.h>
 #include <takatori/statement/empty.h>
-#include <takatori/statement/extension.h>
 
 #include <takatori/testing/descriptors.h>
 #include <takatori/type/dummy_extension.h>
 #include <takatori/value/dummy_extension.h>
 #include <takatori/scalar/dummy_extension.h>
+#include <takatori/relation/intermediate/dummy_extension.h>
 #include <takatori/statement/dummy_extension.h>
 
 namespace takatori::serializer {
@@ -708,6 +708,12 @@ TEST_F(object_scanner_test, relation_escape) {
             { vardesc(1), vardesc(2) },
             { vardesc(3), vardesc(4) },
             { vardesc(5), vardesc(6) },
+    });
+}
+
+TEST_F(object_scanner_test, relation_extension) {
+    print(relation::intermediate::dummy_extension {
+            "Hello, world!"
     });
 }
 

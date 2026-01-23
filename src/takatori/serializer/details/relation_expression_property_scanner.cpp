@@ -262,6 +262,12 @@ void relation_expression_property_scanner::operator()(relation::intermediate::es
     acceptor_.property_end();
 }
 
+void relation_expression_property_scanner::operator()(relation::intermediate::extension const& element) {
+    acceptor_.property_begin("extension_id"sv);
+    acceptor_.unsigned_integer(element.extension_id());
+    acceptor_.property_end();
+}
+
 void relation_expression_property_scanner::operator()(relation::step::join const& element) {
     acceptor_.property_begin("operator_kind"sv);
     accept(element.operator_kind());

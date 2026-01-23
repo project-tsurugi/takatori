@@ -21,6 +21,7 @@
 #include <takatori/relation/intermediate/intersection.h>
 #include <takatori/relation/intermediate/difference.h>
 #include <takatori/relation/intermediate/escape.h>
+#include <takatori/relation/intermediate/extension.h>
 
 #include <takatori/relation/step/join.h>
 #include <takatori/relation/step/aggregate.h>
@@ -61,6 +62,7 @@ public:
     void operator()(relation::intermediate::intersection const& element);
     void operator()(relation::intermediate::difference const& element);
     void operator()(relation::intermediate::escape const& element);
+    void operator()(relation::intermediate::extension const& element);
     void operator()(relation::step::join const& element);
     void operator()(relation::step::aggregate const& element);
     void operator()(relation::step::intersection const& element);

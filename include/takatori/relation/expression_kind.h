@@ -92,7 +92,7 @@ enum class expression_kind {
     offer,
 
     /// @brief custom expression for compiler or third party extension.
-    extension, // FIXME: impl
+    extension,
 };
 
 /// @brief a set of expression_kind.
@@ -192,6 +192,7 @@ inline constexpr bool is_available_in_intermediate_plan(expression_kind value) {
         case kind::write:
         case kind::values:
         case kind::escape:
+        case kind::extension:
             return true;
 
         case kind::join_group:
@@ -203,10 +204,6 @@ inline constexpr bool is_available_in_intermediate_plan(expression_kind value) {
         case kind::take_group:
         case kind::take_cogroup:
         case kind::offer:
-            return false;
-
-        // FIXME: impl
-        case kind::extension:
             return false;
     }
     std::abort();
@@ -252,9 +249,6 @@ inline constexpr bool is_available_in_step_plan(expression_kind value) {
         case kind::intersection_relation:
         case kind::difference_relation:
         case kind::escape:
-            return false;
-
-        // FIXME: impl
         case kind::extension:
             return false;
     }
