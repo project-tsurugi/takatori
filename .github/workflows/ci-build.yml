@@ -61,12 +61,21 @@ jobs:
     timeout-minutes: 30
     container:
       image: ghcr.io/project-tsurugi/tsurugi-ci:almalinux-latest
+      volumes:
+        - ${{ vars.ccache_dir }}:${{ vars.ccache_dir }}
+        - ${{ vars.ctcache_dir }}:${{ vars.ctcache_dir }}
     defaults:
       run:
         shell: bash
     env:
       CCACHE_CONFIGPATH: ${{ vars.ccache_dir }}/ccache.conf
       CCACHE_DIR: ${{ vars.ccache_dir }}/almalinux-latest
+
+      CTCACHE_DISABLE: ${{ vars.ctcache_disable }}
+      CTCACHE_DIR: ${{ vars.ctcache_dir }}/almalinux-latest
+      CTCACHE_SAVE_OUTPUT: 1
+      CTCACHE_LOCAL: 1
+
       CC: clang
       CXX: clang++
 
@@ -78,7 +87,7 @@ jobs:
 
       - name: CMake_Clang-Tidy
         run: |
-          export PATH=/opt/cmake/bin:$PATH
+          export PATH=/opt/cmake/bin:/opt/ctcache:$PATH
 
           mkdir build
           cd build
