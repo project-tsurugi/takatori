@@ -78,7 +78,7 @@ public:
          * @return the referred bit
          */
         [[nodiscard]] constexpr bool get() const noexcept {
-            return entity_.get(position_);
+            return entity_.get_unsafe(position_);
         }
 
         /// @copydoc get()
@@ -246,7 +246,7 @@ public:
      * @warning undefined behavior if the target position is out of range
      */
     [[nodiscard]] constexpr bool get_unsafe(size_type position) const noexcept {
-        auto&& block = blocks_[block_offset(position)];
+        auto&& block = blocks_[block_offset(position)]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
         auto mask = bit_mask(position);
         return (block & mask) != 0;
     }
@@ -258,7 +258,7 @@ public:
      * @warning undefined behavior if the target position is out of range
      */
     constexpr void set_unsafe(size_type position, bool value = true) noexcept {
-        auto&& block = blocks_[block_offset(position)];
+        auto&& block = blocks_[block_offset(position)]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
         auto mask = bit_mask(position);
         if (value) {
             block |= mask;
@@ -272,7 +272,7 @@ public:
      * @param position the bit position (0-origin)
      */
     constexpr void flip_unsafe(size_type position) noexcept {
-        auto&& block = blocks_[block_offset(position)];
+        auto&& block = blocks_[block_offset(position)]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
         auto mask = bit_mask(position);
         block ^= mask;
     }
