@@ -88,6 +88,7 @@
 #include <takatori/statement/drop_table.h>
 #include <takatori/statement/create_index.h>
 #include <takatori/statement/drop_index.h>
+#include <takatori/statement/truncate_table.h>
 #include <takatori/statement/grant_table.h>
 #include <takatori/statement/revoke_table.h>
 #include <takatori/statement/empty.h>
@@ -1004,6 +1005,15 @@ TEST_F(object_scanner_test, drop_index) {
     print(statement::drop_index {
             schemadesc("S"),
             tabledesc("T0"),
+    });
+}
+
+TEST_F(object_scanner_test, truncate_table) {
+    print(statement::truncate_table {
+            storagedesc("T0"),
+            {
+                    statement::truncate_table_option_kind::restart_identity,
+            },
     });
 }
 

@@ -83,6 +83,20 @@ void statement_property_scanner::operator()(statement::drop_index const& element
     acceptor_.property_end();
 }
 
+void statement_property_scanner::operator()(statement::truncate_table const& element) {
+    acceptor_.property_begin("target"sv);
+    accept(element.target());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("options"sv);
+    acceptor_.array_begin();
+    for (auto option : element.options()) {
+        acceptor_.string(to_string_view(option));
+    }
+    acceptor_.array_end();
+    acceptor_.property_end();
+}
+
 void statement_property_scanner::operator()(statement::grant_table const& element) {
     acceptor_.property_begin("schema"sv);
     accept_foreach(element.elements());

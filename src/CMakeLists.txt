@@ -203,6 +203,7 @@ add_library(takatori
     takatori/statement/create_index.cpp
     takatori/statement/drop_table.cpp
     takatori/statement/drop_index.cpp
+    takatori/statement/truncate_table.cpp
     takatori/statement/grant_table.cpp
     takatori/statement/revoke_table.cpp
     takatori/statement/empty.cpp
