@@ -12,20 +12,30 @@ class forward_test : public ::testing::Test {};
 
 static_assert(forward::tag == step_kind::forward);
 
+using relation::details::row_slice;
+
 TEST_F(forward_test, simple) {
     forward s;
     EXPECT_EQ(s.columns().size(), 0);
     EXPECT_EQ(s.input_columns().size(), 0);
     EXPECT_EQ(s.output_columns().size(), 0);
-    EXPECT_EQ(s.limit(), std::nullopt);
+    EXPECT_EQ(s.row_slice(), row_slice {});
 }
 
-TEST_F(forward_test, limits) {
-    forward s { 100 };
+TEST_F(forward_test, row_slice) {
+    forward s {
+            {
+                    10,
+                    5,
+            },
+    };
     EXPECT_EQ(s.columns().size(), 0);
     EXPECT_EQ(s.input_columns().size(), 0);
     EXPECT_EQ(s.output_columns().size(), 0);
-    EXPECT_EQ(s.limit(), 100);
+    EXPECT_EQ(s.row_slice(), (row_slice {
+            10,
+            5,
+    }));
 }
 
 TEST_F(forward_test, columns) {
@@ -59,7 +69,7 @@ TEST_F(forward_test, columns) {
         EXPECT_EQ(cs[2], vardesc(3));
     }
 
-    EXPECT_EQ(s.limit(), std::nullopt);
+    EXPECT_EQ(s.row_slice(), row_slice {});
 }
 
 TEST_F(forward_test, clone) {
@@ -69,7 +79,9 @@ TEST_F(forward_test, clone) {
                     vardesc(2),
                     vardesc(3),
             },
-            10,
+            {
+                    10, 5,
+            },
     };
 
     auto copy = util::clone_unique(s);
@@ -84,7 +96,9 @@ TEST_F(forward_test, clone_move) {
                     vardesc(2),
                     vardesc(3),
             },
-            10,
+            {
+                    10, 5,
+            },
     };
 
     auto copy = util::clone_unique(s);
@@ -103,7 +117,9 @@ TEST_F(forward_test, output) {
                     vardesc(2),
                     vardesc(3),
             },
-            10,
+            {
+                    10, 5,
+            },
     };
 
     std::cout << s << std::endl;

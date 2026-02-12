@@ -1,10 +1,7 @@
 #pragma once
 
 #include <initializer_list>
-#include <memory>
 #include <ostream>
-#include <optional>
-#include <utility>
 #include <vector>
 
 #include "exchange.h"
@@ -13,6 +10,7 @@
 
 #include <takatori/relation/sort_direction.h>
 #include <takatori/relation/details/sort_key_element.h>
+#include <takatori/relation/details/row_slice.h>
 
 #include <takatori/util/clone_tag.h>
 
@@ -40,8 +38,8 @@ public:
     /// @brief the default group mode type.
     static constexpr mode_type mode_default = mode_type::equivalence;
 
-    /// @brief the size type.
-    using size_type = std::size_t;
+    /// @brief row slice type.
+    using row_slice_type = relation::details::row_slice;
 
     /// @brief the kind of this step.
     static constexpr step_kind tag = step_kind::group;
@@ -57,14 +55,14 @@ public:
      * @param columns the exchange columns
      * @param group_keys the group key columns: each column must also appear in the exchange columns
      * @param sort_keys the sort key elements: each column must also appear in the exchange columns, but not in group key columns
-     * @param limit the max number of rows in each group
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of each group
      * @param mode the group mode of this exchange operation
      */
     explicit group(
             std::vector<descriptor::variable> columns,
             std::vector<descriptor::variable> group_keys,
             std::vector<sort_key> sort_keys = {},
-            std::optional<size_type> limit = {},
+            row_slice_type row_slice = {},
             mode_type mode = mode_default) noexcept;
 
     /**
@@ -72,14 +70,14 @@ public:
      * @param columns the exchange columns
      * @param group_keys the group key columns: each column must also appear in the exchange columns
      * @param sort_keys the sort key elements: each column must also appear in the exchange columns, but not in group key columns
-     * @param limit the max number of rows in each group
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of each group
      * @param mode the group mode of this exchange operation
      */
     explicit group(
             std::initializer_list<descriptor::variable> columns,
             std::initializer_list<descriptor::variable> group_keys,
             std::initializer_list<sort_key> sort_keys = {},
-            std::optional<size_type> limit = {},
+            row_slice_type row_slice = {},
             mode_type mode = mode_default);
 
     /**
@@ -126,6 +124,8 @@ public:
      * @brief returns the sort key elements.
      * @details If the sort key is specified, this exchange will sort rows in each group by using it.
      *      Each sort key column must also appear in the columns(), but not appear in group_keys().
+     *      If multiple sort key elements are specified, the earlier elements have higher priority.
+     *      If there are out of slice rows in each group, they will be discarded after sorting.
      * @return the sort key elements
      */
     [[nodiscard]] std::vector<sort_key>& sort_keys() noexcept;
@@ -147,26 +147,19 @@ public:
     group& mode(mode_type mode) noexcept;
 
     /**
-     * @brief returns the max number of exchange rows in each group.
-     * @details If this exchange has both the limit and sort key,
-     *      this exchange first performs sort rows in each group,
-     *      and then removes rows except the first n-th rows in each group.
-     * @return the number of exchange rows in each group
-     * @return empty if it is unlimited
+     * @brief returns the row slice.
+     * @details If this exchange has both the sort key and row slice,
+     *      this exchange first performs sort rows in each group, and then slices rows in each group.
+     * @return the row slice
      */
-    [[nodiscard]] std::optional<size_type> const& limit() const noexcept;
+    [[nodiscard]] row_slice_type& row_slice() noexcept;
+
+    /// @copydoc row_slice()
+    [[nodiscard]] row_slice_type const& row_slice() const noexcept;
 
     /**
-     * @brief sets the max number of exchange rows in each group.
-     * @param limit the number of exchange rows limit
-     * @return this
-     * @see limit()
-     */
-    group& limit(std::optional<size_type> limit) noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are equivalent.
-     * @details this don't compares upstream processes nor downstream processes.
+     * @brief returns whether the two elements are equivalent.
+     * @details this don't compare upstream processes nor downstream processes.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
@@ -176,8 +169,8 @@ public:
     friend bool operator==(group const& a, group const& b) noexcept;
 
     /**
-     * @brief returns whether or not the two elements are different.
-     * @details this don't compares upstream processes nor downstream processes.
+     * @brief returns whether the two elements are different.
+     * @details this don't compare upstream processes nor downstream processes.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
@@ -202,7 +195,7 @@ private:
     std::vector<descriptor::variable> columns_ {};
     std::vector<descriptor::variable> group_keys_ {};
     std::vector<sort_key> sort_keys_ {};
-    std::optional<size_type> limit_ {};
+    row_slice_type row_slice_;
     mode_type mode_ { mode_default };
 };
 

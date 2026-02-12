@@ -12,6 +12,8 @@ class group_test : public ::testing::Test {};
 
 static_assert(group::tag == step_kind::group);
 
+using relation::details::row_slice;
+
 TEST_F(group_test, simple) {
     group s;
     EXPECT_EQ(s.input_columns().size(), 0);
@@ -19,7 +21,7 @@ TEST_F(group_test, simple) {
     EXPECT_EQ(s.columns().size(), 0);
     EXPECT_EQ(s.group_keys().size(), 0);
     EXPECT_EQ(s.sort_keys().size(), 0);
-    EXPECT_EQ(s.limit(), std::nullopt);
+    EXPECT_EQ(s.row_slice(), row_slice {});
     EXPECT_EQ(s.mode(), group_mode::equivalence);
 }
 
@@ -53,7 +55,7 @@ TEST_F(group_test, columns) {
     EXPECT_EQ(s.group_keys()[1], vardesc(1));
 
     EXPECT_EQ(s.sort_keys().size(), 0);
-    EXPECT_EQ(s.limit(), std::nullopt);
+    EXPECT_EQ(s.row_slice(), row_slice {});
     EXPECT_EQ(s.mode(), group_mode::equivalence);
 }
 
@@ -93,11 +95,11 @@ TEST_F(group_test, sort_keys) {
         EXPECT_EQ(k.direction(), sort_direction::descendant);
     }
 
-    EXPECT_EQ(s.limit(), std::nullopt);
+    EXPECT_EQ(s.row_slice(), row_slice {});
     EXPECT_EQ(s.mode(), group_mode::equivalence);
 }
 
-TEST_F(group_test, limit) {
+TEST_F(group_test, row_slice) {
     group s {
             {
                     vardesc(1),
@@ -111,7 +113,10 @@ TEST_F(group_test, limit) {
                     { vardesc(2), sort_direction::ascendant },
                     { vardesc(3), sort_direction::descendant },
             },
-            10,
+            {
+                    10,
+                    5,
+            },
     };
 
     EXPECT_EQ(s.input_columns().size(), 3);
@@ -119,7 +124,10 @@ TEST_F(group_test, limit) {
     EXPECT_EQ(s.columns().size(), 3);
     EXPECT_EQ(s.group_keys().size(), 1);
     ASSERT_EQ(s.sort_keys().size(), 2);
-    EXPECT_EQ(s.limit(), 10);
+    EXPECT_EQ(s.row_slice(), (row_slice {
+            10,
+            5,
+    }));
     EXPECT_EQ(s.mode(), group_mode::equivalence);
 }
 
@@ -143,7 +151,7 @@ TEST_F(group_test, mode) {
     EXPECT_EQ(s.columns().size(), 3);
     EXPECT_EQ(s.group_keys().size(), 0);
     ASSERT_EQ(s.sort_keys().size(), 1);
-    EXPECT_EQ(s.limit(), std::nullopt);
+    EXPECT_EQ(s.row_slice(), row_slice {});
     EXPECT_EQ(s.mode(), group_mode::equivalence_or_whole);
 }
 
@@ -161,7 +169,10 @@ TEST_F(group_test, clone) {
                     { vardesc(2), sort_direction::ascendant },
                     { vardesc(3), sort_direction::descendant },
             },
-            10,
+            {
+                    10,
+                    5,
+            },
             group_mode::equivalence_or_whole,
     };
 
@@ -184,7 +195,10 @@ TEST_F(group_test, clone_move) {
                     { vardesc(2), sort_direction::ascendant },
                     { vardesc(3), sort_direction::descendant },
             },
-            10,
+            {
+                    10,
+                    5,
+            },
             group_mode::equivalence_or_whole,
     };
 
@@ -211,7 +225,10 @@ TEST_F(group_test, output) {
                     { vardesc(2), sort_direction::ascendant },
                     { vardesc(3), sort_direction::descendant },
             },
-            10,
+            {
+                    10,
+                    5,
+            },
             group_mode::equivalence_or_whole,
     };
 

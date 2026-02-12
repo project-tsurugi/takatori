@@ -40,7 +40,7 @@ TEST_F(relation_intermediate_dispatch_test, switch) {
     EXPECT_EQ(dispatch(cb {}, distinct { vardesc(1) }), 1);
     EXPECT_EQ(dispatch(cb {}, intersection { { vardesc(1), vardesc(2) } }), 2);
     EXPECT_EQ(dispatch(cb {}, difference { { vardesc(1), vardesc(2) } }), 3);
-    EXPECT_EQ(dispatch(cb {}, limit { 10 }), -1);
+    EXPECT_EQ(dispatch(cb {}, limit {}), -1);
 }
 
 TEST_F(relation_intermediate_dispatch_test, unsupported) {

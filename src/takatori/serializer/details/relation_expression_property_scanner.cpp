@@ -42,10 +42,8 @@ void relation_expression_property_scanner::operator()(relation::scan const& elem
     accept(element.upper());
     acceptor_.property_end();
 
-    acceptor_.property_begin("limit"sv);
-    if (auto&& v = element.limit()) {
-        acceptor_.unsigned_integer(*v);
-    }
+    acceptor_.property_begin("row_slice"sv);
+    accept(element.row_slice());
     acceptor_.property_end();
 }
 
@@ -210,12 +208,6 @@ void relation_expression_property_scanner::operator()(relation::intermediate::di
 }
 
 void relation_expression_property_scanner::operator()(relation::intermediate::limit const& element) {
-    acceptor_.property_begin("count"sv);
-    if (auto&& v = element.count()) {
-        acceptor_.unsigned_integer(*v);
-    }
-    acceptor_.property_end();
-
     acceptor_.property_begin("group_keys"sv);
     accept_foreach(element.group_keys());
     acceptor_.property_end();
@@ -224,6 +216,9 @@ void relation_expression_property_scanner::operator()(relation::intermediate::li
     accept_foreach(element.sort_keys());
     acceptor_.property_end();
 
+    acceptor_.property_begin("row_slice"sv);
+    accept(element.row_slice());
+    acceptor_.property_end();
 }
 
 void relation_expression_property_scanner::operator()(relation::intermediate::union_ const& element) {
@@ -536,6 +531,37 @@ void relation_expression_property_scanner::accept(relation::details::cogroup_ele
     acceptor_.property_end();
 
     acceptor_.struct_end();
+}
+
+void relation_expression_property_scanner::accept(relation::details::row_slice const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("start"sv);
+    accept(element.start());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("count"sv);
+    accept(element.count());
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
+}
+
+void relation_expression_property_scanner::accept(relation::details::constant_value<std::size_t> const& element) {
+    if (element) {
+        acceptor_.struct_begin();
+        if (element.has_immediate()) {
+            acceptor_.property_begin("immediate"sv);
+            acceptor_.unsigned_integer(element.immediate());
+            acceptor_.property_end();
+        }
+        if (element.has_variable()) {
+            acceptor_.property_begin("variable"sv);
+            accept(element.variable());
+            acceptor_.property_end();
+        }
+        acceptor_.struct_end();
+    }
 }
 
 } // namespace takatori::serializer::details

@@ -1,15 +1,11 @@
 #pragma once
 
-#include <initializer_list>
-#include <memory>
-#include <optional>
 #include <vector>
-
-#include <cstddef>
 
 #include "../expression.h"
 #include "../expression_kind.h"
 #include "../details/sort_key_element.h"
+#include "../details/row_slice.h"
 
 #include <takatori/descriptor/variable.h>
 
@@ -23,36 +19,31 @@ namespace takatori::relation::intermediate {
  */
 class limit : public expression {
 public:
-    /// @brief type of the number of rows.
-    using size_type = std::size_t;
-
     /// @brief sort key type.
     using sort_key = details::sort_key_element;
 
+    /// @brief row slice type.
+    using row_slice_type = details::row_slice;
+
     /// @brief the kind of this expression.
-    static constexpr inline expression_kind tag = expression_kind::limit_relation;
+    static constexpr expression_kind tag = expression_kind::limit_relation;
 
     /**
      * @brief creates a new object.
-     * @param count the number of rows to keep in the input relation or each group
      * @param group_keys the group key columns on the input relation, or empty to limit for whole relation
      * @param sort_keys the sort key: this operation will only keep the rows from head of the sorted relation
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      */
     explicit limit(
-            std::optional<size_type> count,
-            std::vector<descriptor::variable> group_keys,
-            std::vector<sort_key> sort_keys) noexcept;
+            std::vector<descriptor::variable> group_keys = {},
+            std::vector<sort_key> sort_keys = {},
+            row_slice_type row_slice = {}) noexcept;
 
     /**
      * @brief creates a new object.
-     * @param count the number of rows to keep in the input relation or each group
-     * @param group_keys the group key columns on the input relation, or empty to limit for whole relation
-     * @param sort_keys the sort key: this operation will only keep the rows from head of the sorted relation
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      */
-    explicit limit(
-            std::optional<size_type> count,
-            std::initializer_list<descriptor::variable> group_keys = {},
-            std::initializer_list<sort_key> sort_keys = {});
+    explicit limit(row_slice_type row_slice) noexcept;
 
     /**
      * @brief creates a new object.
@@ -93,20 +84,6 @@ public:
     [[nodiscard]] output_port_type const& output() const noexcept;
 
     /**
-     * @brief returns the maximum number of rows for each group.
-     * @return the limit size
-     * @return empty if it is unlimited
-     */
-    [[nodiscard]] std::optional<size_type> const& count() const noexcept;
-
-    /**
-     * @brief sets the maximum number of rows for each group.
-     * @param count the limit size
-     * @return this
-     */
-    limit& count(std::optional<size_type> count) noexcept;
-
-    /**
      * @brief returns the limit key columns on the input relation.
      * @return the limit keys
      */
@@ -125,7 +102,20 @@ public:
     [[nodiscard]] std::vector<sort_key> const& sort_keys() const noexcept;
 
     /**
-     * @brief returns whether or not the two elements are equivalent.
+     * @brief returns the row slice.
+     * @details If the sort key is specified, this exchange will sort rows in each group by using it.
+     *      Each sort key column must also appear in the columns(), but not appear in group_keys().
+     *      If multiple sort key elements are specified, the earlier elements have higher priority.
+     *      If there are out of slice rows in each group, they will be discarded after sorting.
+     * @return the row slice
+     */
+    [[nodiscard]] row_slice_type& row_slice() noexcept;
+
+    /// @copydoc row_slice()
+    [[nodiscard]] row_slice_type const& row_slice() const noexcept;
+
+    /**
+     * @brief returns whether the two elements are equivalent.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
@@ -159,9 +149,9 @@ protected:
 private:
     input_port_type input_;
     output_port_type output_;
-    std::optional<size_type> count_;
     std::vector<descriptor::variable> group_keys_;
     std::vector<sort_key> sort_keys_;
+    row_slice_type row_slice_;
 };
 
 } // namespace takatori::relation::intermediate

@@ -461,6 +461,7 @@ TEST_F(object_scanner_test, relation_find) {
 }
 
 TEST_F(object_scanner_test, relation_scan) {
+    using relation::details::row_slice;
     print(relation::scan {
             tabledesc("A"),
             {
@@ -481,6 +482,10 @@ TEST_F(object_scanner_test, relation_scan) {
                             relation::scan::key { vardesc(3), const_int4() },
                     },
                     relation::endpoint_kind::prefixed_exclusive,
+            },
+            {
+                    10,
+                    5,
             },
     });
 }
@@ -657,8 +662,8 @@ TEST_F(object_scanner_test, relation_distinct_relation) {
 }
 
 TEST_F(object_scanner_test, relation_limit_relation) {
+    using relation::details::row_slice;
     print(relation::intermediate::limit {
-            1,
             {
                     vardesc(1),
                     vardesc(2),
@@ -667,7 +672,11 @@ TEST_F(object_scanner_test, relation_limit_relation) {
                     vardesc(3),
                     { vardesc(4), relation::sort_direction::ascendant },
                     { vardesc(5), relation::sort_direction::descendant },
-            }
+            },
+            {
+                    10,
+                    5,
+            },
     });
 }
 
@@ -839,17 +848,22 @@ TEST_F(object_scanner_test, plan_process) {
 }
 
 TEST_F(object_scanner_test, plan_forward) {
+    using relation::details::row_slice;
     print(plan::forward {
             {
                     vardesc(1),
                     vardesc(2),
                     vardesc(3),
             },
-            1,
+            {
+                    10,
+                    5,
+            },
     });
 }
 
 TEST_F(object_scanner_test, plan_group) {
+    using relation::details::row_slice;
     print(plan::group {
             {
                     vardesc(1),
@@ -867,7 +881,10 @@ TEST_F(object_scanner_test, plan_group) {
                     { vardesc(4), relation::sort_direction::ascendant },
                     { vardesc(5), relation::sort_direction::descendant },
             },
-            1,
+            {
+                    10,
+                    5,
+            },
             plan::group_mode::equivalence,
     });
 }
