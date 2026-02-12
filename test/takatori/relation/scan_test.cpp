@@ -15,6 +15,8 @@ class scan_test : public ::testing::Test {};
 static_assert(scan::tag == expression_kind::scan);
 static_assert(std::is_same_v<type_of_t<scan::tag>, scan>);
 
+using details::row_slice;
+
 TEST_F(scan_test, simple) {
     scan expr {
             tabledesc("T"),
@@ -70,7 +72,7 @@ TEST_F(scan_test, simple) {
         }
         EXPECT_EQ(b.kind(), endpoint_kind::exclusive);
     }
-    EXPECT_EQ(expr.limit(), std::nullopt);
+    EXPECT_EQ(expr.row_slice(), row_slice {});
 
     {
         auto p = expr.input_ports();
@@ -118,7 +120,7 @@ TEST_F(scan_test, full) {
     }
 }
 
-TEST_F(scan_test, limit) {
+TEST_F(scan_test, row_slice) {
     scan expr {
             tabledesc("T"),
             {
@@ -129,10 +131,16 @@ TEST_F(scan_test, limit) {
             },
             {},
             {},
-            100
+            {
+                    10,
+                    5,
+            },
     };
 
-    EXPECT_EQ(expr.limit(), 100);
+    EXPECT_EQ(expr.row_slice(), (row_slice {
+            10,
+            5,
+    }));
 }
 
 TEST_F(scan_test, multiple) {
@@ -269,7 +277,10 @@ TEST_F(scan_test, clone) {
                     },
                     endpoint_kind::exclusive,
             },
-            100,
+            {
+                    10,
+                    5,
+            },
     };
 
     auto copy = util::clone_unique(expr);
@@ -300,7 +311,10 @@ TEST_F(scan_test, clone_move) {
                     },
                     endpoint_kind::exclusive,
             },
-            100,
+            {
+                    10,
+                    5,
+            },
     };
 
     auto copy = util::clone_unique(expr);
@@ -335,7 +349,10 @@ TEST_F(scan_test, output) {
                     },
                     endpoint_kind::exclusive,
             },
-            100,
+            {
+                    10,
+                    5,
+            },
     };
 
     std::cout << expr << std::endl;

@@ -22,10 +22,8 @@ void step_property_scanner::operator()(plan::forward const& element) {
     accept_foreach(element.columns());
     acceptor_.property_end();
 
-    acceptor_.property_begin("limit"sv);
-    if (auto&& v = element.limit()) {
-        acceptor_.unsigned_integer(*v);
-    }
+    acceptor_.property_begin("row_slice"sv);
+    accept(element.row_slice());
     acceptor_.property_end();
 }
 
@@ -42,10 +40,8 @@ void step_property_scanner::operator()(plan::group const& element) {
     accept_foreach(element.sort_keys());
     acceptor_.property_end();
 
-    acceptor_.property_begin("limit"sv);
-    if (auto&& v = element.limit()) {
-        acceptor_.unsigned_integer(*v);
-    }
+    acceptor_.property_begin("row_slice"sv);
+    accept(element.row_slice());
     acceptor_.property_end();
 
     acceptor_.property_begin("mode"sv);
@@ -133,6 +129,37 @@ void step_property_scanner::accept(relation::details::aggregate_element const& e
     acceptor_.property_end();
 
     acceptor_.struct_end();
+}
+
+void step_property_scanner::accept(relation::details::row_slice const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("start"sv);
+    accept(element.start());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("count"sv);
+    accept(element.count());
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
+}
+
+void step_property_scanner::accept(relation::details::constant_value<std::size_t> const& element) {
+    if (element) {
+        acceptor_.struct_begin();
+        if (element.has_immediate()) {
+            acceptor_.property_begin("immediate"sv);
+            acceptor_.unsigned_integer(element.immediate());
+            acceptor_.property_end();
+        }
+        if (element.has_variable()) {
+            acceptor_.property_begin("variable"sv);
+            accept(element.variable());
+            acceptor_.property_end();
+        }
+        acceptor_.struct_end();
+    }
 }
 
 } // namespace takatori::serializer::details

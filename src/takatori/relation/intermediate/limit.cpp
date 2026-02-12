@@ -7,38 +7,38 @@
 namespace takatori::relation::intermediate {
 
 limit::limit(
-        std::optional<size_type> count,
         std::vector<descriptor::variable> group_keys,
-        std::vector<sort_key> sort_keys) noexcept
-    : input_(*this, 0)
-    , output_(*this, 0)
-    , count_(count)
-    , group_keys_(std::move(group_keys))
-    , sort_keys_(std::move(sort_keys))
+        std::vector<sort_key> sort_keys,
+        row_slice_type row_slice) noexcept :
+    input_ { *this, 0 },
+    output_ { *this, 0 },
+    group_keys_ { std::move(group_keys) },
+    sort_keys_ { std::move(sort_keys) },
+    row_slice_ { std::move(row_slice) }
 {}
 
-limit::limit(
-        std::optional<size_type> count,
-        std::initializer_list<descriptor::variable> group_keys,
-        std::initializer_list<sort_key> sort_keys)
-    : limit(
-            count,
-            { group_keys.begin(), group_keys.end() },
-            { sort_keys.begin(), sort_keys.end() })
+limit::limit(row_slice_type row_slice) noexcept :
+    limit {
+            {},
+            {},
+            std::move(row_slice),
+    }
 {}
 
-limit::limit(util::clone_tag_t, limit const& other)
-    : limit(
-            other.count_,
+limit::limit(util::clone_tag_t, limit const& other) :
+    limit {
             { other.group_keys_ },
-            { other.sort_keys_ })
+            { other.sort_keys_ },
+            other.row_slice_,
+    }
 {}
 
-limit::limit(util::clone_tag_t, limit&& other)
-    : limit(
-            other.count_,
+limit::limit(util::clone_tag_t, limit&& other) :
+    limit {
             { std::move(other.group_keys_) },
-            { std::move(other.sort_keys_) })
+            { std::move(other.sort_keys_) },
+            std::move(other.row_slice_),
+    }
 {}
 
 expression_kind limit::kind() const noexcept {
@@ -85,15 +85,6 @@ limit::output_port_type const& limit::output() const noexcept {
     return output_;
 }
 
-std::optional<limit::size_type> const& limit::count() const noexcept {
-    return count_;
-}
-
-limit& limit::count(std::optional<size_type> count) noexcept {
-    count_ = count;
-    return *this;
-}
-
 std::vector<descriptor::variable>& limit::group_keys() noexcept {
     return group_keys_;
 }
@@ -110,10 +101,18 @@ std::vector<limit::sort_key> const& limit::sort_keys() const noexcept {
     return sort_keys_;
 }
 
+limit::row_slice_type& limit::row_slice() noexcept {
+    return row_slice_;
+}
+
+limit::row_slice_type const& limit::row_slice() const noexcept {
+    return row_slice_;
+}
+
 bool operator==(limit const& a, limit const& b) noexcept {
-    return a.count() == b.count()
-        && a.group_keys() == b.group_keys()
-        && a.sort_keys() == b.sort_keys();
+    return a.group_keys() == b.group_keys()
+        && a.sort_keys() == b.sort_keys()
+        && a.row_slice() == b.row_slice();
 }
 
 bool operator!=(limit const& a, limit const& b) noexcept {
@@ -122,9 +121,9 @@ bool operator!=(limit const& a, limit const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, limit const& value) {
     return out << value.kind() << "("
-               << "count=" << util::print_support { value.count() } << ", "
                << "group_keys=" << util::print_support { value.group_keys() } << ", "
-               << "sort_keys=" << util::print_support { value.sort_keys() } << ")";
+               << "sort_keys=" << util::print_support { value.sort_keys() } << ", "
+               << "row_slice=" << util::print_support { value.row_slice() } << ")";
 }
 
 bool limit::equals(expression const& other) const noexcept {

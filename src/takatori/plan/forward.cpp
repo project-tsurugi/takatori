@@ -1,43 +1,45 @@
 #include <takatori/plan/forward.h>
 
-#include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
-#include <takatori/util/optional_print_support.h>
 #include <takatori/util/vector_print_support.h>
 
 namespace takatori::plan {
 
 forward::forward(
         std::vector<descriptor::variable> columns,
-        std::optional<size_type> limit) noexcept
-    : columns_(std::move(columns))
-    , limit_(limit)
+        row_slice_type row_slice) noexcept :
+    columns_ { std::move(columns) },
+    row_slice_ { std::move(row_slice) }
 {}
 
-forward::forward(std::optional<size_type> limit) noexcept
-    : forward(
+forward::forward(row_slice_type row_slice) noexcept :
+    forward {
             decltype(columns_) {},
-            limit)
+            std::move(row_slice),
+    }
 {}
 
 forward::forward(
         std::initializer_list<descriptor::variable> columns,
-        std::optional<size_type> limit) noexcept
-    : forward(
+        row_slice_type row_slice) noexcept :
+    forward {
             decltype(columns_) { columns.begin(), columns.end() },
-            limit)
+            std::move(row_slice),
+    }
 {}
 
-forward::forward(util::clone_tag_t, forward const& other)
-    : forward(
+forward::forward(util::clone_tag_t, forward const& other) :
+    forward {
             { other.columns_ },
-            other.limit_)
+            other.row_slice_,
+    }
 {}
 
-forward::forward(util::clone_tag_t, forward&& other)
-    : forward(
+forward::forward(util::clone_tag_t, forward&& other) :
+    forward {
             { std::move(other.columns_) },
-            other.limit_)
+            std::move(other.row_slice_),
+    }
 {}
 
 step_kind forward::kind() const noexcept {
@@ -68,18 +70,17 @@ std::vector<descriptor::variable> const& forward::columns() const noexcept {
     return columns_;
 }
 
-std::optional<forward::size_type> const& forward::limit() const noexcept {
-    return limit_;
+forward::row_slice_type& forward::row_slice() noexcept {
+    return row_slice_;
 }
 
-forward& forward::limit(std::optional<forward::size_type> limit) noexcept {
-    limit_ = limit;
-    return *this;
+forward::row_slice_type const& forward::row_slice() const noexcept {
+    return row_slice_;
 }
 
 bool operator==(forward const& a, forward const& b) noexcept {
     return a.columns() == b.columns()
-        && a.limit() == b.limit();
+        && a.row_slice() == b.row_slice();
 }
 
 bool operator!=(forward const& a, forward const& b) noexcept {
@@ -89,7 +90,7 @@ bool operator!=(forward const& a, forward const& b) noexcept {
 std::ostream& operator<<(std::ostream& out, forward const& value) {
     return out << value.kind() << "("
                << "columns=" << util::print_support { value.columns() } << ", "
-               << "limit=" << util::print_support { value.limit() } << ")";
+               << "row_slice=" << value.row_slice() << ")";
 }
 
 bool forward::equals(step const& other) const noexcept {

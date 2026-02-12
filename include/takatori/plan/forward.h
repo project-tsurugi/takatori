@@ -1,16 +1,15 @@
 #pragma once
 
-#include <memory>
 #include <initializer_list>
 #include <ostream>
-#include <optional>
-#include <utility>
 #include <vector>
+
+#include <takatori/relation/details/row_slice.h>
+
+#include <takatori/util/clone_tag.h>
 
 #include "exchange.h"
 #include "step_kind.h"
-
-#include <takatori/util/clone_tag.h>
 
 namespace takatori::plan {
 
@@ -19,8 +18,8 @@ namespace takatori::plan {
  */
 class forward : public exchange {
 public:
-    /// @brief the size type.
-    using size_type = std::size_t;
+    /// @brief row slice type.
+    using row_slice_type = relation::details::row_slice;
 
     /// @brief the kind of this step.
     static constexpr step_kind tag = step_kind::forward;
@@ -33,29 +32,28 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param limit the max number of rows to forward
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      * @note the created object does not have any exchange columns, please define them using columns()
      */
-    explicit forward(
-            std::optional<size_type> limit) noexcept;
+    explicit forward(row_slice_type row_slice) noexcept;
 
     /**
      * @brief creates a new object.
      * @param columns the exchange columns
-     * @param limit the max number of rows to forward
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      */
     explicit forward(
             std::vector<descriptor::variable> columns,
-            std::optional<size_type> limit = std::nullopt) noexcept;
+            row_slice_type row_slice = {}) noexcept;
 
     /**
      * @brief creates a new object.
      * @param columns the exchange columns
-     * @param limit the max number of rows to forward
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      */
     forward(
             std::initializer_list<descriptor::variable> columns,
-            std::optional<size_type> limit = std::nullopt) noexcept;
+            row_slice_type row_slice = {}) noexcept;
 
     /**
      * @brief creates a new object.
@@ -88,22 +86,18 @@ public:
     [[nodiscard]] std::vector<descriptor::variable> const& columns() const noexcept;
 
     /**
-     * @brief returns the max number of exchange rows.
-     * @return the number of exchange rows limit
-     * @return empty if it is unlimited
+     * @brief returns the row slice.
+     * @details if there are out of the slice rows, they will be discarded.
+     * @return the row slice
      */
-    [[nodiscard]] std::optional<size_type> const& limit() const noexcept;
+    [[nodiscard]] row_slice_type& row_slice() noexcept;
+
+    /// @copydoc row_slice()
+    [[nodiscard]] row_slice_type const& row_slice() const noexcept;
 
     /**
-     * @brief sets the max number of exchange rows.
-     * @param limit the number of exchange rows limit
-     * @return this
-     */
-    forward& limit(std::optional<size_type> limit) noexcept;
-
-    /**
-     * @brief returns whether or not the two elements are equivalent.
-     * @details this don't compares upstream processes nor downstream processes.
+     * @brief returns whether the two elements are equivalent.
+     * @details this don't compare upstream processes nor downstream processes.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
@@ -113,8 +107,8 @@ public:
     friend bool operator==(forward const& a, forward const& b) noexcept;
 
     /**
-     * @brief returns whether or not the two elements are different.
-     * @details this don't compares upstream processes nor downstream processes.
+     * @brief returns whether the two elements are different.
+     * @details this don't compare upstream processes nor downstream processes.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
      * @param b the second element
@@ -137,7 +131,7 @@ protected:
 
 private:
     std::vector<descriptor::variable> columns_ {};
-    std::optional<size_type> limit_ {};
+    row_slice_type row_slice_;
 };
 
 } // namespace takatori::plan

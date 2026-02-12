@@ -1,6 +1,5 @@
 #include <takatori/relation/scan.h>
 
-#include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
 #include <takatori/util/optional_print_support.h>
 #include <takatori/util/vector_print_support.h>
@@ -12,13 +11,13 @@ scan::scan(
         std::vector<column> columns,
         endpoint lower,
         endpoint upper,
-        std::optional<std::size_t> limit) noexcept
-    : output_(*this, 0)
-    , source_(std::move(source))
-    , columns_(std::move(columns))
-    , lower_(tree::bless_element(*this, std::move(lower)))
-    , upper_(tree::bless_element(*this, std::move(upper)))
-    , limit_(limit)
+        row_slice_type row_slice) noexcept :
+    output_ { *this, 0 },
+    source_ { std::move(source) },
+    columns_ { std::move(columns) },
+    lower_ { tree::bless_element(*this, std::move(lower)) },
+    upper_ { tree::bless_element(*this, std::move(upper)) },
+    row_slice_ { std::move(row_slice) }
 {}
 
 scan::scan(
@@ -26,31 +25,34 @@ scan::scan(
         std::initializer_list<column> columns,
         endpoint lower,
         endpoint upper,
-        std::optional<std::size_t> limit)
-    : scan(
+        row_slice_type row_slice) :
+    scan {
             std::move(source),
             { columns.begin(), columns.end() },
             std::move(lower),
             std::move(upper),
-            limit)
+            std::move(row_slice),
+    }
 {}
 
-scan::scan(util::clone_tag_t, scan const& other)
-    : scan(
+scan::scan(util::clone_tag_t, scan const& other) :
+    scan {
             other.source_,
             { other.columns_ },
             endpoint { util::clone_tag, other.lower_ },
             endpoint { util::clone_tag, other.upper_ },
-            other.limit_)
+            other.row_slice_,
+    }
 {}
 
-scan::scan(util::clone_tag_t, scan&& other)
-    : scan(
+scan::scan(util::clone_tag_t, scan&& other) :
+    scan {
             std::move(other.source_),
             { std::move(other.columns_) },
             endpoint { util::clone_tag, std::move(other.lower_) },
             endpoint { util::clone_tag, std::move(other.upper_) },
-            other.limit_)
+            std::move(other.row_slice_),
+    }
 {}
 
 expression_kind scan::kind() const noexcept {
@@ -121,13 +123,12 @@ scan::endpoint const& scan::upper() const noexcept {
     return upper_;
 }
 
-std::optional<std::size_t> const& scan::limit() const noexcept {
-    return limit_;
+scan::row_slice_type& scan::row_slice() noexcept {
+    return row_slice_;
 }
 
-scan& scan::limit(std::optional<std::size_t> limit) noexcept {
-    limit_ = limit;
-    return *this;
+scan::row_slice_type const& scan::row_slice() const noexcept {
+    return row_slice_;
 }
 
 bool operator==(scan const& a, scan const& b) noexcept {
@@ -135,7 +136,7 @@ bool operator==(scan const& a, scan const& b) noexcept {
         && a.columns() == b.columns()
         && a.lower() == b.lower()
         && a.upper() == b.upper()
-        && a.limit() == b.limit();
+        && a.row_slice() == b.row_slice();
 }
 
 bool operator!=(scan const& a, scan const& b) noexcept {
@@ -148,7 +149,7 @@ std::ostream& operator<<(std::ostream& out, scan const& value) {
                << "columns=" << util::print_support { value.columns() } << ", "
                << "lower=" << value.lower() << ", "
                << "upper=" << value.upper() << ", "
-               << "limit=" << util::print_support { value.limit() } << ")";
+               << "row_slice=" << value.row_slice() << ")";
 }
 
 bool scan::equals(expression const& other) const noexcept {

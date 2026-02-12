@@ -1,8 +1,6 @@
 #pragma once
 
 #include <initializer_list>
-#include <memory>
-#include <optional>
 #include <vector>
 
 #include "expression.h"
@@ -13,10 +11,11 @@
 #include "details/range_endpoint.h"
 
 #include <takatori/descriptor/relation.h>
-#include <takatori/descriptor/variable.h>
 
 #include <takatori/util/clone_tag.h>
 #include <takatori/util/meta_type.h>
+
+#include "details/row_slice.h"
 
 namespace takatori::relation {
 
@@ -34,8 +33,11 @@ public:
     /// @brief the end-point type.
     using endpoint = details::range_endpoint<scan, key>;
 
+    /// @brief row slice type.
+    using row_slice_type = details::row_slice;
+
     /// @brief the kind of this expression.
-    static constexpr inline expression_kind tag = expression_kind::scan;
+    static constexpr expression_kind tag = expression_kind::scan;
 
     /**
      * @brief creates a new instance.
@@ -45,18 +47,18 @@ public:
      *      and `destination` represents a new column of the resulting relation
      * @param lower the lower end-point specification.
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
-     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     *      and each `value` cannot include any variables declared in `columns.destination`s
      * @param upper the upper end-point specification.
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
-     *      and each `value` cannot include any variables declared in `columns.destination`s 
-     * @param limit the maximum number of output records
+     *      and each `value` cannot include any variables declared in `columns.destination`s
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      */
     explicit scan(
             descriptor::relation source,
             std::vector<column> columns,
             endpoint lower,
             endpoint upper,
-            std::optional<std::size_t> limit) noexcept;
+            row_slice_type row_slice) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -66,11 +68,11 @@ public:
      *      and `destination` represents a new column of the resulting relation
      * @param lower the lower end-point specification.
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
-     *      and each `value` cannot include any variables declared in `columns.destination`s 
+     *      and each `value` cannot include any variables declared in `columns.destination`s
      * @param upper the upper end-point specification.
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
-     *      and each `value` cannot include any variables declared in `columns.destination`s 
-     * @param limit the maximum number of output records
+     *      and each `value` cannot include any variables declared in `columns.destination`s
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      * @attention this may take copies of arguments
      */
     explicit scan(
@@ -78,7 +80,7 @@ public:
             std::initializer_list<column> columns,
             endpoint lower = {},
             endpoint upper = {},
-            std::optional<std::size_t> limit = {});
+            row_slice_type row_slice = {});
 
     /**
      * @brief creates a new object.
@@ -146,18 +148,15 @@ public:
     [[nodiscard]] endpoint const& upper() const noexcept;
 
     /**
-     * @brief returns the maximum number of output records.
-     * @return the maximum number of output records
-     * @return empty if it is unlimited
+     * @brief returns the row slice.
+     * @details The slicing range follows the row order of the source relation.
+     *     If there are out of the slice rows, they will be discarded.
+     * @return the row slice
      */
-    [[nodiscard]] std::optional<std::size_t> const& limit() const noexcept;
+    [[nodiscard]] row_slice_type& row_slice() noexcept;
 
-    /**
-     * @brief sets the maximum number of output records.
-     * @param limit the maximum number
-     * @return this
-     */
-    scan& limit(std::optional<std::size_t> limit) noexcept;
+    /// @copydoc row_slice()
+    [[nodiscard]] row_slice_type const& row_slice() const noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.
@@ -197,7 +196,7 @@ private:
     std::vector<column> columns_;
     endpoint lower_;
     endpoint upper_;
-    std::optional<std::size_t> limit_;
+    row_slice_type row_slice_;
 };
 
 /**

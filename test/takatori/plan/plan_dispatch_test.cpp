@@ -8,10 +8,10 @@ class plan_dispatch_test : public ::testing::Test {};
 
 TEST_F(plan_dispatch_test, simple) {
     struct cb {
-        int operator()(forward const& op) { return static_cast<int>(op.limit().value()); }
+        int operator()(forward const& op) { return static_cast<int>(op.row_slice().count().immediate()); }
         int operator()(step const&) { return 0; }
     };
-    forward e { 100 };
+    forward e { { 0, 100 } };
     auto r = dispatch(cb {}, e);
     EXPECT_EQ(r, 100);
 }

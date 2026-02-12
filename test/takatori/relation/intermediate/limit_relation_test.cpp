@@ -17,12 +17,14 @@ static_assert(std::is_same_v<type_of_t<limit::tag>, limit>);
 static_assert(is_available_in_intermediate_plan(limit::tag));
 static_assert(!is_available_in_step_plan(limit::tag));
 
-TEST_F(limit_relation_test, simple) {
-    limit expr { 10 };
+using row_slice = details::row_slice;
 
-    ASSERT_EQ(expr.count(), 10);
+TEST_F(limit_relation_test, simple) {
+    limit expr {};
+
     ASSERT_EQ(expr.group_keys().size(), 0);
     ASSERT_EQ(expr.sort_keys().size(), 0);
+    EXPECT_FALSE(expr.row_slice());
 
     {
         auto p = expr.input_ports();
@@ -43,7 +45,6 @@ TEST_F(limit_relation_test, simple) {
 
 TEST_F(limit_relation_test, group_keys) {
     limit expr {
-            5,
             {
                     vardesc(1),
                     vardesc(2),
@@ -51,16 +52,15 @@ TEST_F(limit_relation_test, group_keys) {
             },
     };
 
-    ASSERT_EQ(expr.count(), 5);
     ASSERT_EQ(expr.group_keys().size(), 3);
     EXPECT_EQ(expr.group_keys()[0], vardesc(1));
     EXPECT_EQ(expr.group_keys()[1], vardesc(2));
     EXPECT_EQ(expr.group_keys()[2], vardesc(3));
+    EXPECT_FALSE(expr.row_slice());
 }
 
 TEST_F(limit_relation_test, sort_keys) {
     limit expr {
-            5,
             {},
             {
                     { vardesc(10) },
@@ -69,7 +69,6 @@ TEST_F(limit_relation_test, sort_keys) {
             },
     };
 
-    ASSERT_EQ(expr.count(), 5);
     ASSERT_EQ(expr.sort_keys().size(), 3);
     {
         auto&& k = expr.sort_keys()[0];
@@ -86,24 +85,27 @@ TEST_F(limit_relation_test, sort_keys) {
         EXPECT_EQ(k.variable(), vardesc(30));
         EXPECT_EQ(k.direction(), sort_direction::ascendant);
     }
+    EXPECT_FALSE(expr.row_slice());
 }
 
-TEST_F(limit_relation_test, unlimited) {
+TEST_F(limit_relation_test, row_slice) {
     limit expr {
-            {},
             {
-                    vardesc(1),
+                    10,
+                    5,
             },
     };
 
-    ASSERT_EQ(expr.count(), std::nullopt);
-    ASSERT_EQ(expr.group_keys().size(), 1);
-    EXPECT_EQ(expr.group_keys()[0], vardesc(1));
+    ASSERT_EQ(expr.group_keys().size(), 0);
+    ASSERT_EQ(expr.sort_keys().size(), 0);
+    EXPECT_EQ(expr.row_slice(), (row_slice {
+            10,
+            5,
+    }));
 }
 
 TEST_F(limit_relation_test, clone) {
     limit expr {
-            5,
             {
                     vardesc(1),
                     vardesc(2),
@@ -113,6 +115,9 @@ TEST_F(limit_relation_test, clone) {
                     { vardesc(10) },
                     { vardesc(20), sort_direction::descendant },
                     { vardesc(30), sort_direction::ascendant },
+            },
+            {
+                    {}, 5,
             },
     };
 
@@ -123,7 +128,6 @@ TEST_F(limit_relation_test, clone) {
 
 TEST_F(limit_relation_test, clone_move) {
     limit expr {
-            5,
             {
                     vardesc(1),
                     vardesc(2),
@@ -133,6 +137,10 @@ TEST_F(limit_relation_test, clone_move) {
                     { vardesc(10) },
                     { vardesc(20), sort_direction::descendant },
                     { vardesc(30), sort_direction::ascendant },
+            },
+            {
+                    10,
+                    5,
             },
     };
 
@@ -147,7 +155,6 @@ TEST_F(limit_relation_test, clone_move) {
 
 TEST_F(limit_relation_test, output) {
     limit expr {
-            5,
             {
                     vardesc(1),
                     vardesc(2),
@@ -157,6 +164,10 @@ TEST_F(limit_relation_test, output) {
                     { vardesc(10) },
                     { vardesc(20), sort_direction::descendant },
                     { vardesc(30), sort_direction::ascendant },
+            },
+            {
+                    10,
+                    5,
             },
     };
 

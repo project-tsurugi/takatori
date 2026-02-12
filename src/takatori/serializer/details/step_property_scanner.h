@@ -36,6 +36,10 @@ private:
     void accept(relation::details::sort_key_element const& element);
 
     void accept(relation::details::aggregate_element const& element);
+
+    void accept(relation::details::row_slice const& element);
+
+    void accept(relation::details::constant_value<std::size_t> const& element);
 };
 
 } // namespace takatori::serializer::details
