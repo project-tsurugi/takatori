@@ -127,6 +127,16 @@ public:
         do_function_call(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
     }
 
+    template<class Callback, class... Args>
+    void operator()(extension& expr, Callback&& callback, Args&&... args) {
+        do_nullary(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
+    }
+
+    template<class Callback, class... Args>
+    void operator()(extension const& expr, Callback&& callback, Args&&... args) {
+        do_nullary(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
+    }
+
     template<class Callback, class Expr, class... Args>
     void operator()(Expr& expr, Callback&& callback, Args&&... args) {
         do_nullary(std::forward<Callback>(callback), expr, std::forward<Args>(args)...);
