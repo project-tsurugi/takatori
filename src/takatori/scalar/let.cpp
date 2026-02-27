@@ -10,37 +10,46 @@ namespace takatori::scalar {
 
 let::let(
         std::vector<declarator> variables,
-        std::unique_ptr<expression> body) noexcept
-    : variables_(*this, std::move(variables))
-    , body_(tree::bless_element(*this, std::move(body)))
+        std::unique_ptr<expression> body) noexcept :
+    variables_ {
+            *this,
+            std::move(variables),
+    },
+    body_ {
+            tree::bless_element(*this, std::move(body))
+    }
 {}
 
 let::let(
         declarator&& variable,
-        expression&& body)
-    : let(
-        { util::rvalue_reference_wrapper { std::move(variable) } },
-        std::move(body))
+        expression&& body) :
+    let {
+            { util::rvalue_reference_wrapper { std::move(variable) } },
+            std::move(body),
+    }
 {}
 
 let::let(
         std::initializer_list<util::rvalue_reference_wrapper<declarator>> variables,
-        expression&& body)
-    : let(
+        expression&& body) :
+    let {
             { variables.begin(), variables.end() },
-            util::clone_unique(body))
+            util::clone_unique(std::move(body)),
+    }
 {}
 
-let::let(util::clone_tag_t, let const& other)
-    : let(
+let::let(util::clone_tag_t, let const& other):
+    let {
             tree::forward(other.variables_),
-            tree::forward(other.body_))
+            tree::forward(other.body_),
+    }
 {}
 
-let::let(util::clone_tag_t, let&& other)
-    : let(
+let::let(util::clone_tag_t, let&& other) :
+    let {
             tree::forward(std::move(other.variables_)),
-            tree::forward(std::move(other.body_)))
+            tree::forward(std::move(other.body_)),
+    }
 {}
 
 expression_kind let::kind() const noexcept {
