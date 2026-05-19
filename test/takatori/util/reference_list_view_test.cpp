@@ -95,7 +95,7 @@ TEST_F(reference_list_view_test, double_pointer_range) {
     int x = 0, y = 1, z = 2;
 
     std::array<int*, 3> a { &x, &y, &z };
-    reference_list_view v { &a[0], &a[3] };
+    reference_list_view v { &a[0], &a[0] + 3 }; // NOLINT
 
     ASSERT_EQ(v.size(), 3);
     EXPECT_EQ(&v[0], &x);
