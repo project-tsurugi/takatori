@@ -26,6 +26,10 @@ enum class comparison_operator {
     greater,
     /// @brief greater than or equal to
     greater_equal,
+    /// @brief is not distinct from
+    is_not_distinct_from,
+    /// @brief is distinct from (pseudo comparison operator for operator~())
+    is_distinct_from,
 };
 
 /**
@@ -42,6 +46,8 @@ inline constexpr comparison_operator operator~(comparison_operator value) noexce
         case kind::less_equal: return kind::greater;
         case kind::greater: return kind::less_equal;
         case kind::greater_equal: return kind::less;
+        case kind::is_not_distinct_from: return kind::is_distinct_from;
+        case kind::is_distinct_from: return kind::is_not_distinct_from;
     }
 }
 
@@ -59,6 +65,8 @@ inline constexpr comparison_operator transpose(comparison_operator value) noexce
         case kind::less_equal: return kind::greater_equal;
         case kind::greater: return kind::less;
         case kind::greater_equal: return kind::less_equal;
+        case kind::is_not_distinct_from: return kind::is_not_distinct_from;
+        case kind::is_distinct_from: return kind::is_not_distinct_from;
     }
 }
 
@@ -77,6 +85,8 @@ inline constexpr std::string_view to_string_view(comparison_operator value) noex
         case kind::less_equal: return "less_equal"sv;
         case kind::greater: return "greater"sv;
         case kind::greater_equal: return "greater_equal"sv;
+        case kind::is_not_distinct_from: return "is_not_distinct_from"sv;
+        case kind::is_distinct_from: return "is_distinct_from"sv;
     }
     std::abort();
 }
@@ -119,7 +129,7 @@ inline constexpr comparison_operator_tag_t<Kind> comparison_operator_tag {};
  * @return the callback result
  */
 template<class Callback, class... Args>
-inline auto dispatch(Callback&& callback, comparison_operator operator_kind, Args&&... args) {
+auto dispatch(Callback&& callback, comparison_operator operator_kind, Args&&... args) {
     using kind = comparison_operator;
     switch (operator_kind) {
         case kind::equal: return util::enum_tag_callback<kind::equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
@@ -128,6 +138,8 @@ inline auto dispatch(Callback&& callback, comparison_operator operator_kind, Arg
         case kind::less_equal: return util::enum_tag_callback<kind::less_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
         case kind::greater: return util::enum_tag_callback<kind::greater>(std::forward<Callback>(callback), std::forward<Args>(args)...);
         case kind::greater_equal: return util::enum_tag_callback<kind::greater_equal>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_not_distinct_from: return util::enum_tag_callback<kind::is_not_distinct_from>(std::forward<Callback>(callback), std::forward<Args>(args)...);
+        case kind::is_distinct_from: return util::enum_tag_callback<kind::is_distinct_from>(std::forward<Callback>(callback), std::forward<Args>(args)...);
     }
     std::abort();
 }

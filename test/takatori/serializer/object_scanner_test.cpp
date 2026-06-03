@@ -454,8 +454,8 @@ TEST_F(object_scanner_test, relation_find) {
                     { vardesc(5), vardesc(6) },
             },
             {
-                    relation::find::key { vardesc(1), const_int4() },
-                    relation::find::key { vardesc(3), const_int4() },
+                    relation::find::key { vardesc(1), const_int4(), relation::comparison_semantics_kind::binary },
+                    relation::find::key { vardesc(3), const_int4(), relation::comparison_semantics_kind::ternary },
             }
     });
 }

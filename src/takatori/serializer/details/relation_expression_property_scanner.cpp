@@ -397,6 +397,10 @@ void relation_expression_property_scanner::accept(relation::details::search_key_
     accept(element.optional_value());
     acceptor_.property_end();
 
+    acceptor_.property_begin("semantics"sv);
+    accept(element.semantics());
+    acceptor_.property_end();
+
     acceptor_.struct_end();
 }
 

@@ -14,6 +14,8 @@
 #include <takatori/util/optional_ptr.h>
 #include <takatori/util/ownership_reference.h>
 
+#include "../comparison_semantics_kind.h"
+
 namespace takatori::relation::details {
 
 /**
@@ -23,6 +25,11 @@ namespace takatori::relation::details {
 template<class Parent>
 class search_key_element {
 public:
+    /// @brief the comparison semantics type.
+    using semantics_type = comparison_semantics_kind;
+
+    static constexpr semantics_type default_semantics = semantics_type::ternary;
+
     /// @brief the fragment owner type.
     using parent_type = Parent;
 
@@ -30,52 +37,68 @@ public:
      * @brief creates a new instance.
      * @param variable the search key column on the target relation
      * @param value the search value for the target column
+     * @param semantics the comparison semantics
      */
     explicit search_key_element(
             descriptor::variable variable,
-            std::unique_ptr<scalar::expression> value) noexcept
-        : variable_(std::move(variable))
-        , value_(std::move(value))
+            std::unique_ptr<scalar::expression> value,
+            semantics_type semantics = default_semantics) noexcept :
+        variable_ { std::move(variable) },
+        value_ { std::move(value) },
+        semantics_ { semantics }
     {}
 
     /**
      * @brief creates a new instance.
      * @param value the search value for the target column
      * @param variable the search key column on the target relation
+     * @param semantics the comparison semantics
      */
     explicit search_key_element(
             std::unique_ptr<scalar::expression> value,
-            descriptor::variable variable) noexcept
-        : variable_(std::move(variable))
-        , value_(std::move(value))
+            descriptor::variable variable,
+            semantics_type semantics = default_semantics) noexcept :
+        search_key_element {
+            std::move(variable),
+            std::move(value),
+            semantics,
+        }
     {}
 
     /**
      * @brief creates a new instance.
      * @param variable the search key column on the target relation
      * @param value the search value for the target column
+     * @param semantics the comparison semantics
      * @attention this may take a copy of arguments
      */
     explicit search_key_element(
             descriptor::variable variable, // FIXME: NOLINT(performance-unnecessary-value-param)
-            scalar::expression&& value) noexcept
-        : search_key_element(
-                std::move(variable),
-                util::clone_unique(std::move(value)))
+            scalar::expression&& value,
+            semantics_type semantics = default_semantics) noexcept :
+        search_key_element {
+            std::move(variable),
+            util::clone_unique(std::move(value)),
+            semantics,
+        }
     {}
 
     /**
      * @brief creates a new instance.
      * @param value the search value for the target column
      * @param variable the search key column on the target relation
+     * @param semantics the comparison semantics
      * @attention this may take a copy of arguments
      */
     explicit search_key_element(
             scalar::expression&& value,
-            descriptor::variable variable) noexcept // FIXME: NOLINT(performance-unnecessary-value-param)
-        : search_key_element(
-                std::move(variable),
-                util::clone_unique(std::move(value)))
+            descriptor::variable variable, // FIXME: NOLINT(performance-unnecessary-value-param)
+            semantics_type semantics = default_semantics) noexcept :
+        search_key_element {
+            std::move(variable),
+            util::clone_unique(std::move(value)),
+            semantics,
+        }
     {}
 
     ~search_key_element() = default;
@@ -101,20 +124,24 @@ public:
      * @brief creates a new object.
      * @param other the copy source
      */
-    explicit search_key_element(util::clone_tag_t, search_key_element const& other)
-        : search_key_element(
-                other.variable_,
-                tree::forward(other.value_))
+    explicit search_key_element(util::clone_tag_t, search_key_element const& other) :
+        search_key_element {
+            other.variable_,
+            tree::forward(other.value_),
+            other.semantics_,
+        }
     {}
 
     /**
      * @brief creates a new object.
      * @param other the move source
      */
-    explicit search_key_element(util::clone_tag_t, search_key_element&& other)
-        : search_key_element(
-                std::move(other.variable_),
-                tree::forward(std::move(other.value_)))
+    explicit search_key_element(util::clone_tag_t, search_key_element&& other) :
+        search_key_element {
+            std::move(other.variable_),
+            tree::forward(std::move(other.value_)),
+            other.semantics_,
+        }
     {}
 
     /**
@@ -207,9 +234,23 @@ public:
         return tree::ownership_element_fragment(parent_, value_);
     }
 
+    /**
+     * @brief returns comparison semantics of this search key.
+     * @return the comparison semantics
+     */
+    [[nodiscard]] semantics_type& semantics() noexcept {
+        return semantics_;
+    }
+
+    /// @copydoc semantics()
+    [[nodiscard]] semantics_type semantics() const noexcept {
+        return semantics_;
+    }
+
 private:
     descriptor::variable variable_;
     std::unique_ptr<scalar::expression> value_;
+    semantics_type semantics_;
     parent_type* parent_ {};
 };
 
@@ -221,10 +262,10 @@ private:
  * @return false otherwise
  */
 template<class Parent>
-inline bool
-operator==(search_key_element<Parent> const& a, search_key_element<Parent> const& b) noexcept {
+bool operator==(search_key_element<Parent> const& a, search_key_element<Parent> const& b) noexcept {
     return a.variable() == b.variable()
-        && a.optional_value() == b.optional_value();
+        && a.optional_value() == b.optional_value()
+        && a.semantics() == b.semantics();
 }
 
 /**
@@ -235,8 +276,7 @@ operator==(search_key_element<Parent> const& a, search_key_element<Parent> const
  * @return false otherwise
  */
 template<class Parent>
-inline bool
-operator!=(search_key_element<Parent> const& a, search_key_element<Parent> const& b) noexcept {
+bool operator!=(search_key_element<Parent> const& a, search_key_element<Parent> const& b) noexcept {
     return !(a == b);
 }
 
@@ -247,11 +287,11 @@ operator!=(search_key_element<Parent> const& a, search_key_element<Parent> const
  * @return the output
  */
 template<class Parent>
-inline std::ostream&
-operator<<(std::ostream& out, search_key_element<Parent> const& value) {
+std::ostream& operator<<(std::ostream& out, search_key_element<Parent> const& value) {
     return out << "key_element("
                << "variable=" << value.variable() << ", "
-               << "value=" << value.optional_value() << ")";
+               << "value=" << value.optional_value() << ", "
+               << "semantics=" << value.semantics() << ")";
 }
 
 } // namespace takatori::relation::details
