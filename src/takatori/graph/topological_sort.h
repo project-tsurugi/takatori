@@ -41,6 +41,8 @@ void topological_sort(
             if (!top.visited) {
                 if (auto [it, success] = saw.emplace(top.element_ptr); success) {
                     (void) it;
+                    // keep the current entry index for memory layout changes
+                    auto current_index = dfs_stack.size() - 1;
                     // extract successors into top of the stack, only if the first time visit of this entry
                     enumerator_type{}(*top.element_ptr, [&](reference next) {
                         if (saw.find(std::addressof(next)) == saw.end()) {
@@ -48,7 +50,7 @@ void topological_sort(
                         }
                     });
                     // revisit current entry later
-                    top.visited = true;
+                    dfs_stack[current_index].visited = true;
                 } else {
                     // already visited via other paths
                     dfs_stack.pop_back();
