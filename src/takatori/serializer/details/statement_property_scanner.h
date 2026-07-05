@@ -6,6 +6,9 @@
 #include <takatori/statement/drop_table.h>
 #include <takatori/statement/create_index.h>
 #include <takatori/statement/drop_index.h>
+#include <takatori/statement/rename_table.h>
+#include <takatori/statement/rename_index.h>
+#include <takatori/statement/rename_column.h>
 #include <takatori/statement/truncate_table.h>
 #include <takatori/statement/grant_table.h>
 #include <takatori/statement/revoke_table.h>
@@ -27,6 +30,9 @@ public:
     void operator()(statement::drop_table const& element);
     void operator()(statement::create_index const& element);
     void operator()(statement::drop_index const& element);
+    void operator()(statement::rename_table const& element);
+    void operator()(statement::rename_index const& element);
+    void operator()(statement::rename_column const& element);
     void operator()(statement::truncate_table const& element);
     void operator()(statement::grant_table const& element);
     void operator()(statement::revoke_table const& element);

@@ -85,8 +85,11 @@
 #include <takatori/statement/execute.h>
 #include <takatori/statement/write.h>
 #include <takatori/statement/create_table.h>
-#include <takatori/statement/drop_table.h>
 #include <takatori/statement/create_index.h>
+#include <takatori/statement/rename_table.h>
+#include <takatori/statement/rename_index.h>
+#include <takatori/statement/rename_column.h>
+#include <takatori/statement/drop_table.h>
 #include <takatori/statement/drop_index.h>
 #include <takatori/statement/truncate_table.h>
 #include <takatori/statement/grant_table.h>
@@ -987,17 +990,41 @@ TEST_F(object_scanner_test, create_table) {
     });
 }
 
-TEST_F(object_scanner_test, drop_table) {
-    print(statement::drop_table {
-            schemadesc("S"),
-            storagedesc("T0"),
-    });
-}
-
 TEST_F(object_scanner_test, create_index) {
     print(statement::create_index {
             schemadesc("S"),
             tabledesc("T0"),
+    });
+}
+
+TEST_F(object_scanner_test, rename_table) {
+    print(statement::rename_table {
+            schemadesc("S"),
+            storagedesc("T0"),
+            "T1",
+    });
+}
+
+TEST_F(object_scanner_test, rename_index) {
+    print(statement::rename_index {
+            schemadesc("S"),
+            tabledesc("I0"),
+            "I1",
+    });
+}
+
+TEST_F(object_scanner_test, rename_column) {
+    print(statement::rename_column {
+            storagedesc("T0"),
+            columndesc("C0"),
+            "C1",
+    });
+}
+
+TEST_F(object_scanner_test, drop_table) {
+    print(statement::drop_table {
+            schemadesc("S"),
+            storagedesc("T0"),
     });
 }
 

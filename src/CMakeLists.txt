@@ -201,6 +201,9 @@ add_library(takatori
     takatori/statement/write.cpp
     takatori/statement/create_table.cpp
     takatori/statement/create_index.cpp
+    takatori/statement/rename_table.cpp
+    takatori/statement/rename_column.cpp
+    takatori/statement/rename_index.cpp
     takatori/statement/drop_table.cpp
     takatori/statement/drop_index.cpp
     takatori/statement/truncate_table.cpp

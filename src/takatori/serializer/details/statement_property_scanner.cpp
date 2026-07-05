@@ -83,6 +83,48 @@ void statement_property_scanner::operator()(statement::drop_index const& element
     acceptor_.property_end();
 }
 
+void statement_property_scanner::operator()(statement::rename_table const& element) {
+    acceptor_.property_begin("schema"sv);
+    accept(element.schema());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("target"sv);
+    accept(element.target());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("replacement"sv);
+    acceptor_.string(element.replacement());
+    acceptor_.property_end();
+}
+
+void statement_property_scanner::operator()(statement::rename_index const& element) {
+    acceptor_.property_begin("schema"sv);
+    accept(element.schema());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("target"sv);
+    accept(element.target());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("replacement"sv);
+    acceptor_.string(element.replacement());
+    acceptor_.property_end();
+}
+
+void statement_property_scanner::operator()(statement::rename_column const& element) {
+    acceptor_.property_begin("table"sv);
+    accept(element.table());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("target"sv);
+    accept(element.target());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("replacement"sv);
+    acceptor_.string(element.replacement());
+    acceptor_.property_end();
+}
+
 void statement_property_scanner::operator()(statement::truncate_table const& element) {
     acceptor_.property_begin("target"sv);
     accept(element.target());

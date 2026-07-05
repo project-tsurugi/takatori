@@ -30,11 +30,20 @@ enum class statement_kind {
     /// @brief remove existing table.
     drop_table,
 
+    /// @brief rename existing table.
+    rename_table,
+
+    /// @brief rename existing table column.
+    rename_column,
+
     /// @brief define an index.
     create_index,
 
     /// @brief remove existing index.
     drop_index,
+
+    /// @brief rename existing index.
+    rename_index,
 
     /// @brief remove all rows from table.
     truncate_table,
@@ -72,8 +81,11 @@ constexpr inline std::string_view to_string_view(statement_kind value) noexcept 
         case kind::write: return "write"sv;
         case kind::create_table: return "create_table"sv;
         case kind::drop_table: return "drop_table"sv;
+        case kind::rename_table: return "rename_table"sv;
+        case kind::rename_column: return "rename_column"sv;
         case kind::create_index: return "create_index"sv;
         case kind::drop_index: return "drop_index"sv;
+        case kind::rename_index: return "rename_index"sv;
         case kind::truncate_table: return "truncate_table"sv;
         case kind::grant_table: return "grant_table"sv;
         case kind::revoke_table: return "revoke_table"sv;

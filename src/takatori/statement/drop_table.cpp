@@ -12,17 +12,17 @@ drop_table::drop_table(
 {}
 
 drop_table::drop_table(util::clone_tag_t, drop_table const& other) noexcept :
-        drop_table {
-                other.schema_,
-                other.target_,
-        }
+    drop_table {
+            other.schema_,
+            other.target_,
+    }
 {}
 
 drop_table::drop_table(util::clone_tag_t, drop_table&& other) noexcept :
-        drop_table {
-                std::move(other.schema_),
-                std::move(other.target_),
-        }
+    drop_table {
+            std::move(other.schema_),
+            std::move(other.target_),
+    }
 {}
 
 statement_kind drop_table::kind() const noexcept {
@@ -34,7 +34,7 @@ drop_table* drop_table::clone() const& {
 }
 
 drop_table* drop_table::clone() && {
-    return new drop_table(util::clone_tag, std::move(*this)); // NOLINT;
+    return new drop_table(util::clone_tag, std::move(*this)); // NOLINT
 }
 
 descriptor::schema& drop_table::schema() noexcept {
