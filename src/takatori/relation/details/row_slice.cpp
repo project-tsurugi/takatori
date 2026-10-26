@@ -13,7 +13,7 @@ row_slice::row_slice(
     count_ { std::move(count) }
 {}
 
-row_slice::operator bool() const noexcept {
+row_slice::operator bool() const noexcept { // NOLINT(bugprone-exception-escape)
     if (count_) {
         return true;
     }

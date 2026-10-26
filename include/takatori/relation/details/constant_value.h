@@ -43,7 +43,7 @@ public:
     /**
      * @brief creates a new instance that represents an absent.
      */
-    constexpr constant_value(std::nullopt_t) noexcept : // NOLINT
+    constexpr constant_value(std::nullopt_t): // NOLINT
         entity_ { std::in_place_type<std::monostate> }
     {}
 
@@ -51,7 +51,7 @@ public:
      * @brief assigns absent to this constant value.
      * @return this
      */
-    constant_value& operator=(std::nullopt_t) noexcept {
+    constant_value& operator=(std::nullopt_t) {
         entity_.template emplace<std::monostate>();
         return *this;
     }
@@ -60,7 +60,7 @@ public:
      * @brief creates a new instance from the given value.
      * @param value the constant value
      */
-    constant_value(value_type value) noexcept : // NOLINT
+    constant_value(value_type value): // NOLINT
         entity_ { std::in_place_type<value_type>, std::move(value) }
     {}
 
@@ -69,7 +69,7 @@ public:
      * @param value the constant value
      * @return this
      */
-    constant_value& operator=(value_type value) noexcept {
+    constant_value& operator=(value_type value) {
         entity_.template emplace<value_type>(std::move(value));
         return *this;
     }
@@ -78,7 +78,7 @@ public:
      * @brief creates a new instance from the given variable.
      * @param variable the variable
      */
-    constant_value(variable_type variable) noexcept : // NOLINT
+    constant_value(variable_type variable): // NOLINT
         entity_ { std::in_place_type<variable_type>, std::move(variable) }
     {}
 
@@ -87,7 +87,7 @@ public:
      * @param variable the variable
      * @return this
      */
-    constant_value& operator=(variable_type variable) noexcept {
+    constant_value& operator=(variable_type variable) {
         entity_.template emplace<variable_type>(std::move(variable));
         return *this;
     }
@@ -96,7 +96,7 @@ public:
      * @brief creates a new instance.
      * @param entity the entity
      */
-    constant_value(entity_type entity) noexcept : // NOLINT
+    constant_value(entity_type entity) noexcept: // NOLINT
         entity_ { std::move(entity) }
     {}
 
@@ -170,13 +170,13 @@ public:
      * @return empty if this constant value does not have immediate value
      */
     [[nodiscard]] util::optional_ptr<value_type> immediate_if() noexcept {
-        auto ptr = std::get_if<value_type>(&entity_);
+        auto* ptr = std::get_if<value_type>(&entity_);
         return util::optional_ptr<value_type> { ptr };
     }
 
     /// @copydoc immediate_if()
     [[nodiscard]] util::optional_ptr<value_type const> immediate_if() const noexcept {
-        auto ptr = std::get_if<value_type>(&entity_);
+        auto* ptr = std::get_if<value_type>(&entity_);
         return util::optional_ptr<value_type const> { ptr };
     }
 
