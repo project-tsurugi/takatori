@@ -4,6 +4,8 @@
 
 namespace takatori::relation::details {
 
+row_slice::row_slice() noexcept = default;
+
 row_slice::row_slice(
         position_type start,
         size_type count) noexcept:
@@ -12,7 +14,13 @@ row_slice::row_slice(
 {}
 
 row_slice::operator bool() const noexcept {
-    return static_cast<bool>(start_) || static_cast<bool>(count_);
+    if (count_) {
+        return true;
+    }
+    if (auto start = start_.immediate_if(); start && *start == 0) {
+        return false;
+    }
+    return static_cast<bool>(start_);
 }
 
 row_slice::position_type& row_slice::start() noexcept {

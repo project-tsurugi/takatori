@@ -20,18 +20,29 @@ public:
     using size_type = constant_value<std::size_t>;
 
     /**
+     * @brief constructs a new instance, which indicates the whole relation.
+     */
+    row_slice() noexcept;
+
+    /**
      * @brief constructs a new instance.
+     * @details To specify only the row count, write `{ {}, count }`.
+     *      A single value like `{ count }` is not accepted, to avoid mistaking it for the start row position.
      * @param start the start row position, or empty to indicate the start from the first row
      * @param count the row count, or empty to indicate all rows
      */
-    row_slice( // NOLINT
-            position_type start = {},
-            size_type count = {}) noexcept;
+    row_slice(
+            position_type start,
+            size_type count) noexcept;
 
     /**
      * @brief returns whether this slice indicates part of relation.
-     * @return true if start() or count() is not empty
-     * @return false if both start() and count() are empty, which indicates the whole relation
+     * @details This only considers which rows are taken by this slice.
+     *      For example, `{ 0, {} }` takes all rows of the relation, so that this returns false.
+     *      Note that, operator==() distinguishes it from `{}`.
+     * @return true if this slice may exclude some rows from the relation
+     * @return false if this slice takes the whole relation,
+     *      that is, start() is empty or immediate `0`, and count() is empty
      */
     [[nodiscard]] explicit operator bool() const noexcept;
 
@@ -57,6 +68,8 @@ public:
 
     /**
      * @brief returns whether the two row slicing are equivalent.
+     * @details This compares the structure of slices, that is, `{ 0, {} }` and `{}` are different
+     *      even though both of them take the whole relation.
      * @param lhs the first value
      * @param rhs the second value
      * @return true if lhs == rhs
