@@ -11,12 +11,14 @@ scan::scan(
         std::vector<column> columns,
         endpoint lower,
         endpoint upper,
+        direction_type direction,
         row_slice_type row_slice) noexcept :
     output_ { *this, 0 },
     source_ { std::move(source) },
     columns_ { std::move(columns) },
     lower_ { tree::bless_element(*this, std::move(lower)) },
     upper_ { tree::bless_element(*this, std::move(upper)) },
+    direction_ { direction },
     row_slice_ { std::move(row_slice) }
 {}
 
@@ -25,12 +27,14 @@ scan::scan(
         std::initializer_list<column> columns,
         endpoint lower,
         endpoint upper,
+        direction_type direction,
         row_slice_type row_slice) :
     scan {
             std::move(source),
             { columns.begin(), columns.end() },
             std::move(lower),
             std::move(upper),
+            direction,
             std::move(row_slice),
     }
 {}
@@ -41,6 +45,7 @@ scan::scan(util::clone_tag_t, scan const& other) :
             { other.columns_ },
             endpoint { util::clone_tag, other.lower_ },
             endpoint { util::clone_tag, other.upper_ },
+            other.direction_,
             other.row_slice_,
     }
 {}
@@ -51,6 +56,7 @@ scan::scan(util::clone_tag_t, scan&& other) :
             { std::move(other.columns_) },
             endpoint { util::clone_tag, std::move(other.lower_) },
             endpoint { util::clone_tag, std::move(other.upper_) },
+            other.direction_,
             std::move(other.row_slice_),
     }
 {}
@@ -123,6 +129,14 @@ scan::endpoint const& scan::upper() const noexcept {
     return upper_;
 }
 
+scan::direction_type& scan::direction() noexcept {
+    return direction_;
+}
+
+scan::direction_type const& scan::direction() const noexcept {
+    return direction_;
+}
+
 scan::row_slice_type& scan::row_slice() noexcept {
     return row_slice_;
 }
@@ -145,6 +159,7 @@ bool operator==(scan const& a, scan const& b) noexcept {
         && a.columns() == b.columns()
         && a.lower() == b.lower()
         && a.upper() == b.upper()
+        && a.direction() == b.direction()
         && a.row_slice() == b.row_slice();
 }
 
@@ -158,6 +173,7 @@ std::ostream& operator<<(std::ostream& out, scan const& value) {
                << "columns=" << util::print_support { value.columns() } << ", "
                << "lower=" << value.lower() << ", "
                << "upper=" << value.upper() << ", "
+               << "direction=" << util::print_support { value.direction() } << ", "
                << "row_slice=" << value.row_slice() << ")";
 }
 

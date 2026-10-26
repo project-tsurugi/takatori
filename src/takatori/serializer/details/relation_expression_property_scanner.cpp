@@ -42,6 +42,12 @@ void relation_expression_property_scanner::operator()(relation::scan const& elem
     accept(element.upper());
     acceptor_.property_end();
 
+    acceptor_.property_begin("direction"sv);
+    if (auto&& direction = element.direction()) {
+        accept(*direction);
+    }
+    acceptor_.property_end();
+
     acceptor_.property_begin("row_slice"sv);
     accept(element.row_slice());
     acceptor_.property_end();

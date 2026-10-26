@@ -1,10 +1,12 @@
 #pragma once
 
 #include <initializer_list>
+#include <optional>
 #include <vector>
 
 #include "expression.h"
 #include "expression_kind.h"
+#include "scan_direction.h"
 
 #include "details/search_key_element.h"
 #include "details/mapping_element.h"
@@ -34,6 +36,9 @@ public:
     /// @brief the end-point type.
     using endpoint = details::range_endpoint<scan, key>;
 
+    /// @brief the scan direction type.
+    using direction_type = std::optional<scan_direction>;
+
     /// @brief row slice type.
     using row_slice_type = details::row_slice;
 
@@ -52,6 +57,7 @@ public:
      * @param upper the upper end-point specification.
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
      *      and each `value` cannot include any variables declared in `columns.destination`s
+     * @param direction the direction to read the index, or empty if the output order is not specified
      * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      */
     explicit scan(
@@ -59,7 +65,8 @@ public:
             std::vector<column> columns,
             endpoint lower,
             endpoint upper,
-            row_slice_type row_slice) noexcept;
+            direction_type direction = {},
+            row_slice_type row_slice = {}) noexcept;
 
     /**
      * @brief creates a new instance.
@@ -73,6 +80,7 @@ public:
      * @param upper the upper end-point specification.
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
      *      and each `value` cannot include any variables declared in `columns.destination`s
+     * @param direction the direction to read the index, or empty if the output order is not specified
      * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
      * @attention this may take copies of arguments
      */
@@ -81,6 +89,7 @@ public:
             std::initializer_list<column> columns,
             endpoint lower = {},
             endpoint upper = {},
+            direction_type direction = {},
             row_slice_type row_slice = {});
 
     /**
@@ -105,6 +114,7 @@ public:
                 std::move(columns),
                 std::move(lower),
                 std::move(upper),
+                direction_type {},
                 row_slice_type { {}, static_cast<std::size_t>(limit) },
         }
     {}
@@ -132,6 +142,7 @@ public:
                 columns,
                 std::move(lower),
                 std::move(upper),
+                direction_type {},
                 row_slice_type { {}, static_cast<std::size_t>(limit) },
         }
     {}
@@ -202,6 +213,22 @@ public:
     [[nodiscard]] endpoint const& upper() const noexcept;
 
     /**
+     * @brief returns the direction to read the index.
+     * @details The direction is relative to the storage order of the index entries,
+     *      and it does not relate to the ascendant or descendant order of the individual index keys.
+     *      The key range specified by lower() and upper() does not depend on the direction,
+     *      that is, the backward direction outputs the same entries in the reverse of the storage order.
+     *      If the direction is specified, the output relation is ordered by reading the index in the direction.
+     *      Otherwise, the order of the output rows is not specified.
+     * @return the direction to read the index
+     * @return empty if the output order is not specified
+     */
+    [[nodiscard]] direction_type& direction() noexcept;
+
+    /// @copydoc direction()
+    [[nodiscard]] direction_type const& direction() const noexcept;
+
+    /**
      * @brief returns the row slice.
      * @details The slicing range follows the row order of the source relation.
      *     If there are out of the slice rows, they will be discarded.
@@ -269,6 +296,7 @@ private:
     std::vector<column> columns_;
     endpoint lower_;
     endpoint upper_;
+    direction_type direction_;
     row_slice_type row_slice_;
 };
 

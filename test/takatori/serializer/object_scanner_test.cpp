@@ -486,6 +486,7 @@ TEST_F(object_scanner_test, relation_scan) {
                     },
                     relation::endpoint_kind::prefixed_exclusive,
             },
+            {},
             {
                     10,
                     5,
@@ -673,6 +674,7 @@ TEST_F(object_scanner_test, relation_scan_row_slice_count) {
             },
             {},
             {},
+            {},
             row_slice { {}, 5 },
     });
 }
@@ -684,6 +686,7 @@ TEST_F(object_scanner_test, relation_scan_row_slice_start) {
             {
                     { vardesc(1), vardesc(2) },
             },
+            {},
             {},
             {},
             row_slice { 10, {} },
@@ -699,7 +702,34 @@ TEST_F(object_scanner_test, relation_scan_row_slice_variable) {
             },
             {},
             {},
+            {},
             row_slice { vardesc(3), vardesc(4) },
+    });
+}
+
+TEST_F(object_scanner_test, relation_scan_direction_forward) {
+    using relation::details::row_slice;
+    print(relation::scan {
+            tabledesc("A"),
+            {
+                    { vardesc(1), vardesc(2) },
+            },
+            {},
+            {},
+            relation::scan_direction::forward,
+            row_slice { {}, 5 },
+    });
+}
+
+TEST_F(object_scanner_test, relation_scan_direction_backward) {
+    print(relation::scan {
+            tabledesc("A"),
+            {
+                    { vardesc(1), vardesc(2) },
+            },
+            {},
+            {},
+            relation::scan_direction::backward,
     });
 }
 
