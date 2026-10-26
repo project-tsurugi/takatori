@@ -8,7 +8,25 @@
 namespace takatori::relation::details {
 
 /**
- * @brief represents a slice of rows in relation.
+ * @brief represents a slice of rows in a relation.
+ * @details A slice consists of the rows that remain after skipping the first `start` rows of the relation,
+ *      and then taking at most `count` rows from the rest.
+ *      That is, it consists of the rows at the 1-origin positions from `start + 1` to `start + count`, if they exist,
+ *      and its number of rows is `min(count, max(0, N - start))`, where `N` is the number of rows in the relation.
+ *
+ *      Each of `start` and `count` is empty, an immediate value, or a variable:
+ *      - empty `start` skips no rows, and empty `count` does not restrict the number of rows
+ *      - `count` of `0` takes no rows
+ *      - a variable whose value is `NULL` is treated as same as empty
+ *      - a negative value of a variable raises an error at runtime
+ *      - the value of a variable is determined before the execution starts, and does not change until it ends
+ *
+ *      If the relation is ordered, "the first rows" follows its order.
+ *      Otherwise, which rows are taken is not specified, and only the number of rows is defined.
+ *      Each operator defines which relation (the whole relation or each group) is sliced, and its order.
+ *
+ *      This is almost equivalent to `OFFSET start ROWS FETCH FIRST count ROWS ONLY` in SQL:2011,
+ *      except that a `NULL` value is treated as same as empty, instead of raising an error.
  */
 class row_slice {
 public:

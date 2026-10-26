@@ -39,7 +39,7 @@ public:
      * @brief creates a new object.
      * @param group_keys the group key columns on the input relation, or empty to limit for whole relation
      * @param sort_keys the sort key: this operation will only keep the rows from head of the sorted relation
-     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of each group
      */
     explicit limit(
             std::vector<descriptor::variable> group_keys = {},
@@ -48,7 +48,7 @@ public:
 
     /**
      * @brief creates a new object.
-     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of each group
      */
     explicit limit(row_slice_type row_slice) noexcept;
 
@@ -140,11 +140,12 @@ public:
     [[nodiscard]] std::vector<sort_key> const& sort_keys() const noexcept;
 
     /**
-     * @brief returns the row slice.
-     * @details If the sort key is specified, this exchange will sort rows in each group by using it.
-     *      Each sort key column must also appear in the columns(), but not appear in group_keys().
-     *      If multiple sort key elements are specified, the earlier elements have higher priority.
-     *      If there are out of slice rows in each group, they will be discarded after sorting.
+     * @brief returns the row slice of each group.
+     * @details This operation takes the slice from each group, which consists of the rows with equivalent group_keys(),
+     *      and then outputs the union of them.
+     *      If group_keys() is empty, the whole input relation is treated as a single group.
+     *      The rows in each group are ordered by sort_keys(), where the earlier elements have higher priority.
+     *      If sort_keys() is empty, which rows are taken from each group is not specified.
      * @return the row slice
      */
     [[nodiscard]] row_slice_type& row_slice() noexcept;

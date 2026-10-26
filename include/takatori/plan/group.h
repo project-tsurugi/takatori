@@ -172,6 +172,8 @@ public:
     /**
      * @brief returns the group key columns.
      * @details each group key column must also appear in the columns(), but not appear in sort_keys().
+     *      If the group key is empty, the whole relation is treated as a single group
+     *      (see group_mode for the case that the relation is empty).
      * @return the group key columns.
      */
     [[nodiscard]] std::vector<descriptor::variable>& group_keys() noexcept;
@@ -206,9 +208,14 @@ public:
     group& mode(mode_type mode) noexcept;
 
     /**
-     * @brief returns the row slice.
-     * @details If this exchange has both the sort key and row slice,
-     *      this exchange first performs sort rows in each group, and then slices rows in each group.
+     * @brief returns the row slice of each group.
+     * @details The row slice is applied to each group individually,
+     *      after sorting rows in each group by sort_keys() if it is specified.
+     *      If sort_keys() is empty, which rows are taken from each group is not specified.
+     *      In principle, the groups whose slice is empty are not passed to the downstream.
+     * @attention the combination of group_mode::equivalence_or_whole and a valid row slice
+     *      (that is, row_slice::operator bool() returns true) is currently undefined,
+     *      as it is reserved for future optimizations.
      * @return the row slice
      */
     [[nodiscard]] row_slice_type& row_slice() noexcept;

@@ -13,7 +13,7 @@ namespace takatori::relation::details {
 
 /**
  * @brief represents a constant value.
- * @details this value can evaluate before query execution.
+ * @details The value is determined before the execution starts, and does not change until the execution ends.
  * @tparam T the value type
  */
 template<class T>

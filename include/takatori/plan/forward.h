@@ -141,8 +141,11 @@ public:
     [[nodiscard]] std::vector<descriptor::variable> const& columns() const noexcept;
 
     /**
-     * @brief returns the row slice.
-     * @details if there are out of the slice rows, they will be discarded.
+     * @brief returns the row slice of this exchange.
+     * @details This exchange only passes the rows in the slice of the whole input
+     *      (the outputs of all upstream processes together) to the downstream.
+     *      As the input rows are not ordered, which rows are passed is not specified,
+     *      and only the number of rows is defined.
      * @return the row slice
      */
     [[nodiscard]] row_slice_type& row_slice() noexcept;

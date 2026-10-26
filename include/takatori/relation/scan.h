@@ -58,7 +58,7 @@ public:
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
      *      and each `value` cannot include any variables declared in `columns.destination`s
      * @param direction the direction to read the index, or empty if the output order is not specified
-     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the output relation
      */
     explicit scan(
             descriptor::relation source,
@@ -81,7 +81,7 @@ public:
      *      The whole keys must be equivalent to or prefix of the key of the `source` relation,
      *      and each `value` cannot include any variables declared in `columns.destination`s
      * @param direction the direction to read the index, or empty if the output order is not specified
-     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
+     * @param row_slice the row slice: this operation will only keep the rows in the specified range of the output relation
      * @attention this may take copies of arguments
      */
     explicit scan(
@@ -229,9 +229,12 @@ public:
     [[nodiscard]] direction_type const& direction() const noexcept;
 
     /**
-     * @brief returns the row slice.
-     * @details The slicing range follows the row order of the source relation.
-     *     If there are out of the slice rows, they will be discarded.
+     * @brief returns the row slice of the output relation.
+     * @details This operation only provides the rows in the slice of the whole output to the downstream.
+     *      If direction() is specified, the slice follows the order of reading the index in the direction.
+     *      Otherwise, which rows are provided is not specified, and only the number of rows is defined.
+     *      Even if this operation is split and executed in parallel,
+     *      the slice must be taken from the whole output (all of the split outputs together).
      * @return the row slice
      */
     [[nodiscard]] row_slice_type& row_slice() noexcept;
