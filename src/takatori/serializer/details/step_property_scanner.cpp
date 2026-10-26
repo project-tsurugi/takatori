@@ -146,20 +146,24 @@ void step_property_scanner::accept(relation::details::row_slice const& element) 
 }
 
 void step_property_scanner::accept(relation::details::constant_value<std::size_t> const& element) {
-    if (element) {
-        acceptor_.struct_begin();
-        if (element.has_immediate()) {
-            acceptor_.property_begin("immediate"sv);
-            acceptor_.unsigned_integer(element.immediate());
-            acceptor_.property_end();
-        }
-        if (element.has_variable()) {
-            acceptor_.property_begin("variable"sv);
-            accept(element.variable());
-            acceptor_.property_end();
-        }
-        acceptor_.struct_end();
+    if (element.is_absent()) {
+        return;
     }
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("kind"sv);
+    acceptor_.string(to_string_view(element.kind()));
+    acceptor_.property_end();
+
+    acceptor_.property_begin("element"sv);
+    if (element.has_immediate()) {
+        acceptor_.unsigned_integer(element.immediate());
+    } else if (element.has_variable()) {
+        accept(element.variable());
+    }
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
 }
 
 } // namespace takatori::serializer::details

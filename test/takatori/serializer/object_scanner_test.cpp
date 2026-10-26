@@ -664,6 +664,65 @@ TEST_F(object_scanner_test, relation_distinct_relation) {
     });
 }
 
+TEST_F(object_scanner_test, relation_scan_row_slice_count) {
+    using relation::details::row_slice;
+    print(relation::scan {
+            tabledesc("A"),
+            {
+                    { vardesc(1), vardesc(2) },
+            },
+            {},
+            {},
+            row_slice { {}, 5 },
+    });
+}
+
+TEST_F(object_scanner_test, relation_scan_row_slice_start) {
+    using relation::details::row_slice;
+    print(relation::scan {
+            tabledesc("A"),
+            {
+                    { vardesc(1), vardesc(2) },
+            },
+            {},
+            {},
+            row_slice { 10, {} },
+    });
+}
+
+TEST_F(object_scanner_test, relation_scan_row_slice_variable) {
+    using relation::details::row_slice;
+    print(relation::scan {
+            tabledesc("A"),
+            {
+                    { vardesc(1), vardesc(2) },
+            },
+            {},
+            {},
+            row_slice { vardesc(3), vardesc(4) },
+    });
+}
+
+TEST_F(object_scanner_test, relation_scan_row_slice_absent) {
+    print(relation::scan {
+            tabledesc("A"),
+            {
+                    { vardesc(1), vardesc(2) },
+            },
+    });
+}
+
+TEST_F(object_scanner_test, relation_limit_relation_row_slice_variable) {
+    using relation::details::row_slice;
+    print(relation::intermediate::limit {
+            {
+                    vardesc(1),
+            },
+            {},
+            row_slice { {}, vardesc(2) },
+    });
+}
+
 TEST_F(object_scanner_test, relation_limit_relation) {
     using relation::details::row_slice;
     print(relation::intermediate::limit {
@@ -861,6 +920,49 @@ TEST_F(object_scanner_test, plan_forward) {
             {
                     10,
                     5,
+            },
+    });
+}
+
+TEST_F(object_scanner_test, plan_forward_row_slice_variable) {
+    using relation::details::row_slice;
+    print(plan::forward {
+            {
+                    vardesc(1),
+            },
+            row_slice { vardesc(2), {} },
+    });
+}
+
+TEST_F(object_scanner_test, plan_forward_row_slice_absent) {
+    print(plan::forward {
+            vardesc(1),
+    });
+}
+
+TEST_F(object_scanner_test, plan_group_row_slice_variable) {
+    using relation::details::row_slice;
+    print(plan::group {
+            {
+                    vardesc(1),
+                    vardesc(2),
+            },
+            {
+                    vardesc(1),
+            },
+            {},
+            row_slice { {}, vardesc(3) },
+    });
+}
+
+TEST_F(object_scanner_test, plan_group_row_slice_absent) {
+    print(plan::group {
+            {
+                    vardesc(1),
+                    vardesc(2),
+            },
+            {
+                    vardesc(1),
             },
     });
 }
