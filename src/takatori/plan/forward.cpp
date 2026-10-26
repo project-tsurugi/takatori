@@ -78,6 +78,15 @@ forward::row_slice_type const& forward::row_slice() const noexcept {
     return row_slice_;
 }
 
+std::optional<forward::size_type> forward::limit() const {
+    return relation::details::get_compatible_row_count(row_slice_);
+}
+
+forward& forward::limit(std::optional<size_type> limit) noexcept {
+    relation::details::set_compatible_row_count(row_slice_, limit);
+    return *this;
+}
+
 bool operator==(forward const& a, forward const& b) noexcept {
     return a.columns() == b.columns()
         && a.row_slice() == b.row_slice();

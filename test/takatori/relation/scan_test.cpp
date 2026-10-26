@@ -1,5 +1,6 @@
 #include <takatori/relation/scan.h>
 
+#include <stdexcept>
 #include <type_traits>
 
 #include <gtest/gtest.h>
@@ -141,6 +142,117 @@ TEST_F(scan_test, row_slice) {
             10,
             5,
     }));
+}
+
+// compatibility API: the row count must be an integral type
+static_assert(std::is_constructible_v<scan, descriptor::relation, std::vector<scan::column>, scan::endpoint, scan::endpoint, int>);
+static_assert(!std::is_constructible_v<scan, descriptor::relation, std::vector<scan::column>, scan::endpoint, scan::endpoint, std::nullopt_t>);
+static_assert(!std::is_constructible_v<scan, descriptor::relation, std::vector<scan::column>, scan::endpoint, scan::endpoint, std::optional<std::size_t>>);
+static_assert(!std::is_constructible_v<scan, descriptor::relation, std::vector<scan::column>, scan::endpoint, scan::endpoint, bool>);
+
+TEST_F(scan_test, compat_limit) {
+    scan expr {
+            tabledesc("T"),
+            {
+                    {
+                            columndesc("C1"),
+                            vardesc(1),
+                    },
+            },
+            {},
+            {},
+            5,
+    };
+
+    EXPECT_EQ(expr.row_slice(), (row_slice { {}, 5 }));
+    EXPECT_EQ(expr.limit(), 5);
+}
+
+TEST_F(scan_test, compat_limit_vector) {
+    std::vector<scan::column> columns {
+            {
+                    columndesc("C1"),
+                    vardesc(1),
+            },
+    };
+    scan expr {
+            tabledesc("T"),
+            std::move(columns),
+            {},
+            {},
+            5,
+    };
+
+    EXPECT_EQ(expr.row_slice(), (row_slice { {}, 5 }));
+}
+
+TEST_F(scan_test, compat_limit_brace) {
+    std::vector<scan::column> columns {
+            {
+                    columndesc("C1"),
+                    vardesc(1),
+            },
+    };
+    // `{}` must be resolved as an empty row slice (unlimited), as same as `std::optional` in the previous API
+    scan expr {
+            tabledesc("T"),
+            std::move(columns),
+            {},
+            {},
+            {},
+    };
+
+    EXPECT_EQ(expr.row_slice(), row_slice {});
+    EXPECT_EQ(expr.limit(), std::nullopt);
+}
+
+TEST_F(scan_test, compat_limit_getter) {
+    scan expr {
+            tabledesc("T"),
+            {
+                    {
+                            columndesc("C1"),
+                            vardesc(1),
+                    },
+            },
+    };
+    EXPECT_EQ(expr.limit(), std::nullopt);
+
+    expr.row_slice() = { 0, 5 };
+    EXPECT_EQ(expr.limit(), 5);
+
+    expr.row_slice() = { 0, {} };
+    EXPECT_EQ(expr.limit(), std::nullopt);
+
+    expr.row_slice() = { 1, 5 };
+    EXPECT_THROW((void) expr.limit(), std::domain_error);
+
+    expr.row_slice() = { vardesc(2), 5 };
+    EXPECT_THROW((void) expr.limit(), std::domain_error);
+
+    expr.row_slice() = { {}, vardesc(2) };
+    EXPECT_THROW((void) expr.limit(), std::domain_error);
+}
+
+TEST_F(scan_test, compat_limit_setter) {
+    scan expr {
+            tabledesc("T"),
+            {
+                    {
+                            columndesc("C1"),
+                            vardesc(1),
+                    },
+            },
+            {},
+            {},
+            row_slice { 10, {} },
+    };
+
+    expr.limit(5);
+    EXPECT_EQ(expr.row_slice(), (row_slice { 10, 5 }));
+
+    expr.limit(std::nullopt);
+    EXPECT_EQ(expr.row_slice(), (row_slice { 10, {} }));
 }
 
 TEST_F(scan_test, multiple) {

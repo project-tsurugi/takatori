@@ -25,6 +25,30 @@ limit::limit(row_slice_type row_slice) noexcept :
     }
 {}
 
+limit::limit(
+        std::optional<size_type> count,
+        std::vector<descriptor::variable> group_keys,
+        std::vector<sort_key> sort_keys) noexcept :
+    limit {
+            std::move(group_keys),
+            std::move(sort_keys),
+            row_slice_type {},
+    }
+{
+    details::set_compatible_row_count(row_slice_, count);
+}
+
+limit::limit(
+        std::optional<size_type> count,
+        std::initializer_list<descriptor::variable> group_keys,
+        std::initializer_list<sort_key> sort_keys) :
+    limit {
+            count,
+            decltype(group_keys_) { group_keys.begin(), group_keys.end() },
+            decltype(sort_keys_) { sort_keys.begin(), sort_keys.end() },
+    }
+{}
+
 limit::limit(util::clone_tag_t, limit const& other) :
     limit {
             { other.group_keys_ },
@@ -107,6 +131,15 @@ limit::row_slice_type& limit::row_slice() noexcept {
 
 limit::row_slice_type const& limit::row_slice() const noexcept {
     return row_slice_;
+}
+
+std::optional<limit::size_type> limit::count() const {
+    return details::get_compatible_row_count(row_slice_);
+}
+
+limit& limit::count(std::optional<size_type> count) noexcept {
+    details::set_compatible_row_count(row_slice_, count);
+    return *this;
 }
 
 bool operator==(limit const& a, limit const& b) noexcept {

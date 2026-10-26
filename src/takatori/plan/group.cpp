@@ -114,6 +114,15 @@ group::row_slice_type const& group::row_slice() const noexcept {
     return row_slice_;
 }
 
+std::optional<group::size_type> group::limit() const {
+    return relation::details::get_compatible_row_count(row_slice_);
+}
+
+group& group::limit(std::optional<size_type> limit) noexcept {
+    relation::details::set_compatible_row_count(row_slice_, limit);
+    return *this;
+}
+
 bool operator==(group const& a, group const& b) noexcept {
     return a.columns() == b.columns()
         && a.group_keys() == b.group_keys()

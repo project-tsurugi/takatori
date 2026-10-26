@@ -11,6 +11,7 @@
 #include <takatori/relation/sort_direction.h>
 #include <takatori/relation/details/sort_key_element.h>
 #include <takatori/relation/details/row_slice.h>
+#include <takatori/relation/details/row_slice_compat.h>
 
 #include <takatori/util/clone_tag.h>
 
@@ -40,6 +41,12 @@ public:
 
     /// @brief row slice type.
     using row_slice_type = relation::details::row_slice;
+
+    /**
+     * @brief the size type.
+     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
+     */
+    using size_type = std::size_t;
 
     /// @brief the kind of this step.
     static constexpr step_kind tag = step_kind::group;
@@ -79,6 +86,58 @@ public:
             std::initializer_list<sort_key> sort_keys = {},
             row_slice_type row_slice = {},
             mode_type mode = mode_default);
+
+    /**
+     * @brief creates a new object.
+     * @tparam T the row count type, must be an integral type
+     * @param columns the exchange columns
+     * @param group_keys the group key columns: each column must also appear in the exchange columns
+     * @param sort_keys the sort key elements: each column must also appear in the exchange columns, but not in group key columns
+     * @param limit the max number of rows in each group
+     * @param mode the group mode of this exchange operation
+     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
+     */
+    template<class T, relation::details::enable_if_compatible_row_count_t<T> = nullptr>
+    explicit group(
+            std::vector<descriptor::variable> columns,
+            std::vector<descriptor::variable> group_keys,
+            std::vector<sort_key> sort_keys,
+            T limit,
+            mode_type mode = mode_default) noexcept :
+        group {
+                std::move(columns),
+                std::move(group_keys),
+                std::move(sort_keys),
+                row_slice_type { {}, static_cast<size_type>(limit) },
+                mode,
+        }
+    {}
+
+    /**
+     * @brief creates a new object.
+     * @tparam T the row count type, must be an integral type
+     * @param columns the exchange columns
+     * @param group_keys the group key columns: each column must also appear in the exchange columns
+     * @param sort_keys the sort key elements: each column must also appear in the exchange columns, but not in group key columns
+     * @param limit the max number of rows in each group
+     * @param mode the group mode of this exchange operation
+     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
+     */
+    template<class T, relation::details::enable_if_compatible_row_count_t<T> = nullptr>
+    explicit group(
+            std::initializer_list<descriptor::variable> columns,
+            std::initializer_list<descriptor::variable> group_keys,
+            std::initializer_list<sort_key> sort_keys,
+            T limit,
+            mode_type mode = mode_default) :
+        group {
+                columns,
+                group_keys,
+                sort_keys,
+                row_slice_type { {}, static_cast<size_type>(limit) },
+                mode,
+        }
+    {}
 
     /**
      * @brief creates a new object.
@@ -156,6 +215,25 @@ public:
 
     /// @copydoc row_slice()
     [[nodiscard]] row_slice_type const& row_slice() const noexcept;
+
+    /**
+     * @brief returns the max number of rows in each group.
+     * @return the number of rows limit
+     * @return empty if it is unlimited
+     * @throws std::domain_error if row_slice() has the start row position other than immediate `0`
+     * @throws std::domain_error if row_slice() has a variable row count
+     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
+     */
+    [[nodiscard]] std::optional<size_type> limit() const;
+
+    /**
+     * @brief sets the max number of rows in each group.
+     * @details This only changes the row count of row_slice(), and keeps its start row position.
+     * @param limit the number of rows limit, or empty to unlimited
+     * @return this
+     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
+     */
+    group& limit(std::optional<size_type> limit) noexcept;
 
     /**
      * @brief returns whether the two elements are equivalent.

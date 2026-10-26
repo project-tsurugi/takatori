@@ -183,6 +183,7 @@ add_library(takatori
     takatori/relation/details/union_element.cpp
     takatori/relation/details/cogroup_element.cpp
     takatori/relation/details/row_slice.cpp
+    takatori/relation/details/row_slice_compat.cpp
     takatori/relation/details/graph_merger.cpp
 
     # plan
