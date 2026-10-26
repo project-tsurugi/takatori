@@ -24,7 +24,7 @@ std::optional<std::size_t> get_compatible_row_count(row_slice const& slice) {
     throw_exception(std::domain_error("row slice with variable count is not supported in the compatibility API"));
 }
 
-void set_compatible_row_count(row_slice& slice, std::optional<std::size_t> count) noexcept {
+void set_compatible_row_count(row_slice& slice, std::optional<std::size_t> count) {
     if (count) {
         slice.count() = *count;
     } else {

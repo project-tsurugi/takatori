@@ -40,6 +40,6 @@ using enable_if_compatible_row_count_t = std::enable_if_t<
  * @param count the row count, or empty to unlimited
  * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
  */
-void set_compatible_row_count(row_slice& slice, std::optional<std::size_t> count) noexcept;
+void set_compatible_row_count(row_slice& slice, std::optional<std::size_t> count);
 
 } // namespace takatori::relation::details
