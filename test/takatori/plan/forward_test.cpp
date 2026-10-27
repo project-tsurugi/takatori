@@ -23,6 +23,7 @@ TEST_F(forward_test, simple) {
     EXPECT_EQ(s.input_columns().size(), 0);
     EXPECT_EQ(s.output_columns().size(), 0);
     EXPECT_EQ(s.row_slice(), row_slice {});
+    EXPECT_EQ(s.ordering(), forward::ordering_type {});
 }
 
 TEST_F(forward_test, row_slice) {
@@ -39,6 +40,75 @@ TEST_F(forward_test, row_slice) {
             10,
             5,
     }));
+}
+
+TEST_F(forward_test, ordering) {
+    forward s {
+            row_slice { {}, 5 },
+            {
+                    forward_ordering::respect_input,
+            },
+    };
+    EXPECT_EQ(s.columns().size(), 0);
+    EXPECT_EQ(s.row_slice(), (row_slice { {}, 5 }));
+    EXPECT_EQ(s.ordering(), (forward::ordering_type {
+            forward_ordering::respect_input,
+    }));
+}
+
+TEST_F(forward_test, ordering_columns) {
+    forward s {
+            {
+                    vardesc(1),
+                    vardesc(2),
+            },
+            {},
+            {
+                    forward_ordering::respect_input,
+                    forward_ordering::preserve_output,
+            },
+    };
+    EXPECT_EQ(s.columns().size(), 2);
+    EXPECT_EQ(s.row_slice(), row_slice {});
+    EXPECT_EQ(s.ordering(), (forward::ordering_type {
+            forward_ordering::respect_input,
+            forward_ordering::preserve_output,
+    }));
+}
+
+TEST_F(forward_test, ordering_vector) {
+    std::vector<descriptor::variable> columns {
+            vardesc(1),
+            vardesc(2),
+    };
+    forward s {
+            std::move(columns),
+            row_slice { {}, 5 },
+            {
+                    forward_ordering::preserve_output,
+            },
+    };
+    EXPECT_EQ(s.columns().size(), 2);
+    EXPECT_EQ(s.row_slice(), (row_slice { {}, 5 }));
+    EXPECT_EQ(s.ordering(), (forward::ordering_type {
+            forward_ordering::preserve_output,
+    }));
+}
+
+TEST_F(forward_test, ordering_setter) {
+    forward s {};
+    s.ordering().insert(forward_ordering::respect_input);
+    EXPECT_EQ(s.ordering(), (forward::ordering_type {
+            forward_ordering::respect_input,
+    }));
+}
+
+TEST_F(forward_test, equals_ordering) {
+    forward a { row_slice { {}, 5 } };
+    forward b { row_slice { {}, 5 }, { forward_ordering::respect_input } };
+    forward c { row_slice { {}, 5 }, { forward_ordering::respect_input } };
+    EXPECT_NE(a, b);
+    EXPECT_EQ(b, c);
 }
 
 // compatibility API: the row count must be an integral type
@@ -162,6 +232,9 @@ TEST_F(forward_test, clone) {
             {
                     10, 5,
             },
+            {
+                    forward_ordering::respect_input,
+            },
     };
 
     auto copy = util::clone_unique(s);
@@ -178,6 +251,9 @@ TEST_F(forward_test, clone_move) {
             },
             {
                     10, 5,
+            },
+            {
+                    forward_ordering::respect_input,
             },
     };
 
@@ -199,6 +275,10 @@ TEST_F(forward_test, output) {
             },
             {
                     10, 5,
+            },
+            {
+                    forward_ordering::respect_input,
+                    forward_ordering::preserve_output,
             },
     };
 

@@ -970,6 +970,32 @@ TEST_F(object_scanner_test, plan_forward_row_slice_absent) {
     });
 }
 
+TEST_F(object_scanner_test, plan_forward_ordering) {
+    using relation::details::row_slice;
+    print(plan::forward {
+            {
+                    vardesc(1),
+            },
+            row_slice { {}, 5 },
+            {
+                    plan::forward_ordering::respect_input,
+            },
+    });
+}
+
+TEST_F(object_scanner_test, plan_forward_ordering_all) {
+    print(plan::forward {
+            {
+                    vardesc(1),
+            },
+            {},
+            {
+                    plan::forward_ordering::respect_input,
+                    plan::forward_ordering::preserve_output,
+            },
+    });
+}
+
 TEST_F(object_scanner_test, plan_group_row_slice_variable) {
     using relation::details::row_slice;
     print(plan::group {

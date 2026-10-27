@@ -10,6 +10,7 @@
 #include <takatori/util/clone_tag.h>
 
 #include "exchange.h"
+#include "forward_ordering.h"
 #include "step_kind.h"
 
 namespace takatori::plan {
@@ -21,6 +22,9 @@ class forward : public exchange {
 public:
     /// @brief row slice type.
     using row_slice_type = relation::details::row_slice;
+
+    /// @brief the ordering properties type.
+    using ordering_type = forward_ordering_set;
 
     /**
      * @brief the size type.
@@ -40,27 +44,34 @@ public:
     /**
      * @brief creates a new object.
      * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
+     * @param ordering the properties about the row order
      * @note the created object does not have any exchange columns, please define them using columns()
      */
-    explicit forward(row_slice_type row_slice) noexcept;
+    explicit forward(
+            row_slice_type row_slice,
+            ordering_type ordering = {}) noexcept;
 
     /**
      * @brief creates a new object.
      * @param columns the exchange columns
      * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
+     * @param ordering the properties about the row order
      */
     explicit forward(
             std::vector<descriptor::variable> columns,
-            row_slice_type row_slice = {}) noexcept;
+            row_slice_type row_slice = {},
+            ordering_type ordering = {}) noexcept;
 
     /**
      * @brief creates a new object.
      * @param columns the exchange columns
      * @param row_slice the row slice: this operation will only keep the rows in the specified range of the relation
+     * @param ordering the properties about the row order
      */
     forward(
             std::initializer_list<descriptor::variable> columns,
-            row_slice_type row_slice = {}) noexcept;
+            row_slice_type row_slice = {},
+            ordering_type ordering = {}) noexcept;
 
     /**
      * @brief creates a new object.
@@ -144,14 +155,30 @@ public:
      * @brief returns the row slice of this exchange.
      * @details This exchange only passes the rows in the slice of the whole input
      *      (the outputs of all upstream processes together) to the downstream.
-     *      As the input rows are not ordered, which rows are passed is not specified,
+     *      If ordering() contains forward_ordering::respect_input and the input relation is an ordered relation,
+     *      the slice is taken in the order defined by the input relation.
+     *      Otherwise, the input rows are not ordered: which rows are passed is not specified,
      *      and only the number of rows is defined.
      * @return the row slice
+     * @see ordering()
      */
     [[nodiscard]] row_slice_type& row_slice() noexcept;
 
     /// @copydoc row_slice()
     [[nodiscard]] row_slice_type const& row_slice() const noexcept;
+
+    /**
+     * @brief returns the properties about the row order of this exchange.
+     * @details Each property is effective only if the input relation is an ordered relation.
+     *      If this is empty, this exchange does not consider the row order.
+     *      Note that the concatenation of two or more input relations is not an ordered relation.
+     * @return the ordering properties
+     * @see forward_ordering
+     */
+    [[nodiscard]] ordering_type& ordering() noexcept;
+
+    /// @copydoc ordering()
+    [[nodiscard]] ordering_type const& ordering() const noexcept;
 
     /**
      * @brief returns the max number of exchange rows.
@@ -209,6 +236,7 @@ protected:
 private:
     std::vector<descriptor::variable> columns_ {};
     row_slice_type row_slice_;
+    ordering_type ordering_ {};
 };
 
 } // namespace takatori::plan

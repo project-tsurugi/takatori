@@ -25,6 +25,14 @@ void step_property_scanner::operator()(plan::forward const& element) {
     acceptor_.property_begin("row_slice"sv);
     accept(element.row_slice());
     acceptor_.property_end();
+
+    acceptor_.property_begin("ordering"sv);
+    acceptor_.array_begin();
+    for (auto ordering : element.ordering()) {
+        acceptor_.string(to_string_view(ordering));
+    }
+    acceptor_.array_end();
+    acceptor_.property_end();
 }
 
 void step_property_scanner::operator()(plan::group const& element) {
