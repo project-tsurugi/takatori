@@ -149,6 +149,14 @@ void relation_expression_property_scanner::operator()(relation::emit const& elem
     acceptor_.property_begin("columns"sv);
     accept_foreach(element.columns());
     acceptor_.property_end();
+
+    acceptor_.property_begin("ordering"sv);
+    acceptor_.array_begin();
+    for (auto ordering : element.ordering()) {
+        acceptor_.string(to_string_view(ordering));
+    }
+    acceptor_.array_end();
+    acceptor_.property_end();
 }
 
 void relation_expression_property_scanner::operator()(relation::write const& element) {

@@ -589,6 +589,18 @@ TEST_F(object_scanner_test, relation_emit) {
     });
 }
 
+TEST_F(object_scanner_test, relation_emit_ordering) {
+    print(relation::emit {
+            {
+                    { vardesc(1), },
+                    { vardesc(2), "B" },
+            },
+            {
+                    relation::emit_ordering::preserve_input,
+            },
+    });
+}
+
 TEST_F(object_scanner_test, relation_write) {
     print(relation::write {
             relation::write_kind::update,

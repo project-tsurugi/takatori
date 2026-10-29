@@ -6,24 +6,35 @@
 
 namespace takatori::relation {
 
-emit::emit(std::vector<column> columns) noexcept
-    : input_(*this, 0)
-    , columns_(std::move(columns))
+emit::emit(
+        std::vector<column> columns,
+        ordering_type ordering) noexcept :
+    input_ { *this, 0 },
+    columns_ { std::move(columns) },
+    ordering_ { ordering }
 {}
 
-emit::emit(std::initializer_list<column> columns)
-    : emit({ columns.begin(), columns.end() })
+emit::emit(
+        std::initializer_list<column> columns,
+        ordering_type ordering) :
+    emit {
+            decltype(columns_) { columns.begin(), columns.end() },
+            ordering,
+    }
 {}
 
-
-emit::emit(util::clone_tag_t, emit const& other)
-    : emit(
-            decltype(columns_) { other.columns_ })
+emit::emit(util::clone_tag_t, emit const& other) :
+    emit {
+            decltype(columns_) { other.columns_ },
+            other.ordering_,
+    }
 {}
 
-emit::emit(util::clone_tag_t, emit&& other)
-    : emit(
-            decltype(columns_) { std::move(other.columns_) })
+emit::emit(util::clone_tag_t, emit&& other) :
+    emit {
+            decltype(columns_) { std::move(other.columns_) },
+            other.ordering_,
+    }
 {}
 
 expression_kind emit::kind() const noexcept {
@@ -71,8 +82,17 @@ std::vector<emit::column> const& emit::columns() const noexcept {
     return columns_;
 }
 
+emit::ordering_type& emit::ordering() noexcept {
+    return ordering_;
+}
+
+emit::ordering_type const& emit::ordering() const noexcept {
+    return ordering_;
+}
+
 bool operator==(emit const& a, emit const& b) noexcept {
-    return a.columns() == b.columns();
+    return a.columns() == b.columns()
+        && a.ordering() == b.ordering();
 }
 
 bool operator!=(emit const& a, emit const& b) noexcept {
@@ -81,7 +101,8 @@ bool operator!=(emit const& a, emit const& b) noexcept {
 
 std::ostream& operator<<(std::ostream& out, emit const& value) {
     return out << value.kind() << "("
-               << "columns=" << util::print_support { value.columns() } << ")";
+               << "columns=" << util::print_support { value.columns() } << ", "
+               << "ordering=" << value.ordering() << ")";
 }
 
 bool emit::equals(expression const& other) const noexcept {

@@ -6,6 +6,7 @@
 
 #include "expression.h"
 #include "expression_kind.h"
+#include "emit_ordering.h"
 #include "details/emit_element.h"
 
 #include <takatori/util/clone_tag.h>
@@ -21,22 +22,30 @@ public:
     /// @brief emit column type.
     using column = details::emit_element;
 
+    /// @brief the ordering properties type.
+    using ordering_type = emit_ordering_set;
+
     /// @brief the kind of this expression.
     static constexpr inline expression_kind tag = expression_kind::emit;
 
     /**
      * @brief creates a new object.
      * @param columns the columns to be emitted in the input relation
+     * @param ordering the properties about the row order
      */
     explicit emit(
-            std::vector<column> columns) noexcept;
+            std::vector<column> columns,
+            ordering_type ordering = {}) noexcept;
 
     /**
      * @brief creates a new object.
      * @param columns the columns to be emitted in the input relation
+     * @param ordering the properties about the row order
      * @attention this may take copies of the given arguments
      */
-    emit(std::initializer_list<column> columns);
+    emit(
+            std::initializer_list<column> columns,
+            ordering_type ordering = {});
 
     /**
      * @brief creates a new object.
@@ -77,6 +86,19 @@ public:
     [[nodiscard]] std::vector<column> const& columns() const noexcept;
 
     /**
+     * @brief returns the properties about the row order of this operation.
+     * @details Each property is effective only if the input relation is an ordered relation.
+     *      If this is empty, the order of the emitted rows is not specified,
+     *      even if the input relation is an ordered relation.
+     * @return the ordering properties
+     * @see emit_ordering
+     */
+    [[nodiscard]] ordering_type& ordering() noexcept;
+
+    /// @copydoc ordering()
+    [[nodiscard]] ordering_type const& ordering() const noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
@@ -111,6 +133,7 @@ protected:
 private:
     input_port_type input_;
     std::vector<column> columns_;
+    ordering_type ordering_ {};
 };
 
 /**
