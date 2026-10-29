@@ -27,6 +27,7 @@ TEST_F(emit_test, simple) {
         EXPECT_EQ(c.source(), vardesc(1));
         EXPECT_EQ(c.name(), std::nullopt);
     }
+    EXPECT_EQ(expr.ordering(), emit::ordering_type {});
     {
         auto p = expr.input_ports();
         ASSERT_EQ(p.size(), 1);
@@ -78,6 +79,61 @@ TEST_F(emit_test, column_multiple) {
     }
 }
 
+TEST_F(emit_test, ordering) {
+    emit expr {
+            {
+                    { vardesc(1), "A", },
+                    { vardesc(2), "B", },
+            },
+            {
+                    emit_ordering::preserve_input,
+            },
+    };
+
+    ASSERT_EQ(expr.columns().size(), 2);
+    EXPECT_EQ(expr.columns()[0].source(), vardesc(1));
+    EXPECT_EQ(expr.columns()[1].source(), vardesc(2));
+    EXPECT_EQ(expr.ordering(), (emit::ordering_type {
+            emit_ordering::preserve_input,
+    }));
+}
+
+TEST_F(emit_test, ordering_vector) {
+    std::vector<emit::column> columns {
+            { vardesc(1), "A", },
+            { vardesc(2), "B", },
+    };
+    emit expr {
+            std::move(columns),
+            {
+                    emit_ordering::preserve_input,
+            },
+    };
+
+    ASSERT_EQ(expr.columns().size(), 2);
+    EXPECT_EQ(expr.ordering(), (emit::ordering_type {
+            emit_ordering::preserve_input,
+    }));
+}
+
+TEST_F(emit_test, ordering_setter) {
+    emit expr {
+            vardesc(1),
+    };
+    expr.ordering().insert(emit_ordering::preserve_input);
+    EXPECT_EQ(expr.ordering(), (emit::ordering_type {
+            emit_ordering::preserve_input,
+    }));
+}
+
+TEST_F(emit_test, equals_ordering) {
+    emit a { vardesc(1) };
+    emit b { { vardesc(1) }, { emit_ordering::preserve_input } };
+    emit c { { vardesc(1) }, { emit_ordering::preserve_input } };
+    EXPECT_NE(a, b);
+    EXPECT_EQ(b, c);
+}
+
 TEST_F(emit_test, clone) {
     emit expr {
             { vardesc(1), "A", },
@@ -104,6 +160,25 @@ TEST_F(emit_test, clone_move) {
     auto move = util::clone_unique(std::move(expr));
     EXPECT_NE(std::addressof(expr), move.get());
     EXPECT_EQ(*copy, *move);
+}
+
+TEST_F(emit_test, clone_ordering) {
+    emit expr {
+            {
+                    { vardesc(1), "A", },
+            },
+            {
+                    emit_ordering::preserve_input,
+            },
+    };
+
+    auto copy = util::clone_unique(expr);
+    EXPECT_EQ(expr, *copy);
+    EXPECT_EQ(copy->ordering(), expr.ordering());
+
+    auto move = util::clone_unique(std::move(expr));
+    EXPECT_EQ(*copy, *move);
+    EXPECT_EQ(move->ordering(), copy->ordering());
 }
 
 TEST_F(emit_test, output) {
