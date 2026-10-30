@@ -97,15 +97,6 @@ forward::ordering_type const& forward::ordering() const noexcept {
     return ordering_;
 }
 
-std::optional<forward::size_type> forward::limit() const {
-    return relation::details::get_compatible_row_count(row_slice_);
-}
-
-forward& forward::limit(std::optional<size_type> limit) noexcept {
-    relation::details::set_compatible_row_count(row_slice_, limit);
-    return *this;
-}
-
 bool operator==(forward const& a, forward const& b) noexcept {
     if (std::addressof(a) == std::addressof(b)) {
         return true;

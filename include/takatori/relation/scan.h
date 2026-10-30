@@ -18,7 +18,6 @@
 #include <takatori/util/meta_type.h>
 
 #include "details/row_slice.h"
-#include "details/row_slice_compat.h"
 
 namespace takatori::relation {
 
@@ -91,61 +90,6 @@ public:
             endpoint upper = {},
             direction_type direction = {},
             row_slice_type row_slice = {});
-
-    /**
-     * @brief creates a new instance.
-     * @tparam T the row count type, must be an integral type
-     * @param source the source relation
-     * @param columns the target columns to scan
-     * @param lower the lower end-point specification
-     * @param upper the upper end-point specification
-     * @param limit the maximum number of output records
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    template<class T, details::enable_if_compatible_row_count_t<T> = nullptr>
-    explicit scan(
-            descriptor::relation source,
-            std::vector<column> columns,
-            endpoint lower,
-            endpoint upper,
-            T limit) noexcept :
-        scan {
-                std::move(source),
-                std::move(columns),
-                std::move(lower),
-                std::move(upper),
-                direction_type {},
-                row_slice_type { {}, static_cast<std::size_t>(limit) },
-        }
-    {}
-
-    /**
-     * @brief creates a new instance.
-     * @tparam T the row count type, must be an integral type
-     * @param source the source relation
-     * @param columns the target columns to scan
-     * @param lower the lower end-point specification
-     * @param upper the upper end-point specification
-     * @param limit the maximum number of output records
-     * @attention this may take copies of arguments
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    template<class T, details::enable_if_compatible_row_count_t<T> = nullptr>
-    explicit scan(
-            descriptor::relation source,
-            std::initializer_list<column> columns,
-            endpoint lower,
-            endpoint upper,
-            T limit) :
-        scan {
-                std::move(source),
-                columns,
-                std::move(lower),
-                std::move(upper),
-                direction_type {},
-                row_slice_type { {}, static_cast<std::size_t>(limit) },
-        }
-    {}
 
     /**
      * @brief creates a new object.
@@ -241,25 +185,6 @@ public:
 
     /// @copydoc row_slice()
     [[nodiscard]] row_slice_type const& row_slice() const noexcept;
-
-    /**
-     * @brief returns the maximum number of output records.
-     * @return the maximum number of output records
-     * @return empty if it is unlimited
-     * @throws std::domain_error if row_slice() has the start row position other than immediate `0`
-     * @throws std::domain_error if row_slice() has a variable row count
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    [[nodiscard]] std::optional<std::size_t> limit() const;
-
-    /**
-     * @brief sets the maximum number of output records.
-     * @details This only changes the row count of row_slice(), and keeps its start row position.
-     * @param limit the maximum number, or empty to unlimited
-     * @return this
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    scan& limit(std::optional<std::size_t> limit) noexcept;
 
     /**
      * @brief returns whether or not the two elements are equivalent.

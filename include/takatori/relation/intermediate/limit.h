@@ -6,7 +6,6 @@
 #include "../expression_kind.h"
 #include "../details/sort_key_element.h"
 #include "../details/row_slice.h"
-#include "../details/row_slice_compat.h"
 
 #include <takatori/descriptor/variable.h>
 
@@ -25,12 +24,6 @@ public:
 
     /// @brief row slice type.
     using row_slice_type = details::row_slice;
-
-    /**
-     * @brief the size type.
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    using size_type = std::size_t;
 
     /// @brief the kind of this expression.
     static constexpr expression_kind tag = expression_kind::limit_relation;
@@ -51,37 +44,6 @@ public:
      * @param row_slice the row slice: this operation will only keep the rows in the specified range of each group
      */
     explicit limit(row_slice_type row_slice) noexcept;
-
-    /**
-     * @brief creates a new object.
-     * @details Unlike the other compatibility constructors, this accepts `std::optional` as same as the previous API,
-     *      because the row count is placed at the head of the parameters.
-     *      In this case, `{}` and `std::nullopt` for the row count are resolved to this constructor,
-     *      and they represent "unlimited" as same as the previous API.
-     * @param count the max number of rows, or empty to unlimited
-     * @param group_keys the group key columns on the input relation, or empty to limit for whole relation
-     * @param sort_keys the sort key: this operation will only keep the rows from head of the sorted relation
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    explicit limit(
-            std::optional<size_type> count,
-            std::vector<descriptor::variable> group_keys,
-            std::vector<sort_key> sort_keys) noexcept;
-
-    /**
-     * @brief creates a new object.
-     * @details Unlike the other compatibility constructors, this accepts `std::optional` as same as the previous API,
-     *      because the row count is placed at the head of the parameters.
-     * @param count the max number of rows, or empty to unlimited
-     * @param group_keys the group key columns on the input relation, or empty to limit for whole relation
-     * @param sort_keys the sort key: this operation will only keep the rows from head of the sorted relation
-     * @attention this may take copies of arguments
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    explicit limit(
-            std::optional<size_type> count,
-            std::initializer_list<descriptor::variable> group_keys = {},
-            std::initializer_list<sort_key> sort_keys = {});
 
     /**
      * @brief creates a new object.
@@ -152,25 +114,6 @@ public:
 
     /// @copydoc row_slice()
     [[nodiscard]] row_slice_type const& row_slice() const noexcept;
-
-    /**
-     * @brief returns the max number of rows.
-     * @return the number of rows limit
-     * @return empty if it is unlimited
-     * @throws std::domain_error if row_slice() has the start row position other than immediate `0`
-     * @throws std::domain_error if row_slice() has a variable row count
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    [[nodiscard]] std::optional<size_type> count() const;
-
-    /**
-     * @brief sets the max number of rows.
-     * @details This only changes the row count of row_slice(), and keeps its start row position.
-     * @param count the number of rows limit, or empty to unlimited
-     * @return this
-     * @note deprecated: use row_slice() instead. This compatibility API will be removed after the migration.
-     */
-    limit& count(std::optional<size_type> count) noexcept;
 
     /**
      * @brief returns whether the two elements are equivalent.

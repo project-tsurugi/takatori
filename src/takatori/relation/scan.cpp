@@ -145,15 +145,6 @@ scan::row_slice_type const& scan::row_slice() const noexcept {
     return row_slice_;
 }
 
-std::optional<std::size_t> scan::limit() const {
-    return details::get_compatible_row_count(row_slice_);
-}
-
-scan& scan::limit(std::optional<std::size_t> limit) noexcept {
-    details::set_compatible_row_count(row_slice_, limit);
-    return *this;
-}
-
 bool operator==(scan const& a, scan const& b) noexcept {
     return a.source() == b.source()
         && a.columns() == b.columns()
