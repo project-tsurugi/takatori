@@ -574,6 +574,13 @@ TEST_F(object_scanner_test, relation_buffer) {
     });
 }
 
+TEST_F(object_scanner_test, relation_buffer_stop_with_primary) {
+    print(relation::buffer {
+            3,
+            true,
+    });
+}
+
 TEST_F(object_scanner_test, relation_identify) {
     print(relation::identify {
             vardesc(1),

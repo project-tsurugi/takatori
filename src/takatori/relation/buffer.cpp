@@ -1,27 +1,42 @@
 #include <takatori/relation/buffer.h>
 
+#include <memory>
+#include <stdexcept>
+
 #include <takatori/util/clonable.h>
 #include <takatori/util/downcast.h>
+#include <takatori/util/exception.h>
+#include <takatori/util/print_support.h>
 
 namespace takatori::relation {
 
-buffer::buffer(size_type size)
-    : input_ { *this, 0 }
+using util::throw_exception;
+
+buffer::buffer(size_type size, bool stop_with_primary) :
+    input_ { *this, 0 },
+    stop_with_primary_ { stop_with_primary }
 {
+    if (size == 0) {
+        throw_exception(std::invalid_argument("buffer must have at least one output"));
+    }
     outputs_.reserve(size);
     for (size_type i = 0; i < size; ++i) {
         outputs_.emplace_back(*this, i);
     }
 }
 
-buffer::buffer(util::clone_tag_t, buffer const& other)
-    : buffer(
-            other.outputs_.size())
+buffer::buffer(util::clone_tag_t, buffer const& other) :
+    buffer {
+            other.outputs_.size(),
+            other.stop_with_primary_,
+    }
 {}
 
-buffer::buffer(util::clone_tag_t, buffer&& other)
-    : buffer(
-            other.outputs_.size())
+buffer::buffer(util::clone_tag_t, buffer&& other) :
+    buffer {
+            other.outputs_.size(),
+            other.stop_with_primary_,
+    }
 {}
 
 expression_kind buffer::kind() const noexcept {
@@ -64,8 +79,29 @@ buffer::size_type buffer::size() const noexcept {
     return outputs_.size();
 }
 
+buffer::output_port_type& buffer::primary_output() noexcept {
+    return outputs_.front();
+}
+
+buffer::output_port_type const& buffer::primary_output() const noexcept {
+    return outputs_.front();
+}
+
+bool buffer::stop_with_primary() const noexcept {
+    return stop_with_primary_;
+}
+
+buffer& buffer::stop_with_primary(bool enabled) noexcept {
+    stop_with_primary_ = enabled;
+    return *this;
+}
+
 bool operator==(buffer const& a, buffer const& b) noexcept {
-    return a.size() == b.size();
+    if (std::addressof(a) == std::addressof(b)) {
+        return true;
+    }
+    return a.size() == b.size()
+        && a.stop_with_primary() == b.stop_with_primary();
 }
 
 bool operator!=(buffer const& a, buffer const& b) noexcept {
@@ -73,7 +109,9 @@ bool operator!=(buffer const& a, buffer const& b) noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, buffer const& value) {
-    return out << value.kind() << "(" << value.size() << ")";
+    return out << value.kind() << "("
+               << "size=" << value.size() << ", "
+               << "stop_with_primary=" << util::print_support { value.stop_with_primary() } << ")";
 }
 
 bool buffer::equals(expression const& other) const noexcept {

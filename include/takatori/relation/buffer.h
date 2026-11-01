@@ -16,6 +16,12 @@ namespace takatori::relation {
 
 /**
  * @brief pass the input relation into the multiple successors.
+ * @details This has the "primary" output (see primary_output()), and the others are called the "secondary" outputs.
+ *      By default, every output receives all rows of the input relation.
+ *      If stop_with_primary() is enabled, the secondary outputs need only the rows
+ *      which the downstream of the primary output requires.
+ * @see primary_output()
+ * @see stop_with_primary()
  */
 class buffer : public expression {
 public:
@@ -28,8 +34,11 @@ public:
     /**
      * @brief creates a new object.
      * @param size the number of output targets
+     * @param stop_with_primary whether or not this can stop when the primary output stops
+     * @throws std::invalid_argument if the number of output targets is 0
+     * @see stop_with_primary()
      */
-    explicit buffer(size_type size);
+    explicit buffer(size_type size, bool stop_with_primary = false);
 
     /**
      * @brief creates a new object.
@@ -67,6 +76,44 @@ public:
     [[nodiscard]] size_type size() const noexcept;
 
     /**
+     * @brief returns the primary output port.
+     * @details The primary output is always the first output port (same as `output_ports()[0]`),
+     *      and the others are the secondary outputs.
+     *      The primary output is only meaningful if stop_with_primary() is enabled;
+     *      otherwise, every output receives all rows of the input relation.
+     * @return the primary output port
+     * @see stop_with_primary()
+     */
+    [[nodiscard]] output_port_type& primary_output() noexcept;
+
+    /// @copydoc primary_output()
+    [[nodiscard]] output_port_type const& primary_output() const noexcept;
+
+    /**
+     * @brief returns whether or not this can stop when the primary output stops.
+     * @details If this is enabled, this operator may stop processing the whole input,
+     *      including passing rows to the secondary outputs,
+     *      when the downstream of the primary output no longer requires any rows (e.g. early stop by row count).
+     *      That is, the secondary outputs need only the rows which the downstream of the primary output requires,
+     *      and the result does not change even if the secondary outputs receive fewer rows.
+     *      For the same reason, the input relation may be narrowed to the rows
+     *      which the downstream of the primary output requires.
+     *      Note that, it is still correct to pass all rows to every output even if this is enabled.
+     * @return true if this can stop when the primary output stops
+     * @return false if every output always receives all rows of the input (default)
+     * @see primary_output()
+     */
+    [[nodiscard]] bool stop_with_primary() const noexcept;
+
+    /**
+     * @brief sets whether or not this can stop when the primary output stops.
+     * @param enabled whether or not this can stop when the primary output stops
+     * @return this
+     * @see stop_with_primary()
+     */
+    buffer& stop_with_primary(bool enabled) noexcept;
+
+    /**
      * @brief returns whether or not the two elements are equivalent.
      * @details This operation does not consider which the input/output ports are connected to.
      * @param a the first element
@@ -101,6 +148,7 @@ protected:
 private:
     input_port_type input_;
     boost::container::small_vector<output_port_type, 4> outputs_;
+    bool stop_with_primary_;
 };
 
 /**

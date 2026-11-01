@@ -131,8 +131,10 @@ void relation_expression_property_scanner::operator()(relation::filter const& el
     acceptor_.property_end();
 }
 
-void relation_expression_property_scanner::operator()(relation::buffer const&) {
-    // no special properties
+void relation_expression_property_scanner::operator()(relation::buffer const& element) {
+    acceptor_.property_begin("stop_with_primary"sv);
+    acceptor_.boolean(element.stop_with_primary());
+    acceptor_.property_end();
 }
 
 void relation_expression_property_scanner::operator()(relation::identify const& element) {
