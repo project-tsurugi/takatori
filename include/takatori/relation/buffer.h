@@ -16,11 +16,13 @@ namespace takatori::relation {
 
 /**
  * @brief pass the input relation into the multiple successors.
- * @details This has the "primary" output (see primary_output()), and the others are called the "secondary" outputs.
+ * @details This has the "primary" output (see primary_output()),
+ *      and the others are called the "secondary" outputs (see secondary_outputs()).
  *      By default, every output receives all rows of the input relation.
  *      If stop_with_primary() is enabled, the secondary outputs need only the rows
  *      which the downstream of the primary output requires.
  * @see primary_output()
+ * @see secondary_outputs()
  * @see stop_with_primary()
  */
 class buffer : public expression {
@@ -88,6 +90,19 @@ public:
 
     /// @copydoc primary_output()
     [[nodiscard]] output_port_type const& primary_output() const noexcept;
+
+    /**
+     * @brief returns the secondary output ports.
+     * @details The secondary outputs are the output ports except the primary output
+     *      (same as `output_ports()` without the first element).
+     * @return the secondary output ports, or empty if this has only the primary output
+     * @see primary_output()
+     * @see stop_with_primary()
+     */
+    [[nodiscard]] util::sequence_view<output_port_type> secondary_outputs() noexcept;
+
+    /// @copydoc secondary_outputs()
+    [[nodiscard]] util::sequence_view<output_port_type const> secondary_outputs() const noexcept;
 
     /**
      * @brief returns whether or not this can stop when the primary output stops.

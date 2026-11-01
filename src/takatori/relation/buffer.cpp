@@ -87,6 +87,14 @@ buffer::output_port_type const& buffer::primary_output() const noexcept {
     return outputs_.front();
 }
 
+util::sequence_view<buffer::output_port_type> buffer::secondary_outputs() noexcept {
+    return util::sequence_view { outputs_.data() + 1, outputs_.size() - 1 };
+}
+
+util::sequence_view<buffer::output_port_type const> buffer::secondary_outputs() const noexcept {
+    return util::sequence_view { outputs_.data() + 1, outputs_.size() - 1 };
+}
+
 bool buffer::stop_with_primary() const noexcept {
     return stop_with_primary_;
 }

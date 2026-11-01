@@ -22,6 +22,11 @@ TEST_F(buffer_test, simple) {
     EXPECT_EQ(expr.size(), 2);
     EXPECT_FALSE(expr.stop_with_primary());
     EXPECT_EQ(&expr.primary_output(), &expr.output_ports()[0]);
+    {
+        auto p = expr.secondary_outputs();
+        ASSERT_EQ(p.size(), 1);
+        EXPECT_EQ(&p[0], &expr.output_ports()[1]);
+    }
     EXPECT_EQ(&expr.input().owner(), &expr);
     for (auto& o : expr.output_ports()) {
         EXPECT_EQ(&o.owner(), &expr);
@@ -47,6 +52,13 @@ TEST_F(buffer_test, stop_with_primary) {
 
     expr.stop_with_primary(false);
     EXPECT_FALSE(expr.stop_with_primary());
+}
+
+TEST_F(buffer_test, primary_only) {
+    buffer expr { 1 };
+
+    EXPECT_EQ(&expr.primary_output(), &expr.output_ports()[0]);
+    EXPECT_TRUE(expr.secondary_outputs().empty());
 }
 
 TEST_F(buffer_test, no_outputs) {
