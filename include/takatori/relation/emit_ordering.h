@@ -20,14 +20,14 @@ enum class emit_ordering : std::size_t {
      * @details If this is not specified, or the input relation is not an ordered relation,
      *      the order of the emitted rows is not specified.
      */
-    preserve_input = 0,
+    preserve_output = 0,
 };
 
 /// @brief set of emit_ordering.
 using emit_ordering_set = util::enum_set<
         emit_ordering,
-        emit_ordering::preserve_input,
-        emit_ordering::preserve_input>;
+        emit_ordering::preserve_output,
+        emit_ordering::preserve_output>;
 
 /**
  * @brief returns string representation of the value.
@@ -38,7 +38,7 @@ inline constexpr std::string_view to_string_view(emit_ordering value) noexcept {
     using namespace std::string_view_literals;
     using kind = emit_ordering;
     switch (value) {
-        case kind::preserve_input: return "preserve_input"sv;
+        case kind::preserve_output: return "preserve_output"sv;
     }
     std::abort();
 }

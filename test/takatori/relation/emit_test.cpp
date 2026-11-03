@@ -86,7 +86,7 @@ TEST_F(emit_test, ordering) {
                     { vardesc(2), "B", },
             },
             {
-                    emit_ordering::preserve_input,
+                    emit_ordering::preserve_output,
             },
     };
 
@@ -94,7 +94,7 @@ TEST_F(emit_test, ordering) {
     EXPECT_EQ(expr.columns()[0].source(), vardesc(1));
     EXPECT_EQ(expr.columns()[1].source(), vardesc(2));
     EXPECT_EQ(expr.ordering(), (emit::ordering_type {
-            emit_ordering::preserve_input,
+            emit_ordering::preserve_output,
     }));
 }
 
@@ -106,13 +106,13 @@ TEST_F(emit_test, ordering_vector) {
     emit expr {
             std::move(columns),
             {
-                    emit_ordering::preserve_input,
+                    emit_ordering::preserve_output,
             },
     };
 
     ASSERT_EQ(expr.columns().size(), 2);
     EXPECT_EQ(expr.ordering(), (emit::ordering_type {
-            emit_ordering::preserve_input,
+            emit_ordering::preserve_output,
     }));
 }
 
@@ -120,16 +120,16 @@ TEST_F(emit_test, ordering_setter) {
     emit expr {
             vardesc(1),
     };
-    expr.ordering().insert(emit_ordering::preserve_input);
+    expr.ordering().insert(emit_ordering::preserve_output);
     EXPECT_EQ(expr.ordering(), (emit::ordering_type {
-            emit_ordering::preserve_input,
+            emit_ordering::preserve_output,
     }));
 }
 
 TEST_F(emit_test, equals_ordering) {
     emit a { vardesc(1) };
-    emit b { { vardesc(1) }, { emit_ordering::preserve_input } };
-    emit c { { vardesc(1) }, { emit_ordering::preserve_input } };
+    emit b { { vardesc(1) }, { emit_ordering::preserve_output } };
+    emit c { { vardesc(1) }, { emit_ordering::preserve_output } };
     EXPECT_NE(a, b);
     EXPECT_EQ(b, c);
 }
@@ -168,7 +168,7 @@ TEST_F(emit_test, clone_ordering) {
                     { vardesc(1), "A", },
             },
             {
-                    emit_ordering::preserve_input,
+                    emit_ordering::preserve_output,
             },
     };
 

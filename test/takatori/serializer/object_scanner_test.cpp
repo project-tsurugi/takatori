@@ -603,7 +603,7 @@ TEST_F(object_scanner_test, relation_emit_ordering) {
                     { vardesc(2), "B" },
             },
             {
-                    relation::emit_ordering::preserve_input,
+                    relation::emit_ordering::preserve_output,
             },
     });
 }
