@@ -12,6 +12,7 @@
 #include <takatori/statement/truncate_table.h>
 #include <takatori/statement/grant_table.h>
 #include <takatori/statement/revoke_table.h>
+#include <takatori/statement/create_foreign_catalog.h>
 #include <takatori/statement/empty.h>
 #include <takatori/statement/extension.h>
 
@@ -36,6 +37,7 @@ public:
     void operator()(statement::truncate_table const& element);
     void operator()(statement::grant_table const& element);
     void operator()(statement::revoke_table const& element);
+    void operator()(statement::create_foreign_catalog const& element);
     void operator()(statement::empty const& element);
     void operator()(statement::extension const& element);
 

@@ -54,6 +54,9 @@ enum class statement_kind {
     /// @brief revoke table access privileges.
     revoke_table,
 
+    /// @brief define a foreign (remote) catalog.
+    create_foreign_catalog,
+
     // special statements
     /// @brief does nothing.
     empty,
@@ -89,6 +92,7 @@ constexpr inline std::string_view to_string_view(statement_kind value) noexcept 
         case kind::truncate_table: return "truncate_table"sv;
         case kind::grant_table: return "grant_table"sv;
         case kind::revoke_table: return "revoke_table"sv;
+        case kind::create_foreign_catalog: return "create_foreign_catalog"sv;
         case kind::empty: return "empty"sv;
         case kind::extension: return "extension"sv;
     }

@@ -94,6 +94,7 @@
 #include <takatori/statement/truncate_table.h>
 #include <takatori/statement/grant_table.h>
 #include <takatori/statement/revoke_table.h>
+#include <takatori/statement/create_foreign_catalog.h>
 #include <takatori/statement/empty.h>
 
 #include <takatori/testing/descriptors.h>
@@ -1314,6 +1315,17 @@ TEST_F(object_scanner_test, revoke_table_current_user) {
                                     },
                             }
                     },
+            },
+    });
+}
+
+TEST_F(object_scanner_test, create_foreign_catalog) {
+    print(statement::create_foreign_catalog {
+            "remote_catalog",
+            "remote_server",
+            {
+                    statement::create_foreign_catalog_option_kind::if_catalog_not_exists,
+                    statement::create_foreign_catalog_option_kind::if_server_exists,
             },
     });
 }

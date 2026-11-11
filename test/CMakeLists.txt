@@ -142,6 +142,7 @@ add_test_executable(takatori/statement/drop_table_statement_test.cpp)
 add_test_executable(takatori/statement/drop_index_statement_test.cpp)
 add_test_executable(takatori/statement/empty_statement_test.cpp)
 add_test_executable(takatori/statement/extension_statement_test.cpp)
+add_test_executable(takatori/statement/create_foreign_catalog_statement_test.cpp)
 
 # tree models
 add_test_executable(takatori/tree/tree_element_test.cpp)
