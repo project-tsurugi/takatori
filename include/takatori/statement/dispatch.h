@@ -20,6 +20,7 @@
 #include "grant_table.h"
 #include "revoke_table.h"
 #include "create_foreign_catalog.h"
+#include "drop_foreign_catalog.h"
 #include "empty.h"
 #include "extension.h"
 
@@ -46,6 +47,7 @@ inline auto dispatch_statement(Callback&& callback, E&& statement, Args&&... arg
         case grant_table::tag: return util::polymorphic_callback<grant_table>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case revoke_table::tag: return util::polymorphic_callback<revoke_table>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case create_foreign_catalog::tag: return util::polymorphic_callback<create_foreign_catalog>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
+        case drop_foreign_catalog::tag: return util::polymorphic_callback<drop_foreign_catalog>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case empty::tag: return util::polymorphic_callback<empty>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case extension::tag: return util::polymorphic_callback<extension>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         default: break;

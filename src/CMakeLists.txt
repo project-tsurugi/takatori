@@ -211,6 +211,7 @@ add_library(takatori
     takatori/statement/grant_table.cpp
     takatori/statement/revoke_table.cpp
     takatori/statement/create_foreign_catalog.cpp
+    takatori/statement/drop_foreign_catalog.cpp
     takatori/statement/empty.cpp
     takatori/statement/extension.cpp
     takatori/statement/details/write_tuple.cpp

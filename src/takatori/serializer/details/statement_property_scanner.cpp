@@ -169,6 +169,20 @@ void statement_property_scanner::operator()(statement::create_foreign_catalog co
     acceptor_.property_end();
 }
 
+void statement_property_scanner::operator()(statement::drop_foreign_catalog const& element) {
+    acceptor_.property_begin("catalog_name"sv);
+    acceptor_.string(element.catalog_name());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("options"sv);
+    acceptor_.array_begin();
+    for (auto option : element.options()) {
+        acceptor_.string(to_string_view(option));
+    }
+    acceptor_.array_end();
+    acceptor_.property_end();
+}
+
 void statement_property_scanner::operator()(statement::empty const& element) {
     (void) element;
 }
