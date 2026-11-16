@@ -171,6 +171,39 @@ TEST_F(enum_set_test, diff) {
             (eset { X::A, }));
 }
 
+TEST_F(enum_set_test, universe) {
+    auto s = eset::universe();
+    EXPECT_EQ(s, (eset { X::A, X::B, X::C, X::D, X::E }));
+    EXPECT_EQ(s.size(), 5);
+
+    EXPECT_FALSE(s.contains(X::_));
+    EXPECT_FALSE(s.contains(X::Z));
+}
+
+TEST_F(enum_set_test, complement) {
+    EXPECT_EQ(
+            ~(eset { X::B, X::D }),
+            (eset { X::A, X::C, X::E }));
+    EXPECT_EQ(~eset {}, eset::universe());
+    EXPECT_EQ(~eset::universe(), eset {});
+
+    eset s { X::A, X::C };
+    EXPECT_EQ(~~s, s);
+}
+
+TEST_F(enum_set_test, constexpr_universe_complement) {
+    static_assert(eset::universe().size() == 5);
+    static_assert((~eset::universe()).empty());
+
+    constexpr auto s = ~(eset { X::B, X::D });
+    static_assert(s.size() == 3);
+    static_assert(s.contains(X::A));
+    static_assert(!s.contains(X::B));
+    static_assert(s.contains(X::C));
+    static_assert(!s.contains(X::D));
+    static_assert(s.contains(X::E));
+}
+
 TEST_F(enum_set_test, output) {
     eset s { X::B, X::D };
 

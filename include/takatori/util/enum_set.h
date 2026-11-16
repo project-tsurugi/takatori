@@ -54,6 +54,16 @@ public:
     }
 
     /**
+     * @brief returns a set which contains all elements in `[First, Last]`.
+     * @return the universal set
+     */
+    [[nodiscard]] static constexpr enum_set universe() noexcept {
+        entity_type entries {};
+        entries.set();
+        return enum_set { entries };
+    }
+
+    /**
      * @brief returns a reference of whether or not this contains the given element.
      * @details Developers can modify the returned reference, then it reflects to this container.
      * @param value the element
@@ -211,6 +221,15 @@ public:
      */
     [[nodiscard]] friend constexpr enum_set operator-(enum_set const& a, enum_set const& b) noexcept {
         return enum_set { a.entries_ - b.entries_ };
+    }
+
+    /**
+     * @brief returns the complement of the given set.
+     * @param a the target set
+     * @return the elements in `[First, Last]` which are not in the given set
+     */
+    [[nodiscard]] friend constexpr enum_set operator~(enum_set const& a) noexcept {
+        return enum_set { ~a.entries_ };
     }
 
     /**
