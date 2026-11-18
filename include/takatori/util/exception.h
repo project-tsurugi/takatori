@@ -13,6 +13,9 @@ namespace takatori::util {
 /// @cond IMPL_DEFS
 namespace impl {
 
+// NOTE: this keeps taking boost::stacktrace::stacktrace (not takatori::util::stacktrace),
+// because throw_exception() is a template and is instantiated in the downstream modules.
+// The given trace is wrapped into takatori::util::stacktrace inside.
 void attach_trace(::boost::exception& exception, ::boost::stacktrace::stacktrace&& trace = {});
 
 } // namespace impl
@@ -41,7 +44,7 @@ template<class T>
  * @return empty if the exception has no stacktrace information
  * @see throw_exception()
  */
-[[nodiscard]] ::boost::stacktrace::stacktrace const* find_trace(std::exception const& exception);
+[[nodiscard]] stacktrace const* find_trace(std::exception const& exception);
 
 /**
  * @brief appends stacktrace information into the given output stream.

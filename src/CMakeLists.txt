@@ -244,6 +244,8 @@ add_library(takatori
     takatori/util/assertion.cpp
     takatori/util/exception.cpp
     takatori/util/fail.cpp
+    takatori/util/stacktrace.cpp
+    takatori/util/symbolizer.cpp
     takatori/util/string_builder.cpp
 )
 
@@ -261,6 +263,7 @@ target_link_libraries(takatori
     PRIVATE ICU::data
     PRIVATE ICU::i18n
     PRIVATE ICU::io
+    PRIVATE Threads::Threads
 )
 
 # FIXME: move to common core module
@@ -281,6 +284,11 @@ else()
         PUBLIC Boost::stacktrace_basic
         PUBLIC ${CMAKE_DL_LIBS}
     )
+endif()
+
+if (ENABLE_STACKTRACE_SYMBOLIZATION)
+    # used only in the implementation: the public headers do not change
+    target_compile_definitions(takatori PRIVATE TAKATORI_ENABLE_STACKTRACE_SYMBOLIZATION)
 endif()
 
 if (ENABLE_PMR)
