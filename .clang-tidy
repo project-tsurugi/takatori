@@ -45,6 +45,7 @@ misc-*,\
 -misc-use-anonymous-namespace,\
 modernize-*,\
 -modernize-type-traits,\
+-modernize-use-scoped-lock,\
 -modernize-use-trailing-return-type,\
 performance-*,\
 -performance-enum-size,\
