@@ -9,13 +9,13 @@
 namespace takatori::util {
 
 /// @brief extended error information about stacktrace.
-using stacktrace_info = ::boost::error_info<struct tag_stacktrace, boost::stacktrace::stacktrace>;
+using stacktrace_info = ::boost::error_info<struct tag_stacktrace, stacktrace>;
 
 void impl::attach_trace(boost::exception& exception, ::boost::stacktrace::stacktrace&& trace) {
-    exception << stacktrace_info { std::move(trace) };
+    exception << stacktrace_info { stacktrace { std::move(trace) } };
 }
 
-::boost::stacktrace::stacktrace const* find_trace(std::exception const& exception) {
+stacktrace const* find_trace(std::exception const& exception) {
     return ::boost::get_error_info<stacktrace_info>(exception);
 }
 

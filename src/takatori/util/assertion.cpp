@@ -15,6 +15,9 @@ namespace boost {
     if (msg != nullptr) {
         std::cerr << " : " << msg;
     }
+    // NOTE: printed on this thread directly, not through takatori::util::stacktrace:
+    // the process aborts right after this, so the per-thread state does not matter,
+    // and not depending on another thread is more reliable here
     std::cerr << '\n'
               << trace
               << '\n'

@@ -75,6 +75,7 @@ available options:
 * `-DBUILD_TESTS=OFF` - don't build test programs
 * `-DBUILD_DOCUMENTS=OFF` - don't build documents by doxygen
 * `-DBUILD_STRICT=OFF` - don't treat compile warnings as build errors
+* `-DENABLE_STACKTRACE_SYMBOLIZATION=OFF` - don't print function names in stacktraces (each frame is printed as `<module path>+0x<offset>`, which `addr2line` can resolve later); always off with Boost.Stacktrace older than 1.69 on libbacktrace
 
 ### install
 
