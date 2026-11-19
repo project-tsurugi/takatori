@@ -127,9 +127,10 @@ TEST_F(symbolizer_test, process_wide_disabled) {
 
 TEST_F(symbolizer_test, on_its_own_thread) {
     // a request from the thread of the symbolizer itself must not wait for itself
-    symbolizer target { 1s };
+    // declared before target: target is destroyed (and its thread is joined) first
     std::promise<std::optional<std::string>> inner {};
     auto inner_result = inner.get_future();
+    symbolizer target { 1s };
     target.submit([&] {
         inner.set_value(target(trace_));
     });
