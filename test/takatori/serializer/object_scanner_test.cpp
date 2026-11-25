@@ -91,6 +91,7 @@
 #include <takatori/statement/rename_column.h>
 #include <takatori/statement/drop_table.h>
 #include <takatori/statement/drop_index.h>
+#include <takatori/statement/drop_partition.h>
 #include <takatori/statement/truncate_table.h>
 #include <takatori/statement/grant_table.h>
 #include <takatori/statement/revoke_table.h>
@@ -1228,6 +1229,44 @@ TEST_F(object_scanner_test, drop_index) {
     print(statement::drop_index {
             schemadesc("S"),
             tabledesc("T0"),
+    });
+}
+
+TEST_F(object_scanner_test, drop_partition) {
+    print(statement::drop_partition {
+            tabledesc("I0"),
+            {
+                    statement::details::partition_criteria {
+                            {
+                                    {
+                                            columndesc("C0"),
+                                            "C0",
+                                            {
+                                                    { scalar::comparison_operator::equal, value::int4 { 1 } },
+                                            },
+                                    },
+                                    {
+                                            columndesc("C1"),
+                                            "V1",
+                                            {
+                                                    { scalar::comparison_operator::greater_equal, value::int4 { 10 } },
+                                                    { scalar::comparison_operator::less, value::int4 { 20 } },
+                                            },
+                                    },
+                            },
+                    },
+                    statement::details::partition_criteria {
+                            {
+                                    {
+                                            columndesc("C0"),
+                                            "C0",
+                                            {
+                                                    { scalar::comparison_operator::equal, value::int4 { 2 } },
+                                            },
+                                    },
+                            },
+                    },
+            },
     });
 }
 

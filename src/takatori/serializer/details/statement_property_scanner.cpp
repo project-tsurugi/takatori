@@ -83,6 +83,16 @@ void statement_property_scanner::operator()(statement::drop_index const& element
     acceptor_.property_end();
 }
 
+void statement_property_scanner::operator()(statement::drop_partition const& element) {
+    acceptor_.property_begin("index"sv);
+    accept(element.index());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("target"sv);
+    accept_foreach(element.target());
+    acceptor_.property_end();
+}
+
 void statement_property_scanner::operator()(statement::rename_table const& element) {
     acceptor_.property_begin("schema"sv);
     accept(element.schema());
@@ -272,6 +282,48 @@ void statement_property_scanner::accept(statement::details::table_privilege_acti
 
     acceptor_.property_begin("action_kind"sv);
     accept(element.action_kind());
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
+}
+
+void statement_property_scanner::accept(statement::details::partition_criteria const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("elements"sv);
+    accept_foreach(element.elements());
+    acceptor_.property_end();
+
+    acceptor_.struct_end();
+}
+
+void statement_property_scanner::accept(statement::details::partition_key_element const& element) {
+    acceptor_.struct_begin();
+
+    acceptor_.property_begin("column"sv);
+    accept(element.column());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("column_name"sv);
+    acceptor_.string(element.column_name());
+    acceptor_.property_end();
+
+    acceptor_.property_begin("predicates"sv);
+    acceptor_.array_begin();
+    for (auto&& [op, literal] : element.predicates()) {
+        acceptor_.struct_begin();
+
+        acceptor_.property_begin("operator_kind"sv);
+        accept(op);
+        acceptor_.property_end();
+
+        acceptor_.property_begin("value"sv);
+        accept(util::optional_ptr<value::data const> { literal.get() });
+        acceptor_.property_end();
+
+        acceptor_.struct_end();
+    }
+    acceptor_.array_end();
     acceptor_.property_end();
 
     acceptor_.struct_end();

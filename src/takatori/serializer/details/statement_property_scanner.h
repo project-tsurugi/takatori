@@ -6,6 +6,7 @@
 #include <takatori/statement/drop_table.h>
 #include <takatori/statement/create_index.h>
 #include <takatori/statement/drop_index.h>
+#include <takatori/statement/drop_partition.h>
 #include <takatori/statement/rename_table.h>
 #include <takatori/statement/rename_index.h>
 #include <takatori/statement/rename_column.h>
@@ -32,6 +33,7 @@ public:
     void operator()(statement::drop_table const& element);
     void operator()(statement::create_index const& element);
     void operator()(statement::drop_index const& element);
+    void operator()(statement::drop_partition const& element);
     void operator()(statement::rename_table const& element);
     void operator()(statement::rename_index const& element);
     void operator()(statement::rename_column const& element);
@@ -66,6 +68,10 @@ private:
     void accept(statement::details::table_authorization_entry const& element);
 
     void accept(statement::details::table_privilege_action const& element);
+
+    void accept(statement::details::partition_criteria const& element);
+
+    void accept(statement::details::partition_key_element const& element);
 };
 
 } // namespace takatori::serializer::details

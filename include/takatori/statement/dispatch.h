@@ -13,6 +13,7 @@
 #include "drop_table.h"
 #include "create_index.h"
 #include "drop_index.h"
+#include "drop_partition.h"
 #include "rename_table.h"
 #include "rename_index.h"
 #include "rename_column.h"
@@ -40,6 +41,7 @@ inline auto dispatch_statement(Callback&& callback, E&& statement, Args&&... arg
         case drop_table::tag: return util::polymorphic_callback<drop_table>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case create_index::tag: return util::polymorphic_callback<create_index>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case drop_index::tag: return util::polymorphic_callback<drop_index>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
+        case drop_partition::tag: return util::polymorphic_callback<drop_partition>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case rename_table::tag: return util::polymorphic_callback<rename_table>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case rename_index::tag: return util::polymorphic_callback<rename_index>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);
         case rename_column::tag: return util::polymorphic_callback<rename_column>(std::forward<Callback>(callback), std::forward<E>(statement), std::forward<Args>(args)...);

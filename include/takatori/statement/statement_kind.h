@@ -45,6 +45,9 @@ enum class statement_kind {
     /// @brief rename existing index.
     rename_index,
 
+    /// @brief remove partitions from existing index.
+    drop_partition,
+
     /// @brief remove all rows from table.
     truncate_table,
 
@@ -92,6 +95,7 @@ constexpr inline std::string_view to_string_view(statement_kind value) noexcept 
         case kind::create_index: return "create_index"sv;
         case kind::drop_index: return "drop_index"sv;
         case kind::rename_index: return "rename_index"sv;
+        case kind::drop_partition: return "drop_partition"sv;
         case kind::truncate_table: return "truncate_table"sv;
         case kind::grant_table: return "grant_table"sv;
         case kind::revoke_table: return "revoke_table"sv;

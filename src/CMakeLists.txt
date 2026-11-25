@@ -207,6 +207,7 @@ add_library(takatori
     takatori/statement/rename_index.cpp
     takatori/statement/drop_table.cpp
     takatori/statement/drop_index.cpp
+    takatori/statement/drop_partition.cpp
     takatori/statement/truncate_table.cpp
     takatori/statement/grant_table.cpp
     takatori/statement/revoke_table.cpp
@@ -218,6 +219,8 @@ add_library(takatori
     takatori/statement/details/table_privilege_action.cpp
     takatori/statement/details/table_authorization_entry.cpp
     takatori/statement/details/table_privilege_element.cpp
+    takatori/statement/details/partition_key_element.cpp
+    takatori/statement/details/partition_criteria.cpp
 
     # document
     takatori/document/basic_document.cpp
