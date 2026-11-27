@@ -23,6 +23,7 @@ if (FORCE_INSTALL_RPATH)
 endif (FORCE_INSTALL_RPATH)
 
 option(ENABLE_COVERAGE "enable coverage on debug build" OFF)
+option(ENABLE_STACKTRACE_SYMBOLIZATION "print function names in stacktraces (converted on a dedicated thread)" ON)
 
 include(GNUInstallDirs)
 
@@ -53,6 +54,8 @@ elseif(Boost_STACKTRACE_BASIC_FOUND)
 else()
     message(FATAL_ERROR "No usable Boost stacktrace component")
 endif()
+
+find_package(Threads REQUIRED)
 
 find_package(Doxygen
     OPTIONAL_COMPONENTS dot)
